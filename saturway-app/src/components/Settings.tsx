@@ -11,6 +11,7 @@ import {
   Languages,
   Eye,
   EyeOff,
+  Palette,
 } from 'lucide-react';
 import { Card } from './ui/card';
 import { Input } from './ui/input';
@@ -36,9 +37,13 @@ import {
 import { Textarea } from './ui/textarea';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import { useTranslation } from 'react-i18next';
+import { useLanguage } from './LanguageContext';
+import { useBackground } from './BackgroundContext';
 
 export function Settings() {
   const { t, i18n } = useTranslation();
+  const { language, setLanguage } = useLanguage();
+  const { background, setBackground } = useBackground();
   const [showPassword, setShowPassword] = useState(false);
   const [userName, setUserName] = useState('Alex');
   const [email, setEmail] = useState('alex@example.com');
@@ -151,15 +156,50 @@ export function Settings() {
             <div className="rounded-lg bg-[#4A9FD8]/10 p-2">
               <Languages className="h-5 w-5 text-[#4A9FD8]" />
             </div>
-            <h3 style={{ fontSize: '18px', fontWeight: 600 }}>{t('settings.language.title')}</h3>
+            <div>
+              <h3 style={{ fontSize: '18px', fontWeight: 600 }}>{t('settings.language')}</h3>
+              <p className="text-muted-foreground" style={{ fontSize: '12px' }}>
+                {t('settings.languageDescription')}
+              </p>
+            </div>
           </div>
-          <Select value={i18n.language} onValueChange={handleLanguageChange}>
+          <Select value={language} onValueChange={(value: 'ru' | 'en') => setLanguage(value)}>
             <SelectTrigger className="border-[#4A9FD8]/30 focus:ring-[#4A9FD8]">
-              <SelectValue placeholder={t('settings.language.select')} />
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="en">English</SelectItem>
               <SelectItem value="ru">Русский</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </Card>
+
+      {/* Background Settings */}
+      <Card className="border-[#4A9FD8]/20">
+        <div className="p-6">
+          <div className="mb-4 flex items-center gap-2">
+            <div className="rounded-lg bg-[#4A9FD8]/10 p-2">
+              <Palette className="h-5 w-5 text-[#4A9FD8]" />
+            </div>
+            <div>
+              <h3 style={{ fontSize: '18px', fontWeight: 600 }}>{t('settings.background')}</h3>
+              <p className="text-muted-foreground" style={{ fontSize: '12px' }}>
+                {t('settings.backgroundDescription')}
+              </p>
+            </div>
+          </div>
+          <Select value={background} onValueChange={(value: any) => setBackground(value)}>
+            <SelectTrigger className="border-[#4A9FD8]/30 focus:ring-[#4A9FD8]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ocean-accents">{t('settings.bgOceanAccents')}</SelectItem>
+              <SelectItem value="caustics">{t('settings.bgCaustics')}</SelectItem>
+              <SelectItem value="waves">{t('settings.bgWaves')}</SelectItem>
+              <SelectItem value="depth-layers">{t('settings.bgDepthLayers')}</SelectItem>
+              <SelectItem value="mesh-grid">{t('settings.bgMeshGrid')}</SelectItem>
+              <SelectItem value="minimal">{t('settings.bgMinimal')}</SelectItem>
             </SelectContent>
           </Select>
         </div>

@@ -1,0 +1,54 @@
+/* Header Component */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-2xl);
+  padding: var(--spacing-lg) 0;
+}
+
+.header-greeting h1 {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  margin-bottom: var(--spacing-xs);
+}
+
+.header-subtitle {
+  font-size: var(--font-size-base);
+  color: var(--tg-theme-hint-color);
+}
+
+.header-logo {
+  animation: float 3s ease-in-out infinite;
+}
+
+@media (max-width: 375px) {
+  .header {
+    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-md) 0;
+  }
+  
+  .header-greeting h1 {
+    font-size: var(--font-size-2xl);
+  }
+  
+  .header-subtitle {
+    font-size: var(--font-size-sm);
+  }
+  
+  .header-logo svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+@media (max-width: 320px) {
+  .header {
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-sm) 0;
+  }
+  
+  .header-greeting h1 {
+    font-size: var(--font-size-xl);
+  }
+}

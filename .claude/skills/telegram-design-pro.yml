@@ -1,0 +1,12 @@
+name: telegram-design-pro
+description: "Профессиональный агент для создания продающих дизайнов Telegram приложений с поддержкой скачивания SVG ресурсов"
+prompt_file: telegram-design-pro.md
+model: sonnet
+tools:
+  - WebFetch
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep

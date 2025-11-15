@@ -3,12 +3,13 @@ import { ArrowRight, Sparkles, Target, Zap, Brain } from 'lucide-react';
 import { Button } from './ui/button';
 import { useTranslation } from 'react-i18next';
 import logoImage from '../assets/logo.png';
+import { LanguageProvider } from './LanguageContext';
 
 interface WelcomeProps {
   onGetStarted: () => void;
 }
 
-export function Welcome({ onGetStarted }: WelcomeProps) {
+function WelcomeContent({ onGetStarted }: WelcomeProps) {
   const { t } = useTranslation();
 
   const features = [
@@ -177,5 +178,13 @@ export function Welcome({ onGetStarted }: WelcomeProps) {
       {/* Bottom Gradient Overlay */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#52C9C1] to-transparent" />
     </div>
+  );
+}
+
+export function Welcome({ onGetStarted }: WelcomeProps) {
+  return (
+    <LanguageProvider>
+      <WelcomeContent onGetStarted={onGetStarted} />
+    </LanguageProvider>
   );
 }

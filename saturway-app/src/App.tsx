@@ -69,11 +69,7 @@ function App() {
   };
 
   if (showWelcome) {
-    return (
-      <LanguageProvider>
-        <Welcome onGetStarted={handleGetStarted} />
-      </LanguageProvider>
-    );
+    return <Welcome onGetStarted={handleGetStarted} />;
   }
 
   return (

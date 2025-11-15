@@ -4,14 +4,14 @@ import { Button } from './ui/button';
 import { OceanBackground } from './OceanBackground';
 import { RippleButton } from './RippleButton';
 import { LanguageToggleCompact } from './LanguageToggle';
-import { useLanguage } from './LanguageContext';
+import { LanguageProvider, useLanguage } from './LanguageContext';
 
 interface PermissionScreenProps {
   onAllow: () => void;
   onSkip: () => void;
 }
 
-export function PermissionScreen({ onAllow, onSkip }: PermissionScreenProps) {
+function PermissionScreenContent({ onAllow, onSkip }: PermissionScreenProps) {
   const { language, setLanguage, t } = useLanguage();
 
   const benefits = [
@@ -154,5 +154,13 @@ export function PermissionScreen({ onAllow, onSkip }: PermissionScreenProps) {
         </div>
       </div>
     </OceanBackground>
+  );
+}
+
+export function PermissionScreen({ onAllow, onSkip }: PermissionScreenProps) {
+  return (
+    <LanguageProvider>
+      <PermissionScreenContent onAllow={onAllow} onSkip={onSkip} />
+    </LanguageProvider>
   );
 }

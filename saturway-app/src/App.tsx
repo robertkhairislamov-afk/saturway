@@ -12,6 +12,9 @@ import { BottomNav } from './components/BottomNav';
 import { useStore } from './store';
 import { useTranslation } from 'react-i18next';
 import logoImage from './assets/logo.png';
+// Ocean Edition 2.0 Components
+import { FloatingBubbles } from './components/FloatingBubbles';
+import { OceanAccents } from './components/OceanAccents';
 
 function App() {
   const [showWelcome, setShowWelcome] = useState(() => {
@@ -68,7 +71,11 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="relative min-h-screen bg-background pb-20">
+      {/* Ocean Edition 2.0 - Background Effects */}
+      <OceanAccents variant="subtle" />
+      <FloatingBubbles count={6} opacity={0.12} />
+
       {/* Header */}
       <header className="sticky top-0 z-10 border-b border-border/50 bg-card/95 backdrop-blur-lg">
         <div className="mx-auto max-w-2xl px-4 py-4">
@@ -102,7 +109,7 @@ function App() {
       </header>
 
       {/* Main Content */}
-      <main className="mx-auto max-w-2xl px-4 py-6">
+      <main className="relative z-10 mx-auto max-w-2xl px-4 py-6">
         {renderView()}
       </main>
 

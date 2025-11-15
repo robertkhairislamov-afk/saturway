@@ -9,8 +9,8 @@ interface FloatingBubblesProps {
   className?: string;
 }
 
-export function FloatingBubbles({
-  count = 4, // Уменьшено с 8 до 4 для производительности
+export function FloatingBubbles({ 
+  count = 8,
   minSize = 15,
   maxSize = 35,
   opacity = 0.15,
@@ -22,15 +22,15 @@ export function FloatingBubbles({
     const checkTheme = () => {
       setIsDark(document.documentElement.classList.contains('dark'));
     };
-
+    
     checkTheme();
-
+    
     const observer = new MutationObserver(checkTheme);
     observer.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ['class'],
     });
-
+    
     return () => observer.disconnect();
   }, []);
 
@@ -56,14 +56,14 @@ export function FloatingBubbles({
             height: bubble.size,
             left: `${bubble.left}%`,
             bottom: '-50px',
+            backdropFilter: 'blur(1px)',
             border: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(74,159,216,0.1)'}`,
             opacity: opacity,
-            willChange: 'transform',
-            transform: 'translateZ(0)', // GPU acceleration
           }}
           animate={{
             y: [0, -window.innerHeight - 100],
             x: [0, bubble.xOffset],
+            scale: [1, 1.1, 1],
           }}
           transition={{
             duration: bubble.duration,

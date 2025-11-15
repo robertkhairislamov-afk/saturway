@@ -2,7 +2,7 @@ import { motion } from 'motion/react';
 import { ArrowRight, Target, Zap, Brain } from 'lucide-react';
 import { Button } from './ui/button';
 import { useLanguage } from './LanguageContext';
-import logoImage from '../assets/443c5c749ebfe974980617b9c917b81b051ddc82.png';
+import logoImage from 'figma:asset/443c5c749ebfe974980617b9c917b81b051ddc82.png';
 
 interface WelcomeProps {
   onGetStarted: () => void;
@@ -29,23 +29,19 @@ export function Welcome({ onGetStarted }: WelcomeProps) {
           }}
         />
         
-        {/* Light Rays - упрощено */}
+        {/* Light Rays */}
         <div className="absolute left-1/2 top-20 h-[600px] w-[600px] -translate-x-1/2">
           <motion.div
             className="absolute inset-0"
-            style={{
-              willChange: 'transform',
-              transform: 'translateZ(0)',
-            }}
             animate={{ rotate: 360 }}
-            transition={{ duration: 80, repeat: Infinity, ease: "linear" }}
+            transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
           >
-            {[...Array(8)].map((_, i) => (
+            {[...Array(12)].map((_, i) => (
               <div
                 key={i}
-                className="absolute left-1/2 top-1/2 h-[300px] w-1 -translate-x-1/2 bg-gradient-to-b from-white/15 to-transparent"
+                className="absolute left-1/2 top-1/2 h-[300px] w-1 -translate-x-1/2 bg-gradient-to-b from-white/20 to-transparent"
                 style={{
-                  transform: `rotate(${i * 45}deg) translateY(-150px)`,
+                  transform: `rotate(${i * 30}deg) translateY(-150px)`,
                   transformOrigin: 'center 150px',
                 }}
               />
@@ -53,25 +49,23 @@ export function Welcome({ onGetStarted }: WelcomeProps) {
           </motion.div>
         </div>
 
-        {/* Clouds - оптимизировано */}
-        {[...Array(3)].map((_, i) => (
+        {/* Clouds */}
+        {[...Array(5)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute h-12 w-32 rounded-full bg-white/30"
+            className="absolute h-12 w-32 rounded-full bg-white/40 blur-sm"
             style={{
-              top: `${20 + i * 20}%`,
-              left: `${-10 + i * 30}%`,
-              willChange: 'transform, opacity',
-              transform: 'translateZ(0)',
+              top: `${20 + i * 15}%`,
+              left: `${-20 + i * 25}%`,
             }}
             animate={{
               x: [0, 100, 0],
-              opacity: [0.2, 0.4, 0.2],
+              opacity: [0.3, 0.6, 0.3],
             }}
             transition={{
-              duration: 25 + i * 5,
+              duration: 20 + i * 5,
               repeat: Infinity,
-              ease: "linear",
+              ease: "easeInOut",
             }}
           />
         ))}

@@ -4,6 +4,7 @@ import logoImage from '../assets/443c5c749ebfe974980617b9c917b81b051ddc82.png';
 import { OceanBackground } from './OceanBackground';
 import { LanguageToggleCompact } from './LanguageToggle';
 import { useLanguage } from './LanguageContext';
+import { AnimatedText } from './AnimatedText';
 
 interface LoadingScreenProps {
   onComplete?: () => void;
@@ -117,13 +118,10 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
           </motion.div>
 
           {/* App name */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="mb-2 text-center"
-          >
-            <h1
+          <div className="mb-2 text-center">
+            <AnimatedText
+              text={t('loading.appName')}
+              as="h1"
               className="bg-gradient-to-r from-white to-white/90 bg-clip-text"
               style={{
                 fontSize: '32px',
@@ -131,21 +129,18 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
                 color: 'transparent',
                 textShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
               }}
-            >
-              {t('loading.appName')}
-            </h1>
-          </motion.div>
+            />
+          </div>
 
           {/* Subtitle */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.9 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
-            className="mb-12 text-white"
-            style={{ fontSize: '16px', textShadow: '0 2px 10px rgba(0,0,0,0.2)' }}
-          >
-            {t('loading.subtitle')}
-          </motion.p>
+          <div className="mb-12 text-center">
+            <AnimatedText
+              text={t('loading.subtitle')}
+              as="p"
+              className="text-white"
+              style={{ fontSize: '16px', textShadow: '0 2px 10px rgba(0,0,0,0.2)', opacity: 0.9 }}
+            />
+          </div>
 
           {/* Loading spinner with bubbles */}
           <motion.div
@@ -180,17 +175,14 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
             </div>
 
             {/* Loading text */}
-            <motion.p
-              key={textIndex}
-              initial={{ opacity: 0, y: 5 }}
-              animate={{ opacity: 0.8, y: 0 }}
-              exit={{ opacity: 0, y: -5 }}
-              transition={{ duration: 0.3 }}
-              className="text-white"
-              style={{ fontSize: '14px', textShadow: '0 2px 8px rgba(0,0,0,0.3)' }}
-            >
-              {loadingTexts[textIndex]}
-            </motion.p>
+            <div className="text-center">
+              <AnimatedText
+                text={loadingTexts[textIndex]}
+                as="p"
+                className="text-white"
+                style={{ fontSize: '14px', textShadow: '0 2px 8px rgba(0,0,0,0.3)', opacity: 0.8 }}
+              />
+            </div>
           </motion.div>
         </div>
       </div>

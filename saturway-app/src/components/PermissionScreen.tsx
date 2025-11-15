@@ -5,6 +5,7 @@ import { OceanBackground } from './OceanBackground';
 import { RippleButton } from './RippleButton';
 import { LanguageToggleCompact } from './LanguageToggle';
 import { useLanguage } from './LanguageContext';
+import { AnimatedText } from './AnimatedText';
 
 interface PermissionScreenProps {
   onAllow: () => void;
@@ -75,26 +76,24 @@ export function PermissionScreen({ onAllow, onSkip }: PermissionScreenProps) {
           </motion.div>
 
           {/* Title */}
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="mb-3 text-center text-foreground"
-            style={{ fontSize: '28px', fontWeight: 700 }}
-          >
-            {t('permission.title')}
-          </motion.h1>
+          <div className="mb-3 text-center">
+            <AnimatedText
+              text={t('permission.title')}
+              as="h1"
+              className="text-foreground"
+              style={{ fontSize: '28px', fontWeight: 700 }}
+            />
+          </div>
 
           {/* Description */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-            className="mb-8 max-w-[300px] text-center text-muted-foreground"
-            style={{ fontSize: '16px', lineHeight: '1.5' }}
-          >
-            {t('permission.description')}
-          </motion.p>
+          <div className="mb-8 max-w-[300px] text-center">
+            <AnimatedText
+              text={t('permission.description')}
+              as="p"
+              className="text-muted-foreground"
+              style={{ fontSize: '16px', lineHeight: '1.5' }}
+            />
+          </div>
 
           {/* Benefits */}
           <motion.div
@@ -108,37 +107,32 @@ export function PermissionScreen({ onAllow, onSkip }: PermissionScreenProps) {
           >
             <div className="space-y-3">
               {benefits.map((benefit, index) => (
-                <motion.div
+                <div
                   key={index}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.5 + index * 0.1, duration: 0.4 }}
                   className="flex items-start gap-3"
                 >
                   <div className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[#52C9C1]">
                     <Check className="h-3 w-3 text-white" strokeWidth={3} />
                   </div>
-                  <span className="text-foreground" style={{ fontSize: '15px', lineHeight: '1.4' }}>
-                    {benefit}
-                  </span>
-                </motion.div>
+                  <AnimatedText
+                    text={benefit}
+                    as="span"
+                    className="text-foreground"
+                    style={{ fontSize: '15px', lineHeight: '1.4' }}
+                  />
+                </div>
               ))}
             </div>
           </motion.div>
 
           {/* Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.5 }}
-            className="w-full space-y-3"
-          >
+          <div className="w-full space-y-3">
             <RippleButton
               onClick={onAllow}
               className="h-[52px] w-full rounded-2xl bg-gradient-to-r from-[#4A9FD8] to-[#52C9C1] text-white shadow-lg shadow-[#4A9FD8]/30 transition-transform hover:scale-[0.98] active:scale-95"
               style={{ fontSize: '16px', fontWeight: 600 }}
             >
-              {t('permission.allow')}
+              <AnimatedText text={t('permission.allow')} />
             </RippleButton>
 
             <motion.button
@@ -148,9 +142,9 @@ export function PermissionScreen({ onAllow, onSkip }: PermissionScreenProps) {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              {t('permission.skip')}
+              <AnimatedText text={t('permission.skip')} />
             </motion.button>
-          </motion.div>
+          </div>
         </div>
       </div>
     </OceanBackground>

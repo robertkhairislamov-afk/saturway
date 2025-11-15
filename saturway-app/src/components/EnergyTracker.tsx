@@ -1,144 +1,184 @@
-import { Battery, BatteryCharging, BatteryLow, Sun, Moon, Coffee } from 'lucide-react';
-import { Card } from './ui/card';
-import { Slider } from './ui/slider';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Battery, TrendingUp, TrendingDown, Lightbulb } from 'lucide-react';
+import { Card } from './ui/card';
+import { RippleButton } from './RippleButton';
+import { Slider } from './ui/slider';
+import { useLanguage } from './LanguageContext';
+import { EmptyState } from './EmptyState';
 
 export function EnergyTracker() {
-  const { t } = useTranslation();
+  const { t } = useLanguage();
   const [currentEnergy, setCurrentEnergy] = useState([75]);
+  const [hasData, setHasData] = useState(true); // Show data by default
 
-  const energyData = [
-    { time: '6 AM', value: 45, label: 'Morning', icon: Sun },
-    { time: '9 AM', value: 85, label: 'Peak', icon: BatteryCharging },
-    { time: '12 PM', value: 70, label: 'Midday', icon: Coffee },
-    { time: '3 PM', value: 55, label: 'Afternoon', icon: BatteryLow },
-    { time: '6 PM', value: 40, label: 'Evening', icon: Battery },
-    { time: '9 PM', value: 25, label: 'Night', icon: Moon },
+  const weeklyData = [
+    { day: t('insights.mon'), energy: 65 },
+    { day: t('insights.tue'), energy: 72 },
+    { day: t('insights.wed'), energy: 68 },
+    { day: t('insights.thu'), energy: 75 },
+    { day: t('insights.fri'), energy: 70 },
+    { day: t('insights.sat'), energy: 80 },
+    { day: t('insights.sun'), energy: 78 },
   ];
 
-  const insights = [
-    {
-      key: 'peakPerformance',
-      color: 'text-[#4ECDC4]',
-      bgColor: 'bg-[#4ECDC4]/10',
-    },
-    {
-      key: 'restNeeded',
-      color: 'text-[#FFD93D]',
-      bgColor: 'bg-[#FFD93D]/10',
-    },
-    {
-      key: 'windDown',
-      color: 'text-[#FF6B9D]',
-      bgColor: 'bg-[#FF6B9D]/10',
-    },
-  ];
-
-  const getEnergyStatus = (value: number) => {
-    if (value >= 70) return { text: t('energy.high'), color: 'text-[#4ECDC4]', icon: BatteryCharging };
-    if (value >= 40) return { text: t('energy.medium'), color: 'text-[#FFD93D]', icon: Battery };
-    return { text: t('energy.low'), color: 'text-[#FF6B9D]', icon: BatteryLow };
+  const getEnergyColor = (energy: number) => {
+    if (energy >= 80) return 'bg-green-500';
+    if (energy >= 60) return 'bg-blue-500';
+    if (energy >= 40) return 'bg-yellow-500';
+    if (energy >= 20) return 'bg-orange-500';
+    return 'bg-red-500';
   };
 
-  const status = getEnergyStatus(currentEnergy[0]);
-  const StatusIcon = status.icon;
+  const getEnergyLabel = (energy: number) => {
+    if (energy >= 80) return t('energy.levels.veryHigh');
+    if (energy >= 60) return t('energy.levels.high');
+    if (energy >= 40) return t('energy.levels.medium');
+    if (energy >= 20) return t('energy.levels.low');
+    return t('energy.levels.veryLow');
+  };
+
+  const handleLogEnergy = () => {
+    setHasData(true);
+  };
+
+  if (!hasData) {
+    return (
+      <div className="space-y-6">
+        <h2 className="mb-6" style={{ fontSize: '24px', fontWeight: 700 }}>
+          {t('energy.title')}
+        </h2>
+        
+        <EmptyState
+          illustration="energy"
+          title={t('energy.empty')}
+          description={t('energy.emptyDescription')}
+          actionLabel={t('energy.logEnergy')}
+          onAction={handleLogEnergy}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h2 className="mb-1">{t('energy.title')}</h2>
-        <p className="text-muted-foreground">
-          {t('energy.subtitle')}
-        </p>
-      </div>
+      <h2 className="mb-6" style={{ fontSize: '24px', fontWeight: 700 }}>
+        {t('energy.title')}
+      </h2>
 
-      {/* Current Energy */}
-      <Card className="border-[#7E57FF]/20 bg-gradient-to-br from-[#7E57FF]/5 to-transparent p-6">
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <div className="mb-1 text-muted-foreground uppercase tracking-wide" style={{ fontSize: '12px' }}>
+      {/* Current Energy Level */}
+      <Card className="border-[#4A9FD8]/20 bg-gradient-to-br from-card to-card/50">
+        <div className="p-6">
+          <div className="mb-6 flex items-center gap-2">
+            <Battery className="h-6 w-6 text-[#4A9FD8]" />
+            <h3 style={{ fontSize: '18px', fontWeight: 600 }}>
               {t('energy.currentLevel')}
+            </h3>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span style={{ fontSize: '48px', fontWeight: 700 }}>
+                {currentEnergy[0]}%
+              </span>
+              <span
+                className="rounded-lg bg-[#4A9FD8]/10 px-4 py-2 text-[#4A9FD8]"
+                style={{ fontSize: '16px', fontWeight: 600 }}
+              >
+                {getEnergyLabel(currentEnergy[0])}
+              </span>
             </div>
-            <div className="flex items-center gap-2">
-              <div style={{ fontSize: '32px', fontWeight: 700 }}>{currentEnergy[0]}%</div>
-              <StatusIcon className={`h-6 w-6 ${status.color}`} />
+
+            <Slider
+              value={currentEnergy}
+              onValueChange={setCurrentEnergy}
+              max={100}
+              step={1}
+              className="w-full"
+            />
+
+            <RippleButton className="w-full bg-gradient-to-r from-[#4A9FD8] to-[#52C9C1] text-white hover:opacity-90">
+              {t('energy.logEnergy')}
+            </RippleButton>
+          </div>
+        </div>
+      </Card>
+
+      {/* Weekly History */}
+      <Card className="border-[#4A9FD8]/20">
+        <div className="p-6">
+          <h3 className="mb-4" style={{ fontSize: '18px', fontWeight: 600 }}>
+            {t('energy.history')}
+          </h3>
+          <div className="flex items-end justify-between gap-2">
+            {weeklyData.map((day, index) => (
+              <div key={index} className="flex flex-1 flex-col items-center gap-2">
+                <div className="relative h-32 w-full">
+                  <div
+                    className={`absolute bottom-0 w-full rounded-t-lg ${getEnergyColor(day.energy)} transition-all`}
+                    style={{ height: `${day.energy}%` }}
+                  />
+                </div>
+                <span className="text-muted-foreground" style={{ fontSize: '12px' }}>
+                  {day.day}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Card>
+
+      {/* Patterns */}
+      <Card className="border-[#4A9FD8]/20">
+        <div className="p-6">
+          <h3 className="mb-4" style={{ fontSize: '18px', fontWeight: 600 }}>
+            {t('energy.patterns')}
+          </h3>
+          <div className="space-y-4">
+            <div className="flex items-start gap-3">
+              <div className="rounded-lg bg-green-500/10 p-2">
+                <TrendingUp className="h-5 w-5 text-green-500" />
+              </div>
+              <div>
+                <p style={{ fontSize: '14px', fontWeight: 500 }}>
+                  {t('energy.peakTime')}
+                </p>
+                <p className="text-muted-foreground" style={{ fontSize: '13px' }}>
+                  {t('energy.morning')}
+                </p>
+              </div>
             </div>
-            <div className={`${status.color}`} style={{ fontSize: '14px' }}>
-              {status.text}
+            <div className="flex items-start gap-3">
+              <div className="rounded-lg bg-orange-500/10 p-2">
+                <TrendingDown className="h-5 w-5 text-orange-500" />
+              </div>
+              <div>
+                <p style={{ fontSize: '14px', fontWeight: 500 }}>
+                  {t('energy.lowTime')}
+                </p>
+                <p className="text-muted-foreground" style={{ fontSize: '13px' }}>
+                  {t('energy.afternoon')}
+                </p>
+              </div>
             </div>
           </div>
         </div>
-        <Slider
-          value={currentEnergy}
-          onValueChange={setCurrentEnergy}
-          max={100}
-          step={5}
-          className="mb-2"
-        />
-        <div className="text-muted-foreground" style={{ fontSize: '12px' }}>
-          {t('energy.sliderHint')}
-        </div>
       </Card>
 
-      {/* Energy Timeline */}
-      <Card className="p-5">
-        <h3 className="mb-4">{t('energy.todayPattern')}</h3>
-        <div className="space-y-4">
-          {energyData.map((item, index) => {
-            const Icon = item.icon;
-            return (
-              <div key={index} className="flex items-center gap-4">
-                <div className="flex w-16 items-center gap-2">
-                  <Icon className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-muted-foreground" style={{ fontSize: '14px' }}>
-                    {item.time}
-                  </span>
-                </div>
-                <div className="flex-1">
-                  <div className="mb-1.5 flex items-center justify-between">
-                    <span style={{ fontSize: '14px' }}>{item.label}</span>
-                    <span className="text-muted-foreground" style={{ fontSize: '14px' }}>
-                      {item.value}%
-                    </span>
-                  </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-muted">
-                    <div
-                      className={`h-full rounded-full transition-all ${
-                        item.value >= 70
-                          ? 'bg-[#4ECDC4]'
-                          : item.value >= 40
-                          ? 'bg-[#FFD93D]'
-                          : 'bg-[#FF6B9D]'
-                      }`}
-                      style={{ width: `${item.value}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+      {/* Recommendation */}
+      <Card className="border-[#4A9FD8]/20 bg-gradient-to-br from-[#FFD93D]/5 to-transparent">
+        <div className="p-6">
+          <div className="mb-3 flex items-center gap-2">
+            <Lightbulb className="h-5 w-5 text-[#FFD93D]" />
+            <h3 style={{ fontSize: '16px', fontWeight: 600 }}>
+              {t('energy.recommendation')}
+            </h3>
+          </div>
+          <p className="text-muted-foreground" style={{ fontSize: '14px' }}>
+            {t('energy.recommendationText')}
+          </p>
         </div>
       </Card>
-
-      {/* Insights */}
-      <div className="space-y-3">
-        <h3>{t('energy.insights.title')}</h3>
-        {insights.map((insight, index) => (
-          <Card key={index} className={`border-border/50 p-4 ${insight.bgColor}`}>
-            <div className="mb-1 flex items-center justify-between">
-              <div className={insight.color}>{t(`energy.insights.${insight.key}.title`)}</div>
-              <div className="text-muted-foreground" style={{ fontSize: '14px' }}>
-                {t(`energy.insights.${insight.key}.time`)}
-              </div>
-            </div>
-            <p className="text-muted-foreground" style={{ fontSize: '14px' }}>
-              {t(`energy.insights.${insight.key}.description`)}
-            </p>
-          </Card>
-        ))}
-      </div>
     </div>
   );
 }

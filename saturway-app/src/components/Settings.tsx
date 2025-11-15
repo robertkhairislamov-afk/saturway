@@ -16,7 +16,7 @@ import {
 import { Card } from './ui/card';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
-import { Button } from './ui/button';
+import { RippleButton } from './RippleButton';
 import { Separator } from './ui/separator';
 import { Switch } from './ui/switch';
 import {
@@ -36,24 +36,19 @@ import {
 } from './ui/dialog';
 import { Textarea } from './ui/textarea';
 import { Avatar, AvatarFallback } from './ui/avatar';
-import { useTranslation } from 'react-i18next';
+import { LanguageToggleDark } from './LanguageToggle';
 import { useLanguage } from './LanguageContext';
 import { useBackground } from './BackgroundContext';
 
 export function Settings() {
-  const { t, i18n } = useTranslation();
-  const { language, setLanguage } = useLanguage();
-  const { background, setBackground } = useBackground();
+  const { language: contextLanguage, setLanguage: setContextLanguage, t } = useLanguage();
+  const { background: contextBackground, setBackground: setContextBackground } = useBackground();
   const [showPassword, setShowPassword] = useState(false);
   const [userName, setUserName] = useState('Alex');
   const [email, setEmail] = useState('alex@example.com');
   const [bio, setBio] = useState('');
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [dataSharing, setDataSharing] = useState(false);
-
-  const handleLanguageChange = (value: string) => {
-    i18n.changeLanguage(value);
-  };
 
   return (
     <div className="space-y-6 pb-6">
@@ -78,7 +73,7 @@ export function Settings() {
             <div className="space-y-2">
               <Label htmlFor="username" className="flex items-center gap-2">
                 <User className="h-4 w-4 text-[#4A9FD8]" />
-                {t('settings.profile.username')}
+                {t('settings.username')}
               </Label>
               <Input
                 id="username"
@@ -91,7 +86,7 @@ export function Settings() {
             <div className="space-y-2">
               <Label htmlFor="email" className="flex items-center gap-2">
                 <Mail className="h-4 w-4 text-[#4A9FD8]" />
-                {t('settings.profile.email')}
+                {t('settings.email')}
               </Label>
               <Input
                 id="email"
@@ -105,7 +100,7 @@ export function Settings() {
             <div className="space-y-2">
               <Label htmlFor="password" className="flex items-center gap-2">
                 <Lock className="h-4 w-4 text-[#4A9FD8]" />
-                {t('settings.profile.password')}
+                {t('settings.password')}
               </Label>
               <div className="relative">
                 <Input
@@ -131,20 +126,20 @@ export function Settings() {
             <div className="space-y-2">
               <Label htmlFor="bio" className="flex items-center gap-2">
                 <FileText className="h-4 w-4 text-[#4A9FD8]" />
-                {t('settings.profile.bio')}
+                {t('settings.aboutMe')}
               </Label>
               <Textarea
                 id="bio"
-                placeholder={t('settings.profile.bioPlaceholder')}
+                placeholder={t('settings.aboutMePlaceholder')}
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 className="min-h-[100px] resize-none border-[#4A9FD8]/30 focus-visible:ring-[#4A9FD8]"
               />
             </div>
 
-            <Button className="w-full bg-gradient-to-r from-[#4A9FD8] to-[#52C9C1] text-white hover:opacity-90">
-              {t('settings.profile.save')}
-            </Button>
+            <RippleButton className="w-full bg-gradient-to-r from-[#4A9FD8] to-[#52C9C1] text-white hover:opacity-90">
+              {t('settings.saveProfile')}
+            </RippleButton>
           </div>
         </div>
       </Card>
@@ -152,26 +147,21 @@ export function Settings() {
       {/* Language Settings */}
       <Card className="border-[#4A9FD8]/20">
         <div className="p-6">
-          <div className="mb-4 flex items-center gap-2">
-            <div className="rounded-lg bg-[#4A9FD8]/10 p-2">
-              <Languages className="h-5 w-5 text-[#4A9FD8]" />
-            </div>
-            <div>
+          <div className="mb-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="rounded-lg bg-[#4A9FD8]/10 p-2">
+                <Languages className="h-5 w-5 text-[#4A9FD8]" />
+              </div>
               <h3 style={{ fontSize: '18px', fontWeight: 600 }}>{t('settings.language')}</h3>
-              <p className="text-muted-foreground" style={{ fontSize: '12px' }}>
-                {t('settings.languageDescription')}
-              </p>
             </div>
+            <LanguageToggleDark
+              currentLanguage={contextLanguage}
+              onToggle={setContextLanguage}
+            />
           </div>
-          <Select value={language} onValueChange={(value: 'ru' | 'en') => setLanguage(value)}>
-            <SelectTrigger className="border-[#4A9FD8]/30 focus:ring-[#4A9FD8]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="en">English</SelectItem>
-              <SelectItem value="ru">Русский</SelectItem>
-            </SelectContent>
-          </Select>
+          <p className="text-muted-foreground" style={{ fontSize: '14px' }}>
+            {t('settings.languageDescription')}
+          </p>
         </div>
       </Card>
 
@@ -182,14 +172,15 @@ export function Settings() {
             <div className="rounded-lg bg-[#4A9FD8]/10 p-2">
               <Palette className="h-5 w-5 text-[#4A9FD8]" />
             </div>
-            <div>
-              <h3 style={{ fontSize: '18px', fontWeight: 600 }}>{t('settings.background')}</h3>
-              <p className="text-muted-foreground" style={{ fontSize: '12px' }}>
-                {t('settings.backgroundDescription')}
-              </p>
-            </div>
+            <h3 style={{ fontSize: '18px', fontWeight: 600 }}>{t('settings.background')}</h3>
           </div>
-          <Select value={background} onValueChange={(value: any) => setBackground(value)}>
+          <p className="mb-4 text-muted-foreground" style={{ fontSize: '14px' }}>
+            {t('settings.backgroundDescription')}
+          </p>
+          <Select
+            value={contextBackground}
+            onValueChange={setContextBackground}
+          >
             <SelectTrigger className="border-[#4A9FD8]/30 focus:ring-[#4A9FD8]">
               <SelectValue />
             </SelectTrigger>
@@ -212,16 +203,16 @@ export function Settings() {
             <div className="rounded-lg bg-[#4A9FD8]/10 p-2">
               <Shield className="h-5 w-5 text-[#4A9FD8]" />
             </div>
-            <h3 style={{ fontSize: '18px', fontWeight: 600 }}>{t('settings.privacy.title')}</h3>
+            <h3 style={{ fontSize: '18px', fontWeight: 600 }}>{t('settings.privacy')}</h3>
           </div>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <p style={{ fontSize: '14px', fontWeight: 500 }}>
-                  {t('settings.privacy.notifications')}
+                  {t('settings.notifications')}
                 </p>
                 <p className="text-muted-foreground" style={{ fontSize: '12px' }}>
-                  {t('settings.privacy.notificationsDesc')}
+                  {t('settings.notificationsDesc')}
                 </p>
               </div>
               <Switch
@@ -233,9 +224,9 @@ export function Settings() {
             <Separator />
             <div className="flex items-center justify-between">
               <div>
-                <p style={{ fontSize: '14px', fontWeight: 500 }}>{t('settings.privacy.dataSharing')}</p>
+                <p style={{ fontSize: '14px', fontWeight: 500 }}>{t('settings.dataSharing')}</p>
                 <p className="text-muted-foreground" style={{ fontSize: '12px' }}>
-                  {t('settings.privacy.dataSharingDesc')}
+                  {t('settings.dataSharingDesc')}
                 </p>
               </div>
               <Switch
@@ -260,7 +251,7 @@ export function Settings() {
                     <Info className="h-5 w-5 text-[#4A9FD8]" />
                   </div>
                   <span style={{ fontSize: '14px', fontWeight: 500 }}>
-                    {t('settings.about.title')}
+                    {t('settings.aboutAuthor')}
                   </span>
                 </div>
                 <ChevronRight className="h-5 w-5 text-muted-foreground" />
@@ -268,15 +259,19 @@ export function Settings() {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>{t('settings.about.title')}</DialogTitle>
-                <DialogDescription className="space-y-3 pt-4">
-                  <p>{t('settings.about.description1')}</p>
-                  <p>{t('settings.about.description2')}</p>
-                  <p className="text-muted-foreground" style={{ fontSize: '12px' }}>
-                    {t('settings.about.version')}
-                  </p>
-                </DialogDescription>
+                <DialogTitle>{t('settings.aboutAuthorTitle')}</DialogTitle>
               </DialogHeader>
+              <div className="space-y-3">
+                <p style={{ fontSize: '14px' }}>
+                  {t('settings.aboutAuthorText1')}
+                </p>
+                <p style={{ fontSize: '14px' }}>
+                  {t('settings.aboutAuthorText2')}
+                </p>
+                <p className="text-muted-foreground" style={{ fontSize: '12px' }}>
+                  {t('settings.version')}
+                </p>
+              </div>
             </DialogContent>
           </Dialog>
 
@@ -291,7 +286,7 @@ export function Settings() {
                     <Shield className="h-5 w-5 text-[#4A9FD8]" />
                   </div>
                   <span style={{ fontSize: '14px', fontWeight: 500 }}>
-                    {t('settings.privacy.policy')}
+                    {t('settings.privacyPolicy')}
                   </span>
                 </div>
                 <ChevronRight className="h-5 w-5 text-muted-foreground" />
@@ -299,28 +294,36 @@ export function Settings() {
             </DialogTrigger>
             <DialogContent className="max-h-[80vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>{t('settings.privacy.policy')}</DialogTitle>
-                <DialogDescription className="space-y-3 pt-4 text-left">
-                  <h4 style={{ fontSize: '14px', fontWeight: 600 }}>
-                    {t('settings.privacy.dataCollection')}
-                  </h4>
-                  <p style={{ fontSize: '13px' }}>
-                    {t('settings.privacy.dataCollectionDesc')}
-                  </p>
-
-                  <h4 style={{ fontSize: '14px', fontWeight: 600 }}>
-                    {t('settings.privacy.dataSecurity')}
-                  </h4>
-                  <p style={{ fontSize: '13px' }}>
-                    {t('settings.privacy.dataSecurityDesc')}
-                  </p>
-
-                  <h4 style={{ fontSize: '14px', fontWeight: 600 }}>{t('settings.privacy.yourRights')}</h4>
-                  <p style={{ fontSize: '13px' }}>
-                    {t('settings.privacy.yourRightsDesc')}
-                  </p>
-                </DialogDescription>
+                <DialogTitle>{t('settings.privacyPolicyTitle')}</DialogTitle>
               </DialogHeader>
+              <div className="space-y-4 text-left">
+                <div>
+                  <div style={{ fontSize: '14px', fontWeight: 600 }} className="mb-2">
+                    {t('settings.dataCollection')}
+                  </div>
+                  <p className="text-muted-foreground" style={{ fontSize: '13px' }}>
+                    {t('settings.dataCollectionText')}
+                  </p>
+                </div>
+                
+                <div>
+                  <div style={{ fontSize: '14px', fontWeight: 600 }} className="mb-2">
+                    {t('settings.dataSecurity')}
+                  </div>
+                  <p className="text-muted-foreground" style={{ fontSize: '13px' }}>
+                    {t('settings.dataSecurityText')}
+                  </p>
+                </div>
+                
+                <div>
+                  <div style={{ fontSize: '14px', fontWeight: 600 }} className="mb-2">
+                    {t('settings.yourRights')}
+                  </div>
+                  <p className="text-muted-foreground" style={{ fontSize: '13px' }}>
+                    {t('settings.yourRightsText')}
+                  </p>
+                </div>
+              </div>
             </DialogContent>
           </Dialog>
 
@@ -335,7 +338,7 @@ export function Settings() {
                     <FileText className="h-5 w-5 text-[#4A9FD8]" />
                   </div>
                   <span style={{ fontSize: '14px', fontWeight: 500 }}>
-                    {t('settings.terms.title')}
+                    {t('settings.termsOfService')}
                   </span>
                 </div>
                 <ChevronRight className="h-5 w-5 text-muted-foreground" />
@@ -343,37 +346,45 @@ export function Settings() {
             </DialogTrigger>
             <DialogContent className="max-h-[80vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>{t('settings.terms.title')}</DialogTitle>
-                <DialogDescription className="space-y-3 pt-4 text-left">
-                  <h4 style={{ fontSize: '14px', fontWeight: 600 }}>
-                    {t('settings.terms.acceptance')}
-                  </h4>
-                  <p style={{ fontSize: '13px' }}>
-                    {t('settings.terms.acceptanceDesc')}
-                  </p>
-
-                  <h4 style={{ fontSize: '14px', fontWeight: 600 }}>
-                    {t('settings.terms.license')}
-                  </h4>
-                  <p style={{ fontSize: '13px' }}>
-                    {t('settings.terms.licenseDesc')}
-                  </p>
-
-                  <h4 style={{ fontSize: '14px', fontWeight: 600 }}>
-                    {t('settings.terms.prohibited')}
-                  </h4>
-                  <p style={{ fontSize: '13px' }}>
-                    {t('settings.terms.prohibitedDesc')}
-                  </p>
-
-                  <h4 style={{ fontSize: '14px', fontWeight: 600 }}>
-                    {t('settings.terms.changes')}
-                  </h4>
-                  <p style={{ fontSize: '13px' }}>
-                    {t('settings.terms.changesDesc')}
-                  </p>
-                </DialogDescription>
+                <DialogTitle>{t('settings.termsOfServiceTitle')}</DialogTitle>
               </DialogHeader>
+              <div className="space-y-4 text-left">
+                <div>
+                  <div style={{ fontSize: '14px', fontWeight: 600 }} className="mb-2">
+                    {t('settings.acceptanceOfTerms')}
+                  </div>
+                  <p className="text-muted-foreground" style={{ fontSize: '13px' }}>
+                    {t('settings.acceptanceOfTermsText')}
+                  </p>
+                </div>
+                
+                <div>
+                  <div style={{ fontSize: '14px', fontWeight: 600 }} className="mb-2">
+                    {t('settings.license')}
+                  </div>
+                  <p className="text-muted-foreground" style={{ fontSize: '13px' }}>
+                    {t('settings.licenseText')}
+                  </p>
+                </div>
+                
+                <div>
+                  <div style={{ fontSize: '14px', fontWeight: 600 }} className="mb-2">
+                    {t('settings.prohibitedUses')}
+                  </div>
+                  <p className="text-muted-foreground" style={{ fontSize: '13px' }}>
+                    {t('settings.prohibitedUsesText')}
+                  </p>
+                </div>
+                
+                <div>
+                  <div style={{ fontSize: '14px', fontWeight: 600 }} className="mb-2">
+                    {t('settings.changesToTerms')}
+                  </div>
+                  <p className="text-muted-foreground" style={{ fontSize: '13px' }}>
+                    {t('settings.changesToTermsText')}
+                  </p>
+                </div>
+              </div>
             </DialogContent>
           </Dialog>
 
@@ -388,7 +399,7 @@ export function Settings() {
                     <Globe className="h-5 w-5 text-[#4A9FD8]" />
                   </div>
                   <span style={{ fontSize: '14px', fontWeight: 500 }}>
-                    {t('settings.copyright.title')}
+                    {t('settings.copyright')}
                   </span>
                 </div>
                 <ChevronRight className="h-5 w-5 text-muted-foreground" />
@@ -396,22 +407,24 @@ export function Settings() {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>{t('settings.copyright.title')}</DialogTitle>
-                <DialogDescription className="space-y-3 pt-4 text-left">
-                  <p style={{ fontSize: '13px' }}>
-                    {t('settings.copyright.description1')}
-                  </p>
-                  <p style={{ fontSize: '13px' }}>
-                    {t('settings.copyright.description2')}
-                  </p>
-                  <h4 style={{ fontSize: '14px', fontWeight: 600 }}>
-                    {t('settings.copyright.opensource')}
-                  </h4>
-                  <p style={{ fontSize: '13px' }}>
-                    {t('settings.copyright.opensourceDesc')}
-                  </p>
-                </DialogDescription>
+                <DialogTitle>{t('settings.copyrightTitle')}</DialogTitle>
               </DialogHeader>
+              <div className="space-y-4 text-left">
+                <p className="text-muted-foreground" style={{ fontSize: '13px' }}>
+                  {t('settings.copyrightText1')}
+                </p>
+                <p className="text-muted-foreground" style={{ fontSize: '13px' }}>
+                  {t('settings.copyrightText2')}
+                </p>
+                <div>
+                  <div style={{ fontSize: '14px', fontWeight: 600 }} className="mb-2">
+                    {t('settings.openSourceLibraries')}
+                  </div>
+                  <p className="text-muted-foreground" style={{ fontSize: '13px' }}>
+                    {t('settings.openSourceLibrariesText')}
+                  </p>
+                </div>
+              </div>
             </DialogContent>
           </Dialog>
         </div>
@@ -419,8 +432,8 @@ export function Settings() {
 
       {/* App Version */}
       <div className="text-center text-muted-foreground" style={{ fontSize: '12px' }}>
-        <p>{t('settings.version.app')}</p>
-        <p>{t('settings.version.tagline')}</p>
+        <p>{t('settings.appVersion')}</p>
+        <p>{t('settings.appTagline')}</p>
       </div>
     </div>
   );

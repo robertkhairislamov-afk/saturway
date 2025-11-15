@@ -1,55 +1,54 @@
-import { useState, useEffect } from 'react';
-import WebApp from '@twa-dev/sdk';
-import './index.css';
-import './i18n';
-import { Welcome } from './components/Welcome';
+import { useState } from 'react';
 import { Dashboard } from './components/Dashboard';
 import { TaskList } from './components/TaskList';
 import { EnergyTracker } from './components/EnergyTracker';
 import { AIInsights } from './components/AIInsights';
 import { Settings } from './components/Settings';
 import { BottomNav } from './components/BottomNav';
-import { useStore } from './store';
-import { useTranslation } from 'react-i18next';
-import logoImage from './assets/logo.png';
-// Ocean Edition 2.0 Components
+import { Welcome } from './components/Welcome';
+import { AuthFlow } from './components/AuthFlow';
+import { AuthScreensDemo } from './components/AuthScreensDemo';
 import { LanguageProvider } from './components/LanguageContext';
 import { BackgroundProvider } from './components/BackgroundContext';
-import { DynamicBackground } from './components/DynamicBackground';
 import { AnimatedScreen } from './components/AnimatedScreen';
+import { DynamicBackground } from './components/DynamicBackground';
+import logoImage from './assets/443c5c749ebfe974980617b9c917b81b051ddc82.png';
 
-function App() {
-  const [showWelcome, setShowWelcome] = useState(() => {
-    return !localStorage.getItem('saturway_onboarded');
-  });
+// Set to true to see auth screens demo
+const DEMO_MODE = false;
+
+export default function App() {
+  const [showAuth, setShowAuth] = useState(!DEMO_MODE);
+  const [showWelcome, setShowWelcome] = useState(false);
   const [currentView, setCurrentView] = useState('dashboard');
-  const { initializeApp } = useStore();
-  const { t } = useTranslation();
 
-  const handleGetStarted = () => {
-    localStorage.setItem('saturway_onboarded', 'true');
-    setShowWelcome(false);
-  };
+  // Demo mode - show auth screens menu
+  if (DEMO_MODE) {
+    return (
+      <LanguageProvider>
+        <AuthScreensDemo />
+      </LanguageProvider>
+    );
+  }
 
-  useEffect(() => {
-    // Инициализация Telegram WebApp
-    WebApp.ready();
-    WebApp.expand();
+  if (showAuth) {
+    return (
+      <LanguageProvider>
+        <AuthFlow onComplete={() => {
+          setShowAuth(false);
+          setShowWelcome(true);
+        }} />
+      </LanguageProvider>
+    );
+  }
 
-    // Настройка темы
-    WebApp.setHeaderColor(WebApp.themeParams.bg_color || '#f8f9fa');
-    WebApp.setBackgroundColor(WebApp.themeParams.bg_color || '#f8f9fa');
-
-    // Инициализация приложения с mock данными
-    initializeApp();
-
-    // Показываем главную кнопку
-    WebApp.MainButton.setText(t('app.optimizeButton'));
-    WebApp.MainButton.show();
-    WebApp.MainButton.onClick(() => {
-      WebApp.showAlert(t('app.optimizeAlert'));
-    });
-  }, [initializeApp, t]);
+  if (showWelcome) {
+    return (
+      <LanguageProvider>
+        <Welcome onGetStarted={() => setShowWelcome(false)} />
+      </LanguageProvider>
+    );
+  }
 
   const renderView = () => {
     switch (currentView) {
@@ -68,18 +67,14 @@ function App() {
     }
   };
 
-  if (showWelcome) {
-    return <Welcome onGetStarted={handleGetStarted} />;
-  }
-
   return (
     <LanguageProvider>
       <BackgroundProvider>
         <div className="relative min-h-screen bg-background pb-20">
           {/* Dynamic Background */}
           <DynamicBackground />
-
-          {/* Header */}
+          
+          {/* Header with gradient enhancement */}
           <header className="sticky top-0 z-40 border-b border-border/50 bg-card/95 backdrop-blur-lg">
             <div className="mx-auto max-w-2xl px-4 py-4">
               <div className="flex items-center justify-between">
@@ -93,32 +88,25 @@ function App() {
                   </div>
                   <div>
                     <h1 className="bg-gradient-to-r from-[#4A9FD8] to-[#52C9C1] bg-clip-text" style={{ fontSize: '20px', fontWeight: 700, color: 'transparent' }}>
-                      {t('app.name')}
+                      Saturway
                     </h1>
                     <p className="text-muted-foreground" style={{ fontSize: '12px' }}>
-                      {t('app.subtitle')}
+                      AI Organizer
                     </p>
                   </div>
-                </div>
-                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-[#4A9FD8] to-[#52C9C1] p-1">
-                  <img
-                    src={logoImage}
-                    alt="Saturway"
-                    className="h-full w-full object-contain drop-shadow-md"
-                  />
                 </div>
               </div>
             </div>
           </header>
 
-          {/* Main Content */}
+          {/* Main Content with Animated Transitions */}
           <main className="relative z-0 mx-auto max-w-2xl px-4 py-6">
             <AnimatedScreen screenKey={currentView}>
               {renderView()}
             </AnimatedScreen>
           </main>
 
-          {/* Gradient fade before bottom navigation */}
+          {/* Gradient fade before bottom nav */}
           <div className="pointer-events-none fixed bottom-16 left-0 right-0 z-30 h-8 bg-gradient-to-t from-background to-transparent" />
 
           {/* Bottom Navigation */}
@@ -128,5 +116,3 @@ function App() {
     </LanguageProvider>
   );
 }
-
-export default App;

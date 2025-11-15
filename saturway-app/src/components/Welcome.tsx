@@ -1,22 +1,15 @@
 import { motion } from 'motion/react';
-import { ArrowRight, Sparkles, Target, Zap, Brain } from 'lucide-react';
+import { ArrowRight, Target, Zap, Brain } from 'lucide-react';
 import { Button } from './ui/button';
-import { useTranslation } from 'react-i18next';
-import logoImage from '../assets/logo.png';
-import { LanguageProvider } from './LanguageContext';
+import { useLanguage } from './LanguageContext';
+import logoImage from '../assets/443c5c749ebfe974980617b9c917b81b051ddc82.png';
 
 interface WelcomeProps {
   onGetStarted: () => void;
 }
 
-function WelcomeContent({ onGetStarted }: WelcomeProps) {
-  const { t } = useTranslation();
-
-  const features = [
-    { icon: Target, text: t('welcome.features.tasks') },
-    { icon: Zap, text: t('welcome.features.energy') },
-    { icon: Brain, text: t('welcome.features.insights') },
-  ];
+export function Welcome({ onGetStarted }: WelcomeProps) {
+  const { t } = useLanguage();
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-[#4A9FD8] via-[#5AB5E8] to-[#52C9C1]">
@@ -35,7 +28,7 @@ function WelcomeContent({ onGetStarted }: WelcomeProps) {
             ease: "easeInOut",
           }}
         />
-
+        
         {/* Light Rays */}
         <div className="absolute left-1/2 top-20 h-[600px] w-[600px] -translate-x-1/2">
           <motion.div
@@ -110,7 +103,7 @@ function WelcomeContent({ onGetStarted }: WelcomeProps) {
             {t('welcome.title')}
           </h1>
           <p className="mx-auto max-w-md text-white/90 drop-shadow-md" style={{ fontSize: '18px' }}>
-            {t('welcome.subtitle')}
+            {t('welcome.description')}
           </p>
         </motion.div>
 
@@ -121,7 +114,11 @@ function WelcomeContent({ onGetStarted }: WelcomeProps) {
           transition={{ delay: 0.6, duration: 0.8 }}
           className="mb-12 grid gap-4 px-4"
         >
-          {features.map((feature, i) => {
+          {[
+            { icon: Target, text: t('welcome.feature1') },
+            { icon: Zap, text: t('welcome.feature2') },
+            { icon: Brain, text: t('welcome.feature3') },
+          ].map((feature, i) => {
             const Icon = feature.icon;
             return (
               <motion.div
@@ -157,34 +154,10 @@ function WelcomeContent({ onGetStarted }: WelcomeProps) {
             <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
           </Button>
         </motion.div>
-
-        {/* Sparkle Effect */}
-        <motion.div
-          className="absolute right-8 top-1/3"
-          animate={{
-            y: [0, -10, 0],
-            rotate: [0, 10, -10, 0],
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        >
-          <Sparkles className="h-8 w-8 text-white/60" />
-        </motion.div>
       </div>
 
       {/* Bottom Gradient Overlay */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#52C9C1] to-transparent" />
     </div>
-  );
-}
-
-export function Welcome({ onGetStarted }: WelcomeProps) {
-  return (
-    <LanguageProvider>
-      <WelcomeContent onGetStarted={onGetStarted} />
-    </LanguageProvider>
   );
 }

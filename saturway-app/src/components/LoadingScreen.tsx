@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
-import logoImage from 'figma:asset/443c5c749ebfe974980617b9c917b81b051ddc82.png';
+import logoImage from '../assets/443c5c749ebfe974980617b9c917b81b051ddc82.png';
 import { OceanBackground } from './OceanBackground';
 import { LanguageToggleCompact } from './LanguageToggle';
 import { useLanguage } from './LanguageContext';

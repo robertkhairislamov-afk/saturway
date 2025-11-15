@@ -1,5 +1,6 @@
 import { Home, ListTodo, Battery, Brain, Settings } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import { motion } from 'motion/react';
+import { useLanguage } from './LanguageContext';
 
 interface BottomNavProps {
   currentView: string;
@@ -7,8 +8,8 @@ interface BottomNavProps {
 }
 
 export function BottomNav({ currentView, onViewChange }: BottomNavProps) {
-  const { t } = useTranslation();
-
+  const { t } = useLanguage();
+  
   const navItems = [
     { id: 'dashboard', label: t('nav.dashboard'), icon: Home },
     { id: 'tasks', label: t('nav.tasks'), icon: ListTodo },
@@ -24,18 +25,58 @@ export function BottomNav({ currentView, onViewChange }: BottomNavProps) {
           const Icon = item.icon;
           const isActive = currentView === item.id;
           return (
-            <button
+            <motion.button
               key={item.id}
               onClick={() => onViewChange(item.id)}
-              className={`flex flex-1 flex-col items-center gap-1 py-3 transition-colors ${
+              className={`relative flex flex-1 flex-col items-center gap-1 py-3 transition-colors ${
                 isActive
                   ? 'text-[#4A9FD8]'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
+              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.2 }}
             >
-              <Icon className={`h-6 w-6 ${isActive ? 'fill-[#4A9FD8]/20' : ''}`} />
+              {/* Active indicator */}
+              {isActive && (
+                <motion.div
+                  layoutId="activeTab"
+                  className="absolute inset-x-2 top-0 h-0.5 bg-gradient-to-r from-[#4A9FD8] to-[#52C9C1]"
+                  initial={false}
+                  transition={{
+                    type: "spring",
+                    stiffness: 500,
+                    damping: 30,
+                  }}
+                />
+              )}
+              
+              {/* Icon with animation */}
+              <motion.div
+                animate={isActive ? { 
+                  scale: [1, 1.2, 1],
+                  rotate: [0, 5, -5, 0]
+                } : {}}
+                transition={{ 
+                  duration: 0.5,
+                  ease: "easeInOut"
+                }}
+              >
+                <Icon className={`h-6 w-6 ${isActive ? 'fill-[#4A9FD8]/20' : ''}`} />
+              </motion.div>
+              
               <span style={{ fontSize: '12px', fontWeight: 500 }}>{item.label}</span>
-            </button>
+              
+              {/* Ripple effect on tap */}
+              {isActive && (
+                <motion.div
+                  className="absolute inset-0 rounded-lg bg-[#4A9FD8]/5"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: [0, 0.3, 0] }}
+                  transition={{ duration: 0.6 }}
+                />
+              )}
+            </motion.button>
           );
         })}
       </div>

@@ -1,13 +1,12 @@
 import { useState } from 'react';
-import { Dashboard } from './components/Dashboard';
+import { TodayScreen } from './components/TodayScreen';
 import { TaskList } from './components/TaskList';
-import { EnergyTracker } from './components/EnergyTracker';
-import { AIInsights } from './components/AIInsights';
-import { Settings } from './components/Settings';
+import { ProfileScreen } from './components/ProfileScreen';
 import { BottomNav } from './components/BottomNav';
 import { Welcome } from './components/Welcome';
+import { Onboarding, OnboardingData } from './components/Onboarding';
+import { ReviewScreen } from './components/ReviewScreen';
 import { AuthFlow } from './components/AuthFlow';
-import { AuthScreensDemo } from './components/AuthScreensDemo';
 import { LanguageProvider } from './components/LanguageContext';
 import { BackgroundProvider } from './components/BackgroundContext';
 import { AnimatedScreen } from './components/AnimatedScreen';
@@ -18,52 +17,53 @@ import logoImage from './assets/443c5c749ebfe974980617b9c917b81b051ddc82.png';
 const DEMO_MODE = false;
 
 export default function App() {
-  const [showAuth, setShowAuth] = useState(!DEMO_MODE);
-  const [showWelcome, setShowWelcome] = useState(false);
-  const [currentView, setCurrentView] = useState('dashboard');
+  const [showAuth, setShowAuth] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [currentView, setCurrentView] = useState('today');
+  const [userName, setUserName] = useState('Alex');
 
-  // Demo mode - show auth screens menu
-  if (DEMO_MODE) {
-    return (
-      <LanguageProvider>
-        <AuthScreensDemo />
-      </LanguageProvider>
-    );
-  }
+  // Handle auth completion
+  const handleAuthComplete = () => {
+    setShowAuth(false);
+    setShowOnboarding(true);
+  };
 
+  // Handle onboarding completion
+  const handleOnboardingComplete = (data: OnboardingData) => {
+    setShowOnboarding(false);
+    console.log('Onboarding data:', data);
+  };
+
+  // Show auth flow
   if (showAuth) {
     return (
       <LanguageProvider>
-        <AuthFlow onComplete={() => {
-          setShowAuth(false);
-          setShowWelcome(true);
-        }} />
+        <AuthFlow onComplete={handleAuthComplete} />
       </LanguageProvider>
     );
   }
 
-  if (showWelcome) {
+  // Show onboarding
+  if (showOnboarding) {
     return (
       <LanguageProvider>
-        <Welcome onGetStarted={() => setShowWelcome(false)} />
+        <Onboarding onComplete={handleOnboardingComplete} />
       </LanguageProvider>
     );
   }
 
   const renderView = () => {
     switch (currentView) {
-      case 'dashboard':
-        return <Dashboard userName="Alex" />;
+      case 'today':
+        return <TodayScreen userName={userName} />;
       case 'tasks':
         return <TaskList />;
-      case 'energy':
-        return <EnergyTracker />;
-      case 'insights':
-        return <AIInsights />;
-      case 'settings':
-        return <Settings />;
+      case 'profile':
+        return <ProfileScreen userName={userName} />;
+      case 'review':
+        return <ReviewScreen onComplete={() => setCurrentView('today')} />;
       default:
-        return <Dashboard userName="Alex" />;
+        return <TodayScreen userName={userName} />;
     }
   };
 

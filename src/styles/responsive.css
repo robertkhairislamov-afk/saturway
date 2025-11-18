@@ -1,0 +1,332 @@
+/* Responsive Styles - Mobile First */
+
+/* Small phones (320px - 374px) */
+@media (max-width: 374px) {
+  /* Shared component spacing */
+  .mood-tracker,
+  .ai-insights,
+  .calendar-container,
+  .mood-analytics,
+  .task-list {
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+  }
+
+  /* Typography */
+  .mood-tracker h3,
+  .ai-insights h3,
+  .calendar-header h3,
+  .task-list h3 {
+    font-size: var(--font-size-lg);
+  }
+
+  /* Mood Tracker */
+  .slider-header {
+    font-size: 13px;
+  }
+
+  /* Insights */
+  .insight-card {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .insight-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .insight-content p {
+    font-size: var(--font-size-sm);
+  }
+
+  .insight-time {
+    font-size: var(--font-size-xs);
+  }
+
+  /* Tasks */
+  .task-card {
+    padding: var(--spacing-md);
+    gap: var(--spacing-sm);
+  }
+
+  .task-header h4 {
+    font-size: var(--font-size-base);
+  }
+
+  .task-description {
+    font-size: 13px;
+  }
+
+  .task-priority {
+    padding: 3px 6px;
+    font-size: 9px;
+  }
+
+  .task-ai-suggestion {
+    padding: 6px;
+    font-size: var(--font-size-xs);
+  }
+
+  .task-ai-suggestion svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .task-meta {
+    font-size: var(--font-size-xs);
+  }
+
+  .task-meta svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  /* Calendar */
+  .calendar-nav {
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .current-month {
+    font-size: var(--font-size-base);
+  }
+
+  .calendar-day {
+    font-size: var(--font-size-sm);
+  }
+
+  .weekday {
+    font-size: var(--font-size-xs);
+    padding: 6px 0;
+  }
+
+  .calendar-days,
+  .calendar-weekdays {
+    gap: 2px;
+  }
+
+  .calendar-day {
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
+  }
+
+  .day-indicator {
+    bottom: 2px;
+    width: 3px;
+    height: 3px;
+  }
+
+  .calendar-tasks {
+    padding: var(--spacing-md);
+  }
+
+  .calendar-tasks h4 {
+    font-size: 13px;
+  }
+
+  .date-task {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .task-badge {
+    font-size: 9px;
+    padding: 3px 6px;
+  }
+
+  .ai-schedule-btn {
+    padding: 6px 10px;
+    font-size: var(--font-size-sm);
+  }
+
+  .ai-schedule-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Analytics */
+  .analytics-stats {
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .stat-card {
+    padding: var(--spacing-md);
+  }
+
+  .stat-label {
+    font-size: var(--font-size-xs);
+  }
+
+  .stat-value {
+    font-size: var(--font-size-xl);
+  }
+
+  .analytics-chart {
+    padding: var(--spacing-md);
+  }
+
+  /* FAB and Toggle */
+  .add-task-fab {
+    width: 48px;
+    height: 48px;
+    bottom: 70px;
+    right: var(--spacing-lg);
+  }
+
+  .add-task-fab svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .theme-toggle {
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
+    width: 40px;
+    height: 40px;
+  }
+
+  .theme-toggle svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Form */
+  .add-task-content {
+    padding: var(--spacing-xl);
+    max-height: 85vh;
+  }
+
+  .add-task-header h3 {
+    font-size: var(--font-size-xl);
+  }
+
+  .form-group input,
+  .form-group textarea {
+    padding: 10px;
+    font-size: var(--font-size-base);
+    border-radius: 10px;
+  }
+
+  .form-group label {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .priority-btn {
+    padding: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+  }
+
+  .btn-cancel,
+  .btn-submit {
+    padding: var(--spacing-md);
+    font-size: var(--font-size-base);
+  }
+
+  .form-actions,
+  .priority-buttons {
+    gap: var(--spacing-sm);
+  }
+}
+
+/* Extra small phones (< 320px) */
+@media (max-width: 320px) {
+  .mood-tracker,
+  .ai-insights,
+  .calendar-container,
+  .mood-analytics,
+  .task-list {
+    padding: 10px;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .task-card {
+    padding: 10px;
+    gap: 6px;
+  }
+
+  .task-checkbox svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .task-delete svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .add-task-fab {
+    width: 44px;
+    height: 44px;
+    bottom: 60px;
+    right: var(--spacing-md);
+  }
+
+  .theme-toggle {
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    width: 36px;
+    height: 36px;
+  }
+
+  .analytics-stats {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+
+  .stat-card {
+    padding: 10px;
+  }
+}
+
+/* Medium phones (376px - 414px) */
+@media (min-width: 376px) and (max-width: 414px) {
+  .task-card {
+    padding: 14px;
+  }
+}
+
+/* Landscape orientation */
+@media (max-height: 500px) and (orientation: landscape) {
+  .app-container {
+    padding: var(--spacing-sm);
+    padding-bottom: 60px;
+  }
+
+  .header {
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-sm) 0;
+  }
+
+  .mood-tracker,
+  .ai-insights,
+  .calendar-container,
+  .mood-analytics,
+  .task-list {
+    margin-bottom: var(--spacing-md);
+  }
+
+  .add-task-fab {
+    bottom: 60px;
+  }
+
+  .add-task-content {
+    max-height: 90vh;
+  }
+}
+
+/* Optimize for very narrow screens */
+@media (max-width: 360px) {
+  .mood-header h3,
+  .ai-insights h3,
+  .calendar-header h3,
+  .task-list h3 {
+    font-size: 15px;
+  }
+
+  .action-btn span {
+    font-size: 9px;
+  }
+}

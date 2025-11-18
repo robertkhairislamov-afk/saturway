@@ -1,0 +1,193 @@
+{
+  "app": {
+    "name": "Saturway",
+    "subtitle": "AI Organizer",
+    "optimizeButton": "✨ Optimize Schedule",
+    "optimizeAlert": "AI optimization coming soon! 🚀"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "tasks": "Tasks",
+    "energy": "Energy",
+    "insights": "Insights",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "greeting": "Good {{timeOfDay}}, {{name}}!",
+    "morning": "morning",
+    "afternoon": "afternoon",
+    "evening": "evening",
+    "subtitle": "Your productivity companion is ready",
+    "stats": {
+      "tasksCompleted": "Tasks Completed",
+      "currentStreak": "Day Streak",
+      "energyLevel": "Energy Level",
+      "focusTime": "Focus Time"
+    },
+    "aiInsight": {
+      "title": "AI Insight",
+      "message": "Your energy peaks around 10 AM. Schedule important tasks then for optimal performance."
+    },
+    "quickActions": {
+      "addTask": "Add Task",
+      "checkEnergy": "Check Energy",
+      "viewInsights": "View Insights"
+    }
+  },
+  "tasks": {
+    "title": "My Tasks",
+    "subtitle": "Stay organized and productive",
+    "addNew": "Add New Task",
+    "addTaskPlaceholder": "What needs to be done?",
+    "priority": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "noTasks": "No tasks yet. Add your first task to get started!",
+    "completed": "Completed",
+    "pending": "Pending"
+  },
+  "energy": {
+    "title": "Energy Tracker",
+    "subtitle": "Track and optimize your daily energy levels",
+    "currentLevel": "Current Energy",
+    "level": "Level",
+    "low": "Low Energy",
+    "medium": "Moderate",
+    "high": "High Energy",
+    "veryHigh": "Very High",
+    "sliderHint": "Slide to update your current energy level",
+    "todayPattern": "Today's Energy Pattern",
+    "insights": {
+      "title": "Energy Insights",
+      "peakPerformance": {
+        "title": "Peak Performance",
+        "time": "9:00 - 11:00 AM",
+        "description": "Your energy is highest during this window"
+      },
+      "restNeeded": {
+        "title": "Rest Needed",
+        "time": "3:00 - 4:00 PM",
+        "description": "Consider a short break or light tasks"
+      },
+      "windDown": {
+        "title": "Wind Down",
+        "time": "After 8:00 PM",
+        "description": "Perfect time for reflection and planning"
+      }
+    }
+  },
+  "insights": {
+    "title": "AI Insights",
+    "subtitle": "Personalized recommendations for you",
+    "productivity": {
+      "title": "Productivity Peak",
+      "time": "9:00 AM - 11:00 AM",
+      "description": "You're most productive during morning hours. Schedule important tasks in this window."
+    },
+    "energy": {
+      "title": "Energy Pattern",
+      "description": "Your energy dips after lunch. Consider a short break or light tasks during 2-4 PM."
+    },
+    "tasks": {
+      "title": "Task Optimization",
+      "description": "You complete 80% more tasks when you break them into smaller chunks."
+    },
+    "schedule": {
+      "title": "Schedule Balance",
+      "description": "You have 3 high-priority tasks tomorrow. Consider spacing them throughout the day."
+    },
+    "learning": {
+      "title": "AI is Learning",
+      "description": "Keep tracking your tasks and energy. The more data we have, the better insights we can provide!",
+      "days": "7 days of data"
+    },
+    "stats": {
+      "tasksCompleted": "Tasks This Week",
+      "avgEnergy": "Avg Energy",
+      "focusTime": "Focus Hours",
+      "streak": "Day Streak"
+    },
+    "priority": {
+      "high": "High Priority",
+      "medium": "Medium",
+      "low": "Low"
+    }
+  },
+  "welcome": {
+    "title": "Welcome to Saturway",
+    "subtitle": "Your AI-powered companion for mindful productivity and balanced living",
+    "features": {
+      "tasks": "Smart task organization",
+      "energy": "Energy level tracking",
+      "insights": "AI-powered insights"
+    },
+    "getStarted": "Get Started"
+  },
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "done": "Done"
+  },
+  "settings": {
+    "profile": {
+      "username": "Username",
+      "email": "Email",
+      "password": "Password",
+      "bio": "About Me",
+      "bioPlaceholder": "Tell us about yourself...",
+      "save": "Save Profile"
+    },
+    "language": {
+      "title": "Language",
+      "select": "Select language"
+    },
+    "privacy": {
+      "title": "Privacy",
+      "notifications": "Push Notifications",
+      "notificationsDesc": "Receive updates about your tasks",
+      "dataSharing": "Data Sharing",
+      "dataSharingDesc": "Help improve the app with anonymous data",
+      "policy": "Privacy Policy",
+      "dataCollection": "Data Collection",
+      "dataCollectionDesc": "We collect only the data necessary to provide you with the best experience. This includes your tasks, energy tracking data, and usage preferences.",
+      "dataSecurity": "Data Security",
+      "dataSecurityDesc": "Your data is encrypted and stored securely. We never sell or share your personal information with third parties.",
+      "yourRights": "Your Rights",
+      "yourRightsDesc": "You have the right to access, modify, or delete your data at any time. Contact us for data export requests."
+    },
+    "about": {
+      "title": "About Author",
+      "description1": "Saturway is crafted with dedication to help you achieve mindful productivity and balanced living.",
+      "description2": "Our mission is to combine AI technology with thoughtful design to create tools that respect your time, energy, and mental well-being.",
+      "version": "Version 1.0.0 • © 2025 Saturway"
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "acceptance": "Acceptance of Terms",
+      "acceptanceDesc": "By using Saturway, you agree to these terms. If you do not agree, please do not use the app.",
+      "license": "License",
+      "licenseDesc": "We grant you a limited, non-exclusive, non-transferable license to use Saturway for personal productivity purposes.",
+      "prohibited": "Prohibited Uses",
+      "prohibitedDesc": "You may not use the app for illegal activities, to harm others, or to violate any applicable laws.",
+      "changes": "Changes to Terms",
+      "changesDesc": "We reserve the right to modify these terms at any time. Continued use constitutes acceptance of updated terms."
+    },
+    "copyright": {
+      "title": "Copyright & Licenses",
+      "description1": "© 2025 Saturway. All rights reserved.",
+      "description2": "The Saturway name, logo, and design are trademarks of Saturway. Unauthorized use is prohibited.",
+      "opensource": "Open Source Libraries",
+      "opensourceDesc": "This app uses open-source libraries licensed under MIT, Apache 2.0, and other permissive licenses. Full attribution can be found in the app repository."
+    },
+    "version": {
+      "app": "Saturway v1.0.0",
+      "tagline": "Built with ❤️ for mindful productivity"
+    }
+  }
+}

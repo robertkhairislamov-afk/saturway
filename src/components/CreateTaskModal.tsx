@@ -84,7 +84,7 @@ export function CreateTaskModal({ isOpen, onClose }: CreateTaskModalProps) {
 
         {/* Form Content */}
         <div className={`p-6 space-y-5 max-h-[60vh] overflow-y-auto overflow-x-visible ${
-          isDatePickerOpen || isTimePickerOpen ? 'pb-6' : 'pb-40'
+          isDateTimePickerOpen ? 'pb-6' : 'pb-40'
         }`}>
           {/* Title Input */}
           <div>

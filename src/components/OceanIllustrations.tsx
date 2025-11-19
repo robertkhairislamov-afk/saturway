@@ -240,7 +240,7 @@ export function BubbleGroup({ className = '' }: { className?: string }) {
             cy={bubble.cy}
             r={bubble.r}
             fill="white"
-            opacity="0.2"
+            initial={{ cy: bubble.cy, opacity: 0.2 }}
             animate={{
               cy: [bubble.cy, bubble.cy - 50],
               opacity: [0.2, 0.5, 0],
@@ -257,7 +257,7 @@ export function BubbleGroup({ className = '' }: { className?: string }) {
             cy={bubble.cy}
             r={bubble.r * 0.6}
             fill="white"
-            opacity="0.4"
+            initial={{ cy: bubble.cy, opacity: 0.4 }}
             animate={{
               cy: [bubble.cy, bubble.cy - 50],
               opacity: [0.4, 0.7, 0],

@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Calendar, Circle, CheckCircle2 } from 'lucid
 import { GradientHeader } from './GradientHeader';
 import { AnimatedOceanCard } from './AnimatedOceanCard';
 import { useStore } from '../store';
+import { formatLocalDate } from '../lib/dateUtils';
 
 const DAYS_OF_WEEK = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
 const MONTHS = [
@@ -16,10 +17,10 @@ export function CalendarView() {
   const tasks = useStore((state) => state.tasks) || [];
 
   const getTasksForDate = (date: Date) => {
-    const dateStr = date.toISOString().split('T')[0];
+    const dateStr = formatLocalDate(date);
     return tasks.filter(task => {
       if (!task.dueDate) return false;
-      const taskDate = new Date(task.dueDate).toISOString().split('T')[0];
+      const taskDate = formatLocalDate(new Date(task.dueDate));
       return taskDate === dateStr;
     });
   };

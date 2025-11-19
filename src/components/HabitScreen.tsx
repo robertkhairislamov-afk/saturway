@@ -8,6 +8,7 @@ import { RippleButton } from './RippleButton';
 import { useStore } from '../store';
 import { Progress } from './ui/progress';
 import { Input } from './ui/input';
+import { formatLocalDate } from '../lib/dateUtils';
 
 export function HabitScreen() {
   const { t } = useLanguage();
@@ -53,8 +54,8 @@ export function HabitScreen() {
   const getDayStatus = (dayIndex: number): 'done' | 'today' | 'future' | 'missed' => {
     const dayDate = new Date(startDate);
     dayDate.setDate(dayDate.getDate() + dayIndex - 1);
-    const dayDateStr = dayDate.toISOString().split('T')[0];
-    const todayStr = today.toISOString().split('T')[0];
+    const dayDateStr = formatLocalDate(dayDate);
+    const todayStr = formatLocalDate(today);
 
     if (completedDates.has(dayDateStr)) return 'done';
     if (dayDateStr === todayStr) return 'today';

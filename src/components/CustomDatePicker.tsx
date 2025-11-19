@@ -1,6 +1,7 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { formatLocalDate } from '../lib/dateUtils';
 
 interface CustomDatePickerProps {
   value: string; // YYYY-MM-DD format
@@ -91,7 +92,7 @@ export function CustomDatePicker({ value, onChange, minDate, onOpenChange }: Cus
     }
 
     // Second click on same day - select
-    const dateString = newDate.toISOString().split('T')[0];
+    const dateString = formatLocalDate(newDate);
     onChange(dateString);
     setHighlightedDay(null);
     handleOpenChange(false);

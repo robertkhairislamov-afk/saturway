@@ -2,6 +2,8 @@
 // API uses: "pending" | "in_progress" | "completed" | "cancelled"
 // UI wants: "active" | "done"
 
+import { formatLocalDate } from '../lib/dateUtils';
+
 export type APITaskStatus = 'pending' | 'in_progress' | 'completed' | 'cancelled';
 export type UITaskStatus = 'active' | 'done';
 
@@ -68,7 +70,7 @@ export function apiTaskToUI(apiTask: APITask): UITask {
     description: apiTask.description,
     priority: apiTask.priority,
     status: apiStatusToUI(apiTask.status),
-    date: apiTask.dueDate ? new Date(apiTask.dueDate).toISOString().split('T')[0] : undefined,
+    date: apiTask.dueDate ? formatLocalDate(new Date(apiTask.dueDate)) : undefined,
     createdAt: apiTask.createdAt,
     updatedAt: apiTask.updatedAt,
   };

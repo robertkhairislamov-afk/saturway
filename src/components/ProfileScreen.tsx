@@ -33,11 +33,21 @@ export function ProfileScreen({ userName = 'Alex', onNavigate }: ProfileScreenPr
   const user = useStore((state) => state.user);
   const updateUser = useStore((state) => state.updateUser);
 
-  const [morningReminder, setMorningReminder] = useState(true);
-  const [eveningReview, setEveningReview] = useState(true);
+  const [morningReminder, setMorningReminder] = useState(() => {
+    return localStorage.getItem('notifications_enabled') !== 'false';
+  });
+  const [eveningReview, setEveningReview] = useState(() => {
+    return localStorage.getItem('notifications_enabled') !== 'false';
+  });
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
+
+  const handleNotificationToggle = (value: boolean) => {
+    localStorage.setItem('notifications_enabled', value.toString());
+    setMorningReminder(value);
+    setEveningReview(value);
+  };
 
   const displayName = user?.firstName || userName;
 
@@ -248,7 +258,7 @@ export function ProfileScreen({ userName = 'Alex', onNavigate }: ProfileScreenPr
               </div>
               <Switch
                 checked={morningReminder}
-                onCheckedChange={setMorningReminder}
+                onCheckedChange={handleNotificationToggle}
                 className="data-[state=checked]:bg-[#4A9FD8]"
               />
             </div>
@@ -267,7 +277,7 @@ export function ProfileScreen({ userName = 'Alex', onNavigate }: ProfileScreenPr
               </div>
               <Switch
                 checked={eveningReview}
-                onCheckedChange={setEveningReview}
+                onCheckedChange={handleNotificationToggle}
                 className="data-[state=checked]:bg-[#4A9FD8]"
               />
             </div>

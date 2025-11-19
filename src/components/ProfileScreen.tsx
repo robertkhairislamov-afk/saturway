@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User, Bell, Globe, Trash2, Languages, Edit2, Check, X, LogOut, TrendingUp, Calendar } from 'lucide-react';
+import { User, Bell, Globe, Trash2, Languages, Edit2, Check, X, LogOut, TrendingUp, Calendar, RotateCcw } from 'lucide-react';
 import { Card } from './ui/card';
 import { Switch } from './ui/switch';
 import { Avatar, AvatarFallback } from './ui/avatar';
@@ -22,6 +22,7 @@ import { LanguageToggleDark } from './LanguageToggle';
 import { AnimatedOceanCard } from './AnimatedOceanCard';
 import { useStore } from '../store';
 import { logout } from '../services/authService';
+import { resetOnboarding } from '../lib/onboardingUtils';
 
 interface ProfileScreenProps {
   userName?: string;
@@ -85,6 +86,14 @@ export function ProfileScreen({ userName = 'Alex', onNavigate }: ProfileScreenPr
     logout();
 
     // Перезагрузить страницу для новой авторизации
+    window.location.reload();
+  };
+
+  const handleResetPreferences = () => {
+    // Reset onboarding data
+    resetOnboarding();
+
+    // Reload to show onboarding again
     window.location.reload();
   };
 
@@ -300,6 +309,40 @@ export function ProfileScreen({ userName = 'Alex', onNavigate }: ProfileScreenPr
             <p>{t('profile.version')}</p>
             <p>{t('profile.tagline')}</p>
           </div>
+        </div>
+      </AnimatedOceanCard>
+
+      {/* Reset Preferences */}
+      <AnimatedOceanCard delay={0.28}>
+        <div className="p-6">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <RippleButton
+                variant="outline"
+                className="w-full border-blue-500/50 text-blue-600 hover:bg-blue-500/10"
+              >
+                <RotateCcw className="mr-2 h-5 w-5" />
+                Сбросить настройки
+              </RippleButton>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Сбросить настройки?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Вы пройдете онбординг заново и сможете изменить свои предпочтения (главный фокус, график работы, время начала дня).
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Отмена</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleResetPreferences}
+                  className="bg-blue-500 hover:bg-blue-600"
+                >
+                  Сбросить
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </AnimatedOceanCard>
 

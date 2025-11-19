@@ -18,6 +18,7 @@ import { AppHeader } from './components/AppHeader';
 import { DynamicBackground } from './components/DynamicBackground';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useStore } from './store';
+import { hasCompletedOnboarding, saveOnboardingData } from './lib/onboardingUtils';
 import logoImage from './assets/443c5c749ebfe974980617b9c917b81b051ddc82.png';
 
 // Set to true to see auth screens demo
@@ -26,7 +27,10 @@ const DEMO_MODE = false;
 const APP_VERSION = '2.0.0-ocean-edition';
 
 export default function App() {
-  const [showAuth, setShowAuth] = useState(!DEMO_MODE);
+  // Check if onboarding was already completed
+  const isOnboardingComplete = hasCompletedOnboarding();
+
+  const [showAuth, setShowAuth] = useState(!DEMO_MODE && !isOnboardingComplete);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [currentView, setCurrentView] = useState('today');
 
@@ -50,8 +54,15 @@ export default function App() {
 
   // Handle onboarding completion
   const handleOnboardingComplete = (data: OnboardingData) => {
+    // Save onboarding data using utility
+    saveOnboardingData(data);
+
+    console.log('Onboarding data saved:', data);
+
+    // TODO: Optionally send to backend
+    // await api.post('/user/onboarding', data);
+
     setShowOnboarding(false);
-    console.log('Onboarding data:', data);
   };
 
   // Show auth flow

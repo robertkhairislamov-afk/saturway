@@ -1,6 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { X, Check } from 'lucide-react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { formatLocalDate } from '../lib/dateUtils';
 
 interface IOSDateTimePickerProps {
@@ -11,102 +9,127 @@ interface IOSDateTimePickerProps {
   initialTime?: string;
 }
 
+/* --- CONSTANTS --- */
+const ITEM_HEIGHT = 44;
+
+/* --- HELPER FUNCTIONS --- */
+const generateDates = () => {
+  const days = [];
+  const today = new Date();
+  const months = ["янв", "фев", "мар", "апр", "май", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"];
+  const weekDays = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
+
+  for (let i = 0; i < 60; i++) {
+    const date = new Date(today);
+    date.setDate(today.getDate() + i);
+
+    let label = (i === 0)
+      ? "Сегодня"
+      : (i === 1)
+        ? "Завтра"
+        : `${weekDays[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]}`;
+
+    days.push({
+      value: i,
+      label,
+      dateObj: date
+    });
+  }
+
+  return days;
+};
+
+const generateHours = () =>
+  Array.from({ length: 24 }, (_, i) => ({
+    value: i,
+    label: i.toString().padStart(2, '0')
+  }));
+
+const generateMinutes = () =>
+  Array.from({ length: 60 }, (_, i) => ({
+    value: i,
+    label: i.toString().padStart(2, '0')
+  }));
+
+/* --- COLUMN COMPONENT --- */
 interface PickerColumnProps {
-  items: { value: string; label: string }[];
-  value: string;
-  onChange: (value: string) => void;
-  unit?: string;
+  items: { value: number; label: string }[];
+  value: number;
+  onChange: (value: number) => void;
+  width: string;
 }
 
-const PickerColumn = ({ items, value, onChange, unit }: PickerColumnProps) => {
+const PickerColumn = ({ items, value, onChange, width }: PickerColumnProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const isScrolling = useRef<NodeJS.Timeout | null>(null);
 
+  // Init position
   useEffect(() => {
-    if (scrollRef.current && value) {
-      const index = items.findIndex(item => item.value === value);
-      if (index !== -1) {
-        const itemHeight = 44;
-        const scrollTop = index * itemHeight;
-        scrollRef.current.scrollTop = scrollTop;
+    if (scrollRef.current) {
+      const idx = items.findIndex(i => i.value === value);
+      if (idx !== -1) {
+        scrollRef.current.scrollTop = idx * ITEM_HEIGHT;
       }
     }
-  }, [value, items]);
+  }, [items, value]);
 
+  // 3D Effect Logic
   const handleScroll = () => {
-    if (!scrollRef.current || isDragging) return;
-
+    if (!scrollRef.current) return;
     const container = scrollRef.current;
-    const scrollTop = container.scrollTop;
-    const itemHeight = 44;
-    const centerIndex = Math.round(scrollTop / itemHeight);
+    const center = container.scrollTop + (container.offsetHeight / 2);
 
-    if (items[centerIndex]) {
-      onChange(items[centerIndex].value);
-    }
+    items.forEach((_, idx) => {
+      const el = itemRefs.current[idx];
+      if (!el) return;
 
-    // Apply 3D rotation effect
-    const children = container.children;
-    const containerCenter = container.offsetHeight / 2;
+      const elCenter = el.offsetTop + (ITEM_HEIGHT / 2);
+      const dist = center - elCenter;
 
-    for (let i = 0; i < children.length; i++) {
-      const child = children[i] as HTMLElement;
-      const childRect = child.getBoundingClientRect();
-      const containerRect = container.getBoundingClientRect();
-      const childCenter = childRect.top + childRect.height / 2 - containerRect.top;
-      const distance = childCenter - containerCenter;
-      const maxDistance = containerRect.height / 2;
-      const angle = (distance / maxDistance) * 45; // Max 45deg rotation
-      const opacity = 1 - Math.abs(distance / maxDistance) * 0.7;
-      const scale = 1 - Math.abs(distance / maxDistance) * 0.3;
+      // Rotate X calculation
+      let angle = dist * (90 / (container.offsetHeight / 2));
+      angle = Math.max(-90, Math.min(90, angle));
 
-      child.style.transform = `rotateX(${-angle}deg) scale(${scale})`;
-      child.style.opacity = `${opacity}`;
-    }
+      const absDist = Math.abs(dist);
+      const isActive = absDist < ITEM_HEIGHT / 2;
+
+      el.style.transform = `rotateX(${angle}deg) scale(${isActive ? 1.1 : 0.95})`;
+      el.style.opacity = `${Math.max(0.3, 1 - (absDist / 150))}`;
+      el.style.fontWeight = isActive ? '600' : '400';
+      el.style.color = isActive ? '#0f172a' : '#94a3b8';
+    });
   };
 
-  const handleTouchStart = () => setIsDragging(true);
-  const handleTouchEnd = () => {
-    setIsDragging(false);
-    if (scrollRef.current) {
-      const scrollTop = scrollRef.current.scrollTop;
-      const itemHeight = 44;
-      const nearestIndex = Math.round(scrollTop / itemHeight);
-      scrollRef.current.scrollTo({
-        top: nearestIndex * itemHeight,
-        behavior: 'smooth'
-      });
+  const onScroll = () => {
+    handleScroll();
+    if (isScrolling.current) {
+      clearTimeout(isScrolling.current);
     }
+    isScrolling.current = setTimeout(() => {
+      if (scrollRef.current) {
+        const idx = Math.round(scrollRef.current.scrollTop / ITEM_HEIGHT);
+        if (items[idx]) {
+          onChange(items[idx].value);
+        }
+      }
+    }, 150);
   };
 
   return (
-    <div className="flex-1 relative">
+    <div className={`h-full ${width} relative`}>
       <div
         ref={scrollRef}
-        onScroll={handleScroll}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        onMouseDown={handleTouchStart}
-        onMouseUp={handleTouchEnd}
-        className="overflow-y-scroll snap-y snap-mandatory scrollbar-hide h-full"
-        style={{
-          paddingTop: '108px',
-          paddingBottom: '108px',
-          perspective: '1000px',
-          transformStyle: 'preserve-3d'
-        }}
+        onScroll={onScroll}
+        className="h-full overflow-y-scroll scrollbar-hide snap-y snap-mandatory py-[108px]"
       >
-        {items.map((item, index) => (
+        {items.map((item, idx) => (
           <div
-            key={index}
-            className="h-[44px] snap-center flex items-center justify-center transition-all duration-100"
-            style={{
-              fontSize: '18px',
-              fontWeight: 500,
-              transformStyle: 'preserve-3d'
-            }}
+            key={item.value}
+            ref={el => itemRefs.current[idx] = el}
+            className="h-[44px] snap-center flex items-center justify-center cursor-pointer select-none text-[17px]"
           >
-            {item.label} {unit}
+            {item.label}
           </div>
         ))}
       </div>
@@ -114,6 +137,7 @@ const PickerColumn = ({ items, value, onChange, unit }: PickerColumnProps) => {
   );
 };
 
+/* --- MAIN COMPONENT --- */
 export function IOSDateTimePicker({
   isOpen,
   onClose,
@@ -121,158 +145,124 @@ export function IOSDateTimePicker({
   initialDate,
   initialTime
 }: IOSDateTimePickerProps) {
-  const today = new Date();
-  const [selectedDay, setSelectedDay] = useState(
-    initialDate ? new Date(initialDate).getDate().toString() : today.getDate().toString()
-  );
-  const [selectedMonth, setSelectedMonth] = useState(
-    initialDate ? (new Date(initialDate).getMonth() + 1).toString() : (today.getMonth() + 1).toString()
-  );
-  const [selectedYear, setSelectedYear] = useState(
-    initialDate ? new Date(initialDate).getFullYear().toString() : today.getFullYear().toString()
-  );
-  const [selectedHour, setSelectedHour] = useState(
-    initialTime ? initialTime.split(':')[0] : '12'
-  );
-  const [selectedMinute, setSelectedMinute] = useState(
-    initialTime ? initialTime.split(':')[1] : '00'
-  );
+  // Initialize from props
+  const getInitialDayOffset = () => {
+    if (!initialDate) return 0;
+    const initial = new Date(initialDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    initial.setHours(0, 0, 0, 0);
+    const diff = Math.floor((initial.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    return Math.max(0, Math.min(59, diff));
+  };
 
-  const days = useMemo(() => {
-    const daysInMonth = new Date(parseInt(selectedYear), parseInt(selectedMonth), 0).getDate();
-    return Array.from({ length: daysInMonth }, (_, i) => ({
-      value: (i + 1).toString(),
-      label: (i + 1).toString()
-    }));
-  }, [selectedMonth, selectedYear]);
+  const getInitialHour = () => {
+    if (!initialTime) return 12;
+    return parseInt(initialTime.split(':')[0]) || 12;
+  };
 
-  const months = useMemo(() => [
-    { value: '1', label: 'Янв' },
-    { value: '2', label: 'Фев' },
-    { value: '3', label: 'Мар' },
-    { value: '4', label: 'Апр' },
-    { value: '5', label: 'Май' },
-    { value: '6', label: 'Июн' },
-    { value: '7', label: 'Июл' },
-    { value: '8', label: 'Авг' },
-    { value: '9', label: 'Сен' },
-    { value: '10', label: 'Окт' },
-    { value: '11', label: 'Ноя' },
-    { value: '12', label: 'Дек' }
-  ], []);
+  const getInitialMinute = () => {
+    if (!initialTime) return 0;
+    return parseInt(initialTime.split(':')[1]) || 0;
+  };
 
-  const years = useMemo(() => {
-    const currentYear = new Date().getFullYear();
-    return Array.from({ length: 10 }, (_, i) => ({
-      value: (currentYear + i).toString(),
-      label: (currentYear + i).toString()
-    }));
-  }, []);
+  const [val, setVal] = useState({
+    day: getInitialDayOffset(),
+    hour: getInitialHour(),
+    minute: getInitialMinute()
+  });
 
-  const hours = useMemo(() =>
-    Array.from({ length: 24 }, (_, i) => ({
-      value: i.toString().padStart(2, '0'),
-      label: i.toString().padStart(2, '0')
-    })), []
-  );
+  const [show, setShow] = useState(false);
 
-  const minutes = useMemo(() =>
-    Array.from({ length: 60 }, (_, i) => ({
-      value: i.toString().padStart(2, '0'),
-      label: i.toString().padStart(2, '0')
-    })), []
-  );
+  const days = useMemo(generateDates, []);
+  const hours = useMemo(generateHours, []);
+  const minutes = useMemo(generateMinutes, []);
 
-  const handleConfirm = () => {
-    const date = new Date(
-      parseInt(selectedYear),
-      parseInt(selectedMonth) - 1,
-      parseInt(selectedDay)
-    );
-    const dateStr = formatLocalDate(date);
-    const timeStr = `${selectedHour}:${selectedMinute}`;
-    onConfirm(dateStr, timeStr);
+  useEffect(() => {
+    if (isOpen) {
+      setShow(true);
+    } else {
+      setTimeout(() => setShow(false), 300);
+    }
+  }, [isOpen]);
+
+  const handleSave = () => {
+    const selectedDate = days.find(d => d.value === val.day);
+    if (selectedDate) {
+      const dateStr = formatLocalDate(selectedDate.dateObj);
+      const timeStr = `${val.hour.toString().padStart(2, '0')}:${val.minute.toString().padStart(2, '0')}`;
+      onConfirm(dateStr, timeStr);
+    }
     onClose();
   };
 
-  if (!isOpen) return null;
+  if (!show && !isOpen) return null;
 
   return (
-    <AnimatePresence>
+    <div className="relative z-[100]">
       <div
-        className="fixed inset-0 z-[100] flex items-end justify-center bg-black/50 backdrop-blur-sm"
+        className={`fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${
+          isOpen ? 'opacity-100' : 'opacity-0'
+        }`}
         onClick={onClose}
+      />
+      <div
+        className={`fixed bottom-0 w-full transition-transform duration-300 ${
+          isOpen ? 'translate-y-0' : 'translate-y-full'
+        }`}
       >
-        <motion.div
-          className="w-full max-w-lg bg-background/95 backdrop-blur-xl rounded-t-3xl shadow-2xl"
-          onClick={(e) => e.stopPropagation()}
-          initial={{ y: '100%' }}
-          animate={{ y: 0 }}
-          exit={{ y: '100%' }}
-          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-        >
-          {/* Toolbar */}
-          <div className="flex justify-between items-center p-4 border-b border-border/50">
+        <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl rounded-t-2xl shadow-2xl overflow-hidden max-w-lg mx-auto">
+
+          {/* Header */}
+          <div className="flex justify-between p-4 border-b border-border/50 bg-white/50 dark:bg-slate-800/50">
             <button
               onClick={onClose}
-              className="text-[#4A9FD8] font-medium text-[17px] flex items-center gap-1"
+              className="text-slate-500 dark:text-slate-400"
             >
-              <X className="h-5 w-5" />
               Отмена
             </button>
-            <span className="font-semibold text-[17px]">Дата и время</span>
+            <span className="font-semibold">Дата и время</span>
             <button
-              onClick={handleConfirm}
-              className="text-[#4A9FD8] font-semibold text-[17px] flex items-center gap-1"
+              onClick={handleSave}
+              className="text-[#4A9FD8] font-bold"
             >
-              <Check className="h-5 w-5" />
               Готово
             </button>
           </div>
 
-          {/* Wheel Picker */}
-          <div className="h-64 relative" style={{ perspective: '1000px' }}>
-            {/* Selection highlight */}
-            <div
-              className="absolute top-1/2 -translate-y-1/2 w-full h-[44px] bg-muted/30 border-y border-border/30 pointer-events-none z-10"
-            />
+          {/* Drum */}
+          <div className="relative h-[260px] bg-slate-50/50 dark:bg-slate-900/50">
+            <div className="absolute top-1/2 w-full h-[44px] -translate-y-1/2 bg-slate-200/30 dark:bg-slate-700/30 pointer-events-none border-y border-slate-300/50 dark:border-slate-600/50" />
+            <div className="absolute inset-0 pointer-events-none picker-mask dark:picker-mask-dark" />
 
-            {/* Columns */}
-            <div className="h-full flex">
+            <div className="flex justify-center h-full picker-perspective">
               <PickerColumn
                 items={days}
-                value={selectedDay}
-                onChange={setSelectedDay}
+                value={val.day}
+                onChange={v => setVal({...val, day: v})}
+                width="w-40"
               />
-              <PickerColumn
-                items={months}
-                value={selectedMonth}
-                onChange={setSelectedMonth}
-              />
-              <PickerColumn
-                items={years}
-                value={selectedYear}
-                onChange={setSelectedYear}
-              />
-              <div className="w-px bg-border/30 my-12" />
+              <div className="flex items-center pb-2 font-bold text-slate-300 dark:text-slate-600 px-1">:</div>
               <PickerColumn
                 items={hours}
-                value={selectedHour}
-                onChange={setSelectedHour}
+                value={val.hour}
+                onChange={v => setVal({...val, hour: v})}
+                width="w-16"
               />
-              <span className="flex items-center justify-center w-4 font-semibold text-lg">:</span>
+              <div className="flex items-center pb-2 font-bold text-slate-300 dark:text-slate-600">:</div>
               <PickerColumn
                 items={minutes}
-                value={selectedMinute}
-                onChange={setSelectedMinute}
+                value={val.minute}
+                onChange={v => setVal({...val, minute: v})}
+                width="w-16"
               />
             </div>
           </div>
 
           {/* Bottom safe area */}
-          <div className="h-8" />
-        </motion.div>
+          <div className="h-8 bg-white/50 dark:bg-slate-800/50" />
+        </div>
       </div>
-    </AnimatePresence>
+    </div>
   );
 }

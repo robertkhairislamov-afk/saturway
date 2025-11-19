@@ -70,8 +70,8 @@ class ApiClient {
       ...((options.headers as Record<string, string>) || {}),
     };
 
-    // Only add Content-Type for requests with body
-    if (options.body) {
+    // Only add Content-Type for requests with non-empty body
+    if (options.body && options.body !== '{}') {
       headers['Content-Type'] = 'application/json';
     }
 

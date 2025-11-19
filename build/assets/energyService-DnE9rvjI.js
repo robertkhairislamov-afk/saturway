@@ -1,0 +1,1 @@
+import{a as n}from"./index-3aVFjxyt.js";async function r(e,t="today"){return(await n.post("/energy",{value:e,source:t})).data.energyLog}async function s(){return(await n.get("/energy/today")).data}export{r as createEnergyLog,s as getTodayEnergy};

@@ -15,6 +15,15 @@ export function CalendarView() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const tasks = useStore((state) => state.tasks) || [];
 
+  const getTasksForDate = (date: Date) => {
+    const dateStr = date.toISOString().split('T')[0];
+    return tasks.filter(task => {
+      if (!task.dueDate) return false;
+      const taskDate = new Date(task.dueDate).toISOString().split('T')[0];
+      return taskDate === dateStr;
+    });
+  };
+
   // Get calendar days for current month
   const calendarDays = useMemo(() => {
     const year = currentDate.getFullYear();
@@ -56,15 +65,6 @@ export function CalendarView() {
 
     return days;
   }, [currentDate, tasks]);
-
-  const getTasksForDate = (date: Date) => {
-    const dateStr = date.toISOString().split('T')[0];
-    return tasks.filter(task => {
-      if (!task.dueDate) return false;
-      const taskDate = new Date(task.dueDate).toISOString().split('T')[0];
-      return taskDate === dateStr;
-    });
-  };
 
   const previousMonth = () => {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));

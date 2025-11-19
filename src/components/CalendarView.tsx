@@ -116,7 +116,10 @@ export function CalendarView() {
           </div>
 
           {/* Days of Week */}
-          <div className="grid grid-cols-7 gap-2 mb-2">
+          <div
+            className="grid grid-cols-7 gap-2 mb-2"
+            style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(0, 1fr))', gap: '8px', marginBottom: '8px' }}
+          >
             {DAYS_OF_WEEK.map(day => (
               <div key={day} className="text-center text-xs font-medium text-muted-foreground">
                 {day}
@@ -125,7 +128,10 @@ export function CalendarView() {
           </div>
 
           {/* Calendar Grid */}
-          <div className="grid grid-cols-7 gap-2">
+          <div
+            className="grid grid-cols-7 gap-2"
+            style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(0, 1fr))', gap: '8px' }}
+          >
             {calendarDays.map((day, index) => {
               const tasksForDay = day.tasks;
               const completedCount = tasksForDay.filter(t => t.status === 'completed').length;
@@ -138,11 +144,16 @@ export function CalendarView() {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: index * 0.01 }}
                   className={`
-                    relative aspect-square rounded-lg border p-1 flex flex-col items-center justify-center
+                    relative rounded-lg border p-1 flex flex-col items-center justify-center
                     ${day.isCurrentMonth ? 'border-border/50' : 'border-transparent'}
                     ${isToday(day.date) ? 'bg-[#4A9FD8]/10 border-[#4A9FD8]' : ''}
                     ${day.isCurrentMonth ? '' : 'opacity-40'}
                   `}
+                  style={{
+                    aspectRatio: '1',
+                    minHeight: '40px',
+                    position: 'relative'
+                  }}
                 >
                   <span className={`text-xs font-medium ${isToday(day.date) ? 'text-[#4A9FD8]' : ''}`}>
                     {day.date.getDate()}

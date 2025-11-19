@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import { Input } from './ui/input';
-import { CustomDatePicker } from './CustomDatePicker';
-import { CustomTimePicker } from './CustomTimePicker';
+import { IOSDateTimePicker } from './IOSDateTimePicker';
 import { useStore } from '../store';
 
 interface CreateTaskModalProps {
@@ -16,8 +15,7 @@ export function CreateTaskModal({ isOpen, onClose }: CreateTaskModalProps) {
   const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium');
   const [dueDate, setDueDate] = useState('');
   const [dueTime, setDueTime] = useState('');
-  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
-  const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
+  const [isDateTimePickerOpen, setIsDateTimePickerOpen] = useState(false);
 
   const addTaskToStore = useStore((state) => state.addTask);
 
@@ -170,31 +168,34 @@ export function CreateTaskModal({ isOpen, onClose }: CreateTaskModalProps) {
             <label className="block text-sm font-medium mb-3">
               Срок выполнения
             </label>
-            <div className="flex gap-3">
-              <div className="flex-1">
-                <CustomDatePicker
-                  value={dueDate}
-                  onChange={setDueDate}
-                  minDate={new Date().toISOString().split('T')[0]}
-                  onOpenChange={setIsDatePickerOpen}
-                />
-              </div>
-              {!isDatePickerOpen && (
-                <div className="flex-1">
-                  <CustomTimePicker
-                    value={dueTime}
-                    onChange={setDueTime}
-                    disabled={!dueDate}
-                    onOpenChange={setIsTimePickerOpen}
-                  />
+            <motion.button
+              type="button"
+              onClick={() => setIsDateTimePickerOpen(true)}
+              className="w-full py-4 px-4 rounded-xl border-2 border-border/50 hover:border-[#4A9FD8]/50 transition-all text-left"
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+            >
+              {dueDate && dueTime ? (
+                <div>
+                  <div className="font-medium text-foreground">
+                    {new Date(`${dueDate}T${dueTime}`).toLocaleDateString('ru-RU', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric'
+                    })}
+                  </div>
+                  <div className="text-sm text-muted-foreground mt-1">
+                    {dueTime}
+                  </div>
                 </div>
+              ) : (
+                <span className="text-muted-foreground">Выберите дату и время</span>
               )}
-            </div>
+            </motion.button>
           </div>
         </div>
 
         {/* Footer Actions */}
-        {!isDatePickerOpen && !isTimePickerOpen && (
         <div className="sticky bottom-0 p-6 border-t border-border/50 bg-background flex gap-3 z-10">
           <motion.button
             onClick={onClose}
@@ -218,8 +219,19 @@ export function CreateTaskModal({ isOpen, onClose }: CreateTaskModalProps) {
             </span>
           </motion.button>
         </div>
-        )}
       </motion.div>
+
+      {/* iOS DateTime Picker */}
+      <IOSDateTimePicker
+        isOpen={isDateTimePickerOpen}
+        onClose={() => setIsDateTimePickerOpen(false)}
+        onConfirm={(date, time) => {
+          setDueDate(date);
+          setDueTime(time);
+        }}
+        initialDate={dueDate}
+        initialTime={dueTime}
+      />
     </div>
   );
 }

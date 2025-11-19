@@ -145,7 +145,7 @@ export function CalendarView() {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: index * 0.01 }}
                   className={`
-                    relative rounded-lg border p-1 flex flex-col items-center justify-center
+                    relative rounded-lg border p-1 flex flex-col items-center justify-between
                     ${day.isCurrentMonth ? 'border-border/50' : 'border-transparent'}
                     ${isToday(day.date) ? 'bg-[#4A9FD8]/10 border-[#4A9FD8]' : ''}
                     ${day.isCurrentMonth ? '' : 'opacity-40'}
@@ -161,12 +161,34 @@ export function CalendarView() {
                   </span>
 
                   {tasksForDay.length > 0 && (
-                    <div className="absolute bottom-1 flex gap-0.5">
-                      {hasActiveTasks && (
-                        <Circle className="h-2 w-2 fill-[#4A9FD8] text-[#4A9FD8]" />
+                    <div className="flex gap-0.5 items-center">
+                      {hasActiveTasks && tasksForDay.filter(t => t.status !== 'completed').length > 0 && (
+                        <div
+                          className="rounded-full bg-[#4A9FD8] text-white flex items-center justify-center"
+                          style={{
+                            fontSize: '9px',
+                            fontWeight: 600,
+                            minWidth: '14px',
+                            height: '14px',
+                            padding: '0 3px'
+                          }}
+                        >
+                          {tasksForDay.filter(t => t.status !== 'completed').length}
+                        </div>
                       )}
                       {completedCount > 0 && (
-                        <CheckCircle2 className="h-2 w-2 fill-green-500 text-green-500" />
+                        <div
+                          className="rounded-full bg-green-500 text-white flex items-center justify-center"
+                          style={{
+                            fontSize: '9px',
+                            fontWeight: 600,
+                            minWidth: '14px',
+                            height: '14px',
+                            padding: '0 3px'
+                          }}
+                        >
+                          {completedCount}
+                        </div>
                       )}
                     </div>
                   )}
@@ -177,13 +199,17 @@ export function CalendarView() {
 
           {/* Legend */}
           <div className="mt-4 flex gap-4 justify-center text-xs text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <Circle className="h-3 w-3 fill-[#4A9FD8] text-[#4A9FD8]" />
-              <span>Активная</span>
+            <div className="flex items-center gap-1.5">
+              <div className="rounded-full bg-[#4A9FD8] text-white w-5 h-5 flex items-center justify-center" style={{ fontSize: '10px', fontWeight: 600 }}>
+                2
+              </div>
+              <span>Активные</span>
             </div>
-            <div className="flex items-center gap-1">
-              <CheckCircle2 className="h-3 w-3 fill-green-500 text-green-500" />
-              <span>Выполнена</span>
+            <div className="flex items-center gap-1.5">
+              <div className="rounded-full bg-green-500 text-white w-5 h-5 flex items-center justify-center" style={{ fontSize: '10px', fontWeight: 600 }}>
+                1
+              </div>
+              <span>Выполнены</span>
             </div>
           </div>
         </div>

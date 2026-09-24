@@ -1,0 +1,29 @@
+{
+  "actorSpecification": 1,
+  "fields": {},
+  "views": {
+    "overview": {
+      "title": "Apps",
+      "transformation": {
+        "fields": ["rank", "title", "developer", "score", "ratingsCount", "installs", "priceText", "genre", "updatedAt", "source", "country", "url"]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "rank": { "label": "Rank", "format": "number" },
+          "title": { "label": "App", "format": "text" },
+          "developer": { "label": "Developer", "format": "text" },
+          "score": { "label": "Rating", "format": "number" },
+          "ratingsCount": { "label": "Ratings", "format": "number" },
+          "installs": { "label": "Installs", "format": "text" },
+          "priceText": { "label": "Price", "format": "text" },
+          "genre": { "label": "Category", "format": "text" },
+          "updatedAt": { "label": "Updated", "format": "date" },
+          "source": { "label": "Source", "format": "text" },
+          "country": { "label": "Country", "format": "text" },
+          "url": { "label": "Google Play link", "format": "link" }
+        }
+      }
+    }
+  }
+}

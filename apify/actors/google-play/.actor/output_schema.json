@@ -1,0 +1,18 @@
+{
+  "actorOutputSchemaVersion": 1,
+  "title": "Google Play Scraper output",
+  "properties": {
+    "apps": {
+      "type": "string",
+      "title": "Apps",
+      "description": "Apps with rank, rating, installs, price, category, dates, developer contacts and descriptions.",
+      "template": "{{links.apiDefaultDatasetUrl}}/items?view=overview"
+    },
+    "summary": {
+      "type": "string",
+      "title": "Run summary",
+      "description": "Apps found and saved for each search, chart, app and developer, with errors.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/SUMMARY"
+    }
+  }
+}

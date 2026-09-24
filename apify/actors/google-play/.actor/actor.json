@@ -1,0 +1,15 @@
+{
+  "actorSpecification": 1,
+  "name": "google-play-scraper",
+  "title": "Google Play Scraper: Apps & Top Charts",
+  "description": "Scrape Google Play apps, top charts (free, paid, grossing) for any country and category, keyword search rankings and developer catalogs: ratings, installs, prices, versions, contacts. No browser.",
+  "version": "0.1",
+  "buildTag": "latest",
+  "input": "./input_schema.json",
+  "storages": {
+    "dataset": "./dataset_schema.json"
+  },
+  "output": "./output_schema.json",
+  "dockerfile": "../Dockerfile",
+  "readme": "../README.md"
+}

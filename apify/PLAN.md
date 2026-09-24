@@ -25,9 +25,29 @@
 - По данным магазина, из разработчиков с 10–19 акторами до этого уровня доходит около половины, с одним актором — 5%.
 - Первые 10 акторов: Google News, Google Play, Greenhouse, Workday, Lever, Ashby, Dice, Welcome to the Jungle, Rightmove, Home Depot.
 
-## Следующий шаг: первая волна акторов
+## Первая волна акторов
 
 Собрать и опубликовать акторы 1–6 из NICHES.md: Google News, Google Play, Greenhouse, Workday, Lever, Ashby. У вакансионных акторов общая основа кода и одинаковый формат результата.
+
+### 1. Google News — готов, ждёт публикации
+
+Код лежит в `actors/google-news/`. Прошли 11 тестов и живые запуски: поиск, темы, топ-новости, немецкое издание, диапазон дат по дням, лимиты, расшифровка ссылок на издания.
+
+Как опубликовать:
+
+1. Выложить в Apify. Два способа:
+   - через API с токеном из API credentials окружения: создать актор из `actors/google-news` и собрать;
+   - через Apify Console: Link Git repository → ветка `claude/gifted-dirac-sv0ed6`, папка `apify/actors/google-news`.
+2. Проверить запуск на платформе с Apify Proxy.
+3. В Console в разделе Monetization выбрать pay-per-event:
+   - `apify-default-dataset-item` — $0.002 за статью;
+   - `url-resolved` — $0.001 за расшифрованную ссылку;
+   - без платы за старт.
+4. Указать PayPal для выплат и опубликовать в Store.
+
+### 2. Следующие
+
+Google Play, затем вакансии: Greenhouse, Workday, Lever, Ashby.
 
 ## Как был сделан анализ (для пересчёта)
 

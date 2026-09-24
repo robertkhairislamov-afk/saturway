@@ -18,6 +18,7 @@ import { resolveArticleUrl } from './resolve.js';
 const ITEM_EVENT = 'apify-default-dataset-item';
 const URL_RESOLVED_EVENT = 'url-resolved';
 const RESOLVE_CONCURRENCY = 4;
+const DEFAULT_QUERY = 'artificial intelligence';
 
 await Actor.init();
 
@@ -43,8 +44,10 @@ const topicList = topics.map((t) => String(t).trim().toUpperCase()).filter(Boole
 const unknownTopic = topicList.find((t) => !TOPICS.includes(t));
 if (unknownTopic) throw new Error(`Unknown topic "${unknownTopic}". Use one of: ${TOPICS.join(', ')}.`);
 if (!TIME_RANGES.includes(timeRange)) throw new Error(`Unknown timeRange "${timeRange}". Use one of: ${TIME_RANGES.join(', ')}.`);
+// An empty input (for example the Store's daily health check) runs an example search instead of failing.
 if (searchQueries.length === 0 && topicList.length === 0 && !includeTopStories) {
-  throw new Error('Nothing to scrape: add at least one search query, pick a topic, or enable top stories.');
+  log.warning(`No search query, topic or top stories selected; searching for "${DEFAULT_QUERY}" as an example.`);
+  searchQueries.push(DEFAULT_QUERY);
 }
 if (!EDITIONS.includes(edition)) log.warning(`Edition "${edition}" is not in the tested list; trying it anyway.`);
 

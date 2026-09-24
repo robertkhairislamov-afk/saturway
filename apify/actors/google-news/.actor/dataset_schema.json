@@ -1,0 +1,25 @@
+{
+  "actorSpecification": 1,
+  "fields": {},
+  "views": {
+    "overview": {
+      "title": "Articles",
+      "transformation": {
+        "fields": ["publishedAt", "title", "source", "url", "googleNewsUrl", "query", "topic", "edition"]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "publishedAt": { "label": "Published", "format": "date" },
+          "title": { "label": "Title", "format": "text" },
+          "source": { "label": "Source", "format": "text" },
+          "url": { "label": "Publisher URL", "format": "link" },
+          "googleNewsUrl": { "label": "Google News link", "format": "link" },
+          "query": { "label": "Query", "format": "text" },
+          "topic": { "label": "Topic", "format": "text" },
+          "edition": { "label": "Edition", "format": "text" }
+        }
+      }
+    }
+  }
+}

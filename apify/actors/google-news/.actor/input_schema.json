@@ -1,0 +1,105 @@
+{
+  "title": "Google News Scraper",
+  "description": "Search Google News by keyword or read topic headlines for any country and language.",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "queries": {
+      "title": "Search queries",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Keywords to search on Google News, one per line. Google News operators work too: \"exact phrase\", OR, -exclude, site:reuters.com, intitle:word.",
+      "prefill": ["artificial intelligence"],
+      "placeholderValue": "electric vehicles"
+    },
+    "topics": {
+      "title": "Topic headlines",
+      "type": "array",
+      "editor": "select",
+      "description": "Also collect the current headlines of these Google News sections.",
+      "items": {
+        "type": "string",
+        "enum": ["WORLD", "NATION", "BUSINESS", "TECHNOLOGY", "ENTERTAINMENT", "SPORTS", "SCIENCE", "HEALTH"],
+        "enumTitles": ["World", "Nation (country news)", "Business", "Technology", "Entertainment", "Sports", "Science", "Health"]
+      }
+    },
+    "includeTopStories": {
+      "title": "Include top stories",
+      "type": "boolean",
+      "description": "Also collect the Google News front page (top stories) for the chosen edition.",
+      "default": false
+    },
+    "edition": {
+      "title": "Country and language",
+      "type": "string",
+      "editor": "select",
+      "description": "Google News edition to use. You can also type any edition as COUNTRY:language, for example NG:en.",
+      "default": "US:en",
+      "enumSuggestedValues": ["US:en", "GB:en", "CA:en", "AU:en", "IN:en", "IE:en", "NZ:en", "SG:en", "ZA:en", "PH:en", "DE:de", "AT:de", "CH:de", "FR:fr", "CA:fr", "ES:es", "MX:es-419", "AR:es-419", "CO:es-419", "BR:pt-419", "PT:pt-150", "IT:it", "NL:nl", "PL:pl", "TR:tr", "UA:uk", "JP:ja", "KR:ko", "TW:zh-Hant", "HK:zh-Hant", "CN:zh-Hans", "ID:id", "TH:th", "VN:vi", "IL:he", "AE:ar", "SA:ar", "EG:ar"],
+      "enumTitles": ["United States — English", "United Kingdom — English", "Canada — English", "Australia — English", "India — English", "Ireland — English", "New Zealand — English", "Singapore — English", "South Africa — English", "Philippines — English", "Germany — German", "Austria — German", "Switzerland — German", "France — French", "Canada — French", "Spain — Spanish", "Mexico — Spanish", "Argentina — Spanish", "Colombia — Spanish", "Brazil — Portuguese", "Portugal — Portuguese", "Italy — Italian", "Netherlands — Dutch", "Poland — Polish", "Turkey — Turkish", "Ukraine — Ukrainian", "Japan — Japanese", "South Korea — Korean", "Taiwan — Chinese (Traditional)", "Hong Kong — Chinese (Traditional)", "China — Chinese (Simplified)", "Indonesia — Indonesian", "Thailand — Thai", "Vietnam — Vietnamese", "Israel — Hebrew", "United Arab Emirates — Arabic", "Saudi Arabia — Arabic", "Egypt — Arabic"]
+    },
+    "timeRange": {
+      "title": "Time range",
+      "type": "string",
+      "editor": "select",
+      "sectionCaption": "Time filters",
+      "sectionDescription": "Use a time range for recent news, or a date range for a specific period. A date range takes priority.",
+      "description": "Only return articles published within this period. Applies to search queries.",
+      "default": "any",
+      "enum": ["any", "1h", "1d", "7d", "30d", "1y"],
+      "enumTitles": ["Any time", "Past hour", "Past 24 hours", "Past 7 days", "Past 30 days", "Past year"]
+    },
+    "dateFrom": {
+      "title": "From date",
+      "type": "string",
+      "editor": "datepicker",
+      "dateType": "absoluteOrRelative",
+      "description": "Start of the date range (UTC), as a date or relative, for example \"3 days\" for three days ago. Applies to search queries.",
+      "pattern": "^(\\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$|^(\\d+)\\s*(day|week|month|year)s?$"
+    },
+    "dateTo": {
+      "title": "To date",
+      "type": "string",
+      "editor": "datepicker",
+      "dateType": "absoluteOrRelative",
+      "description": "End of the date range (UTC, inclusive). Defaults to today.",
+      "pattern": "^(\\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$|^(\\d+)\\s*(day|week|month|year)s?$"
+    },
+    "splitByDay": {
+      "title": "Search each day separately",
+      "type": "boolean",
+      "description": "Google News returns at most about 100 articles per search. Searching each day of the date range separately collects many more articles for long periods.",
+      "default": true
+    },
+    "maxItemsPerFeed": {
+      "title": "Max articles per search",
+      "type": "integer",
+      "sectionCaption": "Limits and extras",
+      "description": "Maximum articles to keep from each search, day or topic. Google News itself returns up to about 100.",
+      "minimum": 1,
+      "maximum": 100,
+      "default": 100
+    },
+    "maxItems": {
+      "title": "Max articles in total",
+      "type": "integer",
+      "description": "Stop after this many articles across all searches and topics. 0 means no limit.",
+      "minimum": 0,
+      "default": 0
+    },
+    "resolveUrls": {
+      "title": "Resolve publisher URLs",
+      "type": "boolean",
+      "description": "Replace Google News redirect links with the original article URL on the publisher's site. Slower, and charged as a separate event for each resolved URL.",
+      "default": false
+    },
+    "proxyConfiguration": {
+      "title": "Proxy configuration",
+      "type": "object",
+      "editor": "proxy",
+      "description": "Apify Proxy keeps Google from rate-limiting the requests. The default works for most runs.",
+      "prefill": { "useApifyProxy": true },
+      "default": { "useApifyProxy": true }
+    }
+  }
+}

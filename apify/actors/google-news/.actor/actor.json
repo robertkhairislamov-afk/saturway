@@ -1,0 +1,14 @@
+{
+  "actorSpecification": 1,
+  "name": "google-news-scraper",
+  "title": "Google News Scraper",
+  "description": "Search Google News by keyword or collect topic headlines for 38 countries and languages. Date ranges split by day, related coverage, optional publisher URLs. Fast, no browser.",
+  "version": "0.1",
+  "buildTag": "latest",
+  "input": "./input_schema.json",
+  "storages": {
+    "dataset": "./dataset_schema.json"
+  },
+  "dockerfile": "../Dockerfile",
+  "readme": "../README.md"
+}

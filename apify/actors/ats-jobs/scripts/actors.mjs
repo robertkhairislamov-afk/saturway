@@ -7,8 +7,8 @@ export const ACTORS = {
     name: 'greenhouse-jobs-scraper',
     title: 'Greenhouse Jobs Scraper',
     description: 'Scrape all open jobs of any company on Greenhouse: title, department, locations, salary range, description and apply link. Keyword, location, remote and date filters, and an only-new mode for monitoring.',
-    seoTitle: 'Greenhouse Jobs Scraper: jobs, salaries, API',
-    seoDescription: 'Scrape job postings from Greenhouse job boards with salary ranges, locations and full descriptions. Filter by keyword, location and date. Export JSON, CSV, Excel.',
+    seoTitle: 'Greenhouse Jobs Scraper – Job Listings & Salaries',
+    seoDescription: 'Scrape jobs from any Greenhouse job board: title, department, location, salary range, description and apply link. Filters and alerts. $1 per 1,000 jobs.',
     companies: {
       title: 'Companies (Greenhouse boards)',
       description: 'Greenhouse job boards to scrape. Enter the board name, for example <code>airbnb</code>, or paste a link such as <code>https://job-boards.greenhouse.io/figma</code> or <code>https://boards.greenhouse.io/stripe</code>. The board name is the part of the link after <code>greenhouse.io/</code>.',
@@ -20,8 +20,8 @@ export const ACTORS = {
     name: 'lever-jobs-scraper',
     title: 'Lever Jobs Scraper',
     description: 'Scrape all open jobs of any company on Lever: title, team, locations, salary range, workplace type, description and apply link. Keyword, location, remote and date filters, and an only-new mode for monitoring.',
-    seoTitle: 'Lever Jobs Scraper: jobs.lever.co postings, salaries, API',
-    seoDescription: 'Scrape job postings from jobs.lever.co career pages with salary ranges, teams, locations and full descriptions. Filter by keyword, location and date. Export JSON, CSV, Excel.',
+    seoTitle: 'Lever Jobs Scraper – Job Listings & Salaries',
+    seoDescription: 'Scrape jobs from any company on jobs.lever.co: title, team, location, salary range, description and apply link. Filters and alerts. $1 per 1,000 jobs.',
     companies: {
       title: 'Companies (Lever job sites)',
       description: 'Lever job sites to scrape. Enter the company name from the link, for example <code>zoox</code>, or paste a link such as <code>https://jobs.lever.co/palantir</code>. EU sites (<code>jobs.eu.lever.co</code>) work too.',
@@ -33,8 +33,8 @@ export const ACTORS = {
     name: 'ashby-jobs-scraper',
     title: 'Ashby Jobs Scraper',
     description: 'Scrape all open jobs of any company on Ashby: title, department, locations, compensation, workplace type, description and apply link. Keyword, location, remote and date filters, and an only-new mode for monitoring.',
-    seoTitle: 'Ashby Jobs Scraper: jobs.ashbyhq.com postings, salaries, API',
-    seoDescription: 'Scrape job postings from jobs.ashbyhq.com with compensation, departments, locations and full descriptions. Filter by keyword, location and date. Export JSON, CSV, Excel.',
+    seoTitle: 'Ashby Jobs Scraper – Job Listings & Compensation',
+    seoDescription: 'Scrape jobs from any Ashby job board: title, department, locations, compensation, description and apply link. Filters and alerts. $1 per 1,000 jobs.',
     companies: {
       title: 'Companies (Ashby job boards)',
       description: 'Ashby job boards to scrape. Enter the board name from the link, for example <code>ramp</code>, or paste a link such as <code>https://jobs.ashbyhq.com/notion</code>.',
@@ -46,8 +46,8 @@ export const ACTORS = {
     name: 'workday-jobs-scraper',
     title: 'Workday Jobs Scraper',
     description: 'Scrape jobs from any Workday career site (myworkdayjobs.com): title, locations, dates, salary from the description, full text and apply link. Gets every job, even beyond the 2,000 Workday shows per search.',
-    seoTitle: 'Workday Jobs Scraper: myworkdayjobs.com postings, API',
-    seoDescription: 'Scrape job postings from Workday career sites (myworkdayjobs.com): all jobs beyond the 2,000 search limit, locations, dates, salaries and descriptions. Export JSON, CSV, Excel.',
+    seoTitle: 'Workday Jobs Scraper – All Jobs from Any Career Site',
+    seoDescription: 'Scrape every job from any Workday career site, even past the 2,000 search limit: title, locations, dates, salary, description. $1 per 1,000 jobs.',
     companies: {
       title: 'Career sites (Workday links)',
       description: 'Links to Workday job search pages, for example <code>https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite</code>. Open the company\'s careers page, click through to the job list and copy the address from your browser. Filters you selected on the page (category, location) are kept.',
@@ -55,15 +55,15 @@ export const ACTORS = {
       placeholder: 'https://company.wd5.myworkdayjobs.com/External',
     },
     keywordsNote: ' Each keyword is also searched on the career site itself, so big sites are read faster.',
-    prefill: { keywords: ['engineer'], maxItems: 100 },
+    prefill: { keywords: ['engineer'], maxItems: 50 },
     noDepartments: true,
   },
   dice: {
     name: 'dice-jobs-scraper',
     title: 'Dice Jobs Scraper',
     description: 'Scrape US tech jobs from Dice.com: title, company, location, salary, skills, full description, dates and apply link. All Dice filters, over 750 results per search, and an only-new mode for alerts.',
-    seoTitle: 'Dice Jobs Scraper: Dice.com tech jobs, salaries, skills',
-    seoDescription: 'Scrape Dice.com job listings with salary, skills, company, location and full descriptions. Search by keyword and location, filter by remote and contract type. JSON, CSV, Excel.',
+    seoTitle: 'Dice Jobs Scraper – Extract Job Listings & Salaries',
+    seoDescription: 'Scrape Dice.com jobs by keyword and location: title, company, salary, skills, description, posting date and link. All Dice filters. $0.50 per 1,000 jobs.',
   },
 };
 
@@ -146,8 +146,8 @@ export function inputSchema(ats) {
       title: 'Maximum jobs in total',
       type: 'integer',
       minimum: 0,
-      description: 'Stop after saving this many jobs. Leave empty or 0 for no limit.',
-      ...(actor.prefill?.maxItems ? { prefill: actor.prefill.maxItems } : {}),
+      description: 'Stop after saving this many jobs. Leave empty or 0 for no limit. The example is kept small so the first run takes seconds.',
+      prefill: actor.prefill?.maxItems ?? 50,
     },
     maxItemsPerCompany: {
       title: 'Maximum jobs per company',
@@ -212,7 +212,8 @@ const commonSettings = ({ proxyDescription }) => ({
     title: 'Maximum jobs in total',
     type: 'integer',
     minimum: 0,
-    description: 'Stop after saving this many jobs. Leave empty or 0 for no limit.',
+    description: 'Stop after saving this many jobs. Leave empty or 0 for no limit. The example is kept small so the first run takes seconds.',
+    prefill: 50,
   },
   maxItemsPerCompany: {
     title: 'Maximum jobs per search',

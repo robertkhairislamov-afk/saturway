@@ -1,5 +1,7 @@
 # Workday Jobs Scraper
 
+**Scrape all jobs from any Workday career site.** Get title, locations, posting date, salary, description and apply link, even beyond Workday's 2,000-job search limit. Export to JSON, CSV or Excel, or use the API. **$1 per 1,000 jobs, no start fee.**
+
 Scrape jobs from any **Workday** career site (`myworkdayjobs.com`): title, all locations, posting date, time type, requisition ID, **salary found in the description**, full description and apply link. Workday's job search stops at 2,000 results; this scraper splits big searches by the site's own filters and **gets every job**. Filter by keyword, location, remote or date, and run it on a schedule to get **only new jobs**. No browser, no login.
 
 ## What can this Workday scraper do?

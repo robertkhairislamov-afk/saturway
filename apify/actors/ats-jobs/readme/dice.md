@@ -1,5 +1,7 @@
 # Dice Jobs Scraper
 
+**Scrape Dice.com jobs by keyword and location.** Get title, company, salary, skills, location, description, job URL and posting date. Export to JSON, CSV or Excel, or use the API. **$0.50 per 1,000 jobs, no start fee.**
+
 Scrape US tech jobs from **Dice.com** the way you search on the website: keywords, location, distance and every Dice filter. Get the title, company, location, workplace type, employment type, **salary as numbers**, **skills**, full description, posting and expiry dates and the job link. Dice shows at most 750 jobs per search; this scraper splits big searches and **gets them all**. Run it on a schedule to get **only new jobs**. No browser, no login.
 
 ## What can this Dice scraper do?

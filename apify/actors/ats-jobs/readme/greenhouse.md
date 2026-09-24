@@ -1,5 +1,7 @@
 # Greenhouse Jobs Scraper
 
+**Scrape all jobs of any company on Greenhouse.** Get title, department, location, salary range, description, apply link and posting date. Export to JSON, CSV or Excel, or use the API. **$1 per 1,000 jobs, no start fee.**
+
 Scrape every open job from any company that hires with **Greenhouse**: title, department, office locations, **salary range**, full description, posting date and apply link. Add several companies at once, filter by keyword, location, remote or date, and run it on a schedule to get **only new jobs**. Fast and reliable: it reads the official public Greenhouse job board API, with no browser and no login.
 
 ## What can this Greenhouse scraper do?

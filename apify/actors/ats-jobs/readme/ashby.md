@@ -1,5 +1,7 @@
 # Ashby Jobs Scraper
 
+**Scrape all jobs of any company on Ashby.** Get title, department, locations, compensation, description, apply link and posting date. Export to JSON, CSV or Excel, or use the API. **$1 per 1,000 jobs, no start fee.**
+
 Scrape every open job from any company that hires with **Ashby** (`jobs.ashbyhq.com`): title, department, team, all locations, workplace type, employment type, **compensation**, full description, publish date and apply link. Add many companies at once, filter by keyword, location, remote or date, and run it on a schedule to get **only new jobs**. It reads the official public Ashby job posting API, so it is fast and stable, with no browser and no login.
 
 ## What can this Ashby scraper do?

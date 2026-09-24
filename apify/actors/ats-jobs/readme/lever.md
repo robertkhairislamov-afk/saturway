@@ -1,5 +1,7 @@
 # Lever Jobs Scraper
 
+**Scrape all jobs of any company on Lever.** Get title, team, location, salary range, description, apply link and posting date. Export to JSON, CSV or Excel, or use the API. **$1 per 1,000 jobs, no start fee.**
+
 Scrape every open job from any company that hires with **Lever** (`jobs.lever.co`): title, team, department, locations, workplace type, commitment, **salary range**, full description, posting date and apply link. Add several companies at once, filter by keyword, location, remote or date, and run it on a schedule to get **only new jobs**. It reads the official public Lever postings API: fast, stable, no browser and no login.
 
 ## What can this Lever scraper do?

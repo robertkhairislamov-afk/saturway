@@ -128,7 +128,7 @@ export async function completeJob(partial, company, { http }) {
   try {
     data = await http.getJson(`${company.apiBase}${partial.externalPath}`);
   } catch (error) {
-    if (error.status === 404) return null;
+    if (error.status === 404 || error.status === 410) return null;
     throw error;
   }
   return data?.jobPostingInfo ? toJob(data.jobPostingInfo, partial, company) : null;

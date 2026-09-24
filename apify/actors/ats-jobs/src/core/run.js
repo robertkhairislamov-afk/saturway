@@ -43,16 +43,24 @@ function parseCompanies(adapter, values, log) {
 }
 
 export async function runScraper(Actor, adapter, rawInput, log) {
-  const input = normalizeInput(rawInput, adapter.exampleInput);
-  if (input.usedExample) log.warning(`No companies in the input; scraping the example ${adapter.title} board ${input.companies.join(', ')}.`);
+  // Adapters whose sources are not company boards (Dice searches) turn their input into sources first.
+  const input = normalizeInput(adapter.prepareInput ? adapter.prepareInput(rawInput) : rawInput, adapter.exampleInput);
+  const [one, many] = adapter.sourceNames ?? ['company', 'companies'];
+  if (input.usedExample) log.warning(`No ${many} in the input; scraping the example ${adapter.title} ${one} ${input.companies.join(', ')}.`);
 
   const { companies, rejected } = parseCompanies(adapter, input.companies, log);
-  if (companies.length === 0) throw new Error(`No ${adapter.title} company could be read from the input. ${rejected[0]?.error ?? ''}`.trim());
+  if (companies.length === 0) throw new Error(`No ${adapter.title} ${one} could be read from the input. ${rejected[0]?.error ?? ''}`.trim());
 
   const proxyConfiguration = input.proxyConfiguration?.useApifyProxy || input.proxyConfiguration?.proxyUrls?.length
     ? await Actor.createProxyConfiguration(input.proxyConfiguration)
     : undefined;
-  const context = { http: createHttpClient({ proxyConfiguration }), log, keywords: input.keywords };
+  const http = createHttpClient({
+    proxyConfiguration,
+    // Sites that limit direct requests (Dice) continue through Apify Proxy.
+    fallbackProxy: adapter.proxyFallback ? () => Actor.createProxyConfiguration({ useApifyProxy: true }) : undefined,
+    onFallback: () => log.info(`${adapter.title} is limiting direct requests; continuing through Apify Proxy.`),
+  });
+  const context = { http, log, keywords: input.keywords, includeDescription: input.includeDescription };
   const filter = createJobFilter(input);
   const seenJobs = input.onlyNew ? await openSeenJobs(Actor, adapter.name) : null;
   const budget = Actor.getChargingManager().calculateMaxEventChargeCountWithinLimit(ITEM_EVENT);
@@ -160,7 +168,7 @@ export async function runScraper(Actor, adapter, rawInput, log) {
     if (roomLeft() <= 0) return { input: company.input, company: company.id, jobsFound: 0, jobsMatched: 0, jobsSaved: 0, error: null, skipped: 'limit reached' };
     const stats = await scrapeCompany(company);
     finished++;
-    await Actor.setStatusMessage(`Saved ${saved} jobs from ${finished} of ${companies.length} companies`);
+    await Actor.setStatusMessage(`Saved ${saved} jobs from ${finished} of ${companies.length} ${many}`);
     return stats;
   });
 
@@ -169,7 +177,7 @@ export async function runScraper(Actor, adapter, rawInput, log) {
 
   const failed = results.filter((result) => result.error);
   if (failed.length === results.length) {
-    throw new Error(failed.length === 1 ? failed[0].error : `All ${failed.length} companies failed. First error: ${failed[0].error}`);
+    throw new Error(failed.length === 1 ? failed[0].error : `All ${failed.length} ${many} failed. First error: ${failed[0].error}`);
   }
   let stopped = null;
   if (saved >= budget) stopped = 'stopped at the maximum cost per run';
@@ -178,7 +186,7 @@ export async function runScraper(Actor, adapter, rawInput, log) {
   if (failed.length > 0) notes.push(`${failed.length} failed`);
   if (rejected.length > 0) notes.push(`${rejected.length} skipped as invalid`);
   if (stopped) notes.push(stopped);
-  const companiesText = `${results.length} ${results.length === 1 ? 'company' : 'companies'}`;
+  const companiesText = `${results.length} ${results.length === 1 ? one : many}`;
   const message = saved === 0 && failed.length === 0 && !stopped
     ? `No ${input.onlyNew ? 'new ' : ''}jobs matched the filters in ${companiesText}.`
     : `Saved ${saved} ${input.onlyNew ? 'new ' : ''}jobs from ${companiesText}${notes.length > 0 ? ` (${notes.join(', ')})` : ''}.`;

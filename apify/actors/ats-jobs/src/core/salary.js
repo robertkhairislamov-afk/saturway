@@ -77,6 +77,8 @@ const amountPattern = (n) => [
 ].join('');
 
 const RANGE = new RegExp(`(?<![\\w.,$])${amountPattern(1)}\\s*(?:-|–|—|to|and)\\s*${amountPattern(2)}`, 'g');
+// A single amount, read only where the text is known to be a pay field ("$68.25/hr").
+const SINGLE = new RegExp(`(?<![\\w.,$])${amountPattern(1)}`, 'g');
 
 const PERIOD_WORDS = { hour: 'hour|hr', day: 'day', week: 'week|wk', month: 'month|mo', year: 'year|yr|annum' };
 const PERIOD_ADJECTIVES = { hour: 'hourly', day: 'daily', week: 'weekly', month: 'monthly', year: 'annual(?:ly|ized)?|yearly|p\\.a\\.' };
@@ -124,11 +126,11 @@ function plausible(min, max, interval, currency) {
   return inUsd(min, currency) >= low && inUsd(max, currency) <= high;
 }
 
-function rangeCandidates(text) {
+function candidatesFrom(text, pattern, known, defaultCurrency) {
   const candidates = [];
-  for (const match of text.matchAll(RANGE)) {
+  for (const match of text.matchAll(pattern)) {
     const g = match.groups;
-    const code = g.pre1 || g.post1 || g.pre2 || g.post2;
+    const code = g.pre1 || g.post1 || g.pre2 || g.post2 || (known ? defaultCurrency : undefined);
     const symbol = g.sym1 || g.sym2;
     if (!code && !symbol) continue;
     const end = match.index + match[0].length;
@@ -136,10 +138,11 @@ function rangeCandidates(text) {
     if (LARGE_UNIT_AFTER.test(after)) continue;
 
     // "$120 - 150K" and "$120K - 150": a k on one side applies to a small number on the other.
+    const single = g.num2 === undefined;
     const k1 = Boolean(g.k1) || (Boolean(g.k2) && parseNumber(g.num1) < 1000);
-    const k2 = Boolean(g.k2) || (Boolean(g.k1) && parseNumber(g.num2) < 1000);
+    const k2 = Boolean(g.k2) || (Boolean(g.k1) && !single && parseNumber(g.num2) < 1000);
     const min = parseNumber(g.num1, k1);
-    const max = parseNumber(g.num2, k2);
+    const max = single ? min : parseNumber(g.num2, k2);
     if (!(min > 0) || !(max >= min) || max > min * 6) continue;
 
     const currency = (code || SYMBOL_CURRENCY[symbol]).toUpperCase();
@@ -151,27 +154,34 @@ function rangeCandidates(text) {
       const hinted = hintBefore(before);
       interval = hinted && plausible(min, max, hinted, currency) ? hinted : guessInterval(max, currency);
     }
-    if (!stated && !PAY_CONTEXT.test(before) && !PAY_CONTEXT.test(after)) continue;
+    if (!known && !stated && !PAY_CONTEXT.test(before) && !PAY_CONTEXT.test(after)) continue;
     if (!plausible(min, max, interval, currency) || (!interval && max < 100)) continue;
-    candidates.push({ min, max, currency, interval, text: match[0].trim() });
+    // "Up to $90K" gives only a maximum.
+    const upTo = single && /\bup\s+to\s*$/i.test(before);
+    candidates.push({ min: upTo ? null : min, max, currency, interval, text: match[0].trim() });
   }
   return candidates;
 }
 
 // Finds pay ranges such as "$120,000 - $150,000", "168,000 USD - 264,500 USD" or "£45k–£55k per annum".
 // Several ranges in the same currency and period (for example one per level) are merged.
-export function salaryFromText(text) {
+// With `known`, the text is a pay field, so no pay words are needed and a single amount counts.
+// `defaultCurrency` applies to a known pay field without a currency, such as "100000 - 120000".
+export function salaryFromText(text, { known = false, source = 'description', defaultCurrency } = {}) {
   if (!text) return null;
-  const candidates = rangeCandidates(String(text));
+  const clean = String(text).replace(/\$\$+/g, '$');
+  let candidates = candidatesFrom(clean, RANGE, known, defaultCurrency);
+  if (candidates.length === 0 && known) candidates = candidatesFrom(clean, SINGLE, known, defaultCurrency);
   if (candidates.length === 0) return null;
   const [first] = candidates;
   const same = candidates.filter((c) => c.currency === first.currency && c.interval === first.interval);
+  const mins = same.map((c) => c.min).filter((value) => value != null);
   return makeSalary({
-    min: Math.min(...same.map((c) => c.min)),
+    min: mins.length > 0 ? Math.min(...mins) : null,
     max: Math.max(...same.map((c) => c.max)),
     currency: first.currency,
     interval: first.interval,
-    text: same.slice(0, 3).map((c) => c.text).join('; '),
-    source: 'description',
+    text: known ? clean.trim() : same.slice(0, 3).map((c) => c.text).join('; '),
+    source,
   });
 }

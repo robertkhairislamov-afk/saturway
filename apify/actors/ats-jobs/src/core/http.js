@@ -20,16 +20,27 @@ export class HttpError extends Error {
   }
 }
 
-export function createHttpClient({ proxyConfiguration, maxRetries = 5, timeoutMs = 30000 } = {}) {
+export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback, maxRetries = 5, timeoutMs = 30000 } = {}) {
+  let proxy = proxyConfiguration;
   let session = null;
+  let fallbackTried = false;
 
   async function dispatcherFor() {
-    if (!proxyConfiguration) return envAgent;
+    if (!proxy) return envAgent;
     if (!session) {
-      const proxyUrl = await proxyConfiguration.newUrl(`ats${Math.random().toString(36).slice(2, 12)}`);
+      const proxyUrl = await proxy.newUrl(`ats${Math.random().toString(36).slice(2, 12)}`);
       session = new ProxyAgent(proxyUrl);
     }
     return session;
+  }
+
+  // The first time a site limits direct requests, every later request goes through the fallback proxy.
+  async function switchToFallback() {
+    if (proxy || fallbackTried || !fallbackProxy) return false;
+    fallbackTried = true;
+    proxy = await fallbackProxy().catch(() => undefined);
+    if (proxy) onFallback?.();
+    return Boolean(proxy);
   }
 
   function dropSession(agent) {
@@ -61,8 +72,9 @@ export function createHttpClient({ proxyConfiguration, maxRetries = 5, timeoutMs
         if (res.status === 404 || res.status === 410) {
           throw new HttpError(`Not found (HTTP ${res.status}): ${url}`, { status: res.status, retryable: false });
         }
-        const blocked = res.status === 403 && Boolean(proxyConfiguration);
-        if (res.status === 429 || res.status >= 500 || blocked) {
+        const limited = res.status === 429 || res.status === 403;
+        const switched = limited && (await switchToFallback());
+        if (res.status === 429 || res.status >= 500 || (res.status === 403 && (Boolean(proxy) || switched))) {
           throw new HttpError(`HTTP ${res.status} for ${url}`, { status: res.status });
         }
         if (!res.ok) {

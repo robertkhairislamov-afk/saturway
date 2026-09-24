@@ -36,3 +36,15 @@ test('makeSalary and normalizeInterval build one salary shape', () => {
   });
   assert.equal(makeSalary({ min: 0, max: null, source: 'ats' }), null);
 });
+
+test('salaryFromText reads known pay fields, including single amounts', () => {
+  const read = (text) => pick(salaryFromText(text, { known: true, source: 'listing', defaultCurrency: 'USD' }));
+  assert.deepEqual(read('$$68 - $68.25 per hour'), [68, 68.25, 'USD', 'hour']);
+  assert.deepEqual(read('$$150,100-$206,450 per year'), [150100, 206450, 'USD', 'year']);
+  assert.deepEqual(read('$68.25/hr'), [68.25, 68.25, 'USD', 'hour']);
+  assert.deepEqual(read('100000 - 120000'), [100000, 120000, 'USD', 'year']);
+  assert.deepEqual(read('Up to $90K'), [null, 90000, 'USD', 'year']);
+  assert.equal(salaryFromText('Depends on Experience', { known: true }), null);
+  assert.equal(salaryFromText('$68.25/hr'), null);
+});
+

@@ -1,5 +1,6 @@
-// Store metadata and input schema of the four job Actors. They share one code base and one
-// output format; only the texts, examples and a few inputs differ.
+// Store metadata and input schema of the job Actors. They share one code base and one output
+// format; only the texts, examples and a few inputs differ. Dice searches a job board instead of
+// company boards, so it has its own search form.
 
 export const ACTORS = {
   greenhouse: {
@@ -57,11 +58,19 @@ export const ACTORS = {
     prefill: { keywords: ['engineer'], maxItems: 100 },
     noDepartments: true,
   },
+  dice: {
+    name: 'dice-jobs-scraper',
+    title: 'Dice Jobs Scraper',
+    description: 'Scrape US tech jobs from Dice.com: title, company, location, salary, skills, full description, dates and apply link. All Dice filters, over 750 results per search, and an only-new mode for alerts.',
+    seoTitle: 'Dice Jobs Scraper: Dice.com tech jobs, salaries, skills',
+    seoDescription: 'Scrape Dice.com job listings with salary, skills, company, location and full descriptions. Search by keyword and location, filter by remote and contract type. JSON, CSV, Excel.',
+  },
 };
 
 export const CATEGORIES = ['JOBS', 'LEAD_GENERATION', 'AUTOMATION'];
 
 export function inputSchema(ats) {
+  if (ats === 'dice') return diceInputSchema();
   const actor = ACTORS[ats];
   const properties = {
     companies: {
@@ -165,32 +174,179 @@ export function inputSchema(ats) {
   };
 }
 
-export const datasetSchema = (ats) => ({
-  actorSpecification: 1,
-  fields: {},
-  views: {
-    overview: {
-      title: 'Jobs',
-      transformation: {
-        fields: ['title', 'companyName', 'location', 'workplaceType', 'salary.text', 'postedAt', 'jobUrl', ...(ats === 'workday' ? [] : ['department'])],
-        flatten: ['salary'],
+// Settings shared by every job Actor: result filters, monitoring, limits and proxy.
+const commonSettings = ({ proxyDescription }) => ({
+  excludeKeywords: {
+    title: 'Exclude title keywords',
+    type: 'array',
+    editor: 'stringList',
+    sectionCaption: 'More filters',
+    description: 'Skip jobs whose title contains any of these, for example <code>intern</code> or <code>senior</code>. Common word endings are included.',
+  },
+  keywords: {
+    title: 'Title must contain',
+    type: 'array',
+    editor: 'stringList',
+    description: 'Keep only jobs whose title contains any of these words or phrases. Dice searches descriptions too, so this makes results stricter. Add <code>*</code> for any ending: <code>data*</code>.',
+  },
+  onlyWithSalary: {
+    title: 'Only jobs with a salary',
+    type: 'boolean',
+    default: false,
+    description: 'Keep only jobs that state a pay range or rate.',
+  },
+  onlyNew: {
+    title: 'Only new jobs since the last run',
+    type: 'boolean',
+    default: false,
+    sectionCaption: 'Monitoring and limits',
+    description: 'For scheduled runs: save only jobs that were not seen in earlier runs of the same saved task. The first run saves all current jobs and remembers them. Jobs that did not match your filters are remembered too.',
+  },
+  includeDescription: {
+    title: 'Load full job details',
+    type: 'boolean',
+    default: true,
+    description: 'Open each job page for the full description (text and HTML), skills and expiry date. Turn off for fast results with a short summary instead.',
+  },
+  maxItems: {
+    title: 'Maximum jobs in total',
+    type: 'integer',
+    minimum: 0,
+    description: 'Stop after saving this many jobs. Leave empty or 0 for no limit.',
+  },
+  maxItemsPerCompany: {
+    title: 'Maximum jobs per search',
+    type: 'integer',
+    minimum: 0,
+    description: 'Save at most this many jobs from each search. Leave empty or 0 for no limit.',
+  },
+  proxyConfiguration: {
+    title: 'Proxy configuration',
+    type: 'object',
+    editor: 'proxy',
+    sectionCaption: 'Advanced',
+    description: proxyDescription,
+    prefill: { useApifyProxy: false },
+    default: { useApifyProxy: false },
+  },
+});
+
+function diceInputSchema() {
+  return {
+    title: ACTORS.dice.title,
+    description: 'Search Dice.com like on the website and get every matching job in one clean format.',
+    type: 'object',
+    schemaVersion: 1,
+    properties: {
+      searchQueries: {
+        title: 'Search keywords or Dice links',
+        type: 'array',
+        editor: 'stringList',
+        description: 'What to search, for example <code>python developer</code> or <code>data engineer</code>. Each line is a separate search with the filters below. You can also paste a dice.com search link; its own filters are used.',
+        prefill: ['python developer'],
+        placeholderValue: 'java developer',
       },
-      display: {
-        component: 'table',
-        properties: {
-          title: { label: 'Title', format: 'text' },
-          companyName: { label: 'Company', format: 'text' },
-          location: { label: 'Location', format: 'text' },
-          workplaceType: { label: 'Workplace', format: 'text' },
-          'salary.text': { label: 'Salary', format: 'text' },
-          postedAt: { label: 'Posted', format: 'date' },
-          jobUrl: { label: 'Job link', format: 'link' },
-          ...(ats === 'workday' ? {} : { department: { label: 'Department', format: 'text' } }),
+      location: {
+        title: 'Location',
+        type: 'string',
+        editor: 'textfield',
+        description: 'City, state or ZIP code, for example <code>New York, NY</code> or <code>Austin, TX</code>. Leave empty to search the whole US.',
+      },
+      radius: {
+        title: 'Distance',
+        type: 'integer',
+        minimum: 0,
+        maximum: 200,
+        unit: 'miles',
+        description: 'Search radius around the location. Leave empty for the Dice default.',
+      },
+      workplaceTypes: {
+        title: 'Workplace',
+        type: 'array',
+        editor: 'select',
+        sectionCaption: 'Dice filters',
+        description: 'Leave empty for all.',
+        items: { type: 'string', enum: ['Remote', 'Hybrid', 'On-Site'], enumTitles: ['Remote', 'Hybrid', 'On-site'] },
+      },
+      employmentTypes: {
+        title: 'Employment type',
+        type: 'array',
+        editor: 'select',
+        description: 'Leave empty for all.',
+        items: { type: 'string', enum: ['FULLTIME', 'PARTTIME', 'CONTRACTS', 'THIRD_PARTY'], enumTitles: ['Full-time', 'Part-time', 'Contract', 'Third party'] },
+      },
+      postedDate: {
+        title: 'Posted',
+        type: 'string',
+        editor: 'select',
+        description: 'How recent the jobs are.',
+        enum: ['ANY', 'ONE', 'THREE', 'SEVEN'],
+        enumTitles: ['Any time', 'Today', 'Last 3 days', 'Last 7 days'],
+        default: 'ANY',
+      },
+      employerTypes: {
+        title: 'Employer type',
+        type: 'array',
+        editor: 'select',
+        description: 'Direct employers, recruiters or both. Leave empty for all.',
+        items: { type: 'string', enum: ['Direct Hire', 'Recruiter', 'Other'], enumTitles: ['Direct hire', 'Recruiter', 'Other'] },
+      },
+      easyApply: {
+        title: 'Easy Apply only',
+        type: 'boolean',
+        default: false,
+        description: 'Only jobs you can apply to directly on Dice.',
+      },
+      willingToSponsor: {
+        title: 'Visa sponsorship only',
+        type: 'boolean',
+        default: false,
+        description: 'Only jobs whose employer is willing to sponsor a work visa.',
+      },
+      ...commonSettings({
+        proxyDescription: 'The Actor connects directly, which is fastest. If Dice starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it from the start.',
+      }),
+    },
+  };
+}
+
+// The last column shows what each job board has: departments, employment types or nothing extra.
+const EXTRA_COLUMN = {
+  greenhouse: ['department', 'Department'],
+  lever: ['department', 'Department'],
+  ashby: ['department', 'Department'],
+  dice: ['employmentType', 'Employment'],
+};
+
+export const datasetSchema = (ats) => {
+  const [extraField, extraLabel] = EXTRA_COLUMN[ats] ?? [];
+  return {
+    actorSpecification: 1,
+    fields: {},
+    views: {
+      overview: {
+        title: 'Jobs',
+        transformation: {
+          fields: ['title', 'companyName', 'location', 'workplaceType', 'salary.text', 'postedAt', 'jobUrl', ...(extraField ? [extraField] : [])],
+          flatten: ['salary'],
+        },
+        display: {
+          component: 'table',
+          properties: {
+            title: { label: 'Title', format: 'text' },
+            companyName: { label: 'Company', format: 'text' },
+            location: { label: 'Location', format: 'text' },
+            workplaceType: { label: 'Workplace', format: 'text' },
+            'salary.text': { label: 'Salary', format: 'text' },
+            postedAt: { label: 'Posted', format: 'date' },
+            jobUrl: { label: 'Job link', format: 'link' },
+            ...(extraField ? { [extraField]: { label: extraLabel, format: 'text' } } : {}),
+          },
         },
       },
     },
-  },
-});
+  };
+};
 
 export const outputSchema = (ats) => ({
   actorOutputSchemaVersion: 1,

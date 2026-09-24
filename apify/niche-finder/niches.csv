@@ -1,0 +1,199 @@
+niche,category,excluded,demand30,burstShare,actors,active,leaderShare,officialShare,failRate,paidShare,growth,medianPrice,leaderRating,leader,expectedUsers,score
+"linkedin profile","LEAD_GENERATION","true",42178,0,117,65,0.2376,0,0.0108,0.9998,1.5564,0.0050,4.6472,"harvestapi/linkedin-profile-scraper",487.2121,620.7985
+"tiktok","SOCIAL_MEDIA","true",30831,0,30,19,0.7650,0,0.0104,1,1.7645,0.0025,4.7573,"clockworks/tiktok-scraper",362.2000,491.1381
+"indeed job","JOBS","false",8706,0.0189,42,14,0.4479,0,0.0020,0.9995,1.3014,0.0020,4.7287,"valig/indeed-jobs-scraper",320.4667,366.8583
+"linkedin company","SOCIAL_MEDIA","true",22699,0,121,65,0.2663,0,0.0066,0.9994,1.7057,0.0040,4.4768,"harvestapi/linkedin-company",252.3485,333.6960
+"naukri","JOBS","false",4955,0,34,11,0.3233,0,0.0130,0.9982,1.2785,0.0023,4.4200,"muhammetakkurtt/naukri-job-scraper",279.4167,323.5432
+"lead","LEAD_GENERATION","true",6576,0,37,15,0.3330,0,0.0080,1,1.1231,0.0050,3.4637,"code_crafter/leads-finder",274.1250,295.1815
+"google maps","LEAD_GENERATION","false",59203,0,304,90,0.6370,0,0.0085,0.9998,1.4253,0.0030,4.6996,"compass/crawler-google-places",236.1538,286.6567
+"linkedin post","LEAD_GENERATION","true",15364,0,72,39,0.4278,0,0.0009,0.9995,1.6764,0.0030,4.9512,"harvestapi/linkedin-post-search",219.8000,284.9523
+"linkedin job","JOBS","true",30606,0.0678,146,52,0.5744,0,0.0077,0.9977,1.2951,0.0020,4.5935,"curious_coder/linkedin-jobs-scraper",245.7987,283.3636
+"youtube transcript","DEVELOPER_TOOLS","false",7345,0,102,25,0.3146,0,0.0721,0.9977,1.3756,0.0050,3.7232,"pintostudio/youtube-transcript-scraper",193.6154,259.2460
+"facebook ad","SOCIAL_MEDIA","true",14756,0,68,30,0.3947,0.3947,0.0021,0.9998,1.5475,0.0015,4.1843,"apify/facebook-ads-scraper",288.1290,217.8392
+"reddit","SOCIAL_MEDIA","true",9174,0,25,11,0.7998,0,0.0592,0.9975,1.4977,0.0020,4.5702,"trudax/reddit-scraper-lite",153.0833,209.0117
+"taobao","ECOMMERCE","false",1024,0.0925,17,4,0.5461,0,0.1399,1,2.0292,0.0045,5,"zen-studio/taobao-detail-scraper",92.9333,168.2003
+"instagram transcript","SOCIAL_MEDIA","true",1261,0,7,4,0.5139,0,0.0023,1,1.2759,0.0100,4.3211,"apple_yang/instagram-transcripts-scraper",122.6000,139.1074
+"youtube channel","SOCIAL_MEDIA","false",5672,0,128,26,0.4457,0,0.0044,1,1.4003,0.0030,4.6255,"streamers/youtube-channel-scraper",116.4444,138.9998
+"google flight","TRAVEL","false",1033,0,32,6,0.3514,0,0.0470,0.9990,1.4441,0.0020,4.0489,"johnvc/Google-Flights-Data-Scraper-Flight-and-Price-Search",95.7143,125.7173
+"youtube video","VIDEOS","false",4839,0,79,25,0.4666,0,0.0097,0.9981,1.4279,0.0050,5,"starvibe/youtube-video-transcript",99.2692,120.7062
+"facebook search","SOCIAL_MEDIA","true",2560,0,13,12,0.3199,0.3199,0.0090,1,1.5629,0.0050,4.9578,"apify/facebook-search-scraper",133.9231,115.9186
+"similarweb","SEO_TOOLS","false",1761,0,29,14,0.1959,0,0.0047,1,1.4651,0.0050,4.4901,"curious_coder/similarweb-scraper",94.4000,115.3241
+"tiktok profile","SOCIAL_MEDIA","true",8907,0,74,33,0.6568,0,0.0039,1,1.6130,0.0025,4.7279,"clockworks/tiktok-profile-scraper",89.9118,115.0922
+"youtube comment","SOCIAL_MEDIA","true",3069,0,68,9,0.6931,0,0.0057,0.9997,1.4470,0.0010,4.9009,"streamers/youtube-comments-scraper",94.2000,114.5603
+"facebook profile","SOCIAL_MEDIA","true",1468,0,17,10,0.4251,0,0.0456,1,1.8504,0.0040,0,"automation-lab/facebook-public-profile-scraper",76.7273,113.8917
+"amazon review","ECOMMERCE","false",2737,0,27,11,0.6105,0,0.0198,0.9996,1.4736,0.0040,3.9205,"junglee/amazon-reviews-scraper",88.8333,112.0740
+"douyin","SOCIAL_MEDIA","true",2887,0.1329,37,19,0.4728,0,0.0097,1,2.1178,0.0050,5,"zen-studio/douyin-search-scraper",76.1000,109.6998
+"instagram follower","SOCIAL_MEDIA","true",5590,0,52,32,0.3030,0.2671,0.0103,0.9959,1.5377,0.0025,4.7735,"scraping_solutions/instagram-scraper-followers-following-no-cookies",118.0606,109.0525
+"instagram related","SOCIAL_MEDIA","true",758,0,10,5,0.2982,0,0.0081,1,1.4239,0.0040,0,"instagram-scraper/instagram-related-profiles",88.6667,107.5249
+"instagram stories","SOCIAL_MEDIA","true",769,0,14,5,0.4200,0,0.0113,1,1.9718,0.0040,4.7175,"datavoyantlab/advanced-instagram-stories-scraper",74.3333,106.7452
+"career","JOBS","false",1784,0,19,3,0.8150,0,0.0003,1,1.5257,0.0030,4.0837,"fantastic-jobs/career-site-job-listing-api",82.5000,101.9639
+"trustpilot review","LEAD_GENERATION","false",1717,0.0355,53,11,0.3949,0,0.0242,0.9977,1.2328,0.0010,4.8031,"memo23/trustpilot-scraper-ppe",86.5833,100.5509
+"glassdoor job","JOBS","false",2078,0,28,7,0.6631,0,0.0134,1,1.2433,0.0016,4.3499,"valig/glassdoor-jobs-scraper",87.5000,100.1750
+"google ad","LEAD_GENERATION","false",2656,0,94,25,0.2331,0,0.0110,0.9989,1.4921,0.0015,5,"scrapesage/google-ads-transparency-scraper",78.3462,97.7047
+"tiktok trends","SOCIAL_MEDIA","true",838,0,9,6,0.3556,0,0.0194,1,1.4358,0.0037,5,"data_xplorer/tiktok-trends",77.1429,96.0261
+"linkedin people","LEAD_GENERATION","true",1891,0,15,13,0.4580,0,0.0200,1,1.5619,0.0050,5,"memo23/linkedin-people-search",73.2143,95.1604
+"amazon bestsellers","ECOMMERCE","false",688,0,11,4,0.5189,0,0.0506,1,1.6808,0.0025,4.2537,"junglee/amazon-bestsellers",66.2000,94.5071
+"google job","JOBS","false",1024,0,28,9,0.3545,0,0.1472,1,1.0968,0.0040,4.5452,"johnvc/Google-Jobs-Scraper",66.1000,89.6084
+"x x","SOCIAL_MEDIA","true",11408,0.0050,117,49,0.6890,0,0.0029,0.9956,1.5573,0.0024,3.8592,"apidojo/tweet-scraper",70.9600,88.6680
+"email","LEAD_GENERATION","true",3890,0.0122,126,40,0.2378,0,0.0230,0.9864,1.4045,0.0049,4.8388,"bounceverify/bounceverify-email-verifier",72.3089,88.4109
+"tiktok shop","ECOMMERCE","true",2175,0,76,29,0.1655,0,0.0728,1,1.5562,0.0050,4.5794,"pratikdani/tiktok-shop-scraper",60.5000,86.4553
+"wellfound","JOBS","false",1045,0,41,9,0.2622,0,0.0217,1,1.1350,0.0020,5,"blackfalcondata/wellfound-scraper",77.1000,85.7032
+"x profile","SOCIAL_MEDIA","true",1455,0,29,13,0.3388,0,0.0009,1,1.4857,0.0008,4.3441,"scraper_one/x-profile-posts-scraper",68.7143,83.9057
+"google play","DEVELOPER_TOOLS","false",1151,0.0271,71,12,0.2475,0,0.0385,0.9991,1.3187,0.0010,4.9537,"neatrat/google-play-store-reviews-scraper",66.6410,82.3474
+"instagram reels","SOCIAL_MEDIA","true",1943,0,39,19,0.3577,0,0.0116,1,1.5905,0.0025,5,"data-slayer/instagram-search-reels",62.4000,80.5226
+"youtube","VIDEOS","false",11106,0,22,7,0.9553,0,0.0184,0.9995,1.5676,0.0020,4.7977,"streamers/youtube-scraper",62.0000,80.4413
+"threads post","SOCIAL_MEDIA","true",1860,0,23,10,0.6382,0,0.0116,1,1.5457,0.0030,4.0979,"futurizerush/meta-threads-scraper",61.1818,77.8289
+"meta","SOCIAL_MEDIA","true",1309,0,47,15,0.2086,0.0374,0.0142,0.9855,1.4316,0.0030,4.9733,"whoareyouanas/meta-ad-scraper",64.7500,75.5786
+"tiktok transcript","SOCIAL_MEDIA","true",737,0,18,7,0.3324,0,0.0210,1,1.3523,0.0020,4.7763,"scrape-creators/best-tiktok-transcripts-scraper",61.5000,74.5187
+"shopee","ECOMMERCE","false",1208,0,28,13,0.2012,0,0.0392,1,1.0003,0.0045,4.3340,"gio21/shopee-scraper",68.9286,74.3418
+"amazon product","ECOMMERCE","false",3358,0,91,24,0.6117,0,0.0984,0.9943,1.4304,0.0040,4.1567,"junglee/Amazon-crawler",52.1600,74.2326
+"instagram story","SOCIAL_MEDIA","true",679,0,7,6,0.3814,0,0.0004,1,1.5100,0.0150,4.1624,"louisdeconinck/instagram-story-details-scraper",60,73.7836
+"tiktok comment","SOCIAL_MEDIA","true",5180,0,50,14,0.8342,0,0.0104,1,1.5412,0.0010,4.7354,"clockworks/tiktok-comments-scraper",57.2667,72.5744
+"tiktok user","SOCIAL_MEDIA","true",743,0,19,6,0.4199,0,0.0006,1,1.3810,0.0050,4.6423,"clockworks/tiktok-user-search-scraper",61.5714,72.4453
+"x post","SOCIAL_MEDIA","true",796,0,10,5,0.5741,0,0.0010,1,1.5547,0.0025,5.0000,"scraper_one/x-posts-search",56.5000,70.5845
+"whatsapp number","LEAD_GENERATION","true",768,0,13,10,0.3073,0,0.1092,1,1.3731,0.0050,5,"devscrapper/whatsapp-number-validator",48.3636,69.0465
+"tripadvisor review","TRAVEL","false",1122,0,27,7,0.6301,0,0.0015,1,1.7431,0.0010,4.9580,"maxcopell/tripadvisor-reviews",51.8750,68.7005
+"seek","JOBS","false",688,0,40,6,0.4491,0,0.0045,1,1.5438,0.0020,5.0000,"blackfalcondata/seek-scraper",54.1429,67.8703
+"keyword","SEO_TOOLS","false",886,0.1015,25,8,0.5271,0,0.0384,1,1.8273,0.0050,0,"aitorsm/keyword-volume",46.5556,67.7654
+"mobile","AUTOMATION","false",436,0,21,5,0.3326,0,0.0011,1,1.9407,0.0010,4,"3x1t/mobile-de-scraper-ppr",48.5000,67.7066
+"upwork","JOBS","false",1565,0,37,16,0.3681,0,0.0070,1,1.2995,0.0040,4.7574,"neatrat/upwork-job-scraper",58.1765,67.2487
+"contact","LEAD_GENERATION","true",2876,0,24,11,0.7629,0,0.0074,1,1.3323,0.0060,4.6938,"vdrmota/contact-info-scraper",56.8333,66.5732
+"ahrefs","SEO_TOOLS","false",611,0,10,5,0.4926,0,0.0157,1,1.5174,0.0100,4.4461,"pro100chok/ahrefs-seo-tools",51.6667,65.6399
+"g2","AUTOMATION","false",662,0,28,9,0.2568,0,0.0431,1,1.3859,0.0057,5,"automation-lab/g2-scraper",49.2000,62.9079
+"pinterest pins","SOCIAL_MEDIA","true",799,0,21,9,0.3705,0,0.0206,1,1.4422,0.0020,5,"automation-lab/pinterest-scraper",50.3000,62.8942
+"idealista","REAL_ESTATE","false",787,0,26,10,0.3825,0,0.0410,1,1.7196,0.0010,3.7607,"igolaizola/idealista-scraper",44.1818,62.6896
+"google news","NEWS","false",1318,0,79,15,0.4029,0,0.0070,0.9970,1.5132,0.0020,4.8956,"data_xplorer/google-news-scraper-fast",49.1875,61.1689
+"xiaohongshu","SOCIAL_MEDIA","true",1061,0,19,6,0.6730,0,0.0072,1,1.4791,0.0060,0,"zen-studio/rednote-comments-scraper",49.5714,61.1565
+"mercadolibre","ECOMMERCE","false",579,0,25,8,0.2746,0,0.0517,1,1.3863,0.0030,5,"karamelo/mercadolibre-scraper-espanol-castellano",46.6667,60.6300
+"xing","JOBS","false",498,0,20,6,0.3635,0,0.0241,1,1.6082,0.0010,4.5694,"shahidirfan/Xing-Jobs-Scraper",45.2857,60.1917
+"facebook marketplace","ECOMMERCE","true",1842,0,41,11,0.4419,0.4419,0.0061,1,1.5397,0.0020,3.9292,"apify/facebook-marketplace-scraper",85.6667,60.0511
+"reddit post","SOCIAL_MEDIA","true",4855,0,58,21,0.7767,0,0.0169,1,1.3883,0.0020,4.4672,"harshmaur/reddit-scraper",49.2727,60.0213
+"job","JOBS","false",1236,0,90,17,0.3172,0,0.0168,0.9935,1.3940,0.0030,5,"openclawai/job-board-scraper",46.8889,56.8543
+"youtube search","SOCIAL_MEDIA","false",1108,0.0867,39,12,0.4513,0,0.0011,1,1.4222,0.0010,4.8206,"api-ninja/youtube-search-scraper",46.7692,55.8970
+"tiktok video","SOCIAL_MEDIA","true",1851,0,56,13,0.6586,0,0.0062,0.9908,1.5012,0.0030,4.6018,"clockworks/tiktok-video-scraper",45.1429,55.4804
+"yelp","TRAVEL","false",313,0,6,2,0.5335,0,0.0266,1,1.1286,0.0050,2.7050,"tri_angle/yelp-scraper",48.6667,54.4495
+"linkedin ad","SOCIAL_MEDIA","true",692,0,24,9,0.4032,0,0.0098,1,1.6648,0.0025,4.9992,"silva95gustavo/linkedin-ad-library-scraper",41.3000,54.3283
+"rednote","SOCIAL_MEDIA","true",1469,0,37,16,0.5391,0,0.0057,1,1.7857,0.0050,4.0342,"zen-studio/rednote-search-scraper",39.8235,53.8172
+"product","LEAD_GENERATION","false",962,0,52,10,0.5457,0,0.0174,1,1.7087,0.0035,5,"zen-studio/1688-wholesale-scraper",39.7273,53.7386
+"airbnb","TRAVEL","false",982,0,11,4,0.7790,0,0.0199,1,1.3766,0.0020,4.5497,"tri_angle/airbnb-scraper",43.4000,52.9479
+"instagram highlights","SOCIAL_MEDIA","true",392,0,6,4,0.4745,0,0.0003,1,1.6288,0.0050,0,"seemuapps/instagram-highlights-scraper",41.2000,52.6154
+"stepstone","JOBS","false",814,0,27,9,0.4791,0,0.0083,1,1.4675,0.0020,5,"memo23/stepstone-search-cheerio-ppr",42.4000,52.2149
+"instagram following","SOCIAL_MEDIA","true",813,0,20,11,0.3210,0,0.0186,1,1.1863,0.0025,3.9457,"louisdeconinck/instagram-following-scraper",46,51.9688
+"instagram email","LEAD_GENERATION","true",621,0,16,8,0.3639,0,0.0181,1,1.2673,0.0150,4.0014,"devil_port369-owner/instagram-email-phone-scraper-pay-per-result",43.8889,51.2019
+"zillow","REAL_ESTATE","false",1326,0,26,5,0.8047,0,0.0122,0.9977,1.3150,0.0020,4.3356,"maxcopell/zillow-detail-scraper",43.1667,50.5984
+"tiktok hashtag","SOCIAL_MEDIA","true",1887,0,32,7,0.8219,0,0.0046,1,1.4152,0.0022,4.9248,"clockworks/tiktok-hashtag-scraper",42.0000,50.4270
+"b2b","LEAD_GENERATION","true",466,0,47,6,0.3391,0,0.0062,0.9914,1.2993,0.0100,4.5932,"olympus/b2b-leads-finder",44,50.3369
+"reddit search","SOCIAL_MEDIA","true",667,0,27,7,0.5277,0,0.0022,1,1.6008,0.0020,1,"clearpath/reddit-search-scraper",39.3750,50.0341
+"yelp review","LEAD_GENERATION","false",508,0,10,7,0.3898,0,0.0005,1,1.5992,0.0010,5,"web_wanderer/yelp-reviews-scraper",38.7500,49.0470
+"google image","SEO_TOOLS","false",602,0,15,5,0.5615,0,0.0106,1,1.1913,0.0020,4.4785,"hooli/google-images-scraper",44,49.0399
+"sports","DEVELOPER_TOOLS","false",450,0,28,7,0.3022,0,0.0122,1,1.4658,0.0050,0,"seemuapps/sports-odds-scraper",39.2500,48.6781
+"threads replies","SOCIAL_MEDIA","true",393,0,6,4,0.6590,0,0.1988,1,1.6041,0.0020,1.7883,"futurizerush/threads-replies-scraper",26.8000,47.4407
+"bayt","JOBS","false",338,0,13,5,0.3373,0,0.0278,1,1.4342,0.0015,5,"blackfalcondata/bayt-scraper",37.3333,47.1940
+"instagram user","SOCIAL_MEDIA","true",562,0,19,7,0.4288,0,0.0284,1,1.2298,0.0060,3.5988,"apidojo/instagram-user-scraper",40.1250,47.0211
+"google trends","SEO_TOOLS","false",2901,0,81,20,0.5088,0.5088,0.0777,0.9941,1.5039,0.0030,3.6774,"apify/google-trends-scraper",67.8571,46.9547
+"shopify store","ECOMMERCE","false",513,0,44,7,0.4016,0,0.0244,1,1.3500,0.0040,4.3873,"clearpath/shopify-store-leads",38.3750,46.7628
+"google lens","AI","false",563,0,13,9,0.3020,0,0.0114,1,1.3447,0.0050,3.9112,"borderline/google-lens",39.3000,46.6089
+"temu product","ECOMMERCE","false",858,0.2353,9,5,0.7777,0,0.0139,1,2.4615,0.0030,5.0000,"crw/temu-products-scraper",31.7778,46.1886
+"tiktok search","SOCIAL_MEDIA","true",796,0,21,10,0.5578,0,0.0440,1,1.7520,0.0025,5.0000,"xmolodtsov/tiktok-search-scraper",32,46.0800
+"linkedin email","LEAD_GENERATION","true",1183,0,13,10,0.6196,0,0.0005,1,1.2563,0.0030,5,"vulnv/linkedin-email-finder",40.9091,45.8992
+"x follower","SOCIAL_MEDIA","true",606,0,13,7,0.4983,0,0.0015,1,1.4429,0.0002,4.4508,"kaitoeasyapi/premium-x-follower-scraper-following-data",38.0000,45.7781
+"tiktok follower","SOCIAL_MEDIA","true",777,0,21,8,0.5534,0,0.0045,1,1.3809,0.0025,4.7204,"clockworks/tiktok-followers-scraper",38.5556,45.7176
+"semrush","SEO_TOOLS","false",805,0,16,8,0.5814,0,0.0168,0.9727,1.4384,0.0020,5,"pro100chok/semrush-scraper",37.4444,45.1446
+"google shopping","ECOMMERCE","false",448,0,27,7,0.3237,0,0.0106,1,1.3467,0.0035,5,"burbn/google-shopping-scraper",37.8750,44.8807
+"app","DEVELOPER_TOOLS","false",653,0,88,7,0.5436,0,0.0146,0.9709,1.4134,0.0020,4.9794,"thewolves/appstore-reviews-scraper",37.2500,44.2528
+"greenhouse","JOBS","false",391,0,52,6,0.3171,0,0.0042,1,1.2947,0.0020,3,"fantastic-jobs/greenhouse-jobs-api",38.1429,43.7622
+"search","SOCIAL_MEDIA","false",548,0,18,5,0.6040,0,0.0009,1,1.4510,0.0080,3.4412,"watcher.data/search-threads-by-keywords",36.1667,43.6478
+"apple app","DEVELOPER_TOOLS","false",334,0,27,5,0.3293,0,0.0037,1,1.3414,0.0020,5,"johnvc/apple-app-store-reviews-api",37.3333,43.5602
+"aliexpress product","ECOMMERCE","false",686,0,34,11,0.3557,0,0.0090,1,1.3243,0.0030,5,"devcake/aliexpress-products-scraper",36.8333,43.1538
+"apollo","LEAD_GENERATION","false",369,0,4,3,0.6802,0,0.1782,1,1.1507,0.0050,0,"coladeu/apollo-people-leads-scraper",29.5000,42.9210
+"youtube shorts","SOCIAL_MEDIA","false",3578,0,38,7,0.9338,0,0.0019,0.9986,1.9735,0.0030,4.3522,"streamers/youtube-shorts-scraper",29.6250,41.7213
+"yandex","SEO_TOOLS","false",639,0,44,14,0.1909,0,0.0126,0.9890,1.4242,0.0034,3.5913,"zen-studio/yandex-maps-scraper",34.4667,41.7069
+"amazon search","ECOMMERCE","false",433,0,15,5,0.5104,0,0.0068,0.8499,1.8772,0.0025,0,"santamaria-automations/amazon-search-scraper",35.3333,41.7053
+"telegram channel","SOCIAL_MEDIA","true",555,0,67,12,0.2036,0,0.0171,0.9982,1.3648,0.0020,4.9053,"truefetch/telegram-channel-message",34,41.0058
+"alibaba product","ECOMMERCE","false",407,0,18,6,0.3808,0,0.0100,1,1.2434,0.0030,5,"zen-studio/alibaba-scraper",36,40.9432
+"hiring","JOBS","false",338,0,26,7,0.3136,0,0.0223,1,1.8237,0.0040,5,"blackfalcondata/hiringcafe-scraper",29.0000,40.9132
+"linkedin sales","LEAD_GENERATION","true",476,0,10,6,0.3676,0,0.0048,1,0.8831,0.0100,4.4103,"curious_coder/linkedin-sales-navigator-search-scraper",43,40.7966
+"google keyword","SEO_TOOLS","false",355,0,20,5,0.3211,0,0.0227,1,0.9087,0.0050,3,"s-r/google-keywords",40.1667,40.0240
+"company","LEAD_GENERATION","false",627,0,96,16,0.1324,0,0.0487,0.9968,1.2565,0.0040,4.8846,"peakydev/company-organization-scraper-apollo-linkedin",32,39.2351
+"tiktok creative","SOCIAL_MEDIA","true",369,0,13,7,0.2656,0,0.0077,1,1.2978,0.0025,5,"doliz/tiktok-creative-center-scraper",33.8750,39.1865
+"facebook video","SOCIAL_MEDIA","true",494,0,15,7,0.2692,0.2692,0.0014,1,1.3863,0.0050,4.6237,"apify/facebook-video-search-scraper",45.1250,38.9366
+"tech","DEVELOPER_TOOLS","false",1304,0,32,2,0.9371,0,0.0019,1,2.7491,0.0040,0,"nexgendata/wappalyzer-replacement",27.3333,38.8026
+"image","AUTOMATION","false",594,0,51,13,0.1919,0.0118,0.0006,0.9630,1.4109,0.0050,5.0000,"onescales/bulk-image-downloader",34.2857,38.8002
+"tiktok ad","SOCIAL_MEDIA","true",740,0,43,16,0.2419,0,0.0234,0.9514,1.3653,0.0025,4.9220,"lexis-solutions/tiktok-ads-scraper",33,38.3988
+"naver","SEO_TOOLS","false",555,0,55,16,0.0991,0,0.0051,1,1.6372,0.0020,5,"delicious_zebu/naver-shopping-reviews-scraper",29.4118,38.0202
+"spotify","SOCIAL_MEDIA","false",562,0,47,13,0.2883,0,0.0279,0.9964,1.5846,0.0030,5,"beatanalytics/spotify-play-count-scraper",28.5714,37.8375
+"booking com","TRAVEL","false",596,0,53,11,0.4144,0,0.0638,1,1.2762,0.0040,0,"santamaria-automations/booking-com-scraper",29.0833,37.0459
+"social","SOCIAL_MEDIA","false",948,0.0916,61,19,0.2068,0.0759,0.0073,0.9589,1.1668,0.0060,4.7018,"tri_angle/social-media-finder",37.6000,36.5134
+"glassdoor review","LEAD_GENERATION","false",448,0,13,4,0.6808,0,0.0159,1,1.5152,0.0090,4.5658,"memo23/glassdoor-scraper-ppr",28.6000,36.3278
+"crunchbase","LEAD_GENERATION","false",458,0,24,10,0.1965,0,0.0177,0.9694,1.1615,0.0050,5,"memo23/crunchbase-scraper",33.4545,36.1869
+"instagram post","SOCIAL_MEDIA","true",15670,0,66,25,0.7825,0.7825,0.0011,0.9993,1.5983,0.0024,4.2851,"apify/instagram-post-scraper",131.1154,36.1128
+"threads search","SOCIAL_MEDIA","true",725,0,14,8,0.6207,0,0.0004,1,1.3645,0.0036,3.4552,"igview-owner/threads-search-scraper",30.5556,35.7210
+"facebook comment","SOCIAL_MEDIA","true",4784,0,25,12,0.7226,0.7226,0.0028,1,1.5735,0.0020,4.7485,"apify/facebook-comments-scraper",102.0769,35.7170
+"remote","JOBS","false",346,0,36,8,0.2775,0,0.0169,0.9971,1.5332,0.0020,5,"memo23/remote-jobs-aggregator",27.7778,35.4549
+"vinted","ECOMMERCE","false",306,0,34,7,0.2941,0,0.0341,1,1.4878,0.0020,4.8489,"epicscrapers/vinted-search-scraper",27.0000,35.1779
+"y","LEAD_GENERATION","false",366,0,36,7,0.3087,0,0.0050,1,1.2119,0.0030,4.0609,"parsebird/yc-jobs-scraper",31.6250,35.1607
+"zillow search","REAL_ESTATE","false",745,0,17,3,0.8537,0,0.0170,1,1.5553,0.0050,4.9501,"maxcopell/zillow-scraper",27.2500,35.1378
+"instagram comment","SOCIAL_MEDIA","true",6994,0,38,17,0.7285,0.7285,0.0035,1,1.4540,0.0023,4.6641,"apify/instagram-comment-scraper",105.5000,34.7850
+"snapchat","SOCIAL_MEDIA","true",545,0,53,15,0.1468,0,0.0004,1,1.4010,0.0030,5,"tri_angle/snapchat-scraper",29.0625,34.4273
+"instagram keyword","SOCIAL_MEDIA","true",512,0,8,6,0.6367,0,0.0174,1,1.4884,0.0050,4.2826,"crawlerbros/instagram-keyword-search-scraper",26.5714,33.5442
+"substack","SOCIAL_MEDIA","false",333,0,63,7,0.3574,0,0.0140,1,1.4756,0.0025,0,"automation-lab/substack-scraper",26.7500,33.4045
+"ozon","ECOMMERCE","false",539,0,11,6,0.6920,0,0.0045,1,1.9227,0.0030,4.6996,"zen-studio/ozon-scraper-pro",23.7143,33.1809
+"skool","LEAD_GENERATION","false",305,0,41,7,0.2230,0,0.0274,0.9934,1.1409,0.0040,0,"crustapi/skool-community-scraper",29.6250,33.1564
+"tennis","AUTOMATION","false",1210,0,26,4,0.9066,0,0.0159,1,2.0983,0.0050,5,"crawlstone/tennis-scraper",22.6000,32.9805
+"x search","SOCIAL_MEDIA","true",605,0,10,6,0.6826,0,0.0118,1,1.3515,0.0050,4.8812,"api-ninja/x-twitter-advanced-search",27.4286,32.6359
+"facebook post","SOCIAL_MEDIA","true",17484,0,43,28,0.8023,0.8023,0.0033,1,1.8307,0.0035,4.6423,"apify/facebook-posts-scraper",119.2069,32.1023
+"leboncoin","REAL_ESTATE","false",354,0,33,9,0.2316,0,0.0060,0.9774,1.4122,0.0015,3.6498,"fatihtahta/leboncoin-fr-scraper",27.2000,31.9726
+"domain","LEAD_GENERATION","false",494,0,86,12,0.1862,0,0.0044,0.9636,1.1085,0.0040,5,"emastra/website-contact-scraper",30.9231,31.6434
+"avito","ECOMMERCE","false",399,0,27,8,0.4637,0,0.0147,1,1.5729,0.0040,5.0000,"zen-studio/avito-listings-scraper",23.7778,30.6986
+"skip","LEAD_GENERATION","false",1058,0,13,11,0.7136,0,0.0003,1,1.4600,0.0150,4.6283,"one-api/skip-trace",25.2500,30.5301
+"x user","SOCIAL_MEDIA","true",1233,0,16,8,0.8248,0,0.0154,1,1.4814,0.0030,4.4437,"apidojo/twitter-user-scraper",24,30.1087
+"dice","JOBS","false",362,0,33,6,0.4807,0,0.0063,1,1.2107,0.0010,4.5399,"shahidirfan/Dice-Job-Scraper",26.8571,29.9224
+"video","VIDEOS","false",481,0,41,13,0.2869,0,0.0456,1,1.1935,0.0150,4.2709,"invideoiq/video-transcriber",24.5000,29.2078
+"x","SOCIAL_MEDIA","true",718,0,9,5,0.7883,0,0.0006,1,1.3174,0.0007,4.4269,"danek/twitter-scraper",25.3333,29.1139
+"instagram profile","SOCIAL_MEDIA","true",33446,0,101,41,0.8335,0.8335,0.0042,0.9999,1.6490,0.0025,4.7471,"apify/instagram-profile-scraper",132.5714,28.5725
+"realtor","REAL_ESTATE","false",547,0,88,17,0.1572,0,0.0010,0.9909,1.2138,0.0030,5.0000,"memo23/realtor-search-cheerio",25.6111,28.0146
+"amazon","ECOMMERCE","false",521,0,6,2,0.9002,0,0.1593,1,1.4815,0.0050,4.9742,"junglee/free-amazon-product-scraper",17.3333,27.8184
+"medium","NEWS","false",322,0,22,2,0.8230,0,0.0066,1,1.8365,0.0040,0,"moving_beacon-owner1/medium-scraper",19.0000,26.0866
+"tiktok post","SOCIAL_MEDIA","true",362,0,10,4,0.6989,0,0.0005,1,1.3541,0.0020,5,"scrapeforge/tiktok-posts",21.8000,25.3948
+"backlink","SEO_TOOLS","false",393,0,6,3,0.8219,0,0.0088,1,2.1593,0.0500,5,"s-r/backlinks-checker",17.5000,25.1829
+"facebook group","SOCIAL_MEDIA","true",7110,0,39,18,0.7776,0.7776,0.0015,1,1.8102,0.0030,4.9008,"apify/facebook-groups-scraper",83.2105,24.9693
+"ziprecruiter","JOBS","false",316,0,18,6,0.5222,0,0.0247,1,1.2076,0.0030,0,"crawlerbros/ziprecruiter-scraper-pro",21.5714,24.8760
+"facebook reels","SOCIAL_MEDIA","true",1255,0,18,10,0.5865,0.5865,0.0012,1,1.5826,0.0030,2.8133,"apify/facebook-reels-scraper",47.1818,24.6063
+"quora","SOCIAL_MEDIA","true",356,0,12,6,0.6292,0,0.0221,1,1.2775,0.0035,5,"fatihtahta/quora-scraper",18.8571,22.2578
+"google search","SEO_TOOLS","false",21161,0,58,21,0.8678,0.8678,0.0038,0.9995,1.6802,0.0020,4.6257,"apify/google-search-scraper",127.1818,21.9552
+"etsy listing","ECOMMERCE","false",344,0,11,2,0.8430,0,0.0091,1,1.3490,0.0035,0,"yumitori/etsy-listings-scraper",18.0000,21.2850
+"booking","TRAVEL","false",887,0,8,3,0.9278,0,0.0144,1,1.6030,0.0050,4.5373,"voyager/booking-scraper",16,20.8417
+"facebook page","SOCIAL_MEDIA","true",7283,0,80,29,0.7211,0.7559,0.0016,1,1.4985,0.0040,4.6409,"apify/facebook-pages-scraper",67.7000,20.2952
+"ebay sold","ECOMMERCE","false",845,0,21,7,0.8568,0,0.0002,0.9988,1.7316,0.0035,4.3783,"caffein.dev/ebay-sold-listings",15.1250,19.8888
+"clutch","LEAD_GENERATION","false",380,0,41,6,0.5737,0,0.0504,1,0.3620,0.0029,4.5958,"memo23/apify-clutch-cheerio",23.1429,18.0136
+"threads","SOCIAL_MEDIA","true",334,0.9211,13,4,0.7365,0,0.0211,0.9491,0.9635,0.0030,4.2378,"automation-lab/threads-scraper",17.6000,17.0872
+"pinterest","SOCIAL_MEDIA","true",402,0,9,1,0.9303,0,0.0082,0.9950,1.2036,0.0040,5.0000,"fatihtahta/pinterest-scraper-search",14.0000,15.5330
+"instagram hashtag","SOCIAL_MEDIA","true",11360,0,39,19,0.8431,0.8793,0.0071,1,1.4819,0.0023,3.4064,"apify/instagram-hashtag-scraper",89.1000,13.2752
+"indeed","JOBS","false",2282,0,2,2,0.9860,0,0.0021,1,1.5180,0.0060,3.0071,"misceres/indeed-scraper",10.6667,13.1984
+"booking review","TRAVEL","false",483,0,8,1,0.9669,0,0.0009,1,1.9346,0.0014,4.3160,"voyager/booking-reviews-scraper",8.0000,11.1478
+"threads profile","SOCIAL_MEDIA","true",728,0,25,8,0.6909,0.6909,0.0013,1,1.4908,0.0030,4.9898,"apify/threads-profile-api-scraper",25,9.4587
+"airbnb rooms","TRAVEL","false",410,0,2,2,0.9537,0,0.0008,1,1.6466,0.0050,4.5563,"tri_angle/airbnb-rooms-urls-scraper",6.3333,8.1401
+"instagram","SOCIAL_MEDIA","true",46549,0,24,13,0.9492,0.9712,0.0023,1.0000,1.7243,0.0025,4.7023,"apify/instagram-scraper",168.9286,6.4098
+"web","DEVELOPER_TOOLS","false",16212,0,46,7,0.8839,0.9812,0.0572,0.9158,2.4613,0.0050,5,"apify/web-fetch",235.3750,6.3703
+"facebook follower","SOCIAL_MEDIA","true",307,0,10,5,0.6645,0.6645,0.0022,1,1.1413,0.0050,4.7170,"apify/facebook-followers-following-scraper",17.1667,6.1805
+"tripadvisor","TRAVEL","false",358,0,5,1,0.9721,0,0.0022,1,1.4514,0.0034,4.9287,"maxcopell/tripadvisor",5.0000,6.0496
+"x 0","SOCIAL_MEDIA","true",4405,0,2,1,0.9982,0,0.0015,1,1.7608,0.0003,4.2781,"kaitoeasyapi/twitter-x-data-tweet-scraper-pay-per-result-cheapest",4.0000,5.3238
+"article","AI","false",327,0,8,3,0.8165,0,0.0499,0.1835,1.8133,0.0030,4.8294,"lukaskrivka/article-extractor-smart",15,4.0761
+"send","INTEGRATIONS","false",407,0,4,2,0.7371,0.7371,0.1176,0.2629,1.7246,0.0050,4.9899,"apify/send-mail",35.6667,3.9986
+"instagram reel","SOCIAL_MEDIA","true",14581,0,18,8,0.9575,0.9575,0.0029,1,1.7203,0.0035,4.3943,"apify/instagram-reel-scraper",68.8889,3.8641
+"facebook event","SOCIAL_MEDIA","true",589,0,12,3,0.8913,0.8913,0.0109,1,1.8959,0.0030,4.9687,"apify/facebook-events-scraper",16.0000,2.4460
+"facebook photos","SOCIAL_MEDIA","true",398,0,6,3,0.8744,0.8744,0.0006,1,1.4832,0.0030,4.7394,"apify/facebook-photos-scraper",12.5000,1.9149
+"e","ECOMMERCE","false",724,0,23,2,0.9254,0.9254,0.0514,0.9959,1.4318,0.0030,4.6726,"apify/e-commerce-scraping-tool",18.0000,1.7644
+"website","DEVELOPER_TOOLS","false",14933,0,272,55,0.7915,0.8550,0.0334,0.1438,1.5335,0.0050,4.6111,"apify/website-content-crawler",55.6071,1.5321
+"instagram search","SOCIAL_MEDIA","true",3564,0,12,5,0.9579,0.9579,0.0505,1,1.4744,0.0060,4.8435,"apify/instagram-search-scraper",25.0000,1.4066
+"facebook review","SOCIAL_MEDIA","true",452,0,4,1,0.9779,0.9779,0.0003,1,1.6866,0.0025,4.6548,"apify/facebook-reviews-scraper",5.0000,0.1437
+"google sheets","AUTOMATION","false",800,0,6,1,0.9888,0,0.6507,0.0112,2.2684,0.0040,4.8106,"lukaskrivka/google-sheets",4.5000,0.1432
+"instagram mentions","SOCIAL_MEDIA","true",640,0,2,1,0.9859,0.9859,0.0036,1,1.5815,0.0027,4.9992,"apify/instagram-tagged-scraper",4.5000,0.0802
+"facebook url","SOCIAL_MEDIA","true",1283,0,4,2,0.9821,0.9821,0.0028,0.0179,2.6973,0.0030,4.9909,"apify/facebook-url-to-id",7.6667,0.0035
+"playwright","DEVELOPER_TOOLS","false",3155,0,5,2,0.9921,0.9921,0.0295,0.0079,2.2187,0.0120,3.7820,"apify/playwright-scraper",8.3333,0.0008
+"puppeteer","DEVELOPER_TOOLS","false",1054,0,2,1,0.9924,0.9924,0.0128,0.0076,2.0440,0.0030,4.9927,"apify/puppeteer-scraper",4.0000,0.0003
+"rag","AI","false",31058,0,13,1,0.9995,0.9995,0.0185,0.0005,1.4429,0.0030,4.7130,"apify/rag-web-browser",7.0000,0.0000
+"x limits","SOCIAL_MEDIA","true",2115,0,1,1,1,0,0.0006,1,1.4388,0.0004,4.7592,"apidojo/twitter-scraper-lite",0,0
+"cheerio","DEVELOPER_TOOLS","false",1253,0,1,1,1,1,0.0062,0,1.7024,,4.7468,"apify/cheerio-scraper",0,0
+"rapid","JOBS","false",660,0,1,1,1,0,0.0013,1,1.0334,0.0005,3.7313,"worldunboxer/rapid-linkedin-scraper",0,0
+"reddit enterprise","AUTOMATION","true",1652,0,1,1,1,0,0.0021,1,1.4104,0.0015,4.2392,"fatihtahta/reddit-scraper-search-fast",0,0

@@ -1,2 +1,4 @@
 node_modules/
 storage/
+# Keep the lockfile for reproducible Actor builds (the repository root ignores lockfiles).
+!package-lock.json

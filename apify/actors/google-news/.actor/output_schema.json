@@ -1,0 +1,12 @@
+{
+  "actorOutputSchemaVersion": 1,
+  "title": "Google News Scraper output",
+  "properties": {
+    "articles": {
+      "type": "string",
+      "title": "Articles",
+      "description": "News articles with title, source, publication date, Google News link and, optionally, the publisher URL.",
+      "template": "{{links.apiDefaultDatasetUrl}}/items?view=overview"
+    }
+  }
+}

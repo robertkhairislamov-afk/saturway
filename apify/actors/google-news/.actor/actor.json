@@ -10,5 +10,6 @@
     "dataset": "./dataset_schema.json"
   },
   "dockerfile": "../Dockerfile",
-  "readme": "../README.md"
+  "readme": "../README.md",
+  "output": "./output_schema.json"
 }

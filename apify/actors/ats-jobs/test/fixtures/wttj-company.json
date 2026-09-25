@@ -1,0 +1,220 @@
+{
+ "data": [
+  {
+   "name": "Senior Data Engineer - Analytics (x/f/m)",
+   "status": "published",
+   "remote": "partial",
+   "reference": "a2c0db07-869d-4e10-ad58-2ce400dd96d1",
+   "updated_at": "2026-09-24T22:02:52.570566Z",
+   "slug": "senior-data-engineer-analytics-x-f-m_paris_DOCTO_1WqDjWd",
+   "wk_reference": "DOCTO_1WqDjWd",
+   "organization": {
+    "name": "Doctolib",
+    "reference": "8GNWxLL",
+    "labels": [
+     "bcorp"
+    ],
+    "slug": "doctolib",
+    "logo": {
+     "url": "https://cdn-images.welcometothejungle.com/WdmCR52zeoOlsD5Iq5ZWkh0lloZvMUgZsWCLbnZ-kDk/rs:auto:400::/q:85/czM6Ly93dHRqLXByb2R1Y3Rpb24vdXBsb2Fkcy9vcmdhbml6YXRpb24vbG9nby8yNDQ1LzE0NDQ5Mi8yOTAzY2RiYi0zYjFlLTQzMWQtYTgyNS1jZGUyZDBkZTRiYjkucG5n",
+     "thumb": {
+      "url": "https://cdn-images.welcometothejungle.com/rGI3kJ414-wKPfHF2PhyB4cYUqfu2SxNgZTB5eKngks/rs:auto:70::/q:85/czM6Ly93dHRqLXByb2R1Y3Rpb24vdXBsb2Fkcy9vcmdhbml6YXRpb24vbG9nby8yNDQ1LzE0NDQ5Mi8yOTAzY2RiYi0zYjFlLTQzMWQtYTgyNS1jZGUyZDBkZTRiYjkucG5n"
+     }
+    },
+    "sectors": [
+     {
+      "name": "Mobile Apps",
+      "parent_name": "Tech"
+     },
+     {
+      "name": "Software",
+      "parent_name": "Tech"
+     },
+     {
+      "name": "SaaS / Cloud Services",
+      "parent_name": "Tech"
+     },
+     {
+      "name": "Health",
+      "parent_name": "Health / Social / Environment"
+     }
+    ],
+    "website_organization": {
+     "slug": "doctolib"
+    },
+    "nb_employees": 3000,
+    "industry": "Mobile Apps, Software, SaaS / Cloud Services, Health"
+   },
+   "contract_type": "full_time",
+   "published_at": "2026-09-24T22:01:15Z",
+   "office": {
+    "city": "Paris",
+    "latitude": 48.85717,
+    "longitude": 2.3414,
+    "country_code": "FR"
+   },
+   "salary_period": null,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_currency": null,
+   "offices": [
+    {
+     "city": "Paris",
+     "latitude": 48.85717,
+     "longitude": 2.3414,
+     "country_code": "FR"
+    }
+   ],
+   "company_summary": "Plateforme de santé pour praticiens et patients en Europe.",
+   "is_bookmarked": false,
+   "experience_min": null,
+   "experience_max": null
+  },
+  {
+   "name": "Stage - Consolidation et Contrôle financier (x/f/m) - janvier 2027",
+   "status": "published",
+   "remote": "partial",
+   "reference": "c2bcb047-9423-43b4-af98-465aee542f7b",
+   "updated_at": "2026-09-24T22:05:49.827894Z",
+   "slug": "stage-consolidation-et-controle-financier-x-f-m-janvier-2027_paris",
+   "wk_reference": "DOCTO_0jODRMQ",
+   "organization": {
+    "name": "Doctolib",
+    "reference": "8GNWxLL",
+    "labels": [
+     "bcorp"
+    ],
+    "slug": "doctolib",
+    "logo": {
+     "url": "https://cdn-images.welcometothejungle.com/WdmCR52zeoOlsD5Iq5ZWkh0lloZvMUgZsWCLbnZ-kDk/rs:auto:400::/q:85/czM6Ly93dHRqLXByb2R1Y3Rpb24vdXBsb2Fkcy9vcmdhbml6YXRpb24vbG9nby8yNDQ1LzE0NDQ5Mi8yOTAzY2RiYi0zYjFlLTQzMWQtYTgyNS1jZGUyZDBkZTRiYjkucG5n",
+     "thumb": {
+      "url": "https://cdn-images.welcometothejungle.com/rGI3kJ414-wKPfHF2PhyB4cYUqfu2SxNgZTB5eKngks/rs:auto:70::/q:85/czM6Ly93dHRqLXByb2R1Y3Rpb24vdXBsb2Fkcy9vcmdhbml6YXRpb24vbG9nby8yNDQ1LzE0NDQ5Mi8yOTAzY2RiYi0zYjFlLTQzMWQtYTgyNS1jZGUyZDBkZTRiYjkucG5n"
+     }
+    },
+    "sectors": [
+     {
+      "name": "Mobile Apps",
+      "parent_name": "Tech"
+     },
+     {
+      "name": "Software",
+      "parent_name": "Tech"
+     },
+     {
+      "name": "SaaS / Cloud Services",
+      "parent_name": "Tech"
+     },
+     {
+      "name": "Health",
+      "parent_name": "Health / Social / Environment"
+     }
+    ],
+    "website_organization": {
+     "slug": "doctolib"
+    },
+    "nb_employees": 3000,
+    "industry": "Mobile Apps, Software, SaaS / Cloud Services, Health"
+   },
+   "contract_type": "internship",
+   "published_at": "2026-09-24T22:01:08Z",
+   "office": {
+    "city": "Paris",
+    "latitude": 48.85717,
+    "longitude": 2.3414,
+    "country_code": "FR"
+   },
+   "salary_period": null,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_currency": null,
+   "offices": [
+    {
+     "city": "Paris",
+     "latitude": 48.85717,
+     "longitude": 2.3414,
+     "country_code": "FR"
+    }
+   ],
+   "company_summary": "Plateforme de santé pour praticiens et patients en Europe.",
+   "is_bookmarked": false,
+   "experience_min": null,
+   "experience_max": null
+  },
+  {
+   "name": "Head of Design System (x/f/m)",
+   "status": "published",
+   "remote": "partial",
+   "reference": "11d20a74-457f-440a-808d-948b5f4bef7e",
+   "updated_at": "2026-09-24T22:00:57.884257Z",
+   "slug": "head-of-design-system-x-f-m_paris",
+   "wk_reference": "DOCTO_xDJKD5m",
+   "organization": {
+    "name": "Doctolib",
+    "reference": "8GNWxLL",
+    "labels": [
+     "bcorp"
+    ],
+    "slug": "doctolib",
+    "logo": {
+     "url": "https://cdn-images.welcometothejungle.com/WdmCR52zeoOlsD5Iq5ZWkh0lloZvMUgZsWCLbnZ-kDk/rs:auto:400::/q:85/czM6Ly93dHRqLXByb2R1Y3Rpb24vdXBsb2Fkcy9vcmdhbml6YXRpb24vbG9nby8yNDQ1LzE0NDQ5Mi8yOTAzY2RiYi0zYjFlLTQzMWQtYTgyNS1jZGUyZDBkZTRiYjkucG5n",
+     "thumb": {
+      "url": "https://cdn-images.welcometothejungle.com/rGI3kJ414-wKPfHF2PhyB4cYUqfu2SxNgZTB5eKngks/rs:auto:70::/q:85/czM6Ly93dHRqLXByb2R1Y3Rpb24vdXBsb2Fkcy9vcmdhbml6YXRpb24vbG9nby8yNDQ1LzE0NDQ5Mi8yOTAzY2RiYi0zYjFlLTQzMWQtYTgyNS1jZGUyZDBkZTRiYjkucG5n"
+     }
+    },
+    "sectors": [
+     {
+      "name": "Mobile Apps",
+      "parent_name": "Tech"
+     },
+     {
+      "name": "Software",
+      "parent_name": "Tech"
+     },
+     {
+      "name": "SaaS / Cloud Services",
+      "parent_name": "Tech"
+     },
+     {
+      "name": "Health",
+      "parent_name": "Health / Social / Environment"
+     }
+    ],
+    "website_organization": {
+     "slug": "doctolib"
+    },
+    "nb_employees": 3000,
+    "industry": "Mobile Apps, Software, SaaS / Cloud Services, Health"
+   },
+   "contract_type": "full_time",
+   "published_at": "2026-09-24T22:00:57Z",
+   "office": {
+    "city": "Paris",
+    "latitude": 48.85717,
+    "longitude": 2.3414,
+    "country_code": "FR"
+   },
+   "salary_period": null,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_currency": null,
+   "offices": [
+    {
+     "city": "Paris",
+     "latitude": 48.85717,
+     "longitude": 2.3414,
+     "country_code": "FR"
+    }
+   ],
+   "company_summary": "Plateforme de santé pour praticiens et patients en Europe.",
+   "is_bookmarked": false,
+   "experience_min": null,
+   "experience_max": null
+  }
+ ],
+ "metadata": {
+  "total": 79,
+  "page": 1,
+  "per_page": 30,
+  "page_count": 3
+ }
+}

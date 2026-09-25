@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { makeSalary, normalizeInterval, salaryFromText } from '../src/core/salary.js';
+import { fixStatedUnits, makeSalary, normalizeInterval, salaryFromText, yearlyMax } from '../src/core/salary.js';
 
 const pick = (salary) => salary && [salary.min, salary.max, salary.currency, salary.interval];
 
@@ -48,3 +48,28 @@ test('salaryFromText reads known pay fields, including single amounts', () => {
   assert.equal(salaryFromText('$68.25/hr'), null);
 });
 
+test('fixStatedUnits repairs salaries typed in the wrong unit', () => {
+  const fix = (min, max, interval, currency = 'EUR') => {
+    const fixed = fixStatedUnits({ min, max, currency, interval });
+    return fixed && [fixed.min, fixed.max, fixed.interval];
+  };
+  assert.deepEqual(fix(45000, 55000, 'year'), [45000, 55000, 'year']);
+  assert.deepEqual(fix(34, 48, 'year'), [34000, 48000, 'year']);
+  assert.deepEqual(fix(700, 900, 'year'), [700, 900, 'month']);
+  assert.deepEqual(fix(2500, null, 'year'), [2500, null, 'month']);
+  assert.deepEqual(fix(8645, 8646, 'year'), [8645, 8646, 'year']);
+  assert.deepEqual(fix(45000, 55000, 'month'), [45000, 55000, 'year']);
+  assert.deepEqual(fix(4167, null, 'month'), [4167, null, 'month']);
+  assert.deepEqual(fix(40000, 65000, 'day'), [40000, 65000, 'year']);
+  assert.deepEqual(fix(550, 600, 'day'), [550, 600, 'day']);
+  assert.deepEqual(fix(1200000, 1500000, 'year', 'CZK'), [1200000, 1500000, 'year']);
+  assert.deepEqual(fix(45, 55, 'year', 'XXX'), [45, 55, 'year']);
+  assert.equal(fix(1, 1, 'year'), null);
+});
+
+test('yearlyMax turns pay per period into a yearly amount', () => {
+  assert.equal(yearlyMax({ min: 40000, max: 50000, interval: 'year' }), 50000);
+  assert.equal(yearlyMax({ min: 1800, max: null, interval: 'month' }), 21600);
+  assert.equal(yearlyMax({ min: 45000, max: null, interval: null }), 45000);
+  assert.equal(yearlyMax(null), 0);
+});

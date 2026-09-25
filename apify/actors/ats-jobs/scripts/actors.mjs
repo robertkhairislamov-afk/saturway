@@ -1,6 +1,6 @@
 // Store metadata and input schema of the job Actors. They share one code base and one output
-// format; only the texts, examples and a few inputs differ. Dice searches a job board instead of
-// company boards, so it has its own search form.
+// format; only the texts, examples and a few inputs differ. Dice and Welcome to the Jungle search a
+// job board instead of company boards, so they have their own search forms.
 
 export const ACTORS = {
   greenhouse: {
@@ -65,12 +65,20 @@ export const ACTORS = {
     seoTitle: 'Dice Jobs Scraper – Extract Job Listings & Salaries',
     seoDescription: 'Scrape Dice.com jobs by keyword and location: title, company, salary, skills, description, posting date and link. All Dice filters. $0.50 per 1,000 jobs.',
   },
+  wttj: {
+    name: 'welcome-to-the-jungle-jobs-scraper',
+    title: 'Welcome to the Jungle Jobs Scraper',
+    description: 'Scrape Welcome to the Jungle jobs in France, Europe, the UK and the US by keyword or company: title, company, salary, remote policy, skills, tools, description and apply link. Filters and alerts.',
+    seoTitle: 'Welcome to the Jungle Jobs Scraper – Jobs & Salaries',
+    seoDescription: 'Scrape Welcome to the Jungle jobs by keyword, country or company: title, company, salary, remote, skills, description. JSON, CSV. $0.50 per 1,000 jobs.',
+  },
 };
 
 export const CATEGORIES = ['JOBS', 'LEAD_GENERATION', 'AUTOMATION'];
 
 export function inputSchema(ats) {
   if (ats === 'dice') return diceInputSchema();
+  if (ats === 'wttj') return wttjInputSchema();
   const actor = ACTORS[ats];
   const properties = {
     companies: {
@@ -175,7 +183,7 @@ export function inputSchema(ats) {
 }
 
 // Settings shared by every job Actor: result filters, monitoring, limits and proxy.
-const commonSettings = ({ proxyDescription }) => ({
+const commonSettings = ({ proxyDescription, site, perSource = 'search' }) => ({
   excludeKeywords: {
     title: 'Exclude title keywords',
     type: 'array',
@@ -187,7 +195,7 @@ const commonSettings = ({ proxyDescription }) => ({
     title: 'Title must contain',
     type: 'array',
     editor: 'stringList',
-    description: 'Keep only jobs whose title contains any of these words or phrases. Dice searches descriptions too, so this makes results stricter. Add <code>*</code> for any ending: <code>data*</code>.',
+    description: `Keep only jobs whose title contains any of these words or phrases. ${site} searches descriptions too, so this makes results stricter. Add <code>*</code> for any ending: <code>data*</code>.`,
   },
   onlyWithSalary: {
     title: 'Only jobs with a salary',
@@ -216,10 +224,10 @@ const commonSettings = ({ proxyDescription }) => ({
     prefill: 50,
   },
   maxItemsPerCompany: {
-    title: 'Maximum jobs per search',
+    title: `Maximum jobs per ${perSource}`,
     type: 'integer',
     minimum: 0,
-    description: 'Save at most this many jobs from each search. Leave empty or 0 for no limit.',
+    description: `Save at most this many jobs from each ${perSource}. Leave empty or 0 for no limit.`,
   },
   proxyConfiguration: {
     title: 'Proxy configuration',
@@ -305,7 +313,88 @@ function diceInputSchema() {
         description: 'Only jobs whose employer is willing to sponsor a work visa.',
       },
       ...commonSettings({
+        site: 'Dice',
         proxyDescription: 'The Actor connects directly, which is fastest. If Dice starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it from the start.',
+      }),
+    },
+  };
+}
+
+function wttjInputSchema() {
+  return {
+    title: ACTORS.wttj.title,
+    description: 'Search Welcome to the Jungle by keyword or list all jobs of companies, in one clean format.',
+    type: 'object',
+    schemaVersion: 1,
+    properties: {
+      searchQueries: {
+        title: 'Job titles or keywords',
+        type: 'array',
+        editor: 'stringList',
+        description: 'What to search, for example <code>product manager</code> or <code>développeur python</code>. Each line is a separate search with the filters below.',
+        prefill: ['python developer'],
+        placeholderValue: 'data analyst',
+      },
+      companies: {
+        title: 'Companies',
+        type: 'array',
+        editor: 'stringList',
+        description: 'Companies whose jobs you want, all of them: the name from the company link, such as <code>doctolib</code>, or a link like <code>https://www.welcometothejungle.com/en/companies/doctolib</code>. The filters below apply too.',
+        placeholderValue: 'doctolib',
+      },
+      countries: {
+        title: 'Countries',
+        type: 'array',
+        editor: 'stringList',
+        sectionCaption: 'Filters',
+        description: 'Two-letter country codes, for example <code>FR</code>, <code>BE</code>, <code>ES</code>, <code>DE</code> or <code>GB</code>. Leave empty for all countries.',
+      },
+      contractTypes: {
+        title: 'Contract type',
+        type: 'array',
+        editor: 'select',
+        description: 'Leave empty for all.',
+        items: {
+          type: 'string',
+          enum: ['full_time', 'part_time', 'internship', 'apprenticeship', 'freelance', 'temporary', 'vie', 'graduate_program', 'volunteer', 'other'],
+          enumTitles: ['Permanent / full-time', 'Part-time', 'Internship', 'Apprenticeship (alternance)', 'Freelance', 'Temporary (CDD)', 'VIE', 'Graduate program', 'Volunteer', 'Other'],
+        },
+      },
+      experienceLevels: {
+        title: 'Experience',
+        type: 'array',
+        editor: 'select',
+        description: 'Years of experience asked for. Leave empty for all.',
+        items: {
+          type: 'string',
+          enum: ['zero_to_one', 'one_to_three', 'three_to_five', 'five_to_ten', 'more_than_ten'],
+          enumTitles: ['Less than 1 year', '1 to 3 years', '3 to 5 years', '5 to 10 years', 'More than 10 years'],
+        },
+      },
+      remoteTypes: {
+        title: 'Remote policy',
+        type: 'array',
+        editor: 'select',
+        description: 'Leave empty for all.',
+        items: { type: 'string', enum: ['fulltime', 'partial', 'punctual', 'no'], enumTitles: ['Full remote', 'Hybrid', 'Occasional remote', 'No remote'] },
+      },
+      minSalary: {
+        title: 'Minimum yearly salary',
+        type: 'integer',
+        minimum: 0,
+        description: 'Keep jobs whose salary reaches this amount per year, in the job\'s currency (usually EUR). Monthly pay counts twelve times. Jobs without a salary are left out.',
+      },
+      postedWithinDays: {
+        title: 'Posted in the last days',
+        type: 'integer',
+        minimum: 0,
+        unit: 'days',
+        description: 'Keep jobs published in the last N days: 1 means today and yesterday. Leave empty or 0 for any date.',
+      },
+      ...commonSettings({
+        site: 'Welcome to the Jungle',
+        perSource: 'search or company',
+        proxyDescription: 'The Actor connects directly, which is fastest. If Welcome to the Jungle starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it from the start.',
       }),
     },
   };
@@ -317,6 +406,7 @@ const EXTRA_COLUMN = {
   lever: ['department', 'Department'],
   ashby: ['department', 'Department'],
   dice: ['employmentType', 'Employment'],
+  wttj: ['employmentType', 'Contract'],
 };
 
 export const datasetSchema = (ats) => {

@@ -1,0 +1,203 @@
+{
+ "data": [
+  {
+   "name": "Product Owner / Product Manager Senior (H/F)",
+   "status": "published",
+   "remote": "partial",
+   "reference": "c7195463-01f1-4206-9311-05cf2d876c39",
+   "search_result": {
+    "score": 2.8398302
+   },
+   "updated_at": "2026-09-23T09:00:06.429248Z",
+   "slug": "product-manager-senior-consultant-e_paris",
+   "wk_reference": "THIGA_66mA4R3",
+   "organization": {
+    "name": "Thiga",
+    "reference": "5NbMx62",
+    "labels": [],
+    "slug": "thiga",
+    "logo": {
+     "url": "https://cdn-images.welcometothejungle.com/k7OGkgRSL5OEj5NDZi1OK7T_nW9eww-CvQQnK0imQGw/rs:auto:400::/q:85/czM6Ly93dHRqLXByb2R1Y3Rpb24vdXBsb2Fkcy9vcmdhbml6YXRpb24vbG9nby80OTM5LzE0NjQ3OS9iY2RhNWJmYi1lYjczLTRiMjItOWYxNi03MjdjNWZkODIwYmQucG5n",
+     "thumb": {
+      "url": "https://cdn-images.welcometothejungle.com/yY-4XnDhe4kZXh8bKxx8wWWZ8Bk04Mm7R4RSTMk6WCo/rs:auto:70::/q:85/czM6Ly93dHRqLXByb2R1Y3Rpb24vdXBsb2Fkcy9vcmdhbml6YXRpb24vbG9nby80OTM5LzE0NjQ3OS9iY2RhNWJmYi1lYjczLTRiMjItOWYxNi03MjdjNWZkODIwYmQucG5n"
+     }
+    },
+    "sectors": [
+     {
+      "name": "Design",
+      "parent_name": "Advertising / Marketing / Agency"
+     },
+     {
+      "name": "IT / Digital",
+      "parent_name": "Consulting / Audit"
+     },
+     {
+      "name": "Organization / Management",
+      "parent_name": "Consulting / Audit"
+     },
+     {
+      "name": "Digital",
+      "parent_name": "Advertising / Marketing / Agency"
+     }
+    ],
+    "website_organization": {
+     "slug": "thiga"
+    },
+    "nb_employees": 183,
+    "industry": "Design, IT / Digital, Organization / Management, Digital"
+   },
+   "contract_type": "full_time",
+   "published_at": "2026-09-16T16:28:15Z",
+   "office": {
+    "city": "Paris",
+    "latitude": 48.87313,
+    "longitude": 2.33526,
+    "country_code": "FR"
+   },
+   "salary_period": "yearly",
+   "salary_min": 50000,
+   "salary_max": 60000,
+   "salary_currency": null,
+   "offices": [
+    {
+     "city": "Paris",
+     "latitude": 48.87313,
+     "longitude": 2.33526,
+     "country_code": "FR"
+    }
+   ],
+   "company_summary": "Cabinet de conseil en Produit, Tech et IA.",
+   "is_bookmarked": false,
+   "experience_min": null,
+   "experience_max": null
+  },
+  {
+   "name": "Chef de produit H/F (Product Lead)",
+   "status": "published",
+   "remote": "unknown",
+   "reference": "b56acc0e-974a-40d0-82d4-0623bcac8f18",
+   "search_result": {
+    "score": 2.8983054
+   },
+   "updated_at": "2026-09-23T13:25:54.603701Z",
+   "slug": "chef-de-produit-h-f-product-lead_templemars_KINGF_m9m69bA",
+   "wk_reference": "KINGF_m9m69bA",
+   "organization": {
+    "name": "Kingfisher",
+    "reference": "Oe97MN",
+    "labels": [],
+    "slug": "kingfisher-france",
+    "logo": {
+     "url": "https://cdn-images.welcometothejungle.com/bcF3I7bDllKmj4FuJXpMLFBV-D8B12miv4iLWFLXvOo/rs:auto:400::/q:85/czM6Ly93dHRqLXByb2R1Y3Rpb24vdXBsb2Fkcy9vcmdhbml6YXRpb24vbG9nby83NjI3LzE3MjM0Ni9iZTRiN2QwYS1mMzY0LTQ4MDgtYjM4OC1iMTU5ODU5ZDQ5NGYucG5n",
+     "thumb": {
+      "url": "https://cdn-images.welcometothejungle.com/bhHpHHo8yuTaiIxO10OuvH9uTCLT9sOBvyoLBAKqLSU/rs:auto:70::/q:85/czM6Ly93dHRqLXByb2R1Y3Rpb24vdXBsb2Fkcy9vcmdhbml6YXRpb24vbG9nby83NjI3LzE3MjM0Ni9iZTRiN2QwYS1mMzY0LTQ4MDgtYjM4OC1iMTU5ODU5ZDQ5NGYucG5n"
+     }
+    },
+    "sectors": [
+     {
+      "name": "Mass Distribution",
+      "parent_name": "Distribution"
+     },
+     {
+      "name": "Selective Distribution",
+      "parent_name": "Distribution"
+     }
+    ],
+    "website_organization": {
+     "slug": "kingfisher-france"
+    },
+    "nb_employees": 74000,
+    "industry": "Mass Distribution, Selective Distribution"
+   },
+   "contract_type": "temporary",
+   "published_at": "2026-09-23T13:25:54Z",
+   "office": {
+    "city": "Templemars",
+    "latitude": 50.56726,
+    "longitude": 3.07003,
+    "country_code": "FR"
+   },
+   "salary_period": null,
+   "salary_min": null,
+   "salary_max": null,
+   "salary_currency": null,
+   "offices": [
+    {
+     "city": "Templemars",
+     "latitude": 50.56726,
+     "longitude": 3.07003,
+     "country_code": "FR"
+    }
+   ],
+   "company_summary": "International home improvement company with retail and e-commerce channels.",
+   "is_bookmarked": false,
+   "experience_min": null,
+   "experience_max": null
+  },
+  {
+   "name": "Product Owner / Product Manager – Produits logiciels",
+   "status": "published",
+   "remote": "punctual",
+   "reference": "6d98946f-5b9a-47e5-afe9-707703354290",
+   "search_result": {
+    "score": 2.8369172
+   },
+   "updated_at": "2026-07-31T08:31:03.078969Z",
+   "slug": "product-owner-product-manager-produits-logiciels_le-mans",
+   "wk_reference": "OC_aPQjzAO",
+   "organization": {
+    "name": "Oui Care",
+    "reference": "NdlLbZ3",
+    "labels": [],
+    "slug": "ouicare",
+    "logo": {
+     "url": "https://cdn-images.welcometothejungle.com/_mPs-4Kglo5agN5E2gAbBTPktDxCW9l4FDtEqpiGEFA/rs:auto:400::/q:85/czM6Ly93dHRqLXByb2R1Y3Rpb24vdXBsb2Fkcy9vcmdhbml6YXRpb24vbG9nby84NzExLzE1OTQ2NC9jZjFmOTk3My1iOGJjLTRlMGItOTBiNS03N2Q5MWZmNGY1OTEuanBn",
+     "thumb": {
+      "url": "https://cdn-images.welcometothejungle.com/EdEj6p7F14pXyLdf7IUY3moNa0A17_0VcQx15Z1q01Y/rs:auto:70::/q:85/czM6Ly93dHRqLXByb2R1Y3Rpb24vdXBsb2Fkcy9vcmdhbml6YXRpb24vbG9nby84NzExLzE1OTQ2NC9jZjFmOTk3My1iOGJjLTRlMGItOTBiNS03N2Q5MWZmNGY1OTEuanBn"
+     }
+    },
+    "sectors": [
+     {
+      "name": "Home Care Services",
+      "parent_name": "Health / Social / Environment"
+     }
+    ],
+    "website_organization": {
+     "slug": "ouicare"
+    },
+    "nb_employees": 25000,
+    "industry": "Home Care Services"
+   },
+   "contract_type": "full_time",
+   "published_at": "2026-07-31T08:27:35Z",
+   "office": {
+    "city": "Le Mans",
+    "latitude": 47.99431,
+    "longitude": 0.19299,
+    "country_code": "FR"
+   },
+   "salary_period": "yearly",
+   "salary_min": null,
+   "salary_max": null,
+   "salary_currency": "EUR",
+   "offices": [
+    {
+     "city": "Le Mans",
+     "latitude": 47.99431,
+     "longitude": 0.19299,
+     "country_code": "FR"
+    }
+   ],
+   "company_summary": "Leader français des services à la personne.",
+   "is_bookmarked": false,
+   "experience_min": null,
+   "experience_max": null
+  }
+ ],
+ "metadata": {
+  "total": 3153,
+  "page": 1,
+  "per_page": 10,
+  "page_count": 316
+ }
+}

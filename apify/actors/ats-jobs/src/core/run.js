@@ -46,9 +46,17 @@ export async function runScraper(Actor, adapter, rawInput, log) {
   // Adapters whose sources are not company boards (Dice searches) turn their input into sources first.
   const input = normalizeInput(adapter.prepareInput ? adapter.prepareInput(rawInput) : rawInput, adapter.exampleInput);
   const [one, many] = adapter.sourceNames ?? ['company', 'companies'];
-  if (input.usedExample) log.warning(`No ${many} in the input; scraping the example ${adapter.title} ${one} ${input.companies.join(', ')}.`);
+  // "3 companies"; adapters with several kinds of sources count each kind: "1 search and 2 companies".
+  const countOf = (sources) => (adapter.sourceKinds
+    ? Object.entries(adapter.sourceKinds)
+      .map(([kind, [single, plural]]) => [sources.filter((source) => source.kind === kind).length, single, plural])
+      .filter(([count]) => count > 0)
+      .map(([count, single, plural]) => `${count} ${count === 1 ? single : plural}`)
+      .join(' and ')
+    : `${sources.length} ${sources.length === 1 ? one : many}`);
 
   const { companies, rejected } = parseCompanies(adapter, input.companies, log);
+  if (input.usedExample) log.warning(`No ${many} in the input, so the example is used: ${companies.map((company) => company.id).join(', ')}.`);
   if (companies.length === 0) throw new Error(`No ${adapter.title} ${one} could be read from the input. ${rejected[0]?.error ?? ''}`.trim());
 
   const proxyConfiguration = input.proxyConfiguration?.useApifyProxy || input.proxyConfiguration?.proxyUrls?.length
@@ -168,7 +176,7 @@ export async function runScraper(Actor, adapter, rawInput, log) {
     if (roomLeft() <= 0) return { input: company.input, company: company.id, jobsFound: 0, jobsMatched: 0, jobsSaved: 0, error: null, skipped: 'limit reached' };
     const stats = await scrapeCompany(company);
     finished++;
-    await Actor.setStatusMessage(`Saved ${saved} jobs from ${finished} of ${companies.length} ${many}`);
+    await Actor.setStatusMessage(`Saved ${saved} jobs from ${finished} of ${countOf(companies)}`);
     return stats;
   });
 
@@ -186,7 +194,7 @@ export async function runScraper(Actor, adapter, rawInput, log) {
   if (failed.length > 0) notes.push(`${failed.length} failed`);
   if (rejected.length > 0) notes.push(`${rejected.length} skipped as invalid`);
   if (stopped) notes.push(stopped);
-  const companiesText = `${results.length} ${results.length === 1 ? one : many}`;
+  const companiesText = countOf(companies);
   const message = saved === 0 && failed.length === 0 && !stopped
     ? `No ${input.onlyNew ? 'new ' : ''}jobs matched the filters in ${companiesText}.`
     : `Saved ${saved} ${input.onlyNew ? 'new ' : ''}jobs from ${companiesText}${notes.length > 0 ? ` (${notes.join(', ')})` : ''}.`;

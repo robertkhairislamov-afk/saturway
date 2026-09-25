@@ -17,7 +17,8 @@ export function normalizeEmployment(value) {
   const text = original.toLowerCase().replace(/[\s_-]+/g, '');
   if (text.includes('fulltime') || text === 'permanent' || text === 'regular') return 'full-time';
   if (text.includes('parttime')) return 'part-time';
-  if (text.includes('intern') || text.includes('trainee') || text.includes('apprentice')) return 'internship';
+  if (text.includes('apprentice') || text.includes('alternance')) return 'apprenticeship';
+  if (text.includes('intern') || text.includes('trainee')) return 'internship';
   if (text.includes('contract') || text.includes('freelance') || text.includes('contingent')) return 'contract';
   if (text.includes('temp') || text.includes('fixedterm') || text.includes('seasonal')) return 'temporary';
   return original;

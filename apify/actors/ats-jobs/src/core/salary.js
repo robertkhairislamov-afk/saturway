@@ -39,6 +39,35 @@ function formatSalary(min, max, currency, interval) {
   return `${currency ? `${currency} ` : ''}${range}${interval ? ` per ${interval}` : ''}`;
 }
 
+// Pay a period usually covers, in US dollars. Outside this range the stated period is suspect.
+const TYPICAL = { hour: [5, 1100], day: [40, 5500], week: [200, 16500], month: [300, 16500], year: [5500, 2000000] };
+
+// Job boards where companies type the salary in by hand get "45" for 45K a year, monthly pay
+// marked as yearly and yearly pay marked as monthly or daily. Fixes the period (or the missing
+// thousands) when the amount clearly does not fit it. Returns null when the amount is no salary.
+export function fixStatedUnits({ min = null, max = null, currency = null, interval = null }) {
+  const code = currency ? String(currency).trim().toUpperCase() : null;
+  const usd = inUsd(Math.max(min ?? 0, max ?? 0), code);
+  if (!interval || !TYPICAL[interval] || !(usd > 0)) return { min, max, interval };
+  const [low, high] = TYPICAL[interval];
+  if (usd >= low && usd < high) return { min, max, interval };
+  if (interval === 'year' && usd < 5.5) return null;
+  if (interval === 'year' && usd < 330) {
+    return { min: min == null ? null : min * 1000, max: max == null ? null : max * 1000, interval };
+  }
+  if (usd >= 16500) return { min, max, interval: 'year' };
+  if (usd >= 300) return { min, max, interval: 'month' };
+  return { min, max, interval };
+}
+
+const PER_YEAR = { hour: 1820, day: 218, week: 52, month: 12, year: 1 };
+
+// The highest pay of a salary as a yearly amount, for minimum salary filters.
+export function yearlyMax(salary) {
+  const top = Math.max(salary?.min ?? 0, salary?.max ?? 0);
+  return top > 0 ? top * (PER_YEAR[salary.interval] ?? 1) : 0;
+}
+
 export function makeSalary({ min = null, max = null, currency = null, interval = null, text = null, source }) {
   const low = Number.isFinite(min) && min > 0 ? min : null;
   const high = Number.isFinite(max) && max > 0 ? max : null;

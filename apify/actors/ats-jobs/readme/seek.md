@@ -120,7 +120,7 @@ You pay only for the jobs you get: **$0.50 per 1,000 jobs**. There is no start f
 
 **Why do some jobs have no salary?** Many ads show text such as "Competitive salary" instead of numbers. When numbers are given, they are parsed; `salary.text` keeps SEEK's original wording.
 
-**Does it collect recruiter contact details?** No. It saves the job ad and company information, not phone numbers or names of recruiters.
+**Does it collect recruiter contact details?** No. There are no fields for recruiters' names, emails or phone numbers, and they are not requested. The job description is saved as the employer wrote it.
 
 **Is it legal to scrape SEEK?** The Actor reads the public job listings SEEK shows to every visitor. Check the terms that apply to your use case.
 

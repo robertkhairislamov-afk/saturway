@@ -3,6 +3,7 @@
 // job board instead of company boards, so they have their own search forms.
 
 import { CLASSIFICATIONS, WORK_ARRANGEMENTS, WORK_TYPES } from '../src/adapters/seek.js';
+import * as stepstone from '../src/adapters/stepstone.js';
 
 export const ACTORS = {
   greenhouse: {
@@ -81,6 +82,13 @@ export const ACTORS = {
     seoTitle: 'SEEK Jobs Scraper – Australia & NZ Jobs and Salaries',
     seoDescription: 'Scrape seek.com.au and seek.co.nz jobs by keyword and location: title, company, salary, work type, description. All filters. $0.50 per 1,000 jobs.',
   },
+  stepstone: {
+    name: 'stepstone-jobs-scraper',
+    title: 'StepStone Jobs Scraper',
+    description: 'Scrape StepStone.de jobs in Germany by keyword and city: title, company, location, remote, contract type, full description, benefits, industry and apply link. All StepStone filters and alerts.',
+    seoTitle: 'StepStone Jobs Scraper – Germany Job Listings',
+    seoDescription: 'Scrape StepStone.de jobs by keyword and city: title, company, location, remote, contract type, benefits and full description. $0.50 per 1,000 jobs.',
+  },
 };
 
 export const CATEGORIES = ['JOBS', 'LEAD_GENERATION', 'AUTOMATION'];
@@ -89,6 +97,7 @@ export function inputSchema(ats) {
   if (ats === 'dice') return diceInputSchema();
   if (ats === 'wttj') return wttjInputSchema();
   if (ats === 'seek') return seekInputSchema();
+  if (ats === 'stepstone') return stepstoneInputSchema();
   const actor = ACTORS[ats];
   const properties = {
     companies: {
@@ -508,6 +517,97 @@ function seekInputSchema() {
   };
 }
 
+const selectOf = (map) => ({ type: 'string', enum: Object.keys(map), enumTitles: Object.values(map) });
+
+function stepstoneInputSchema() {
+  return {
+    title: ACTORS.stepstone.title,
+    description: 'Search StepStone.de like on the website and get every matching job in one clean format.',
+    type: 'object',
+    schemaVersion: 1,
+    properties: {
+      searchQueries: {
+        title: 'Job titles or keywords',
+        type: 'array',
+        editor: 'stringList',
+        description: 'What to search, for example <code>Softwareentwickler</code>, <code>data analyst</code> or <code>Pflege</code>. Each line is a separate search with the filters below. You can also paste links of searches from stepstone.de.',
+        prefill: ['python developer'],
+        placeholderValue: 'data analyst',
+      },
+      location: {
+        title: 'Location',
+        type: 'string',
+        editor: 'textfield',
+        description: 'A city or region, for example <code>Berlin</code>, <code>München</code> or <code>Frankfurt am Main</code>. Leave empty for all of Germany.',
+      },
+      radius: {
+        title: 'Distance around the location',
+        type: 'integer',
+        minimum: 0,
+        unit: 'km',
+        description: 'Also find jobs this far from the location, for example 30.',
+      },
+      contractTypes: {
+        title: 'Contract type',
+        type: 'array',
+        editor: 'select',
+        sectionCaption: 'StepStone filters',
+        description: 'Leave empty for all.',
+        items: selectOf(stepstone.CONTRACT_TYPES),
+      },
+      workTypes: {
+        title: 'Working hours',
+        type: 'array',
+        editor: 'select',
+        description: 'Leave empty for all.',
+        items: selectOf(stepstone.WORK_TYPES),
+      },
+      remoteTypes: {
+        title: 'Home office',
+        type: 'array',
+        editor: 'select',
+        description: 'Leave empty for all jobs, including on-site ones.',
+        items: selectOf(stepstone.REMOTE_TYPES),
+      },
+      experience: {
+        title: 'Experience',
+        type: 'array',
+        editor: 'select',
+        description: 'Leave empty for all.',
+        items: selectOf(stepstone.EXPERIENCE),
+      },
+      languages: {
+        title: 'Job ad language',
+        type: 'array',
+        editor: 'select',
+        description: 'Only jobs written in these languages. Pick English for jobs where English is enough.',
+        items: selectOf(stepstone.LANGUAGES),
+      },
+      postedWithinDays: {
+        title: 'Posted in the last days',
+        type: 'integer',
+        minimum: 0,
+        unit: 'days',
+        description: 'Keep jobs published in the last N days: 1 means today and yesterday. Leave empty or 0 for any date.',
+      },
+      sortBy: {
+        title: 'Sort by',
+        type: 'string',
+        editor: 'select',
+        enum: ['date', 'relevance'],
+        enumTitles: ['Newest first', 'Relevance'],
+        default: 'date',
+        description: 'Newest first suits job alerts. Links you paste keep their own order.',
+      },
+      ...commonSettings({
+        site: 'StepStone',
+        details: 'the full description (text and HTML), employment type, industry and expiry date',
+        proxyDescription: 'The Actor connects directly, which is fastest. If StepStone starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it from the start.',
+      }),
+    },
+  };
+}
+
 // The last column shows what each job board has: departments, employment types or nothing extra.
 const EXTRA_COLUMN = {
   greenhouse: ['department', 'Department'],
@@ -516,6 +616,7 @@ const EXTRA_COLUMN = {
   dice: ['employmentType', 'Employment'],
   wttj: ['employmentType', 'Contract'],
   seek: ['employmentType', 'Work type'],
+  stepstone: ['employmentType', 'Employment'],
 };
 
 export const datasetSchema = (ats) => {

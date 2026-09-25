@@ -12,7 +12,7 @@ Scrape every open job from any company that hires with **Ashby** (`jobs.ashbyhq.
 - 🔎 **Filters**: title keywords, excluded words, locations, remote only, departments and teams, posted in the last N days, only jobs with a salary.
 - 🆕 **Only new jobs since the last run**: for job alerts and hiring-signal monitoring.
 - 🏷️ **Company names** as shown on the job board.
-- 🧩 **Same output as our [Greenhouse](https://apify.com/robertosan16/greenhouse-jobs-scraper), [Lever](https://apify.com/robertosan16/lever-jobs-scraper) and [Workday](https://apify.com/robertosan16/workday-jobs-scraper) scrapers**, so jobs from all four systems merge into one table.
+- 🧩 **Same output as our other job scrapers**, listed at the end of this page, so jobs from company career sites and job boards fit into one table.
 
 ## What data does it extract?
 

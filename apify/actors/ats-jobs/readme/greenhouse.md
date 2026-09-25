@@ -12,7 +12,7 @@ Scrape every open job from any company that hires with **Greenhouse**: title, de
 - 🆕 **Only new jobs since the last run**: perfect for job alerts, recruiting pipelines and hiring signals.
 - 🧾 **Clean text and HTML descriptions**: the escaped Greenhouse HTML is decoded for you.
 - 🔗 **Accepts any link format**: `airbnb`, `boards.greenhouse.io/airbnb`, `job-boards.greenhouse.io/figma`, embedded boards (`?for=discord`) or job links.
-- 🧩 **Same output as our [Lever](https://apify.com/robertosan16/lever-jobs-scraper), [Ashby](https://apify.com/robertosan16/ashby-jobs-scraper) and [Workday](https://apify.com/robertosan16/workday-jobs-scraper) scrapers**, so you can merge jobs from all four systems into one table.
+- 🧩 **Same output as our other job scrapers**, listed at the end of this page, so jobs from company career sites and job boards fit into one table.
 
 ## What data does it extract?
 

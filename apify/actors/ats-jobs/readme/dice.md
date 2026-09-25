@@ -12,7 +12,7 @@ Scrape US tech jobs from **Dice.com** the way you search on the website: keyword
 - 💰 **Salary as numbers**: "$$68 - $68.25 per hour" becomes `{ "min": 68, "max": 68.25, "currency": "USD", "interval": "hour" }`.
 - 🧠 **Skills** listed on each job, such as Python, Apache Kafka or AWS.
 - 🆕 **Only new jobs since the last run**: for job alerts, recruiting pipelines and market monitoring.
-- 🧩 **Same output as our [Greenhouse](https://apify.com/robertosan16/greenhouse-jobs-scraper), [Lever](https://apify.com/robertosan16/lever-jobs-scraper), [Ashby](https://apify.com/robertosan16/ashby-jobs-scraper) and [Workday](https://apify.com/robertosan16/workday-jobs-scraper) scrapers**, so jobs from company career sites and Dice fit into one table.
+- 🧩 **Same output as our other job scrapers**, listed at the end of this page, so jobs from company career sites and job boards fit into one table.
 
 ## What data does it extract?
 

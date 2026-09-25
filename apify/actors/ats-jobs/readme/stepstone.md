@@ -13,7 +13,7 @@ Scrape jobs from **StepStone** (`stepstone.de`), one of Germany's biggest job si
 - 🎁 **Benefits as a list**: company car, flexible hours, pension plan, JobRad and more, as StepStone shows them.
 - 🧾 **Full job details**: description as text and HTML, employment type, industry, expiry date, quick apply and "no cover letter needed" flags.
 - 🆕 **Only new jobs since the last run**: for job alerts, recruiting pipelines and market monitoring.
-- 🧩 **Same output as our [Greenhouse](https://apify.com/robertosan16/greenhouse-jobs-scraper), [Lever](https://apify.com/robertosan16/lever-jobs-scraper), [Ashby](https://apify.com/robertosan16/ashby-jobs-scraper), [Workday](https://apify.com/robertosan16/workday-jobs-scraper), [Dice](https://apify.com/robertosan16/dice-jobs-scraper) and [Welcome to the Jungle](https://apify.com/robertosan16/welcome-to-the-jungle-jobs-scraper) scrapers**, so jobs from all of them fit into one table.
+- 🧩 **Same output as our other job scrapers**, listed at the end of this page, so jobs from company career sites and job boards fit into one table.
 
 ## What data does it extract?
 

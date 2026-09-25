@@ -14,7 +14,7 @@ Scrape jobs from **Welcome to the Jungle** (`welcometothejungle.com`), the job s
 - 🧠 **Skills and tools** listed on each job, such as SQL, Python, Power BI or Figma, plus experience level, education level, contract length and start date.
 - 🏷️ **Company data**: industry, number of employees, short summary and logo.
 - 🆕 **Only new jobs since the last run**: for job alerts and market monitoring.
-- 🧩 **Same output as our [Greenhouse](https://apify.com/robertosan16/greenhouse-jobs-scraper), [Lever](https://apify.com/robertosan16/lever-jobs-scraper), [Ashby](https://apify.com/robertosan16/ashby-jobs-scraper) and [Workday](https://apify.com/robertosan16/workday-jobs-scraper) scrapers**, so jobs from job sites and company career pages fit into one table.
+- 🧩 **Same output as our other job scrapers**, listed at the end of this page, so jobs from company career sites and job boards fit into one table.
 
 ## What data does it extract?
 

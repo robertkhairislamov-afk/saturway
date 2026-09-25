@@ -9,6 +9,7 @@ export const ACTORS = {
   greenhouse: {
     name: 'greenhouse-jobs-scraper',
     title: 'Greenhouse Jobs Scraper',
+    tagline: 'every job of any company on Greenhouse, with salary ranges',
     description: 'Scrape all open jobs of any company on Greenhouse: title, department, locations, salary range, description and apply link. Keyword, location, remote and date filters, and an only-new mode for monitoring.',
     seoTitle: 'Greenhouse Jobs Scraper – Job Listings & Salaries',
     seoDescription: 'Scrape jobs from any Greenhouse job board: title, department, location, salary range, description and apply link. Filters and alerts. $1 per 1,000 jobs.',
@@ -22,6 +23,7 @@ export const ACTORS = {
   lever: {
     name: 'lever-jobs-scraper',
     title: 'Lever Jobs Scraper',
+    tagline: 'every job of any company on Lever, including EU sites',
     description: 'Scrape all open jobs of any company on Lever: title, team, locations, salary range, workplace type, description and apply link. Keyword, location, remote and date filters, and an only-new mode for monitoring.',
     seoTitle: 'Lever Jobs Scraper – Job Listings & Salaries',
     seoDescription: 'Scrape jobs from any company on jobs.lever.co: title, team, location, salary range, description and apply link. Filters and alerts. $1 per 1,000 jobs.',
@@ -35,6 +37,7 @@ export const ACTORS = {
   ashby: {
     name: 'ashby-jobs-scraper',
     title: 'Ashby Jobs Scraper',
+    tagline: 'startup jobs from Ashby job boards, with compensation',
     description: 'Scrape all open jobs of any company on Ashby: title, department, locations, compensation, workplace type, description and apply link. Keyword, location, remote and date filters, and an only-new mode for monitoring.',
     seoTitle: 'Ashby Jobs Scraper – Job Listings & Compensation',
     seoDescription: 'Scrape jobs from any Ashby job board: title, department, locations, compensation, description and apply link. Filters and alerts. $1 per 1,000 jobs.',
@@ -48,6 +51,7 @@ export const ACTORS = {
   workday: {
     name: 'workday-jobs-scraper',
     title: 'Workday Jobs Scraper',
+    tagline: 'every job from any Workday career site, past the 2,000 search limit',
     description: 'Scrape jobs from any Workday career site (myworkdayjobs.com): title, locations, dates, salary from the description, full text and apply link. Gets every job, even beyond the 2,000 Workday shows per search.',
     seoTitle: 'Workday Jobs Scraper – All Jobs from Any Career Site',
     seoDescription: 'Scrape every job from any Workday career site, even past the 2,000 search limit: title, locations, dates, salary, description. $1 per 1,000 jobs.',
@@ -64,6 +68,7 @@ export const ACTORS = {
   dice: {
     name: 'dice-jobs-scraper',
     title: 'Dice Jobs Scraper',
+    tagline: 'US tech jobs from Dice.com, with skills and salaries',
     description: 'Scrape US tech jobs from Dice.com: title, company, location, salary, skills, full description, dates and apply link. All Dice filters, over 750 results per search, and an only-new mode for alerts.',
     seoTitle: 'Dice Jobs Scraper – Extract Job Listings & Salaries',
     seoDescription: 'Scrape Dice.com jobs by keyword and location: title, company, salary, skills, description, posting date and link. All Dice filters. $0.50 per 1,000 jobs.',
@@ -71,6 +76,7 @@ export const ACTORS = {
   wttj: {
     name: 'welcome-to-the-jungle-jobs-scraper',
     title: 'Welcome to the Jungle Jobs Scraper',
+    tagline: 'startup jobs in France, Europe, the UK and the US',
     description: 'Scrape Welcome to the Jungle jobs in France, Europe, the UK and the US by keyword or company: title, company, salary, remote policy, skills, tools, description and apply link. Filters and alerts.',
     seoTitle: 'Welcome to the Jungle Jobs Scraper – Jobs & Salaries',
     seoDescription: 'Scrape Welcome to the Jungle jobs by keyword, country or company: title, company, salary, remote, skills, description. JSON, CSV. $0.50 per 1,000 jobs.',
@@ -78,6 +84,7 @@ export const ACTORS = {
   seek: {
     name: 'seek-jobs-scraper',
     title: 'SEEK Jobs Scraper',
+    tagline: 'jobs in Australia and New Zealand, with salaries as numbers',
     description: 'Scrape SEEK jobs in Australia and New Zealand by keyword and location: title, company, salary, work type, classification, full description and apply link. All SEEK filters and alerts.',
     seoTitle: 'SEEK Jobs Scraper – Australia & NZ Jobs and Salaries',
     seoDescription: 'Scrape seek.com.au and seek.co.nz jobs by keyword and location: title, company, salary, work type, description. All filters. $0.50 per 1,000 jobs.',
@@ -85,6 +92,7 @@ export const ACTORS = {
   stepstone: {
     name: 'stepstone-jobs-scraper',
     title: 'StepStone Jobs Scraper',
+    tagline: 'jobs in Germany, with benefits and English-language jobs',
     description: 'Scrape StepStone.de jobs in Germany by keyword and city: title, company, location, remote, contract type, full description, benefits, industry and apply link. All StepStone filters and alerts.',
     seoTitle: 'StepStone Jobs Scraper – Germany Job Listings',
     seoDescription: 'Scrape StepStone.de jobs by keyword and city: title, company, location, remote, contract type, benefits and full description. $0.50 per 1,000 jobs.',
@@ -92,6 +100,19 @@ export const ACTORS = {
 };
 
 export const CATEGORIES = ['JOBS', 'LEAD_GENERATION', 'AUTOMATION'];
+
+const STORE_URL = 'https://apify.com/robertosan16';
+
+// The other job scrapers, listed at the end of every README: they all share one output format.
+export function familySection(ats) {
+  const others = Object.entries(ACTORS).filter(([key]) => key !== ats);
+  return [
+    '## More job scrapers with the same output',
+    '',
+    ...others.map(([, actor]) => `- [${actor.title}](${STORE_URL}/${actor.name}): ${actor.tagline}`),
+    '',
+  ].join('\n');
+}
 
 export function inputSchema(ats) {
   if (ats === 'dice') return diceInputSchema();

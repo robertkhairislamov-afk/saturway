@@ -12,7 +12,7 @@ Scrape every open job from any company that hires with **Lever** (`jobs.lever.co
 - 🆕 **Only new jobs since the last run**: made for job alerts and monitoring.
 - 🏷️ **Real company names** from the job site, workplace type (on-site, hybrid, remote) and commitment (full-time, contract, internship).
 - 🧾 **Complete descriptions**: the intro, every requirements and responsibilities list, pay notes and the closing text, as plain text and HTML.
-- 🧩 **Same output as our [Greenhouse](https://apify.com/robertosan16/greenhouse-jobs-scraper), [Ashby](https://apify.com/robertosan16/ashby-jobs-scraper) and [Workday](https://apify.com/robertosan16/workday-jobs-scraper) scrapers**, so jobs from all four systems fit into one table.
+- 🧩 **Same output as our other job scrapers**, listed at the end of this page, so jobs from company career sites and job boards fit into one table.
 
 ## What data does it extract?
 

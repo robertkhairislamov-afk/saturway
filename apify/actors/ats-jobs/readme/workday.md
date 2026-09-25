@@ -12,7 +12,7 @@ Scrape jobs from any **Workday** career site (`myworkdayjobs.com`): title, all l
 - 🔎 **Filters**: title keywords (also searched on the site itself, so big sites are fast), excluded words, locations, remote only, posted in the last N days, only jobs with a salary.
 - 💰 **Salary ranges from descriptions**, such as "The base salary range is 168,000 USD - 264,500 USD", as `min`, `max`, `currency` and `interval`.
 - 🆕 **Only new jobs since the last run**: for job alerts and hiring monitoring. Details are loaded only for new jobs, so scheduled runs are quick.
-- 🧩 **Same output as our [Greenhouse](https://apify.com/robertosan16/greenhouse-jobs-scraper), [Lever](https://apify.com/robertosan16/lever-jobs-scraper) and [Ashby](https://apify.com/robertosan16/ashby-jobs-scraper) scrapers**, so jobs from all four systems fit into one table.
+- 🧩 **Same output as our other job scrapers**, listed at the end of this page, so jobs from company career sites and job boards fit into one table.
 
 ## What data does it extract?
 

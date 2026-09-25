@@ -6,7 +6,7 @@ import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { ACTORS, actorJson, datasetSchema, inputSchema, outputSchema } from './actors.mjs';
+import { ACTORS, actorJson, datasetSchema, familySection, inputSchema, outputSchema } from './actors.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -39,7 +39,11 @@ for (const ats of names) {
   writeFileSync(join(out, '.actor', 'output_schema.json'), json(outputSchema(ats)));
   writeFileSync(join(out, 'Dockerfile'), DOCKERFILE(ats));
   writeFileSync(join(out, '.dockerignore'), 'node_modules\nstorage\n.git\n');
-  cpSync(join(root, 'readme', `${ats}.md`), join(out, 'README.md'));
+  // The list of the other job scrapers goes before the closing line of the README.
+  const readme = readFileSync(join(root, 'readme', `${ats}.md`), 'utf8');
+  const closing = readme.lastIndexOf('\nMissing a field or a feature?');
+  const family = familySection(ats);
+  writeFileSync(join(out, 'README.md'), closing >= 0 ? `${readme.slice(0, closing + 1)}${family}\n${readme.slice(closing + 1)}` : `${readme}\n${family}`);
   cpSync(join(root, 'src'), join(out, 'src'), { recursive: true });
 
   const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));

@@ -109,8 +109,8 @@ const RANGE = new RegExp(`(?<![\\w.,$])${amountPattern(1)}\\s*(?:-|–|—|to|an
 // A single amount, read only where the text is known to be a pay field ("$68.25/hr").
 const SINGLE = new RegExp(`(?<![\\w.,$])${amountPattern(1)}`, 'g');
 
-const PERIOD_WORDS = { hour: 'hour|hr', day: 'day', week: 'week|wk', month: 'month|mo', year: 'year|yr|annum' };
-const PERIOD_ADJECTIVES = { hour: 'hourly', day: 'daily', week: 'weekly', month: 'monthly', year: 'annual(?:ly|ized)?|yearly|p\\.a\\.' };
+const PERIOD_WORDS = { hour: 'hour|hr', day: 'day', week: 'week|wk', fortnight: 'fortnight', month: 'month|mo', year: 'year|yr|annum' };
+const PERIOD_ADJECTIVES = { hour: 'hourly|p\\.h\\.|ph', day: 'daily|p\\.d\\.', week: 'weekly', fortnight: 'fortnightly', month: 'monthly', year: 'annual(?:ly|ized)?|yearly|p\\.a\\.' };
 const PAY_WORDS = 'salary|pay|rate|wage|compensation|range';
 
 // Right after a range: "/yr", "per hour", "an hour", ", annually", "annual base salary".
@@ -123,8 +123,10 @@ const HINTS_BEFORE = Object.keys(PERIOD_WORDS).map((interval) => [interval, new 
 )]);
 const PAY_CONTEXT = /salary|\bpay\b|compensation|\bwages?\b|\brate\b|\bOTE\b|\bearn|\bbase\b|\brange\b|stipend/i;
 const LARGE_UNIT_AFTER = /^\s*(?:million|billion|mm|m|bn|b)\b/i;
+// A number without a currency followed by these is a quantity ("38 hours", "12 month contract", "15%").
+const QUANTITY_AFTER = /^\s*(?:%|hours?\b|hrs?\b|months?\b|mths?\b|weeks?\b|wks?\b|days?\b|years?\b|yrs?\b)/i;
 // Plausible amounts per period, in US dollars.
-const PLAUSIBLE = { hour: [5, 2000], day: [30, 10000], week: [100, 50000], month: [300, 200000], year: [1000, 5000000] };
+const PLAUSIBLE = { hour: [5, 2000], day: [30, 10000], week: [100, 50000], fortnight: [200, 100000], month: [300, 200000], year: [1000, 5000000] };
 
 function parseNumber(raw, thousands = false) {
   const compact = raw.replace(/[\s\u00a0\u202f\u2009]/g, '');
@@ -159,17 +161,20 @@ function candidatesFrom(text, pattern, known, defaultCurrency) {
   const candidates = [];
   for (const match of text.matchAll(pattern)) {
     const g = match.groups;
+    const explicit = Boolean(g.pre1 || g.post1 || g.pre2 || g.post2 || g.sym1 || g.sym2);
     const code = g.pre1 || g.post1 || g.pre2 || g.post2 || (known ? defaultCurrency : undefined);
     const symbol = g.sym1 || g.sym2;
     if (!code && !symbol) continue;
     const end = match.index + match[0].length;
     const after = text.slice(end, end + 50);
     if (LARGE_UNIT_AFTER.test(after)) continue;
+    if (/^\s*%/.test(after) || (!explicit && QUANTITY_AFTER.test(after))) continue;
 
     // "$120 - 150K" and "$120K - 150": a k on one side applies to a small number on the other.
     const single = g.num2 === undefined;
-    const k1 = Boolean(g.k1) || (Boolean(g.k2) && parseNumber(g.num1) < 1000);
-    const k2 = Boolean(g.k2) || (Boolean(g.k1) && !single && parseNumber(g.num2) < 1000);
+    // Not when the other number is already bigger: "$800 - $1k p.d." is 800 to 1,000.
+    const k1 = Boolean(g.k1) || (Boolean(g.k2) && parseNumber(g.num1) < 1000 && parseNumber(g.num1) <= parseNumber(g.num2));
+    const k2 = Boolean(g.k2) || (Boolean(g.k1) && !single && parseNumber(g.num2) < 1000 && parseNumber(g.num2) >= parseNumber(g.num1));
     const min = parseNumber(g.num1, k1);
     const max = single ? min : parseNumber(g.num2, k2);
     if (!(min > 0) || !(max >= min) || max > min * 6) continue;
@@ -187,7 +192,9 @@ function candidatesFrom(text, pattern, known, defaultCurrency) {
     if (!plausible(min, max, interval, currency) || (!interval && max < 100)) continue;
     // "Up to $90K" gives only a maximum.
     const upTo = single && /\bup\s+to\s*$/i.test(before);
-    candidates.push({ min: upTo ? null : min, max, currency, interval, text: match[0].trim() });
+    // Pay per fortnight, common in Australia, becomes pay per year.
+    const factor = interval === 'fortnight' ? 26 : 1;
+    candidates.push({ min: upTo ? null : min * factor, max: max * factor, currency, interval: factor > 1 ? 'year' : interval, explicit, text: match[0].trim() });
   }
   return candidates;
 }
@@ -198,9 +205,12 @@ function candidatesFrom(text, pattern, known, defaultCurrency) {
 // `defaultCurrency` applies to a known pay field without a currency, such as "100000 - 120000".
 export function salaryFromText(text, { known = false, source = 'description', defaultCurrency } = {}) {
   if (!text) return null;
-  const clean = String(text).replace(/\$\$+/g, '$');
+  // "$$68" is "$68", and "180, 000" is "180,000".
+  const clean = String(text).replace(/\$\$+/g, '$').replace(/(\d),\s+(\d{3})(?!\d)/g, '$1,$2');
   let candidates = candidatesFrom(clean, RANGE, known, defaultCurrency);
   if (candidates.length === 0 && known) candidates = candidatesFrom(clean, SINGLE, known, defaultCurrency);
+  // Amounts with a currency win over bare numbers such as "EA7 (38 hours) - $99,550 + super".
+  if (candidates.some((candidate) => candidate.explicit)) candidates = candidates.filter((candidate) => candidate.explicit);
   if (candidates.length === 0) return null;
   const [first] = candidates;
   const same = candidates.filter((c) => c.currency === first.currency && c.interval === first.interval);

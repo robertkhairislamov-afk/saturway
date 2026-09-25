@@ -73,3 +73,17 @@ test('yearlyMax turns pay per period into a yearly amount', () => {
   assert.equal(yearlyMax({ min: 45000, max: null, interval: null }), 45000);
   assert.equal(yearlyMax(null), 0);
 });
+
+test('salaryFromText reads free-text pay labels from job boards', () => {
+  const read = (text) => pick(salaryFromText(text, { known: true, source: 'listing', defaultCurrency: 'AUD' }));
+  assert.deepEqual(read('EA7 (38 hours) - $99,550.81 + super'), [99550.81, 99550.81, 'AUD', 'year']);
+  assert.deepEqual(read('$330 - $352.92 p.d. + Super'), [330, 352.92, 'AUD', 'day']);
+  assert.deepEqual(read('$42.99ph + 15.25% Scale Penalty + 12% Super'), [42.99, 42.99, 'AUD', 'hour']);
+  assert.deepEqual(read('$800 - $1k p.d.'), [800, 1000, 'AUD', 'day']);
+  assert.deepEqual(read('$120 - 150K'), [120000, 150000, 'AUD', 'year']);
+  assert.deepEqual(read('180, 000-250, 000'), [180000, 250000, 'AUD', 'year']);
+  assert.deepEqual(read('Up to $127861 p.a.'), [null, 127861, 'AUD', 'year']);
+  assert.deepEqual(read('$5,390.40 to $5,852.40 per fortnight'), [140150.4, 152162.4, 'AUD', 'year']);
+  assert.equal(read('Base + 15.4% super'), null);
+  assert.equal(read('12 month fixed-term contract'), null);
+});

@@ -2,6 +2,8 @@
 // format; only the texts, examples and a few inputs differ. Dice and Welcome to the Jungle search a
 // job board instead of company boards, so they have their own search forms.
 
+import { CLASSIFICATIONS, WORK_ARRANGEMENTS, WORK_TYPES } from '../src/adapters/seek.js';
+
 export const ACTORS = {
   greenhouse: {
     name: 'greenhouse-jobs-scraper',
@@ -72,6 +74,13 @@ export const ACTORS = {
     seoTitle: 'Welcome to the Jungle Jobs Scraper – Jobs & Salaries',
     seoDescription: 'Scrape Welcome to the Jungle jobs by keyword, country or company: title, company, salary, remote, skills, description. JSON, CSV. $0.50 per 1,000 jobs.',
   },
+  seek: {
+    name: 'seek-jobs-scraper',
+    title: 'SEEK Jobs Scraper',
+    description: 'Scrape SEEK jobs in Australia and New Zealand by keyword and location: title, company, salary, work type, classification, full description and apply link. All SEEK filters and alerts.',
+    seoTitle: 'SEEK Jobs Scraper – Australia & NZ Jobs and Salaries',
+    seoDescription: 'Scrape seek.com.au and seek.co.nz jobs by keyword and location: title, company, salary, work type, description. All filters. $0.50 per 1,000 jobs.',
+  },
 };
 
 export const CATEGORIES = ['JOBS', 'LEAD_GENERATION', 'AUTOMATION'];
@@ -79,6 +88,7 @@ export const CATEGORIES = ['JOBS', 'LEAD_GENERATION', 'AUTOMATION'];
 export function inputSchema(ats) {
   if (ats === 'dice') return diceInputSchema();
   if (ats === 'wttj') return wttjInputSchema();
+  if (ats === 'seek') return seekInputSchema();
   const actor = ACTORS[ats];
   const properties = {
     companies: {
@@ -183,7 +193,7 @@ export function inputSchema(ats) {
 }
 
 // Settings shared by every job Actor: result filters, monitoring, limits and proxy.
-const commonSettings = ({ proxyDescription, site, perSource = 'search' }) => ({
+const commonSettings = ({ proxyDescription, site, perSource = 'search', details = 'the full description (text and HTML), skills and expiry date' }) => ({
   excludeKeywords: {
     title: 'Exclude title keywords',
     type: 'array',
@@ -214,7 +224,7 @@ const commonSettings = ({ proxyDescription, site, perSource = 'search' }) => ({
     title: 'Load full job details',
     type: 'boolean',
     default: true,
-    description: 'Open each job page for the full description (text and HTML), skills and expiry date. Turn off for fast results with a short summary instead.',
+    description: `Open each job page for ${details}. Turn off for fast results with a short summary instead.`,
   },
   maxItems: {
     title: 'Maximum jobs in total',
@@ -400,6 +410,104 @@ function wttjInputSchema() {
   };
 }
 
+// Select options from a map of SEEK ids to names, sorted by name.
+const optionsOf = (map) => {
+  const entries = Object.entries(map).sort(([, a], [, b]) => a.localeCompare(b));
+  return { enum: entries.map(([id]) => id), enumTitles: entries.map(([, label]) => label) };
+};
+
+function seekInputSchema() {
+  return {
+    title: ACTORS.seek.title,
+    description: 'Search SEEK in Australia or New Zealand with the site\'s own filters and get every matching job in one clean format.',
+    type: 'object',
+    schemaVersion: 1,
+    properties: {
+      searchQueries: {
+        title: 'Job titles or keywords',
+        type: 'array',
+        editor: 'stringList',
+        description: 'What to search, for example <code>python developer</code> or <code>registered nurse</code>. Each line is a separate search with the filters below. You can also paste links of searches from seek.com.au or seek.co.nz.',
+        prefill: ['python developer'],
+        placeholderValue: 'data analyst',
+      },
+      country: {
+        title: 'Country',
+        type: 'string',
+        editor: 'select',
+        enum: ['AU', 'NZ'],
+        enumTitles: ['Australia (seek.com.au)', 'New Zealand (seek.co.nz)'],
+        default: 'AU',
+        description: 'The SEEK site to search. Salaries come in its currency, AUD or NZD.',
+      },
+      location: {
+        title: 'Location',
+        type: 'string',
+        editor: 'textfield',
+        description: 'A suburb, city, region or state as on SEEK, for example <code>Sydney NSW</code>, <code>All Melbourne VIC</code>, <code>Queensland QLD</code> or <code>Auckland</code>. Leave empty for the whole country.',
+      },
+      classifications: {
+        title: 'Classifications',
+        type: 'array',
+        editor: 'select',
+        sectionCaption: 'SEEK filters',
+        description: 'Job categories as on SEEK. Leave empty for all.',
+        items: { type: 'string', ...optionsOf(CLASSIFICATIONS) },
+      },
+      workTypes: {
+        title: 'Work type',
+        type: 'array',
+        editor: 'select',
+        description: 'Leave empty for all.',
+        items: { type: 'string', enum: Object.keys(WORK_TYPES), enumTitles: Object.values(WORK_TYPES) },
+      },
+      workArrangements: {
+        title: 'Work arrangement',
+        type: 'array',
+        editor: 'select',
+        description: 'On-site, hybrid or remote. Leave empty for all.',
+        items: { type: 'string', enum: Object.keys(WORK_ARRANGEMENTS), enumTitles: Object.values(WORK_ARRANGEMENTS) },
+      },
+      postedWithinDays: {
+        title: 'Posted in the last days',
+        type: 'integer',
+        minimum: 0,
+        unit: 'days',
+        description: 'Keep jobs listed in the last N days: 1 means today and yesterday. Leave empty or 0 for any date.',
+      },
+      minSalary: {
+        title: 'Minimum salary',
+        type: 'integer',
+        minimum: 0,
+        description: 'Keep jobs paying at least this much, in AUD or NZD, per the salary type below. SEEK applies it to the pay range the employer set, even when the ad does not show it.',
+      },
+      salaryType: {
+        title: 'Salary type',
+        type: 'string',
+        editor: 'select',
+        enum: ['annual', 'monthly', 'hourly'],
+        enumTitles: ['Per year', 'Per month', 'Per hour'],
+        default: 'annual',
+        description: 'What the minimum salary above means.',
+      },
+      sortBy: {
+        title: 'Sort by',
+        type: 'string',
+        editor: 'select',
+        enum: ['ListedDate', 'KeywordRelevance'],
+        enumTitles: ['Newest first', 'Relevance'],
+        default: 'ListedDate',
+        description: 'Newest first suits job alerts. Links you paste keep their own order.',
+      },
+      ...commonSettings({
+        site: 'SEEK',
+        details: 'the full description (text and HTML), expiry date and company industry, size and website',
+        proxyDescription: 'The Actor connects directly, which is fastest. If SEEK starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it from the start.',
+      }),
+    },
+  };
+}
+
 // The last column shows what each job board has: departments, employment types or nothing extra.
 const EXTRA_COLUMN = {
   greenhouse: ['department', 'Department'],
@@ -407,6 +515,7 @@ const EXTRA_COLUMN = {
   ashby: ['department', 'Department'],
   dice: ['employmentType', 'Employment'],
   wttj: ['employmentType', 'Contract'],
+  seek: ['employmentType', 'Work type'],
 };
 
 export const datasetSchema = (ats) => {

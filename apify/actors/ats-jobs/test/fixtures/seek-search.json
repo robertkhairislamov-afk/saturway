@@ -1,0 +1,234 @@
+{
+ "data": [
+  {
+   "advertiser": {
+    "id": "39423369",
+    "description": "Jacobi Strategies Pty Ltd"
+   },
+   "bulletPoints": [
+    "Equity potential",
+    "Innovative technology stack",
+    "World class team"
+   ],
+   "branding": {
+    "serpLogoUrl": "https://bx-branding-gateway.cloud.seek.com.au/3156f0c8-416a-f88b-04a3-6659e059b771.1/jdpLogo"
+   },
+   "classifications": [
+    {
+     "classification": {
+      "id": "6281",
+      "description": "Information & Communication Technology"
+     },
+     "subclassification": {
+      "id": "6290",
+      "description": "Engineering - Software"
+     }
+    }
+   ],
+   "companyName": "Jacobi Strategies Pty Ltd",
+   "companyProfileStructuredDataId": 3245945,
+   "displayStyle": {
+    "search": "sourcrProfile"
+   },
+   "displayType": "promoted",
+   "employer": {
+    "id": "3245945",
+    "name": "Jacobi Strategies Pty Ltd"
+   },
+   "id": "94424868",
+   "isFeatured": true,
+   "listingDate": "2026-09-04T07:47:49Z",
+   "listingDateDisplay": "21d ago",
+   "locations": [
+    {
+     "label": "Brisbane QLD",
+     "countryCode": "AU",
+     "seoHierarchy": [
+      {
+       "contextualName": "All Brisbane QLD"
+      },
+      {
+       "contextualName": "Queensland QLD"
+      }
+     ]
+    }
+   ],
+   "roleId": "software-engineer",
+   "salaryLabel": "",
+   "teaser": "Ship software that helps institutional investors design and analyse multi-asset portfolios—hybrid work, real room to grow.",
+   "title": "Software Engineer",
+   "workTypes": [
+    "Full time"
+   ],
+   "workArrangements": {
+    "data": [
+     {
+      "id": "2",
+      "label": {
+       "text": "Hybrid"
+      }
+     }
+    ],
+    "displayText": "Hybrid"
+   }
+  },
+  {
+   "advertiser": {
+    "id": "25966116",
+    "description": "Austcorp Executive"
+   },
+   "bulletPoints": [
+    "$85K-$95K + super",
+    "Hybrid after 2 months + free parking",
+    "Software + IoT, automation & technology integration"
+   ],
+   "branding": {
+    "serpLogoUrl": "https://bx-branding-gateway.cloud.seek.com.au/5abf2350-10f2-eb1e-3291-888120292f3f.1/jdpLogo"
+   },
+   "classifications": [
+    {
+     "classification": {
+      "id": "6281",
+      "description": "Information & Communication Technology"
+     },
+     "subclassification": {
+      "id": "6287",
+      "description": "Developers/Programmers"
+     }
+    }
+   ],
+   "companyName": "Austcorp Executive",
+   "companyProfileStructuredDataId": 22654,
+   "displayStyle": {
+    "search": "sourcrProfile"
+   },
+   "displayType": "standard",
+   "employer": {
+    "id": "22654",
+    "name": "Austcorp Executive"
+   },
+   "id": "94756812",
+   "isFeatured": false,
+   "listingDate": "2026-09-21T00:02:56Z",
+   "listingDateDisplay": "4d ago",
+   "locations": [
+    {
+     "label": "Melbourne Airport, Melbourne VIC",
+     "countryCode": "AU",
+     "seoHierarchy": [
+      {
+       "contextualName": "Melbourne Airport VIC 3045"
+      },
+      {
+       "contextualName": "All Melbourne VIC"
+      }
+     ]
+    }
+   ],
+   "roleId": "software-developer",
+   "salaryLabel": "Up to $95000 Plus Super",
+   "teaser": "Build software that interacts with real-world technology. $85-95K + super, hybrid after 2 months, free parking.",
+   "title": "Junior Software Developer - Integration",
+   "workTypes": [
+    "Full time"
+   ],
+   "workArrangements": {
+    "data": [
+     {
+      "id": "2",
+      "label": {
+       "text": "Hybrid"
+      }
+     }
+    ],
+    "displayText": "Hybrid"
+   }
+  },
+  {
+   "advertiser": {
+    "id": "26220238",
+    "description": "Robert Half"
+   },
+   "bulletPoints": [],
+   "branding": {},
+   "classifications": [
+    {
+     "classification": {
+      "id": "6281",
+      "description": "Information & Communication Technology"
+     },
+     "subclassification": {
+      "id": "6287",
+      "description": "Developers/Programmers"
+     }
+    }
+   ],
+   "companyName": "Robert Half",
+   "companyProfileStructuredDataId": 22659,
+   "displayType": "standard",
+   "employer": {
+    "id": "22659",
+    "name": "Robert Half"
+   },
+   "id": "94692923",
+   "isFeatured": false,
+   "listingDate": "2026-09-17T03:47:19Z",
+   "listingDateDisplay": "8d ago",
+   "locations": [
+    {
+     "label": "Fortitude Valley, Brisbane QLD",
+     "countryCode": "AU",
+     "seoHierarchy": [
+      {
+       "contextualName": "Fortitude Valley QLD 4006"
+      },
+      {
+       "contextualName": "All Brisbane QLD"
+      }
+     ]
+    }
+   ],
+   "roleId": "full-stack-developer",
+   "salaryLabel": "$120,000 - $140,000 p.a. + Superannuation",
+   "teaser": "Join a collaborative team building scalable Python/Django applications and modernising a trusted SaaS platform.",
+   "title": "Full Stack Developer (Python) | Inner Brisbane | Hybrid",
+   "workTypes": [
+    "Full time"
+   ],
+   "workArrangements": {
+    "data": [
+     {
+      "id": "2",
+      "label": {
+       "text": "Hybrid"
+      }
+     }
+    ],
+    "displayText": "Hybrid"
+   }
+  }
+ ],
+ "totalCount": 763,
+ "location": {
+  "description": "All Australia",
+  "locationDescription": "",
+  "type": "Country",
+  "whereId": "3000",
+  "localisedDescriptions": {
+   "en": {
+    "contextualName": "All Australia"
+   },
+   "id": {
+    "contextualName": "Australia"
+   },
+   "th": {
+    "contextualName": "ออสเตรเลีย"
+   },
+   "zh-Hant": {
+    "contextualName": "澳洲"
+   }
+  },
+  "isGranular": false,
+  "defaultDistanceKms": 50
+ }
+}

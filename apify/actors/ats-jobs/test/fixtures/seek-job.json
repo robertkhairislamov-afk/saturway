@@ -1,0 +1,49 @@
+{
+ "job": {
+  "id": "94424868",
+  "title": "Software Engineer",
+  "isExpired": false,
+  "content": "<p>Jacobi builds an open-architecture SaaS platform for institutional multi-asset investment management—portfolio construction, risk analytics, custom workflows, and client-ready reporting on a shared data foundation. You’ll join engineers across Brisbane, London, and San Francisco shipping production software used by investment teams worldwide.</p><p>We’re looking for someone team-focused who likes solving problems with Python, Java, React, JavaScript, SQL and open-source tooling. You’ll use AI as part of day-to-day delivery, collaborate closely with other engineering teams on the Jacobi platform, and help bring proprietary quantitative models into production. We get the best from people when they work where they feel most engaged—hybrid by design.<br>&nbsp;</p><p><strong>In the role, you will:</strong></p><ul><li><p>Contribute to Jacobi’s core platform by building and maintaining production features used by institutional investment teams.</p></li><li><p>Architect and implement solutions to custom requirements for key clients</p></li><li><p>Collaborate with a global expert team across Brisbane, London, and San Francisco</p></li><li><p>Get exposure to a broad range of leading edge technologies</p></li></ul><p><br>&nbsp;</p><p><strong>Benefits include:</strong></p><ul><li><p><strong>Competitive salary with equity and bonus potential</strong></p></li><li><p><strong>Flexible hybrid work arrangements</strong></p></li><li><p><strong>Great potential for your personal growth and development within the organisation</strong></p></li><li><p><strong>Relaxed and supportive team-based environment which encourages new ideas and autonomy</strong></p></li></ul><p><br>&nbsp;</p><p><strong>Must have:</strong></p><ul><li><p>Bachelor's or master's degree in a related field (e.g. Computer Science, Software Engineering)</p></li><li><p>0-3 years experience in software development</p></li><li><p>Proficiency in Java and Python with strong software development best practices</p></li><li><p>Experience interacting with REST APIs&nbsp;</p></li></ul><ul><li><p>Strong problem-solving and debugging skills with a keen eye for detail</p></li><li><p>Excellent communication skills, both written and verbal</p></li><li><p>Ability to adapt to a dynamic and fast-paced start-up environment</p></li><li><p>Curious with a passion for learning</p></li></ul><p><br>&nbsp;</p><p><strong>Nice to have:</strong></p><ul><li><p>JavaScript, TypeScript and/or React experience</p></li><li><p>Databricks and Apache Spark experience</p></li><li><p>Prior experience in client-facing roles and client engagement</p></li><li><p>Knowledge and use of Git</p></li><li><p>Experience with cloud platforms (AWS preferably) and IaC tools (e.g. Terraform)</p></li><li><p>Study, experience or knowledge in economics or finance</p></li></ul><p><br></p>",
+  "listedAt": {
+   "dateTimeUtc": "2026-09-04T07:47:49.108Z"
+  },
+  "expiresAt": {
+   "dateTimeUtc": "2026-10-04T12:59:59.999Z"
+  },
+  "salary": null,
+  "workTypes": {
+   "label": "Full time"
+  },
+  "location": {
+   "label": "Brisbane QLD"
+  },
+  "advertiser": {
+   "id": "39423369",
+   "name": "Jacobi Strategies Pty Ltd"
+  },
+  "products": {
+   "bullets": [
+    "Equity potential",
+    "Innovative technology stack",
+    "World class team"
+   ]
+  },
+  "tracking": {
+   "classificationInfo": {
+    "classification": "Information & Communication Technology",
+    "subClassification": "Engineering - Software"
+   }
+  }
+ },
+ "companyProfile": null,
+ "gfjInfo": {
+  "location": {
+   "countryCode": "AU",
+   "country": "Australia",
+   "suburb": "Brisbane",
+   "region": null,
+   "state": "Queensland",
+   "postcode": "4000"
+  }
+ }
+}

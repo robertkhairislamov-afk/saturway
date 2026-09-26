@@ -141,4 +141,18 @@ You pay only for results: **$0.50 per 1,000 results**. There is no start fee. Th
 
 **Is it legal to scrape Google Play?** The Actor collects publicly available app listings. It does not collect reviews, and it leaves out developers' postal addresses and phone numbers. Check the terms that apply to your use case.
 
+## Integrations and API
+
+- **Google Sheets, Slack, email and BI tools**: connect the Actor to Make, Zapier or n8n, or use the **Integrations** tab of this Actor. Schedule it daily to track chart ranks, ratings and installs over time.
+- **Webhooks**: call your own URL when a run finishes, for example to load the results into your database.
+- **AI agents (MCP)**: add `https://mcp.apify.com?tools=robertosan16/google-play-scraper` as an MCP server in Claude, Cursor or VS Code, and your agent can look up apps, top charts and search rankings with this Actor.
+- **LangChain and LlamaIndex**: load app data into your LLM app with the Apify loaders.
+- **API**: one request runs the Actor and returns the apps, for runs of up to 5 minutes. Start longer runs with the `runs` endpoint and read the dataset when they finish.
+
+```bash
+curl -X POST "https://api.apify.com/v2/acts/robertosan16~google-play-scraper/run-sync-get-dataset-items?token=YOUR_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"searchTerms":["habit tracker"],"countries":["US"],"maxItems":20}'
+```
+
 Missing a field or a feature? Open an issue in the Issues tab and we will reply quickly.

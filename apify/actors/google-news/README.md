@@ -93,4 +93,18 @@ You pay only for results: **$2 per 1,000 articles**, and **$1 per 1,000 resolved
 
 **Can I get the full article text?** Not yet. Enable *Resolve publisher URLs* and pass the URLs to a content extractor such as Website Content Crawler.
 
+## Integrations and API
+
+- **Google Sheets, Slack, email and dashboards**: connect the Actor to Make, Zapier or n8n, or use the **Integrations** tab of this Actor. Schedule it hourly or daily for news alerts on your topics.
+- **Webhooks**: call your own URL when a run finishes, for example to load the articles into your database.
+- **AI agents (MCP)**: add `https://mcp.apify.com?tools=robertosan16/google-news-scraper` as an MCP server in Claude, Cursor or VS Code, and your agent can search current news with this Actor.
+- **LangChain and LlamaIndex**: feed headlines and links into RAG pipelines with the Apify loaders.
+- **API**: one request runs the Actor and returns the articles, for runs of up to 5 minutes. Start longer runs with the `runs` endpoint and read the dataset when they finish.
+
+```bash
+curl -X POST "https://api.apify.com/v2/acts/robertosan16~google-news-scraper/run-sync-get-dataset-items?token=YOUR_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"queries":["artificial intelligence"],"maxItems":20}'
+```
+
 Found a bug or need a feature? Open an issue in the Issues tab and we will reply quickly.

@@ -10,6 +10,7 @@ export const ACTORS = {
     name: 'greenhouse-jobs-scraper',
     title: 'Greenhouse Jobs Scraper',
     tagline: 'every job of any company on Greenhouse, with salary ranges',
+    apiExample: { companies: ['airbnb'], maxItems: 20 },
     description: 'Scrape all open jobs of any company on Greenhouse: title, department, locations, salary range, description and apply link. Keyword, location, remote and date filters, and an only-new mode for monitoring.',
     seoTitle: 'Greenhouse Jobs Scraper – Job Listings & Salaries',
     seoDescription: 'Scrape jobs from any Greenhouse job board: title, department, location, salary range, description and apply link. Filters and alerts. $1 per 1,000 jobs.',
@@ -24,6 +25,7 @@ export const ACTORS = {
     name: 'lever-jobs-scraper',
     title: 'Lever Jobs Scraper',
     tagline: 'every job of any company on Lever, including EU sites',
+    apiExample: { companies: ['zoox'], maxItems: 20 },
     description: 'Scrape all open jobs of any company on Lever: title, team, locations, salary range, workplace type, description and apply link. Keyword, location, remote and date filters, and an only-new mode for monitoring.',
     seoTitle: 'Lever Jobs Scraper – Job Listings & Salaries',
     seoDescription: 'Scrape jobs from any company on jobs.lever.co: title, team, location, salary range, description and apply link. Filters and alerts. $1 per 1,000 jobs.',
@@ -38,6 +40,7 @@ export const ACTORS = {
     name: 'ashby-jobs-scraper',
     title: 'Ashby Jobs Scraper',
     tagline: 'startup jobs from Ashby job boards, with compensation',
+    apiExample: { companies: ['ramp'], maxItems: 20 },
     description: 'Scrape all open jobs of any company on Ashby: title, department, locations, compensation, workplace type, description and apply link. Keyword, location, remote and date filters, and an only-new mode for monitoring.',
     seoTitle: 'Ashby Jobs Scraper – Job Listings & Compensation',
     seoDescription: 'Scrape jobs from any Ashby job board: title, department, locations, compensation, description and apply link. Filters and alerts. $1 per 1,000 jobs.',
@@ -52,6 +55,7 @@ export const ACTORS = {
     name: 'workday-jobs-scraper',
     title: 'Workday Jobs Scraper',
     tagline: 'every job from any Workday career site, past the 2,000 search limit',
+    apiExample: { companies: ['https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite'], maxItems: 20 },
     description: 'Scrape jobs from any Workday career site (myworkdayjobs.com): title, locations, dates, salary from the description, full text and apply link. Gets every job, even beyond the 2,000 Workday shows per search.',
     seoTitle: 'Workday Jobs Scraper – All Jobs from Any Career Site',
     seoDescription: 'Scrape every job from any Workday career site, even past the 2,000 search limit: title, locations, dates, salary, description. $1 per 1,000 jobs.',
@@ -69,6 +73,7 @@ export const ACTORS = {
     name: 'dice-jobs-scraper',
     title: 'Dice Jobs Scraper',
     tagline: 'US tech jobs from Dice.com, with skills and salaries',
+    apiExample: { searchQueries: ['python developer'], maxItems: 20 },
     description: 'Scrape US tech jobs from Dice.com: title, company, location, salary, skills, full description, dates and apply link. All Dice filters, over 750 results per search, and an only-new mode for alerts.',
     seoTitle: 'Dice Jobs Scraper – Extract Job Listings & Salaries',
     seoDescription: 'Scrape Dice.com jobs by keyword and location: title, company, salary, skills, description, posting date and link. All Dice filters. $0.50 per 1,000 jobs.',
@@ -77,6 +82,7 @@ export const ACTORS = {
     name: 'welcome-to-the-jungle-jobs-scraper',
     title: 'Welcome to the Jungle Jobs Scraper',
     tagline: 'startup jobs in France, Europe, the UK and the US',
+    apiExample: { searchQueries: ['python developer'], countries: ['FR'], maxItems: 20 },
     description: 'Scrape Welcome to the Jungle jobs in France, Europe, the UK and the US by keyword or company: title, company, salary, remote policy, skills, tools, description and apply link. Filters and alerts.',
     seoTitle: 'Welcome to the Jungle Jobs Scraper – Jobs & Salaries',
     seoDescription: 'Scrape Welcome to the Jungle jobs by keyword, country or company: title, company, salary, remote, skills, description. JSON, CSV. $0.50 per 1,000 jobs.',
@@ -85,6 +91,7 @@ export const ACTORS = {
     name: 'seek-jobs-scraper',
     title: 'SEEK Jobs Scraper',
     tagline: 'jobs in Australia and New Zealand, with salaries as numbers',
+    apiExample: { searchQueries: ['registered nurse'], location: 'Sydney NSW', maxItems: 20 },
     description: 'Scrape SEEK jobs in Australia and New Zealand by keyword and location: title, company, salary, work type, classification, full description and apply link. All SEEK filters and alerts.',
     seoTitle: 'SEEK Jobs Scraper – Australia & NZ Jobs and Salaries',
     seoDescription: 'Scrape seek.com.au and seek.co.nz jobs by keyword and location: title, company, salary, work type, description. All filters. $0.50 per 1,000 jobs.',
@@ -93,6 +100,7 @@ export const ACTORS = {
     name: 'stepstone-jobs-scraper',
     title: 'StepStone Jobs Scraper',
     tagline: 'jobs in Germany, with benefits and English-language jobs',
+    apiExample: { searchQueries: ['data analyst'], location: 'Berlin', maxItems: 20 },
     description: 'Scrape StepStone.de jobs in Germany by keyword and city: title, company, location, remote, contract type, full description, benefits, industry and apply link. All StepStone filters and alerts.',
     seoTitle: 'StepStone Jobs Scraper – Germany Job Listings',
     seoDescription: 'Scrape StepStone.de jobs by keyword and city: title, company, location, remote, contract type, benefits and full description. $0.50 per 1,000 jobs.',
@@ -102,6 +110,28 @@ export const ACTORS = {
 export const CATEGORIES = ['JOBS', 'LEAD_GENERATION', 'AUTOMATION'];
 
 const STORE_URL = 'https://apify.com/robertosan16';
+
+// How to use an Actor from other tools: no-code platforms, webhooks, AI agents and the API.
+export function integrationsSection(ats) {
+  const actor = ACTORS[ats];
+  const path = `robertosan16/${actor.name}`;
+  return [
+    '## Integrations and API',
+    '',
+    '- **Google Sheets, Slack, email and CRMs**: connect the Actor to Make, Zapier or n8n, or use the **Integrations** tab of this Actor. With **Only new jobs since the last run** and a schedule, each run sends only the new jobs.',
+    '- **Webhooks**: call your own URL when a run finishes, for example to load the new jobs into your database.',
+    `- **AI agents (MCP)**: add \`https://mcp.apify.com?tools=${path}\` as an MCP server in Claude, Cursor or VS Code, and your agent can search jobs with this Actor. Tell it how many jobs you need, so it sets **Maximum jobs in total**.`,
+    '- **LangChain and LlamaIndex**: load the jobs into your LLM app with the Apify loaders.',
+    '- **API**: one request runs the Actor and returns the jobs, for runs of up to 5 minutes. Start longer runs with the `runs` endpoint and read the dataset when they finish.',
+    '',
+    '```bash',
+    `curl -X POST "https://api.apify.com/v2/acts/${path.replace('/', '~')}/run-sync-get-dataset-items?token=YOUR_API_TOKEN" \\`,
+    '  -H "Content-Type: application/json" \\',
+    `  -d '${JSON.stringify(actor.apiExample)}'`,
+    '```',
+    '',
+  ].join('\n');
+}
 
 // The other job scrapers, listed at the end of every README: they all share one output format.
 export function familySection(ats) {

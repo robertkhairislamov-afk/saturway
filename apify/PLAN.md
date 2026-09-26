@@ -184,7 +184,7 @@
   Правило только для SEEK: «85 - 105» у полной занятости — это 85–105 тыс. в год; голые числа в тексте со словами («Hay Grade 17») не считаются зарплатой.
 - В логе видно, какое место SEEK выбрал для локации: «WA» — это Wagga Wagga, а не Западная Австралия.
 
-### 7. StepStone — выложен, ждёт публикации
+### 7. StepStone — опубликован 25.09
 
 Восьмой актор: код в `actors/ats-jobs/src/adapters/stepstone.js`. На Apify: `robertosan16/stepstone-jobs-scraper` (ID `iY2HrdYLxAM58624E`), сборка 0.1.4.
 
@@ -202,7 +202,7 @@
 Apify разрешает не больше 5 публикаций в сутки.
 
 - 24.09.2026: Google News и четыре актора ATS.
-- 25.09.2026: компания подтверждена, акторы появились в поиске Store. Опубликованы Google Play, Dice, Welcome to the Jungle и SEEK. StepStone — пятая публикация за этот день.
+- 25.09.2026: компания подтверждена, акторы появились в поиске Store. Опубликованы Google Play, Dice, Welcome to the Jungle, SEEK и StepStone. Все 10 акторов публичные.
 
 Позиции в поиске Store 25.09 (новые акторы начинают снизу):
 
@@ -214,6 +214,8 @@ Apify разрешает не больше 5 публикаций в сутки.
 | greenhouse jobs, google news | Greenhouse и Google News — дальше первых ~85 |
 
 В README всех акторов с вакансиями в конце генерируется список остальных («More job scrapers with the same output», `familySection` в `scripts/actors.mjs`). Новый актор попадает в список сам после пересборки всех.
+
+26.09 во все 10 README добавлен раздел «Integrations and API», по мотивам онбординг-письма Apify. Там Make, Zapier и n8n, вебхуки, LangChain и LlamaIndex, подключение к ИИ-агентам через MCP (`https://mcp.apify.com?tools=robertosan16/<актор>` для Claude, Cursor и VS Code) и вызов одной командой `curl` через `run-sync-get-dataset-items`. Примеры запросов проверены на наших акторах. У акторов с вакансиями раздел генерирует `integrationsSection`, пример ввода лежит в поле `apiExample` в `scripts/actors.mjs`. У Google Play и Google News раздел написан вручную.
 
 ### 8. Потом
 

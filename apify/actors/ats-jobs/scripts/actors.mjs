@@ -105,6 +105,24 @@ export const ACTORS = {
     seoTitle: 'StepStone Jobs Scraper – Germany Job Listings',
     seoDescription: 'Scrape StepStone.de jobs by keyword and city: title, company, location, remote, contract type, benefits and full description. $0.50 per 1,000 jobs.',
   },
+  jobstreet: {
+    name: 'jobstreet-jobs-scraper',
+    title: 'Jobstreet Jobs Scraper',
+    tagline: 'jobs in Malaysia, Singapore, the Philippines and Indonesia, with salaries as numbers',
+    apiExample: { searchQueries: ['software engineer'], country: 'MY', maxItems: 20 },
+    description: 'Scrape Jobstreet jobs in Malaysia, Singapore, the Philippines and Indonesia by keyword and location: title, company, salary as numbers, work type, full description and apply link. Filters and alerts.',
+    seoTitle: 'Jobstreet Jobs Scraper – Malaysia, Singapore, PH, ID',
+    seoDescription: 'Scrape Jobstreet jobs in Malaysia, Singapore, the Philippines and Indonesia: title, company, salary, work type, description. $0.50 per 1,000 jobs.',
+  },
+  jobsdb: {
+    name: 'jobsdb-jobs-scraper',
+    title: 'JobsDB Jobs Scraper',
+    tagline: 'jobs in Hong Kong and Thailand, with salaries as numbers',
+    apiExample: { searchQueries: ['accountant'], country: 'HK', maxItems: 20 },
+    description: 'Scrape JobsDB jobs in Hong Kong and Thailand by keyword and location: title, company, salary as numbers, work type, classification, full description and apply link. Filters and alerts.',
+    seoTitle: 'JobsDB Jobs Scraper – Hong Kong & Thailand Jobs',
+    seoDescription: 'Scrape JobsDB jobs in Hong Kong and Thailand by keyword and location: title, company, salary, work type and full description. $0.50 per 1,000 jobs.',
+  },
 };
 
 export const CATEGORIES = ['JOBS', 'LEAD_GENERATION', 'AUTOMATION'];
@@ -147,7 +165,7 @@ export function familySection(ats) {
 export function inputSchema(ats) {
   if (ats === 'dice') return diceInputSchema();
   if (ats === 'wttj') return wttjInputSchema();
-  if (ats === 'seek') return seekInputSchema();
+  if (ats === 'seek' || ats === 'jobstreet' || ats === 'jobsdb') return seekInputSchema(ats);
   if (ats === 'stepstone') return stepstoneInputSchema();
   const actor = ACTORS[ats];
   const properties = {
@@ -476,10 +494,46 @@ const optionsOf = (map) => {
   return { enum: entries.map(([id]) => id), enumTitles: entries.map(([, label]) => label) };
 };
 
-function seekInputSchema() {
+// SEEK, Jobstreet and JobsDB share one platform and one form; these texts differ.
+const SEEK_FORMS = {
+  seek: {
+    countries: { AU: 'Australia (seek.com.au)', NZ: 'New Zealand (seek.co.nz)' },
+    where: 'Australia or New Zealand',
+    currencies: 'AUD or NZD',
+    places: '<code>Sydney NSW</code>, <code>All Melbourne VIC</code>, <code>Queensland QLD</code> or <code>Auckland</code>',
+    links: 'seek.com.au or seek.co.nz',
+    queries: '<code>python developer</code> or <code>registered nurse</code>',
+    prefill: ['python developer'],
+    salaryType: 'annual',
+  },
+  jobstreet: {
+    countries: { MY: 'Malaysia (my.jobstreet.com)', SG: 'Singapore (sg.jobstreet.com)', PH: 'Philippines (ph.jobstreet.com)', ID: 'Indonesia (id.jobstreet.com)' },
+    where: 'Malaysia, Singapore, the Philippines or Indonesia',
+    currencies: 'MYR, SGD, PHP or IDR',
+    places: '<code>Kuala Lumpur</code>, <code>Penang</code>, <code>Makati City</code> or <code>Jakarta Raya</code>',
+    links: 'Jobstreet',
+    queries: '<code>software engineer</code> or <code>accountant</code>',
+    prefill: ['software engineer'],
+    salaryType: 'monthly',
+  },
+  jobsdb: {
+    countries: { HK: 'Hong Kong (hk.jobsdb.com)', TH: 'Thailand (th.jobsdb.com)' },
+    where: 'Hong Kong or Thailand',
+    currencies: 'HKD or THB',
+    places: '<code>Kowloon</code>, <code>Hong Kong Island</code> or <code>Bangkok</code>',
+    links: 'hk.jobsdb.com or th.jobsdb.com',
+    queries: '<code>software engineer</code> or <code>accountant</code>',
+    prefill: ['software engineer'],
+    salaryType: 'monthly',
+  },
+};
+
+function seekInputSchema(ats) {
+  const form = SEEK_FORMS[ats];
+  const site = ACTORS[ats].title.replace(/ Jobs Scraper$/, '');
   return {
-    title: ACTORS.seek.title,
-    description: 'Search SEEK in Australia or New Zealand with the site\'s own filters and get every matching job in one clean format.',
+    title: ACTORS[ats].title,
+    description: `Search ${site} in ${form.where} with the site's own filters and get every matching job in one clean format.`,
     type: 'object',
     schemaVersion: 1,
     properties: {
@@ -487,30 +541,30 @@ function seekInputSchema() {
         title: 'Job titles or keywords',
         type: 'array',
         editor: 'stringList',
-        description: 'What to search, for example <code>python developer</code> or <code>registered nurse</code>. Each line is a separate search with the filters below. You can also paste links of searches from seek.com.au or seek.co.nz.',
-        prefill: ['python developer'],
+        description: `What to search, for example ${form.queries}. Each line is a separate search with the filters below. You can also paste links of searches from ${form.links}.`,
+        prefill: form.prefill,
         placeholderValue: 'data analyst',
       },
       country: {
         title: 'Country',
         type: 'string',
         editor: 'select',
-        enum: ['AU', 'NZ'],
-        enumTitles: ['Australia (seek.com.au)', 'New Zealand (seek.co.nz)'],
-        default: 'AU',
-        description: 'The SEEK site to search. Salaries come in its currency, AUD or NZD.',
+        enum: Object.keys(form.countries),
+        enumTitles: Object.values(form.countries),
+        default: Object.keys(form.countries)[0],
+        description: `The ${site} site to search. Salaries come in its currency, ${form.currencies}.`,
       },
       location: {
         title: 'Location',
         type: 'string',
         editor: 'textfield',
-        description: 'A suburb, city, region or state as on SEEK, for example <code>Sydney NSW</code>, <code>All Melbourne VIC</code>, <code>Queensland QLD</code> or <code>Auckland</code>. Leave empty for the whole country.',
+        description: `A suburb, city, region or state as on ${site}, for example ${form.places}. Leave empty for the whole country.`,
       },
       classifications: {
         title: 'Classifications',
         type: 'array',
         editor: 'select',
-        sectionCaption: 'SEEK filters',
+        sectionCaption: `${site} filters`,
         description: 'Job categories as on SEEK. Leave empty for all.',
         items: { type: 'string', ...optionsOf(CLASSIFICATIONS) },
       },
@@ -539,7 +593,7 @@ function seekInputSchema() {
         title: 'Minimum salary',
         type: 'integer',
         minimum: 0,
-        description: 'Keep jobs paying at least this much, in AUD or NZD, per the salary type below. SEEK applies it to the pay range the employer set, even when the ad does not show it.',
+        description: `Keep jobs paying at least this much, in ${form.currencies}, per the salary type below. ${site} applies it to the pay range the employer set, even when the ad does not show it.`,
       },
       salaryType: {
         title: 'Salary type',
@@ -547,7 +601,7 @@ function seekInputSchema() {
         editor: 'select',
         enum: ['annual', 'monthly', 'hourly'],
         enumTitles: ['Per year', 'Per month', 'Per hour'],
-        default: 'annual',
+        default: form.salaryType,
         description: 'What the minimum salary above means.',
       },
       sortBy: {
@@ -560,9 +614,9 @@ function seekInputSchema() {
         description: 'Newest first suits job alerts. Links you paste keep their own order.',
       },
       ...commonSettings({
-        site: 'SEEK',
+        site,
         details: 'the full description (text and HTML), expiry date and company industry, size and website',
-        proxyDescription: 'The Actor connects directly, which is fastest. If SEEK starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it from the start.',
+        proxyDescription: `The Actor connects directly, which is fastest. If ${site} starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it from the start.`,
       }),
     },
   };
@@ -667,6 +721,8 @@ const EXTRA_COLUMN = {
   dice: ['employmentType', 'Employment'],
   wttj: ['employmentType', 'Contract'],
   seek: ['employmentType', 'Work type'],
+  jobstreet: ['employmentType', 'Work type'],
+  jobsdb: ['employmentType', 'Work type'],
   stepstone: ['employmentType', 'Employment'],
 };
 

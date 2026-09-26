@@ -1,7 +1,9 @@
-// SEEK (seek.com.au, seek.co.nz): the job search API behind the website. A search lists at most
-// 550 jobs (10 pages of 55), so bigger searches are split by classification, work type and salary
-// band. Job details come from SEEK's GraphQL API: the full description, expiry date and company
-// profile. Phone numbers and contact details of recruiters are never requested.
+// SEEK and the sites on its platform: SEEK (Australia, New Zealand), Jobstreet (Malaysia,
+// Singapore, the Philippines, Indonesia) and JobsDB (Hong Kong, Thailand). The job search API behind
+// the websites lists at most 550 jobs per search (10 pages of 55), so bigger searches are split by
+// classification, work type and salary band. Job details come from the GraphQL API: the full
+// description, expiry date and company profile. Phone numbers and contacts of recruiters are never
+// requested.
 
 import { makeJob } from '../core/job.js';
 import { makeSalary, salaryFromText } from '../core/salary.js';
@@ -17,9 +19,22 @@ export const proxyFallback = true;
 const PAGE_SIZE = 55;
 const MAX_PAGES = 10;
 
+// Asian sites show pay per month unless the label says otherwise. "$" is the local dollar where
+// there is one, and US dollars elsewhere.
 export const SITES = {
-  AU: { host: 'www.seek.com.au', siteKey: 'AU-Main', locale: 'en-AU', zone: 'anz-1', currency: 'AUD', everywhere: 'All Australia' },
-  NZ: { host: 'www.seek.co.nz', siteKey: 'NZ-Main', locale: 'en-NZ', zone: 'anz-2', currency: 'NZD', everywhere: 'All New Zealand' },
+  AU: { brand: 'seek', host: 'www.seek.com.au', siteKey: 'AU-Main', locale: 'en-AU', zone: 'anz-1', currency: 'AUD', dollar: 'AUD', country: 'Australia', everywhere: 'All Australia' },
+  NZ: { brand: 'seek', host: 'www.seek.co.nz', siteKey: 'NZ-Main', locale: 'en-NZ', zone: 'anz-2', currency: 'NZD', dollar: 'NZD', country: 'New Zealand', everywhere: 'All New Zealand' },
+  MY: { brand: 'jobstreet', host: 'my.jobstreet.com', oldHost: 'jobstreet.com.my', siteKey: 'MY-Main', locale: 'en-MY', zone: 'asia-3', currency: 'MYR', country: 'Malaysia', monthly: true },
+  SG: { brand: 'jobstreet', host: 'sg.jobstreet.com', oldHost: 'jobstreet.com.sg', siteKey: 'SG-Main', locale: 'en-SG', zone: 'asia-5', currency: 'SGD', dollar: 'SGD', country: 'Singapore', monthly: true },
+  PH: { brand: 'jobstreet', host: 'ph.jobstreet.com', oldHost: 'jobstreet.com.ph', siteKey: 'PH-Main', locale: 'en-PH', zone: 'asia-4', currency: 'PHP', country: 'the Philippines', monthly: true },
+  ID: { brand: 'jobstreet', host: 'id.jobstreet.com', oldHost: 'jobstreet.co.id', siteKey: 'ID-Main', locale: 'en-ID', zone: 'asia-2', currency: 'IDR', country: 'Indonesia', monthly: true },
+  HK: { brand: 'jobsdb', host: 'hk.jobsdb.com', siteKey: 'HK-Main', locale: 'en-HK', zone: 'asia-1', currency: 'HKD', dollar: 'HKD', country: 'Hong Kong', monthly: true },
+  TH: { brand: 'jobsdb', host: 'th.jobsdb.com', siteKey: 'TH-Main', locale: 'en-TH', zone: 'asia-6', currency: 'THB', country: 'Thailand', monthly: true },
+};
+export const BRANDS = {
+  seek: { title: 'SEEK', sites: ['AU', 'NZ'], example: 'python developer' },
+  jobstreet: { title: 'Jobstreet', sites: ['MY', 'SG', 'PH', 'ID'], example: 'software engineer' },
+  jobsdb: { title: 'JobsDB', sites: ['HK', 'TH'], example: 'software engineer' },
 };
 
 export const CLASSIFICATIONS = {
@@ -68,7 +83,10 @@ const SEARCH_PARAMS = ['keywords', 'where', 'classification', 'subclassification
 const toList = (value) => (Array.isArray(value) ? value : value ? [value] : []).map((item) => String(item).trim()).filter(Boolean);
 const slug = (text) => text.toLowerCase().replace(/&/g, ' ').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const CLASSIFICATION_SLUGS = Object.fromEntries(Object.entries(CLASSIFICATIONS).map(([id, label]) => [slug(label), id]));
-const siteOf = (code) => SITES[String(code ?? 'AU').toUpperCase()] ? String(code ?? 'AU').toUpperCase() : 'AU';
+const siteOf = (code, fallback = 'AU') => (SITES[String(code ?? '').toUpperCase()] ? String(code).toUpperCase() : fallback);
+const bareHost = (host) => String(host).toLowerCase().replace(/^www\./, '');
+// The site of a link, also on the old Jobstreet domains such as jobstreet.com.my.
+export const siteOfHost = (host) => Object.keys(SITES).find((code) => [SITES[code].host, SITES[code].oldHost].filter(Boolean).map(bareHost).includes(bareHost(host))) ?? null;
 
 // A search as a key: the site plus SEEK's own search parameters, sorted.
 function keyOf(siteCode, params) {
@@ -98,10 +116,11 @@ export function searchKey({ site, query = '', location, classifications, workTyp
   });
 }
 
-// A search link from seek.com.au or seek.co.nz, such as /python-developer-jobs/in-All-Sydney-NSW?worktype=242.
+// A search link from one of the sites, such as seek.com.au/python-developer-jobs/in-All-Sydney-NSW?worktype=242.
 export function fromSeekUrl(value) {
   const url = new URL(value);
-  const siteCode = /seek\.co\.nz$/i.test(url.hostname) ? 'NZ' : 'AU';
+  const siteCode = siteOfHost(url.hostname);
+  if (!siteCode) throw new Error(`${url.hostname} is not a SEEK, Jobstreet or JobsDB site.`);
   const params = Object.fromEntries(SEARCH_PARAMS.map((param) => [param, url.searchParams.get(param) ?? '']));
   const segments = url.pathname.split('/').filter(Boolean).map((segment) => decodeURIComponent(segment));
   for (const segment of segments) {
@@ -118,10 +137,10 @@ export function fromSeekUrl(value) {
   return keyOf(siteCode, params);
 }
 
-// Keywords become searches with the form's filters; SEEK links are used as they are.
-export function prepareInput(raw) {
+// Keywords become searches with the form's filters; links from the sites are used as they are.
+export function prepareInput(raw, defaultSite = 'AU') {
   const form = {
-    site: raw.country,
+    site: siteOf(raw.country, defaultSite),
     location: String(raw.location ?? '').trim(),
     classifications: raw.classifications,
     workTypes: raw.workTypes,
@@ -149,23 +168,25 @@ export function prepareInput(raw) {
 
 export const exampleInput = { companies: [searchKey({ query: 'python developer' })], maxItems: 50 };
 
-export function parseCompany(value) {
+export function parseCompany(value, brand = 'seek') {
   const raw = String(value ?? '').trim();
+  const { title: brandTitle, sites } = BRANDS[brand];
   let key = raw;
   if (/^https?:\/\//i.test(raw)) {
     const url = new URL(raw);
-    if (!/(^|\.)seek\.(com\.au|co\.nz)$/i.test(url.hostname)) {
-      throw new Error('this is not a SEEK search link. Search on seek.com.au or seek.co.nz and copy the address, or enter keywords.');
+    if (!siteOfHost(url.hostname)) {
+      const hosts = sites.map((code) => SITES[code].host.replace(/^www\./, '')).join(', ');
+      throw new Error(`this is not a ${brandTitle} search link. Search on ${hosts} and copy the address, or enter keywords.`);
     }
     key = fromSeekUrl(raw);
   } else if (!/^seek:\/\//i.test(raw)) {
-    key = searchKey({ query: raw });
+    key = searchKey({ site: sites[0], query: raw });
   }
   const url = new URL(key.replace(/^seek:\/\//i, 'https://seek/'));
-  const siteCode = siteOf(url.pathname.slice(1));
+  const siteCode = siteOf(url.pathname.slice(1), sites[0]);
   const params = Object.fromEntries(SEARCH_PARAMS.map((param) => [param, url.searchParams.get(param) ?? '']));
   const site = SITES[siteCode];
-  const id = `${params.keywords || 'all jobs'} in ${params.where || site.everywhere}`;
+  const id = `${params.keywords || 'all jobs'} in ${params.where || site.everywhere || site.country}`;
   return { kind: 'search', id, key, site: siteCode, params };
 }
 
@@ -175,7 +196,7 @@ export function searchUrl(siteCode, params, page = 1) {
   for (const param of SEARCH_PARAMS) {
     if (params[param]) search.set(param, params[param]);
   }
-  if (!params.where) search.set('where', site.everywhere);
+  if (!params.where && site.everywhere) search.set('where', site.everywhere);
   return `https://${site.host}/api/jobsearch/v5/search?${search}`;
 }
 
@@ -184,19 +205,25 @@ export function searchUrl(siteCode, params, page = 1) {
 const EMPLOYMENT = { 'Full time': 'full-time', 'Part time': 'part-time', 'Contract/Temp': 'contract', 'Casual/Vacation': 'casual' };
 
 // Words a pay label may have around bare numbers such as "85 - 105" or "100k - 120k + super".
-const PAY_WORDS = /\b(?:per|an?|hours?|hr|days?|weeks?|months?|years?|annum|p\.?[ahd]\.?|ph|pa|plus|super|superannuation|package|packaging|base|salary|doe|negotiable|inc|incl|including|aud|nzd|circa|up|to|from|bonus)\b/gi;
+const PAY_WORDS = /\b(?:per|an?|hours?|hr|days?|weeks?|months?|years?|annum|p\.?[ahd]\.?|ph|pa|plus|super|superannuation|package|packaging|base|salary|doe|negotiable|inc|incl|including|aud|nzd|myr|sgd|php|idr|hkd|thb|circa|up|to|from|bonus)\b/gi;
+const CURRENCY = /[$€£₱฿]|RM\s?\d|Rp\.?\s?\d|Php\s?\d|\b(?:AUD|NZD|USD|MYR|SGD|PHP|IDR|HKD|THB)\b/i;
+const PERIOD = /hour|\bhr\b|p\.?h\b|\dph\b|\bday|daily|p\.?d\b|week|fortnight|month|p\.?m\b|annum|annual|year|p\.?a\b/i;
 
-// SEEK's salary is free text. Numbers without a currency count only in a plain pay label, so
-// "Hay Grade 17" is no salary. "85 - 105" on a full-time job means 85K to 105K a year, not per hour.
-export function salaryOf(label, workType, currency) {
+// The salary is free text. Numbers without a currency count only in a plain pay label, so "Hay
+// Grade 17" is no salary. On SEEK "85 - 105" for a full-time job means 85K to 105K a year, not
+// per hour; on the Asian sites pay without a period is per month.
+export function salaryOf(label, workType, siteCode = 'AU') {
+  const site = SITES[siteCode] ?? SITES.AU;
   const text = String(label ?? '');
-  const hasCurrency = /[$€£]|\b(?:AUD|NZD|USD)\b/i.test(text);
-  if (!hasCurrency && /[a-z]/i.test(text.replace(/(\d)\s*k\b/gi, '$1').replace(PAY_WORDS, ''))) return null;
-  const salary = salaryFromText(text, { known: true, source: 'listing', defaultCurrency: currency });
-  const hourly = /hour|\bhr|p\.?h\b|\dph\b/i.test(String(label));
-  if (!salary || workType !== 'Full time' || salary.interval !== 'hour' || hourly || (salary.max ?? salary.min) >= 1000) return salary;
+  if (!CURRENCY.test(text) && /[a-z]/i.test(text.replace(/(\d)\s*k\b/gi, '$1').replace(PAY_WORDS, ''))) return null;
+  const salary = salaryFromText(text, { known: true, source: 'listing', defaultCurrency: site.currency, dollar: site.dollar ?? 'USD' });
+  if (!salary) return null;
+  const again = (changes) => makeSalary({ ...salary, ...changes, source: 'listing' });
+  if (site.monthly) return salary.interval && PERIOD.test(text) ? salary : again({ interval: 'month' });
+  const hourly = /hour|\bhr|p\.?h\b|\dph\b/i.test(text);
+  if (workType !== 'Full time' || salary.interval !== 'hour' || hourly || (salary.max ?? salary.min) >= 1000) return salary;
   const thousand = (value) => (value == null ? null : value * 1000);
-  return makeSalary({ min: thousand(salary.min), max: thousand(salary.max), currency: salary.currency, interval: 'year', text: salary.text, source: 'listing' });
+  return again({ min: thousand(salary.min), max: thousand(salary.max), interval: 'year' });
 }
 const escapeHtml = (text) => String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
@@ -217,7 +244,7 @@ export function toJob(raw, details = null, siteCode = 'AU') {
   const rating = profile?.reviewsSummary?.overallRating;
   return {
     ...makeJob({
-      ats: name,
+      ats: site.brand,
       company: raw.advertiser?.id ?? null,
       companyName: raw.companyName ?? raw.advertiser?.description ?? job.advertiser?.name,
       jobId: raw.id,
@@ -228,7 +255,7 @@ export function toJob(raw, details = null, siteCode = 'AU') {
       remote: arrangement === 'Remote',
       workplaceType: arrangement,
       employmentType: EMPLOYMENT[workType] ?? workType,
-      salary: salaryOf(job.salary?.label || raw.salaryLabel, workType, site.currency),
+      salary: salaryOf(job.salary?.label || raw.salaryLabel, workType, siteCode),
       postedAt: job.listedAt?.dateTimeUtc ?? raw.listingDate,
       jobUrl,
       applyUrl: `${jobUrl}/apply`,
@@ -283,7 +310,7 @@ export async function completeJob(partial, source, { http, includeDescription })
     query: JOB_DETAILS_QUERY,
     variables: { jobId: String(partial.raw.id), zone: site.zone, locale: site.locale },
   });
-  if (!result?.data && result?.errors?.length) throw new Error(`SEEK job details failed: ${result.errors[0]?.message}`);
+  if (!result?.data && result?.errors?.length) throw new Error(`Job details failed: ${result.errors[0]?.message}`);
   const details = result?.data?.jobDetails;
   // The job was taken down after the search listed it.
   if (!details?.job || details.job.isExpired) return null;
@@ -312,24 +339,25 @@ export function chooseSplit(params) {
 
 async function* searchPages(source, params, context, seen, label = source.id) {
   const { http, log } = context;
+  const brandTitle = BRANDS[SITES[source.site]?.brand ?? 'seek'].title;
   const first = await http.getJson(searchUrl(source.site, params), { retries: 4 });
   const total = Number(first?.totalCount) || 0;
   if (label === source.id && params.where) {
     const place = first?.location?.description;
-    if (!place) log.warning(`${label}: SEEK did not recognize the location "${params.where}". Try a suburb, city or state as shown on the site, such as "Sydney NSW".`);
+    if (!place) log.warning(`${label}: ${brandTitle} did not recognize the location "${params.where}". Try a suburb, city, region or state as the site shows it.`);
     // "WA" alone is Wagga Wagga, so say which place SEEK picked.
-    else if (place.toLowerCase() !== params.where.toLowerCase()) log.info(`${label}: SEEK searches in "${place}".`);
+    else if (place.toLowerCase() !== params.where.toLowerCase()) log.info(`${label}: ${brandTitle} searches in "${place}".`);
   }
   const limit = PAGE_SIZE * MAX_PAGES;
   const split = total > limit ? chooseSplit(params) : null;
   if (split) {
     const [dimension, parts] = split;
-    log.info(`${label}: ${total} jobs; SEEK lists at most ${limit} per search, so searching each ${dimension} separately.`);
+    log.info(`${label}: ${total} jobs; ${brandTitle} lists at most ${limit} per search, so searching each ${dimension} separately.`);
     for (const [value, next] of parts) yield* searchPages(source, next, context, seen, `${label}, ${value}`);
     return;
   }
   if (total > limit) {
-    log.warning(`${label}: SEEK lists at most ${limit} jobs per search; ${total} match. Add filters or more precise keywords to get the rest.`);
+    log.warning(`${label}: ${brandTitle} lists at most ${limit} jobs per search; ${total} match. Add filters or more precise keywords to get the rest.`);
   }
   const fresh = (list) => (list ?? []).filter((raw) => raw?.id && !seen.has(raw.id) && seen.add(raw.id)).map((raw) => toPartialJob(raw, source.site));
   yield fresh(first?.data);
@@ -343,4 +371,22 @@ async function* searchPages(source, params, context, seen, label = source.id) {
 
 export async function* listJobs(source, context) {
   yield* searchPages(source, source.params, context, new Set());
+}
+
+// Jobstreet and JobsDB run the same code with their own sites, name and example search.
+export function brandAdapter(brand) {
+  const { title: brandTitle, sites, example } = BRANDS[brand];
+  return {
+    name: brand,
+    title: brandTitle,
+    sourceNames,
+    companyConcurrency,
+    detailConcurrency,
+    proxyFallback,
+    exampleInput: { companies: [searchKey({ site: sites[0], query: example })], maxItems: 50 },
+    prepareInput: (raw) => prepareInput(raw, sites[0]),
+    parseCompany: (value) => parseCompany(value, brand),
+    completeJob,
+    listJobs,
+  };
 }

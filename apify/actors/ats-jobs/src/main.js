@@ -1,5 +1,5 @@
-// One code base for the Greenhouse, Lever, Ashby and Workday Actors. The ATS comes from the
-// ATS_PLATFORM environment variable or from the Actor name, for example "lever-jobs-scraper".
+// One code base for all job Actors. The job site comes from the ATS_PLATFORM environment variable
+// or from the Actor name, for example "lever-jobs-scraper".
 
 import { readFileSync } from 'node:fs';
 

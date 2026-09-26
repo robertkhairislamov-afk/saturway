@@ -75,7 +75,7 @@ test('yearlyMax turns pay per period into a yearly amount', () => {
 });
 
 test('salaryFromText reads free-text pay labels from job boards', () => {
-  const read = (text) => pick(salaryFromText(text, { known: true, source: 'listing', defaultCurrency: 'AUD' }));
+  const read = (text) => pick(salaryFromText(text, { known: true, source: 'listing', defaultCurrency: 'AUD', dollar: 'AUD' }));
   assert.deepEqual(read('EA7 (38 hours) - $99,550.81 + super'), [99550.81, 99550.81, 'AUD', 'year']);
   assert.deepEqual(read('$330 - $352.92 p.d. + Super'), [330, 352.92, 'AUD', 'day']);
   assert.deepEqual(read('$42.99ph + 15.25% Scale Penalty + 12% Super'), [42.99, 42.99, 'AUD', 'hour']);
@@ -86,4 +86,18 @@ test('salaryFromText reads free-text pay labels from job boards', () => {
   assert.deepEqual(read('$5,390.40 to $5,852.40 per fortnight'), [140150.4, 152162.4, 'AUD', 'year']);
   assert.equal(read('Base + 15.4% super'), null);
   assert.equal(read('12 month fixed-term contract'), null);
+});
+
+test('salaryFromText: "$" is the site\'s dollar, other symbols keep their currency', () => {
+  const read = (text, options) => pick(salaryFromText(text, { known: true, source: 'listing', ...options }));
+  assert.deepEqual(read('$1,100 per month', { defaultCurrency: 'PHP' }), [1100, 1100, 'USD', 'month']);
+  assert.deepEqual(read('$3,000 – $4,000 per month', { defaultCurrency: 'SGD', dollar: 'SGD' }), [3000, 4000, 'SGD', 'month']);
+  assert.deepEqual(read('RM 3,100 – RM 3,500 per month', { defaultCurrency: 'MYR' }), [3100, 3500, 'MYR', 'month']);
+  assert.deepEqual(read('Rp 5.250.000 – Rp 6.250.000 per month', { defaultCurrency: 'IDR' }), [5250000, 6250000, 'IDR', 'month']);
+  assert.deepEqual(read('฿70 per hour', { defaultCurrency: 'THB' }), [70, 70, 'THB', 'hour']);
+  assert.deepEqual(read('Php50,000-Php60,000 per month', { defaultCurrency: 'PHP' }), [50000, 60000, 'PHP', 'month']);
+  assert.deepEqual(read('€50,000 per year', { defaultCurrency: 'USD' }), [50000, 50000, 'EUR', 'year']);
+  // Pay fields that leave out the thousands, and "p.m." for per month.
+  assert.deepEqual(read('$20 – $23 per month', { defaultCurrency: 'HKD', dollar: 'HKD' }), [20000, 23000, 'HKD', 'month']);
+  assert.deepEqual(read('$3600 - $4100 p.m. + Transport', { defaultCurrency: 'SGD', dollar: 'SGD' }), [3600, 4100, 'SGD', 'month']);
 });

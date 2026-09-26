@@ -89,6 +89,7 @@ export function makeSalary({ min = null, max = null, currency = null, interval =
 const SYMBOL_CURRENCY = {
   $: 'USD', US$: 'USD', CA$: 'CAD', C$: 'CAD', AU$: 'AUD', A$: 'AUD', NZ$: 'NZD', S$: 'SGD',
   HK$: 'HKD', R$: 'BRL', MX$: 'MXN', '£': 'GBP', '€': 'EUR', '₹': 'INR', '₪': 'ILS', '¥': 'JPY', '₩': 'KRW',
+  '₱': 'PHP', Php: 'PHP', '฿': 'THB', RM: 'MYR', Rp: 'IDR',
 };
 const CODES = 'USD|EUR|GBP|CAD|AUD|NZD|SGD|HKD|CHF|JPY|INR|KRW|ILS|PLN|SEK|NOK|DKK|BRL|MXN|ZAR|AED|CNY|TWD|THB|PHP|IDR|MYR|CZK|HUF|RON|TRY';
 const SYMBOLS = Object.keys(SYMBOL_CURRENCY)
@@ -110,7 +111,7 @@ const RANGE = new RegExp(`(?<![\\w.,$])${amountPattern(1)}\\s*(?:-|–|—|to|an
 const SINGLE = new RegExp(`(?<![\\w.,$])${amountPattern(1)}`, 'g');
 
 const PERIOD_WORDS = { hour: 'hour|hr', day: 'day', week: 'week|wk', fortnight: 'fortnight', month: 'month|mo', year: 'year|yr|annum' };
-const PERIOD_ADJECTIVES = { hour: 'hourly|p\\.h\\.|ph', day: 'daily|p\\.d\\.', week: 'weekly', fortnight: 'fortnightly', month: 'monthly', year: 'annual(?:ly|ized)?|yearly|p\\.a\\.' };
+const PERIOD_ADJECTIVES = { hour: 'hourly|p\\.h\\.|ph', day: 'daily|p\\.d\\.', week: 'weekly', fortnight: 'fortnightly', month: 'monthly|p\\.m\\.', year: 'annual(?:ly|ized)?|yearly|p\\.a\\.' };
 const PAY_WORDS = 'salary|pay|rate|wage|compensation|range';
 
 // Right after a range: "/yr", "per hour", "an hour", ", annually", "annual base salary".
@@ -126,7 +127,8 @@ const LARGE_UNIT_AFTER = /^\s*(?:million|billion|mm|m|bn|b)\b/i;
 // A number without a currency followed by these is a quantity ("38 hours", "12 month contract", "15%").
 const QUANTITY_AFTER = /^\s*(?:%|hours?\b|hrs?\b|months?\b|mths?\b|weeks?\b|wks?\b|days?\b|years?\b|yrs?\b)/i;
 // Plausible amounts per period, in US dollars.
-const PLAUSIBLE = { hour: [5, 2000], day: [30, 10000], week: [100, 50000], fortnight: [200, 100000], month: [300, 200000], year: [1000, 5000000] };
+// Low enough for pay in Southeast Asia, such as 70 baht an hour or 3 million rupiah a month.
+const PLAUSIBLE = { hour: [1, 2000], day: [8, 10000], week: [40, 50000], fortnight: [80, 100000], month: [100, 200000], year: [1000, 5000000] };
 
 function parseNumber(raw, thousands = false) {
   const compact = raw.replace(/[\s\u00a0\u202f\u2009]/g, '');
@@ -157,14 +159,15 @@ function plausible(min, max, interval, currency) {
   return inUsd(min, currency) >= low && inUsd(max, currency) <= high;
 }
 
-function candidatesFrom(text, pattern, known, defaultCurrency) {
+function candidatesFrom(text, pattern, known, defaultCurrency, dollar) {
   const candidates = [];
   for (const match of text.matchAll(pattern)) {
     const g = match.groups;
     const explicit = Boolean(g.pre1 || g.post1 || g.pre2 || g.post2 || g.sym1 || g.sym2);
-    const code = g.pre1 || g.post1 || g.pre2 || g.post2 || (known ? defaultCurrency : undefined);
     const symbol = g.sym1 || g.sym2;
-    if (!code && !symbol) continue;
+    // A currency code wins, then the symbol ("$" is the site's own dollar), then the field's currency.
+    const code = g.pre1 || g.post1 || g.pre2 || g.post2 || (symbol === '$' ? dollar : SYMBOL_CURRENCY[symbol]) || (known ? defaultCurrency : undefined);
+    if (!code) continue;
     const end = match.index + match[0].length;
     const after = text.slice(end, end + 50);
     if (LARGE_UNIT_AFTER.test(after)) continue;
@@ -175,14 +178,19 @@ function candidatesFrom(text, pattern, known, defaultCurrency) {
     // Not when the other number is already bigger: "$800 - $1k p.d." is 800 to 1,000.
     const k1 = Boolean(g.k1) || (Boolean(g.k2) && parseNumber(g.num1) < 1000 && parseNumber(g.num1) <= parseNumber(g.num2));
     const k2 = Boolean(g.k2) || (Boolean(g.k1) && !single && parseNumber(g.num2) < 1000 && parseNumber(g.num2) >= parseNumber(g.num1));
-    const min = parseNumber(g.num1, k1);
-    const max = single ? min : parseNumber(g.num2, k2);
+    let min = parseNumber(g.num1, k1);
+    let max = single ? min : parseNumber(g.num2, k2);
     if (!(min > 0) || !(max >= min) || max > min * 6) continue;
 
-    const currency = (code || SYMBOL_CURRENCY[symbol]).toUpperCase();
+    const currency = code.toUpperCase();
     const before = text.slice(Math.max(0, match.index - 250), match.index);
     const stated = hintAfter(after);
-    if (stated && !plausible(min, max, stated, currency)) continue;
+    if (stated && !plausible(min, max, stated, currency)) {
+      // A pay field saying "$20 – $23 per month" left out the thousands.
+      if (!known || k1 || k2 || !plausible(min * 1000, max * 1000, stated, currency)) continue;
+      min *= 1000;
+      max *= 1000;
+    }
     let interval = stated;
     if (!interval) {
       const hinted = hintBefore(before);
@@ -203,12 +211,13 @@ function candidatesFrom(text, pattern, known, defaultCurrency) {
 // Several ranges in the same currency and period (for example one per level) are merged.
 // With `known`, the text is a pay field, so no pay words are needed and a single amount counts.
 // `defaultCurrency` applies to a known pay field without a currency, such as "100000 - 120000".
-export function salaryFromText(text, { known = false, source = 'description', defaultCurrency } = {}) {
+// `dollar` is the currency of "$" on the site: AUD on SEEK Australia, USD by default.
+export function salaryFromText(text, { known = false, source = 'description', defaultCurrency, dollar = 'USD' } = {}) {
   if (!text) return null;
   // "$$68" is "$68", and "180, 000" is "180,000".
   const clean = String(text).replace(/\$\$+/g, '$').replace(/(\d),\s+(\d{3})(?!\d)/g, '$1,$2');
-  let candidates = candidatesFrom(clean, RANGE, known, defaultCurrency);
-  if (candidates.length === 0 && known) candidates = candidatesFrom(clean, SINGLE, known, defaultCurrency);
+  let candidates = candidatesFrom(clean, RANGE, known, defaultCurrency, dollar);
+  if (candidates.length === 0 && known) candidates = candidatesFrom(clean, SINGLE, known, defaultCurrency, dollar);
   // Amounts with a currency win over bare numbers such as "EA7 (38 hours) - $99,550 + super".
   if (candidates.some((candidate) => candidate.explicit)) candidates = candidates.filter((candidate) => candidate.explicit);
   if (candidates.length === 0) return null;

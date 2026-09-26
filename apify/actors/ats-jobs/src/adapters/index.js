@@ -7,4 +7,15 @@ import * as stepstone from './stepstone.js';
 import * as workday from './workday.js';
 import * as wttj from './wttj.js';
 
-export const ADAPTERS = { greenhouse, lever, ashby, workday, dice, wttj, seek, stepstone };
+export const ADAPTERS = {
+  greenhouse,
+  lever,
+  ashby,
+  workday,
+  dice,
+  wttj,
+  seek,
+  stepstone,
+  jobstreet: seek.brandAdapter('jobstreet'),
+  jobsdb: seek.brandAdapter('jobsdb'),
+};

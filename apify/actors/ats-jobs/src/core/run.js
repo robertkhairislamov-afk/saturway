@@ -66,6 +66,9 @@ export async function runScraper(Actor, adapter, rawInput, log) {
     proxyConfiguration,
     // Sites that limit direct requests (Dice) continue through Apify Proxy.
     fallbackProxy: adapter.proxyFallback ? () => Actor.createProxyConfiguration({ useApifyProxy: true }) : undefined,
+    // Sites that limit every address (LinkedIn) get residential proxies on the Apify platform when
+    // the input sets no proxy. Local runs connect directly.
+    rotatingProxy: Actor.isAtHome?.() ? () => Actor.createProxyConfiguration({ useApifyProxy: true, apifyProxyGroups: ['RESIDENTIAL'] }) : undefined,
     onFallback: () => log.info(`${adapter.title} is limiting direct requests; continuing through Apify Proxy.`),
   });
   const context = { http, log, keywords: input.keywords, includeDescription: input.includeDescription };
@@ -195,6 +198,8 @@ export async function runScraper(Actor, adapter, rawInput, log) {
 
   const summary = [...results, ...rejected];
   await Actor.setValue('SUMMARY', { ats: adapter.name, jobsSaved: saved, companies: summary });
+  const { requests, retried, limited, blocked } = http.stats;
+  if (retried > 0) log.info(`${requests} requests; ${retried} tried again after ${limited} rate limits and ${blocked} empty or blocked pages.`);
 
   const failed = results.filter((result) => result.error);
   if (failed.length === results.length) {

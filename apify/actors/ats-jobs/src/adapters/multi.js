@@ -1,13 +1,14 @@
 // One search across our job sites. Keywords and countries go to the job boards that cover those
-// countries (Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet, JobsDB); career site links go
-// to their applicant tracking system (Greenhouse, Lever, Ashby, Workday). Each source runs with
-// its own adapter, and a job found on two sites is saved once.
+// countries (LinkedIn everywhere, Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet, JobsDB);
+// career site links go to their applicant tracking system (Greenhouse, Lever, Ashby, Workday). Each
+// source runs with its own adapter, and a job found on two sites is saved once.
 
 import { compileTerms, matchesAny } from '../core/match.js';
 import * as ashby from './ashby.js';
 import * as dice from './dice.js';
 import * as greenhouse from './greenhouse.js';
 import * as lever from './lever.js';
+import * as linkedin from './linkedin.js';
 import * as seek from './seek.js';
 import * as stepstone from './stepstone.js';
 import * as workday from './workday.js';
@@ -40,6 +41,22 @@ export const COUNTRIES = {
   ID: 'Indonesia',
   HK: 'Hong Kong',
   TH: 'Thailand',
+  // Covered by LinkedIn only.
+  AT: 'Austria',
+  CH: 'Switzerland',
+  PT: 'Portugal',
+  PL: 'Poland',
+  SE: 'Sweden',
+  DK: 'Denmark',
+  NO: 'Norway',
+  FI: 'Finland',
+  AE: 'United Arab Emirates',
+  SA: 'Saudi Arabia',
+  IN: 'India',
+  JP: 'Japan',
+  ZA: 'South Africa',
+  BR: 'Brazil',
+  MX: 'Mexico',
 };
 
 // The job boards and the countries each one covers well.
@@ -50,6 +67,7 @@ export const BOARDS = {
   seek: { adapter: seek, label: 'SEEK', countries: ['AU', 'NZ'] },
   jobstreet: { adapter: seek.brandAdapter('jobstreet'), label: 'Jobstreet', countries: ['MY', 'SG', 'PH', 'ID'] },
   jobsdb: { adapter: seek.brandAdapter('jobsdb'), label: 'JobsDB', countries: ['HK', 'TH'] },
+  linkedin: { adapter: linkedin, label: 'LinkedIn', countries: Object.keys(COUNTRIES) },
 };
 
 // Company career sites, recognized by the address of their job board.
@@ -84,6 +102,11 @@ function boardForms(board, { queries, countries, location, remoteOnly, postedWit
   // Welcome to the Jungle needs keywords and searches all the countries at once.
   if (board === 'wttj') return queries.length > 0 ? [{ ...common, countries, remoteTypes: remoteOnly ? ['fulltime'] : [], onlyWithSalary }] : [];
   if (board === 'stepstone') return [{ ...common, location, remoteTypes: remoteOnly ? ['1'] : [] }];
+  // LinkedIn needs keywords and shows visitors no remote jobs; it searches a city with its country.
+  if (board === 'linkedin') {
+    if (queries.length === 0 || remoteOnly) return [];
+    return countries.map((country) => ({ ...common, location: location ? `${location}, ${COUNTRIES[country]}` : COUNTRIES[country] }));
+  }
   return countries.map((country) => ({ ...common, country, location, workArrangements: remoteOnly ? ['3'] : [] }));
 }
 

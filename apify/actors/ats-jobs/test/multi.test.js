@@ -8,7 +8,9 @@ const sitesOf = (keys) => keys.map((key) => /^multi:\/\/([a-z]+)/.exec(key)[1]);
 
 test('multi: countries pick the job boards that cover them', () => {
   const { companies } = multi.prepareInput({ searchQueries: ['data analyst'], countries: ['us', 'DE', 'AU', 'MY', 'HK', 'XX'] });
-  assert.deepEqual([...new Set(sitesOf(companies))].sort(), ['dice', 'jobsdb', 'jobstreet', 'seek', 'stepstone', 'wttj']);
+  assert.deepEqual([...new Set(sitesOf(companies))].sort(), ['dice', 'jobsdb', 'jobstreet', 'linkedin', 'seek', 'stepstone', 'wttj']);
+  // LinkedIn searches every country on its own.
+  assert.equal(sitesOf(companies).filter((site) => site === 'linkedin').length, 5);
   // Welcome to the Jungle searches all its countries at once.
   const wttjSources = companies.filter((key) => key.startsWith('multi://wttj/')).map((key) => multi.parseCompany(key));
   assert.equal(wttjSources.length, 1);
@@ -16,7 +18,21 @@ test('multi: countries pick the job boards that cover them', () => {
   // Chosen sites only.
   assert.deepEqual(sitesOf(multi.prepareInput({ searchQueries: ['nurse'], countries: ['AU', 'US'], sources: ['seek'] }).companies), ['seek']);
   // Keywords without countries search the United States.
-  assert.deepEqual(sitesOf(multi.prepareInput({ searchQueries: ['nurse'] }).companies).sort(), ['dice', 'wttj']);
+  assert.deepEqual(sitesOf(multi.prepareInput({ searchQueries: ['nurse'] }).companies).sort(), ['dice', 'linkedin', 'wttj']);
+  // Countries that only LinkedIn covers.
+  assert.deepEqual(sitesOf(multi.prepareInput({ searchQueries: ['nurse'], countries: ['IN', 'AE'] }).companies), ['linkedin', 'linkedin']);
+});
+
+test('multi: LinkedIn searches a city with its country, and no remote jobs', () => {
+  const place = (input) => multi.prepareInput({ searchQueries: ['python'], sources: ['linkedin'], ...input }).companies
+    .map((key) => multi.parseCompany(key).inner.params.location);
+  assert.deepEqual(place({ countries: ['DE'], location: 'Berlin' }), ['Berlin, Germany']);
+  assert.deepEqual(place({ countries: ['DE', 'FR'], location: 'Berlin' }), ['Germany', 'France']);
+  assert.deepEqual(place({ countries: ['US'], remoteOnly: true }), []);
+  const [key] = multi.prepareInput({ searchQueries: ['python'], countries: ['US'], sources: ['linkedin'], postedWithinDays: 1 }).companies;
+  const source = multi.parseCompany(key);
+  assert.equal(source.id, 'LinkedIn: python in United States');
+  assert.equal(source.inner.params.f_TPR, `r${2 * 86400}`);
 });
 
 test('multi: a location applies only to a single country, filters reach every board', () => {

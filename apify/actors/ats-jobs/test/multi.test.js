@@ -1,0 +1,68 @@
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import * as multi from '../src/adapters/multi.js';
+import { normalizeInput } from '../src/core/input.js';
+
+const sitesOf = (keys) => keys.map((key) => /^multi:\/\/([a-z]+)/.exec(key)[1]);
+
+test('multi: countries pick the job boards that cover them', () => {
+  const { companies } = multi.prepareInput({ searchQueries: ['data analyst'], countries: ['us', 'DE', 'AU', 'MY', 'HK', 'XX'] });
+  assert.deepEqual([...new Set(sitesOf(companies))].sort(), ['dice', 'jobsdb', 'jobstreet', 'seek', 'stepstone', 'wttj']);
+  // Welcome to the Jungle searches all its countries at once.
+  const wttjSources = companies.filter((key) => key.startsWith('multi://wttj/')).map((key) => multi.parseCompany(key));
+  assert.equal(wttjSources.length, 1);
+  assert.deepEqual(wttjSources[0].inner.filters.countries, ['US', 'DE']);
+  // Chosen sites only.
+  assert.deepEqual(sitesOf(multi.prepareInput({ searchQueries: ['nurse'], countries: ['AU', 'US'], sources: ['seek'] }).companies), ['seek']);
+  // Keywords without countries search the United States.
+  assert.deepEqual(sitesOf(multi.prepareInput({ searchQueries: ['nurse'] }).companies).sort(), ['dice', 'wttj']);
+});
+
+test('multi: a location applies only to a single country, filters reach every board', () => {
+  const [one] = multi.prepareInput({ searchQueries: ['python'], countries: ['DE'], location: 'Berlin', sources: ['stepstone'] }).companies;
+  assert.match(multi.parseCompany(one).inner.url, /\/jobs\/python\/in-berlin/);
+  const [two] = multi.prepareInput({ searchQueries: ['python'], countries: ['DE', 'FR'], location: 'Berlin', sources: ['stepstone'] }).companies;
+  assert.doesNotMatch(multi.parseCompany(two).inner.url, /in-berlin/);
+  const remote = multi.prepareInput({ searchQueries: ['python'], countries: ['US', 'AU'], remoteOnly: true, postedWithinDays: 3 }).companies.map((key) => multi.parseCompany(key));
+  const bySite = Object.fromEntries(remote.map((source) => [source.site, source.inner]));
+  assert.match(bySite.dice.url, /filters\.workplaceTypes=Remote/);
+  assert.match(bySite.dice.url, /filters\.postedDate=THREE/);
+  assert.deepEqual(bySite.wttj.filters.remoteTypes, ['fulltime']);
+  assert.equal(bySite.seek.params.workarrangement, '3');
+  assert.equal(bySite.seek.params.daterange, '4');
+});
+
+test('multi: career site links are recognized and keep the keywords as a title filter', async () => {
+  const { companies } = multi.prepareInput({
+    searchQueries: ['data engineer', 'a|b'],
+    companies: ['https://boards.greenhouse.io/airbnb', 'https://jobs.lever.co/zoox', 'https://jobs.ashbyhq.com/ramp', 'https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite', 'https://example.com/careers'],
+  });
+  // Career links alone search no job board.
+  assert.deepEqual(sitesOf(companies.slice(0, 4)), ['greenhouse', 'lever', 'ashby', 'workday']);
+  assert.equal(companies[4], 'https://example.com/careers');
+  assert.throws(() => multi.parseCompany(companies[4]), /not a supported career site link/);
+  const greenhouse = multi.parseCompany(companies[0]);
+  assert.deepEqual(greenhouse.queries, ['data engineer', 'a|b']);
+  assert.equal(greenhouse.id, 'Greenhouse: airbnb');
+  // The keys survive the input reader, which splits plain names at commas.
+  const keys = multi.prepareInput({ searchQueries: ['sales, marketing'], countries: ['US'], location: 'New York, NY' }).companies;
+  assert.deepEqual(normalizeInput({ companies: keys }).companies, keys);
+  // Career site jobs are kept only when the title matches.
+  const source = {
+    site: 'greenhouse',
+    queries: ['data engineer'],
+    inner: {},
+    adapter: { async *listJobs() { yield [{ jobId: '1', title: 'Senior Data Engineer' }, { jobId: '2', title: 'Designer' }]; } },
+  };
+  const pages = [];
+  for await (const page of multi.listJobs(source, {})) pages.push(page.map((job) => job.jobId));
+  assert.deepEqual(pages, [['1']]);
+});
+
+test('multi: the same job on two sites has one key', () => {
+  const a = multi.dedupeKey({ title: 'Senior Software Engineer', companyName: 'Zoë GmbH', location: 'Berlin, Germany' });
+  const b = multi.dedupeKey({ title: 'senior software-engineer', companyName: 'Zoe GmbH', location: 'Berlin' });
+  assert.equal(a, b);
+  assert.notEqual(a, multi.dedupeKey({ title: 'Senior Software Engineer', companyName: 'Zoë GmbH', location: 'Munich' }));
+});

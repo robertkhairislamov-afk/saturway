@@ -75,6 +75,8 @@ export async function runScraper(Actor, adapter, rawInput, log) {
 
   let saved = 0;
   let finished = 0;
+  // Adapters that search several sites name each job; the same job from another source is skipped.
+  const savedKeys = new Map();
   const roomLeft = () => Math.min(input.maxItems > 0 ? input.maxItems - saved : Infinity, budget - saved);
 
   const toOutput = (job, scrapedAt) => {
@@ -94,15 +96,25 @@ export async function runScraper(Actor, adapter, rawInput, log) {
 
     // Saves as many jobs as the limits allow and reports whether all of them fit.
     async function save(jobs) {
-      const taken = jobs.slice(0, Math.max(0, room()));
+      const fresh = adapter.dedupeKey ? jobs.filter((job) => {
+        const owner = savedKeys.get(adapter.dedupeKey(job));
+        if (!owner || owner === company.key) return true;
+        stats.duplicates = (stats.duplicates ?? 0) + 1;
+        handled.add(job.jobId);
+        return false;
+      }) : jobs;
+      const taken = fresh.slice(0, Math.max(0, room()));
       saved += taken.length;
       stats.jobsSaved += taken.length;
-      for (const job of taken) handled.add(job.jobId);
+      for (const job of taken) {
+        handled.add(job.jobId);
+        if (adapter.dedupeKey) savedKeys.set(adapter.dedupeKey(job), company.key);
+      }
       if (taken.length > 0) {
         const scrapedAt = new Date().toISOString();
         await Actor.pushData(taken.map((job) => toOutput(job, scrapedAt)));
       }
-      return taken.length === jobs.length;
+      return taken.length === fresh.length;
     }
 
     async function loadDetails(partials) {
@@ -168,7 +180,8 @@ export async function runScraper(Actor, adapter, rawInput, log) {
       await seenJobs.save(company.key, nextSeenIds({ before, listed, handled, listingComplete }));
     }
     if (before) stats.jobsNew = [...listed].filter((id) => !before.has(id)).length;
-    log.info(`${company.id}: ${stats.jobsFound} jobs${before ? `, ${stats.jobsNew} new` : ''}, ${stats.jobsMatched} matching, ${stats.jobsSaved} saved.`);
+    const duplicates = stats.duplicates ? `, ${stats.duplicates} duplicates of jobs from other sources skipped` : '';
+    log.info(`${company.id}: ${stats.jobsFound} jobs${before ? `, ${stats.jobsNew} new` : ''}, ${stats.jobsMatched} matching, ${stats.jobsSaved} saved${duplicates}.`);
     return stats;
   }
 

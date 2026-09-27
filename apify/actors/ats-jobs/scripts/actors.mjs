@@ -3,6 +3,7 @@
 // job board instead of company boards, so they have their own search forms.
 
 import { CLASSIFICATIONS, WORK_ARRANGEMENTS, WORK_TYPES } from '../src/adapters/seek.js';
+import * as multi from '../src/adapters/multi.js';
 import * as stepstone from '../src/adapters/stepstone.js';
 
 export const ACTORS = {
@@ -123,6 +124,15 @@ export const ACTORS = {
     seoTitle: 'JobsDB Jobs Scraper – Hong Kong & Thailand Jobs',
     seoDescription: 'Scrape JobsDB jobs in Hong Kong and Thailand by keyword and location: title, company, salary, work type and full description. $0.50 per 1,000 jobs.',
   },
+  multi: {
+    name: 'all-in-one-jobs-scraper',
+    title: 'All-in-One Jobs Scraper',
+    tagline: 'all of these job sites and career sites in one search, without duplicates',
+    apiExample: { searchQueries: ['data analyst'], countries: ['US', 'DE', 'AU'], maxItems: 30 },
+    description: 'Search 10 job sites at once by keyword and country: Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet, JobsDB and Greenhouse, Lever, Ashby and Workday career sites. One format, no duplicates.',
+    seoTitle: 'All-in-One Jobs Scraper – 10 Job Boards & Career Sites',
+    seoDescription: 'Search Dice, StepStone, SEEK, Jobstreet, JobsDB, Welcome to the Jungle and company career sites at once. One format, no duplicates. $1 per 1,000 jobs.',
+  },
 };
 
 export const CATEGORIES = ['JOBS', 'LEAD_GENERATION', 'AUTOMATION'];
@@ -167,6 +177,7 @@ export function inputSchema(ats) {
   if (ats === 'wttj') return wttjInputSchema();
   if (ats === 'seek' || ats === 'jobstreet' || ats === 'jobsdb') return seekInputSchema(ats);
   if (ats === 'stepstone') return stepstoneInputSchema();
+  if (ats === 'multi') return multiInputSchema();
   const actor = ACTORS[ats];
   const properties = {
     companies: {
@@ -713,6 +724,74 @@ function stepstoneInputSchema() {
   };
 }
 
+function multiInputSchema() {
+  const boards = Object.entries(multi.BOARDS);
+  return {
+    title: ACTORS.multi.title,
+    description: 'Search many job sites at once and get every job in one clean format, without duplicates.',
+    type: 'object',
+    schemaVersion: 1,
+    properties: {
+      searchQueries: {
+        title: 'Job titles or keywords',
+        type: 'array',
+        editor: 'stringList',
+        description: 'What to search, for example <code>data analyst</code> or <code>registered nurse</code>. Each line is a separate search on every chosen site.',
+        prefill: ['python developer'],
+        placeholderValue: 'data analyst',
+      },
+      countries: {
+        title: 'Countries',
+        type: 'array',
+        editor: 'select',
+        description: 'Where to search. Each country goes to the sites that cover it: the United States to Dice and Welcome to the Jungle; Germany to StepStone and Welcome to the Jungle; Australia and New Zealand to SEEK; Malaysia, Singapore, the Philippines and Indonesia to Jobstreet; Hong Kong and Thailand to JobsDB; the UK, Canada and the rest of Europe to Welcome to the Jungle.',
+        items: selectOf(multi.COUNTRIES),
+        prefill: ['US'],
+      },
+      location: {
+        title: 'City or region',
+        type: 'string',
+        editor: 'textfield',
+        description: 'For example <code>New York, NY</code>, <code>Berlin</code> or <code>Sydney NSW</code>. Used when you pick one country; Welcome to the Jungle always searches the whole country.',
+      },
+      sources: {
+        title: 'Job sites',
+        type: 'array',
+        editor: 'select',
+        description: 'Search only these sites. Leave empty for every site that covers your countries.',
+        items: { type: 'string', enum: boards.map(([site]) => site), enumTitles: boards.map(([, board]) => board.label) },
+      },
+      companies: {
+        title: 'Company career sites',
+        type: 'array',
+        editor: 'stringList',
+        description: 'Links to company job boards on Greenhouse, Lever, Ashby or Workday, for example <code>https://boards.greenhouse.io/airbnb</code>. Jobs whose title contains your keywords are added; without keywords, all their jobs.',
+        placeholderValue: 'https://jobs.lever.co/zoox',
+      },
+      remoteOnly: {
+        title: 'Remote jobs only',
+        type: 'boolean',
+        default: false,
+        sectionCaption: 'Filters',
+        description: 'Keep only fully remote jobs.',
+      },
+      postedWithinDays: {
+        title: 'Posted in the last days',
+        type: 'integer',
+        minimum: 0,
+        unit: 'days',
+        description: 'Keep jobs published in the last N days: 1 means today and yesterday. Leave empty or 0 for any date.',
+      },
+      ...commonSettings({
+        site: 'Each job site',
+        perSource: 'search or career site',
+        details: 'the full description (text and HTML) and every detail the site offers',
+        proxyDescription: 'The Actor connects directly, which is fastest. If a site starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it from the start.',
+      }),
+    },
+  };
+}
+
 // The last column shows what each job board has: departments, employment types or nothing extra.
 const EXTRA_COLUMN = {
   greenhouse: ['department', 'Department'],
@@ -723,6 +802,7 @@ const EXTRA_COLUMN = {
   seek: ['employmentType', 'Work type'],
   jobstreet: ['employmentType', 'Work type'],
   jobsdb: ['employmentType', 'Work type'],
+  multi: ['ats', 'Source'],
   stepstone: ['employmentType', 'Employment'],
 };
 

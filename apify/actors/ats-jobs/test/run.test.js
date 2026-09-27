@@ -106,3 +106,19 @@ test('an empty input scrapes the example board, and a run fails only when every 
   await assert.rejects(runScraper(fakeActor(), fakeAdapter({}), { companies: ['broken'] }, silentLog), /board is down/);
   await assert.rejects(runScraper(fakeActor(), fakeAdapter({}), { companies: ['bad name'] }, silentLog), /bad name/);
 });
+
+test('adapters with a dedupe key skip the same job from another source, not from the same one', async () => {
+  const actor = fakeActor();
+  const adapter = {
+    ...fakeAdapter({
+      alpha: [[job('alpha', 1, { title: 'Nurse' }), job('alpha', 2, { title: 'Nurse' })]],
+      beta: [[job('beta', 3, { title: 'Nurse' }), job('beta', 4, { title: 'Doctor' })]],
+    }),
+    companyConcurrency: 1,
+    dedupeKey: (j) => j.title,
+  };
+  const result = await runScraper(actor, adapter, { companies: ['alpha', 'beta'] }, silentLog);
+  assert.deepEqual(actor.dataset.map((j) => j.jobId), [1, 2, 4]);
+  assert.equal(result.saved, 3);
+  assert.equal(actor.values.SUMMARY.companies.find((c) => c.company === 'beta').duplicates, 1);
+});

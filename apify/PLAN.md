@@ -262,6 +262,21 @@ Google Play, Lever, Ashby, Greenhouse и Google News пока дальше пе�
 
 ### 9. Потом
 
-- Rightmove (212 пользователей за 30 дней), Home Depot (181), Zoopla (127).
-- Naukri — самый большой спрос (5389 пользователей за 30 дней), но API отвечает «recaptcha required».
-- stepstone.be работает так же, как stepstone.de.
+Спрос по данным Store 27.09 (пользователи за 30 дней, сумма по всем акторам ниши):
+
+| Ниша | Пользователей | Лидеры и их цены | Заметки |
+|---|---|---|---|
+| LinkedIn Jobs | 33 109 | curious_coder 17 765 ($2), cheap_scraper 3 967 ($0.70), valig 3 955 ($0.40) | Публичный гостевой поиск работает без входа (проверено). Но LinkedIn активно борется со скрейпингом и запрещает его в соглашении — решать владельцу |
+| Indeed | 11 857 | valig 3 857 ($0.10) | Сильная защита |
+| Glassdoor | 3 209 | valig 1 367 ($0.40) | Cloudflare |
+| Xing | 560 | shahidirfan 182 ($1) | Германия, пара к StepStone |
+| Bayt | 491 | около $1 | Страны Персидского залива |
+| ZipRecruiter | 367 | crawlerbros 184 ($2) | США |
+| Monster / Foundit | 301 | themineworks 185 ($2.50) | |
+| Reed | 251 | scrapersdelight 76 ($0.50) | Великобритания |
+| InfoJobs | 220 | easyapi 57 ($2.99) | Испания |
+| Агрегаторы многих сайтов | — | agentx/all-jobs-scraper (39 сайтов) 280 ($3.50) | Можно собрать из наших 10 источников без новых сайтов |
+
+- Totaljobs и CWJobs отсюда рвут соединение (HTTP/2 INTERNAL_ERROR). stepstone.at отвечает 403, stepstone.be работает как stepstone.de. Открытый API Arbeitsagentur с ключом `jobboerse-jobsuche` отвечает 403.
+- Rightmove (212), Home Depot (181), Zoopla (127) — не вакансии.
+- Naukri — 5389 пользователей за 30 дней, но API отвечает «recaptcha required».

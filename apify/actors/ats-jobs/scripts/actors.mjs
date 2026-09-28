@@ -884,35 +884,48 @@ const EXTRA_COLUMN = {
   seek: ['employmentType', 'Work type'],
   jobstreet: ['employmentType', 'Work type'],
   jobsdb: ['employmentType', 'Work type'],
-  linkedin: ['seniorityLevel', 'Seniority'],
+  linkedin: ['employmentType', 'Employment'],
   multi: ['ats', 'Source'],
   stepstone: ['employmentType', 'Employment'],
 };
 
+const COLUMNS = {
+  title: { label: 'Title', format: 'text' },
+  companyName: { label: 'Company', format: 'text' },
+  location: { label: 'Location', format: 'text' },
+  workplaceType: { label: 'Workplace', format: 'text' },
+  employmentType: { label: 'Employment', format: 'text' },
+  applicants: { label: 'Applicants', format: 'text' },
+  industry: { label: 'Industry', format: 'text' },
+  'salary.text': { label: 'Salary', format: 'text' },
+  postedAt: { label: 'Posted', format: 'date' },
+  jobUrl: { label: 'Job link', format: 'link' },
+};
+const OVERVIEW = ['title', 'companyName', 'location', 'workplaceType', 'salary.text', 'postedAt', 'jobUrl'];
+// Where a site almost never fills a column of the table, a column it does fill takes its place:
+// LinkedIn shows visitors no workplace, Workday career sites rarely state it, StepStone employers
+// rarely publish pay, and in All-in-One most jobs come from LinkedIn.
+const SWAPPED = {
+  linkedin: { workplaceType: 'applicants' },
+  workday: { workplaceType: 'employmentType' },
+  stepstone: { 'salary.text': 'industry' },
+  multi: { workplaceType: 'employmentType' },
+};
+
 export const datasetSchema = (ats) => {
   const [extraField, extraLabel] = EXTRA_COLUMN[ats] ?? [];
+  const columns = OVERVIEW.map((field) => SWAPPED[ats]?.[field] ?? field);
+  const fields = [...new Set([...columns, ...(extraField ? [extraField] : [])])];
   return {
     actorSpecification: 1,
     fields: {},
     views: {
       overview: {
         title: 'Jobs',
-        transformation: {
-          fields: ['title', 'companyName', 'location', 'workplaceType', 'salary.text', 'postedAt', 'jobUrl', ...(extraField ? [extraField] : [])],
-          flatten: ['salary'],
-        },
+        transformation: { fields, flatten: ['salary'] },
         display: {
           component: 'table',
-          properties: {
-            title: { label: 'Title', format: 'text' },
-            companyName: { label: 'Company', format: 'text' },
-            location: { label: 'Location', format: 'text' },
-            workplaceType: { label: 'Workplace', format: 'text' },
-            'salary.text': { label: 'Salary', format: 'text' },
-            postedAt: { label: 'Posted', format: 'date' },
-            jobUrl: { label: 'Job link', format: 'link' },
-            ...(extraField ? { [extraField]: { label: extraLabel, format: 'text' } } : {}),
-          },
+          properties: Object.fromEntries(fields.map((field) => [field, field === extraField ? { label: extraLabel, format: 'text' } : COLUMNS[field]])),
         },
       },
     },

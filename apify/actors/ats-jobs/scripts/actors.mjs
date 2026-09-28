@@ -134,7 +134,7 @@ export const ACTORS = {
     apiExample: { searchQueries: ['data analyst'], location: 'London', maxItems: 20 },
     description: 'Scrape Reed.co.uk jobs in the UK by keyword and location: title, company, salary as numbers, contract type, hours, hybrid or remote, sector, full description and apply link. All Reed filters and alerts.',
     seoTitle: 'Reed Jobs Scraper – UK Job Listings & Salaries',
-    seoDescription: 'Scrape Reed.co.uk jobs by keyword and location: title, company, salary, contract type, hybrid or remote, full description. $0.50 per 1,000 jobs.',
+    seoDescription: 'Scrape Reed.co.uk jobs by keyword and location: title, company, salary, contract type, hybrid or remote, full description. $1 per 1,000 jobs.',
   },
   infojobs: {
     name: 'infojobs-jobs-scraper',
@@ -143,7 +143,7 @@ export const ACTORS = {
     apiExample: { searchQueries: ['python'], provinces: ['33'], maxItems: 20 },
     description: 'Scrape InfoJobs.net jobs in Spain by keyword and province: title, company, salary as numbers, contract type, working hours, remote policy, full description and apply link. All InfoJobs filters and alerts.',
     seoTitle: 'InfoJobs Scraper – Spain Job Listings & Salaries',
-    seoDescription: 'Scrape InfoJobs.net jobs in Spain by keyword and province: title, company, salary, contract, remote or hybrid, full description. $0.50 per 1,000 jobs.',
+    seoDescription: 'Scrape InfoJobs.net jobs in Spain by keyword and province: title, company, salary, contract, remote or hybrid, full description. $2 per 1,000 jobs.',
   },
   linkedin: {
     name: 'linkedin-jobs-scraper',

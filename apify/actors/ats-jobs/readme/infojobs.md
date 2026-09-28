@@ -1,6 +1,6 @@
 # InfoJobs Jobs Scraper
 
-**Scrape InfoJobs.net jobs in Spain by keyword and province.** Get title, company, salary as numbers, contract type, working hours, remote policy, full description and apply link. Export to JSON, CSV or Excel, or use the API. **$0.50 per 1,000 jobs, no start fee.**
+**Scrape InfoJobs.net jobs in Spain by keyword and province.** Get title, company, salary as numbers, contract type, working hours, remote policy, full description and apply link. Export to JSON, CSV or Excel, or use the API. **$2 per 1,000 jobs, no start fee.**
 
 Scrape jobs from **InfoJobs**, Spain's largest job site (infojobs.net), the way you search on the website: keywords, provinces and every InfoJobs filter. Each job comes with the **salary as numbers** per year or month, gross or net, the contract type (permanent, fixed-term, self-employed and more), working hours (full day, intensive or part-time), the **remote policy** (on-site, hybrid or remote only), the full description and the company. Contract types and working hours come in English, next to fields in the same format as our other job scrapers. InfoJobs serves every job of a search, with no limit per search. Run it on a schedule to get **only new jobs**. No browser, no login.
 
@@ -90,7 +90,7 @@ Provinces are InfoJobs ids, for example `33` Madrid, `9` Barcelona and `49` Vale
 
 ## How much does it cost?
 
-You pay only for the jobs you get: **$0.50 per 1,000 jobs**. There is no start fee. Jobs filtered out by your settings are free. The Apify free plan covers about 10,000 jobs every month.
+You pay only for the jobs you get: **$2 per 1,000 jobs**. There is no start fee. Jobs filtered out by your settings are free. The Apify free plan covers about 2,500 jobs every month.
 
 ## Tips
 

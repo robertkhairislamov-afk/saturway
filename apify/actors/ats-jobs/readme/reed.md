@@ -1,6 +1,6 @@
 # Reed Jobs Scraper
 
-**Scrape Reed.co.uk jobs in the UK by keyword and location.** Get title, company, salary as numbers, contract type, working hours, hybrid or remote, sector, full description, expiry date and apply link. Export to JSON, CSV or Excel, or use the API. **$0.50 per 1,000 jobs, no start fee.**
+**Scrape Reed.co.uk jobs in the UK by keyword and location.** Get title, company, salary as numbers, contract type, working hours, hybrid or remote, sector, full description, expiry date and apply link. Export to JSON, CSV or Excel, or use the API. **$1 per 1,000 jobs, no start fee.**
 
 Scrape jobs from **Reed**, one of the UK's largest job sites (reed.co.uk), the way you search on the website: keywords, location and every Reed filter. Each job comes with the **salary as numbers** per year, day or hour, the contract type (permanent, contract or temporary), working hours, whether the job is **on-site, hybrid or remote**, the sector, county and region, the full description and the expiry date. Salaries that the employer hides stay empty instead of showing numbers the site keeps behind them. Run it on a schedule to get **only new jobs**. No browser, no login.
 
@@ -100,7 +100,7 @@ Job types are `perm`, `contract` and `temp`; working hours `fulltime` and `partt
 
 ## How much does it cost?
 
-You pay only for the jobs you get: **$0.50 per 1,000 jobs**. There is no start fee. Jobs filtered out by your settings are free. The Apify free plan covers about 10,000 jobs every month.
+You pay only for the jobs you get: **$1 per 1,000 jobs**. There is no start fee. Jobs filtered out by your settings are free. The Apify free plan covers about 5,000 jobs every month.
 
 ## Tips
 

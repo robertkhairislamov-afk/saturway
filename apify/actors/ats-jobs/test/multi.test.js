@@ -23,6 +23,19 @@ test('multi: countries pick the job boards that cover them', () => {
   assert.deepEqual(sitesOf(multi.prepareInput({ searchQueries: ['nurse'], countries: ['IN', 'AE'] }).companies), ['linkedin', 'linkedin']);
 });
 
+test('multi: Reed searches the UK, InfoJobs Spain by province', () => {
+  const sources = (input) => multi.prepareInput({ searchQueries: ['nurse'], ...input }).companies.map((key) => multi.parseCompany(key));
+  assert.deepEqual(sources({ countries: ['GB', 'ES'] }).map((source) => source.site).sort(), ['infojobs', 'linkedin', 'linkedin', 'reed', 'wttj']);
+  const [reed] = sources({ countries: ['GB'], location: 'Leeds', sources: ['reed'] });
+  assert.match(reed.inner.url, /\/jobs\/nurse-jobs-in-leeds$/);
+  const [madrid] = sources({ countries: ['ES'], location: 'Madrid', sources: ['infojobs'] });
+  assert.deepEqual(madrid.inner.params.provinceIds, ['33']);
+  const [remote] = sources({ countries: ['ES'], location: 'Bilbao', remoteOnly: true, sources: ['infojobs'] });
+  assert.deepEqual([remote.inner.params.provinceIds, remote.inner.params.teleworkingIds], [[], ['2']]);
+  assert.equal(multi.provinceOf('valència'), '49');
+  assert.equal(multi.provinceOf('Bizkaia'), '51');
+});
+
 test('multi: LinkedIn searches a city with its country, and no remote jobs', () => {
   const place = (input) => multi.prepareInput({ searchQueries: ['python'], sources: ['linkedin'], ...input }).companies
     .map((key) => multi.parseCompany(key).inner.params.location);

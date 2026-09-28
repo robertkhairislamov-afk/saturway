@@ -1,14 +1,16 @@
 // One search across our job sites. Keywords and countries go to the job boards that cover those
-// countries (LinkedIn everywhere, Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet, JobsDB);
-// career site links go to their applicant tracking system (Greenhouse, Lever, Ashby, Workday). Each
-// source runs with its own adapter, and a job found on two sites is saved once.
+// countries (LinkedIn everywhere, Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet, JobsDB,
+// Reed, InfoJobs); career site links go to their applicant tracking system (Greenhouse, Lever,
+// Ashby, Workday). Each source runs with its own adapter, and a job found on two sites is saved once.
 
 import { compileTerms, matchesAny } from '../core/match.js';
 import * as ashby from './ashby.js';
 import * as dice from './dice.js';
 import * as greenhouse from './greenhouse.js';
+import * as infojobs from './infojobs.js';
 import * as lever from './lever.js';
 import * as linkedin from './linkedin.js';
+import * as reed from './reed.js';
 import * as seek from './seek.js';
 import * as stepstone from './stepstone.js';
 import * as workday from './workday.js';
@@ -67,8 +69,18 @@ export const BOARDS = {
   seek: { adapter: seek, label: 'SEEK', countries: ['AU', 'NZ'] },
   jobstreet: { adapter: seek.brandAdapter('jobstreet'), label: 'Jobstreet', countries: ['MY', 'SG', 'PH', 'ID'] },
   jobsdb: { adapter: seek.brandAdapter('jobsdb'), label: 'JobsDB', countries: ['HK', 'TH'] },
+  reed: { adapter: reed, label: 'Reed', countries: ['GB'] },
+  infojobs: { adapter: infojobs, label: 'InfoJobs', countries: ['ES'] },
   linkedin: { adapter: linkedin, label: 'LinkedIn', countries: Object.keys(COUNTRIES) },
 };
+
+// A Spanish province named like the city or region, such as "Madrid" or "Valencia".
+const plain = (text) => String(text ?? '').toLowerCase().normalize('NFKD').replace(/\p{M}+/gu, '').trim();
+export function provinceOf(place) {
+  const wanted = plain(place);
+  if (!wanted) return null;
+  return Object.keys(infojobs.PROVINCES).find((id) => plain(infojobs.PROVINCES[id]).split('/').includes(wanted)) ?? null;
+}
 
 // Company career sites, recognized by the address of their job board.
 const CAREER_SITES = {
@@ -102,6 +114,9 @@ function boardForms(board, { queries, countries, location, remoteOnly, postedWit
   // Welcome to the Jungle needs keywords and searches all the countries at once.
   if (board === 'wttj') return queries.length > 0 ? [{ ...common, countries, remoteTypes: remoteOnly ? ['fulltime'] : [], onlyWithSalary }] : [];
   if (board === 'stepstone') return [{ ...common, location, remoteTypes: remoteOnly ? ['1'] : [] }];
+  if (board === 'reed') return [{ ...common, location }];
+  // InfoJobs searches by province; a city that is no province searches all of Spain.
+  if (board === 'infojobs') return [{ ...common, provinces: [provinceOf(location)].filter(Boolean), teleworking: remoteOnly ? ['2'] : [] }];
   // LinkedIn needs keywords and shows visitors no remote jobs; it searches a city with its country.
   if (board === 'linkedin') {
     if (queries.length === 0 || remoteOnly) return [];

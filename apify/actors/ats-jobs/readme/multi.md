@@ -1,12 +1,12 @@
 # All-in-One Jobs Scraper
 
-**Search LinkedIn and 10 more job sites at once.** Enter keywords and countries, and get jobs from LinkedIn, Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet and JobsDB, plus any Greenhouse, Lever, Ashby or Workday career site you add, in one format, without duplicates. Salary as numbers, full descriptions, apply links. **$1 per 1,000 jobs, no start fee.**
+**Search LinkedIn and 12 more job sites at once.** Enter keywords and countries, and get jobs from LinkedIn, Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet, JobsDB, Reed and InfoJobs, plus any Greenhouse, Lever, Ashby or Workday career site you add, in one format, without duplicates. Salary as numbers, full descriptions, apply links. **$1 per 1,000 jobs, no start fee.**
 
 One search, many job sites: the Actor sends your keywords to every job board that covers your countries, reads the career sites of the companies you list, and merges everything into one clean table. The same job posted on two sites is saved once, and duplicates are free. Each job keeps its source, so you always know where it came from. Run it on a schedule to get **only new jobs** from all sites at once. No browser, no login.
 
 ## What can this all-in-one jobs scraper do?
 
-- 🌍 **34 countries, 11 job sites**: pick countries, and the right sites are searched for each one (see the table below).
+- 🌍 **34 countries, 13 job sites**: pick countries, and the right sites are searched for each one (see the table below).
 - 🔗 **LinkedIn included**: public LinkedIn job listings in every country, without login, with seniority, job function and number of applicants. The residential proxies LinkedIn needs are included in the price.
 - 🔎 **One simple input**: keywords, countries and, for one country, a city. No site-specific settings needed.
 - 🏢 **Company career sites by link**: paste any Greenhouse, Lever, Ashby or Workday job board link; the system is recognized automatically. Your keywords pick jobs by title.
@@ -14,7 +14,7 @@ One search, many job sites: the Actor sends your keywords to every job board tha
 - 💰 **Salary as numbers** in the local currency: "$120k - $140k p.a.", "RM 3,800 – RM 5,000 per month" or "€75,000-85,000" become `min`, `max`, `currency` and `interval`.
 - 🎛️ **Filters for all sites**: remote only, posted in the last N days, only jobs with a salary, title must contain, exclude words.
 - 🆕 **Only new jobs since the last run**: one daily job alert across all sites.
-- 🏷️ **Source of every job** in the `ats` field: `linkedin`, `dice`, `wttj`, `stepstone`, `seek`, `jobstreet`, `jobsdb`, `greenhouse`, `lever`, `ashby` or `workday`.
+- 🏷️ **Source of every job** in the `ats` field: `linkedin`, `dice`, `wttj`, `stepstone`, `seek`, `jobstreet`, `jobsdb`, `reed`, `infojobs`, `greenhouse`, `lever`, `ashby` or `workday`.
 
 ## Which sites cover which countries?
 
@@ -23,7 +23,9 @@ One search, many job sites: the Actor sends your keywords to every job board tha
 | Every country in this table | LinkedIn |
 | United States | Dice, Welcome to the Jungle |
 | Germany | StepStone, Welcome to the Jungle |
-| United Kingdom, Ireland, France, Belgium, Netherlands, Luxembourg, Spain, Italy, Canada | Welcome to the Jungle |
+| United Kingdom | Reed, Welcome to the Jungle |
+| Spain | InfoJobs (a city that is a province, such as Madrid, searches that province), Welcome to the Jungle |
+| Ireland, France, Belgium, Netherlands, Luxembourg, Italy, Canada | Welcome to the Jungle |
 | Australia, New Zealand | SEEK |
 | Malaysia, Singapore, Philippines, Indonesia | Jobstreet |
 | Hong Kong, Thailand | JobsDB |

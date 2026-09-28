@@ -3,8 +3,10 @@
 // job board instead of company boards, so they have their own search forms.
 
 import { CLASSIFICATIONS, WORK_ARRANGEMENTS, WORK_TYPES } from '../src/adapters/seek.js';
+import * as infojobs from '../src/adapters/infojobs.js';
 import * as linkedin from '../src/adapters/linkedin.js';
 import * as multi from '../src/adapters/multi.js';
+import * as reed from '../src/adapters/reed.js';
 import * as stepstone from '../src/adapters/stepstone.js';
 
 export const ACTORS = {
@@ -125,6 +127,24 @@ export const ACTORS = {
     seoTitle: 'JobsDB Jobs Scraper – Hong Kong & Thailand Jobs',
     seoDescription: 'Scrape JobsDB jobs in Hong Kong and Thailand by keyword and location: title, company, salary, work type and full description. $0.50 per 1,000 jobs.',
   },
+  reed: {
+    name: 'reed-jobs-scraper',
+    title: 'Reed Jobs Scraper',
+    tagline: 'UK jobs from Reed.co.uk, with salaries, contract type and hybrid or remote',
+    apiExample: { searchQueries: ['data analyst'], location: 'London', maxItems: 20 },
+    description: 'Scrape Reed.co.uk jobs in the UK by keyword and location: title, company, salary as numbers, contract type, hours, hybrid or remote, sector, full description and apply link. All Reed filters and alerts.',
+    seoTitle: 'Reed Jobs Scraper – UK Job Listings & Salaries',
+    seoDescription: 'Scrape Reed.co.uk jobs by keyword and location: title, company, salary, contract type, hybrid or remote, full description. $0.50 per 1,000 jobs.',
+  },
+  infojobs: {
+    name: 'infojobs-jobs-scraper',
+    title: 'InfoJobs Jobs Scraper',
+    tagline: 'jobs in Spain from InfoJobs.net, with salaries and remote policy',
+    apiExample: { searchQueries: ['python'], provinces: ['33'], maxItems: 20 },
+    description: 'Scrape InfoJobs.net jobs in Spain by keyword and province: title, company, salary as numbers, contract type, working hours, remote policy, full description and apply link. All InfoJobs filters and alerts.',
+    seoTitle: 'InfoJobs Scraper – Spain Job Listings & Salaries',
+    seoDescription: 'Scrape InfoJobs.net jobs in Spain by keyword and province: title, company, salary, contract, remote or hybrid, full description. $0.50 per 1,000 jobs.',
+  },
   linkedin: {
     name: 'linkedin-jobs-scraper',
     title: 'LinkedIn Jobs Scraper',
@@ -139,9 +159,9 @@ export const ACTORS = {
     title: 'All-in-One Jobs Scraper',
     tagline: 'LinkedIn and all of these job sites and career sites in one search, without duplicates',
     apiExample: { searchQueries: ['data analyst'], countries: ['US', 'DE', 'AU'], maxItems: 30 },
-    description: 'Search LinkedIn and 10 more job sites at once by keyword and country: Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet, JobsDB and Greenhouse, Lever, Ashby and Workday career sites. One format, no duplicates.',
-    seoTitle: 'All-in-One Jobs Scraper – LinkedIn & 10 More Job Sites',
-    seoDescription: 'Search LinkedIn, Dice, StepStone, SEEK, Jobstreet, JobsDB, Welcome to the Jungle and career sites at once. One format, no duplicates. $1 per 1,000 jobs.',
+    description: 'Search LinkedIn and 12 more job sites at once by keyword and country: Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet, JobsDB, Reed, InfoJobs and Greenhouse, Lever, Ashby and Workday career sites. One format, no duplicates.',
+    seoTitle: 'All-in-One Jobs Scraper – LinkedIn & 12 More Job Sites',
+    seoDescription: 'Search LinkedIn, Dice, StepStone, SEEK, Reed, InfoJobs, Jobstreet, JobsDB and career sites at once. One format, no duplicates. $1 per 1,000 jobs.',
   },
 };
 
@@ -188,6 +208,8 @@ export function inputSchema(ats) {
   if (ats === 'seek' || ats === 'jobstreet' || ats === 'jobsdb') return seekInputSchema(ats);
   if (ats === 'stepstone') return stepstoneInputSchema();
   if (ats === 'linkedin') return linkedinInputSchema();
+  if (ats === 'reed') return reedInputSchema();
+  if (ats === 'infojobs') return infojobsInputSchema();
   if (ats === 'multi') return multiInputSchema();
   const actor = ACTORS[ats];
   const properties = {
@@ -735,6 +757,172 @@ function stepstoneInputSchema() {
   };
 }
 
+function reedInputSchema() {
+  return {
+    title: ACTORS.reed.title,
+    description: 'Search Reed.co.uk like on the website and get every matching UK job in one clean format.',
+    type: 'object',
+    schemaVersion: 1,
+    properties: {
+      searchQueries: {
+        title: 'Job titles or keywords',
+        type: 'array',
+        editor: 'stringList',
+        description: 'What to search, for example <code>data analyst</code> or <code>care assistant</code>. Each line is a separate search with the filters below. You can also paste links of searches from reed.co.uk.',
+        prefill: ['python developer'],
+        placeholderValue: 'data analyst',
+      },
+      location: {
+        title: 'Location',
+        type: 'string',
+        editor: 'textfield',
+        description: 'A town, city, county or postcode, for example <code>London</code>, <code>Greater Manchester</code> or <code>LS1</code>. Leave empty for the whole UK.',
+        prefill: 'London',
+      },
+      distance: {
+        title: 'Distance around the location',
+        type: 'integer',
+        minimum: 0,
+        unit: 'miles',
+        description: 'Also find jobs this far from the location. Reed uses 10 miles when this is empty.',
+      },
+      minSalary: {
+        title: 'Minimum salary per year',
+        type: 'integer',
+        minimum: 0,
+        sectionCaption: 'Reed filters',
+        description: 'In GBP, for example 40000. Reed also compares daily and hourly rates as yearly pay.',
+      },
+      maxSalary: {
+        title: 'Maximum salary per year',
+        type: 'integer',
+        minimum: 0,
+        description: 'In GBP. Leave empty for no maximum.',
+      },
+      jobTypes: {
+        title: 'Job type',
+        type: 'array',
+        editor: 'select',
+        description: 'Leave empty for all.',
+        items: selectOf(reed.JOB_TYPES),
+      },
+      hours: {
+        title: 'Working hours',
+        type: 'array',
+        editor: 'select',
+        description: 'Leave empty for all.',
+        items: selectOf(reed.HOURS),
+      },
+      employerTypes: {
+        title: 'Posted by',
+        type: 'array',
+        editor: 'select',
+        description: 'Direct employers, recruitment agencies or both. Leave empty for all.',
+        items: selectOf(reed.EMPLOYERS),
+      },
+      graduate: {
+        title: 'Graduate jobs only',
+        type: 'boolean',
+        default: false,
+        description: 'Only jobs that Reed marks as suitable for graduates.',
+      },
+      postedWithinDays: {
+        title: 'Posted in the last days',
+        type: 'integer',
+        minimum: 0,
+        unit: 'days',
+        description: 'Keep jobs posted in the last N days: 1 means today and yesterday. Leave empty or 0 for any date.',
+      },
+      ...commonSettings({
+        site: 'Reed',
+        details: 'the full description (text and HTML), contract type, hours, sector and full location',
+        proxyDescription: 'The Actor connects directly, which is fastest. If Reed starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it from the start.',
+      }),
+    },
+  };
+}
+
+// Select options from a map of ids to names, sorted by name.
+const sortedSelectOf = (map) => ({ type: 'string', ...optionsOf(map) });
+
+function infojobsInputSchema() {
+  const settings = commonSettings({
+    site: 'InfoJobs',
+    proxyDescription: 'The Actor connects directly, which is fastest. If InfoJobs starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it from the start.',
+  });
+  return {
+    title: ACTORS.infojobs.title,
+    description: 'Search InfoJobs.net like on the website and get every matching job in Spain in one clean format.',
+    type: 'object',
+    schemaVersion: 1,
+    properties: {
+      searchQueries: {
+        title: 'Job titles or keywords',
+        type: 'array',
+        editor: 'stringList',
+        description: 'What to search, in Spanish or English, for example <code>python</code>, <code>enfermera</code> or <code>camarero</code>. Each line is a separate search with the filters below. You can also paste links of searches from infojobs.net.',
+        prefill: ['python'],
+        placeholderValue: 'administrativo',
+      },
+      provinces: {
+        title: 'Provinces',
+        type: 'array',
+        editor: 'select',
+        description: 'Leave empty for all of Spain.',
+        items: sortedSelectOf(infojobs.PROVINCES),
+      },
+      categories: {
+        title: 'Categories',
+        type: 'array',
+        editor: 'select',
+        sectionCaption: 'InfoJobs filters',
+        description: 'Job categories as on InfoJobs. Leave empty for all.',
+        items: sortedSelectOf(infojobs.CATEGORIES),
+      },
+      teleworking: {
+        title: 'Remote policy',
+        type: 'array',
+        editor: 'select',
+        description: 'On-site, hybrid or remote only. Leave empty for all.',
+        items: selectOf(infojobs.TELEWORKING),
+      },
+      contractTypes: {
+        title: 'Contract type',
+        type: 'array',
+        editor: 'select',
+        description: 'Leave empty for all.',
+        items: selectOf(infojobs.CONTRACT_TYPES),
+      },
+      workdays: {
+        title: 'Working hours',
+        type: 'array',
+        editor: 'select',
+        description: 'Full day, intensive (continuous) or part-time days. Leave empty for all.',
+        items: selectOf(infojobs.WORKDAYS),
+      },
+      postedWithinDays: {
+        title: 'Posted in the last days',
+        type: 'integer',
+        minimum: 0,
+        unit: 'days',
+        description: 'Keep jobs posted in the last N days: 1 means today and yesterday. Leave empty or 0 for any date.',
+      },
+      sortBy: {
+        title: 'Sort by',
+        type: 'string',
+        editor: 'select',
+        enum: ['PUBLICATION_DATE', 'RELEVANCE'],
+        enumTitles: ['Newest first', 'Relevance'],
+        default: 'PUBLICATION_DATE',
+        description: 'Newest first suits job alerts. Links you paste keep their own order.',
+      },
+      ...settings,
+      // The search itself carries the full description, so no job page is opened.
+      includeDescription: { ...settings.includeDescription, title: 'Include job descriptions', description: 'Save the full job description as plain text and HTML. Turn off for smaller results.' },
+    },
+  };
+}
+
 const RESIDENTIAL_PROXY = { useApifyProxy: true, apifyProxyGroups: ['RESIDENTIAL'] };
 
 function linkedinInputSchema() {
@@ -826,7 +1014,7 @@ function multiInputSchema() {
         title: 'Countries',
         type: 'array',
         editor: 'select',
-        description: 'Where to search. LinkedIn covers every country here, and each country also goes to the other sites that cover it: the United States to Dice and Welcome to the Jungle; Germany to StepStone and Welcome to the Jungle; Australia and New Zealand to SEEK; Malaysia, Singapore, the Philippines and Indonesia to Jobstreet; Hong Kong and Thailand to JobsDB; the UK, Canada and western Europe to Welcome to the Jungle.',
+        description: 'Where to search. LinkedIn covers every country here, and each country also goes to the other sites that cover it: the United States to Dice and Welcome to the Jungle; Germany to StepStone and Welcome to the Jungle; the UK to Reed and Welcome to the Jungle; Spain to InfoJobs and Welcome to the Jungle; Australia and New Zealand to SEEK; Malaysia, Singapore, the Philippines and Indonesia to Jobstreet; Hong Kong and Thailand to JobsDB; Canada and western Europe to Welcome to the Jungle.',
         items: selectOf(multi.COUNTRIES),
         prefill: ['US'],
       },
@@ -884,6 +1072,8 @@ const EXTRA_COLUMN = {
   seek: ['employmentType', 'Work type'],
   jobstreet: ['employmentType', 'Work type'],
   jobsdb: ['employmentType', 'Work type'],
+  reed: ['employmentType', 'Employment'],
+  infojobs: ['employmentType', 'Employment'],
   linkedin: ['employmentType', 'Employment'],
   multi: ['ats', 'Source'],
   stepstone: ['employmentType', 'Employment'],

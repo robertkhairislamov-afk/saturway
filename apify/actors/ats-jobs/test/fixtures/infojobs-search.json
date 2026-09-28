@@ -1,0 +1,106 @@
+{
+ "offers": [
+  {
+   "code": "e76c0c8167406f912a411d522bfd2a",
+   "title": "VB / Python Developer (AI-Assisted Migration)",
+   "description": "We are looking for a developer specialised in migrating legacy applications written in Visual Basic to modern Python, with strong command of the latest AI-assisted development tools. The role has both a technical and strategic component: it is not simply about rewriting code, but about designing a robust and sustainable Python architecture for the long term.\nMain Responsibilities\nAnalysis, documentation and in-depth understanding of existing Visual Basic codebases.\nSystematic migration of VB modules to Python, ensuring functional equivalence and performance improvements.\nIntensive use of AI tools (Claude, Cursor, GitHub Copilot and similar) to accelerate and validate the migration process.\nDesign of unit and integration tests to validate the equivalence of migrated code.\nTechnical documentation of the migration process and the new Python codebase.\nCollaboration with the infrastructure team to ensure integration with existing systems.\nEssential Requirements\nDemonstrable experience in Visual Basic (VB6, VBA or VB.NET) and Python (3.x).\nProven experience in legacy code migration or modernisation projects.\nCommand of AI-assisted development tools: Claude API, Cursor, GitHub Copilot or similar.\nHigh level of English (C1 or equivalent) – a test will be conducted.\nAbility to work independently and make technical decisions.\nValued Experience\nKnowledge of service-oriented or microservices architectures in Python.\nExperience with Python frameworks (FastAPI, Django, Flask).\nFamiliarity with Linux infrastructure environments and version control systems (Git).\nExperience in corporate environments with management systems or ERPs.",
+   "city": "Bilbao",
+   "link": "//www.infojobs.net/bilbao/vb-python-developer-ai-assisted-migration/of-ie76c0c8167406f912a411d522bfd2a?applicationOrigin=search-new&page=1&sortBy=RELEVANCE",
+   "contractType": "Contrato indefinido",
+   "salary": {
+    "range": {
+     "min": 40000,
+     "max": 50000
+    },
+    "period": "YEAR",
+    "currency": "EUR",
+    "type": "GROSS"
+   },
+   "workday": "Jornada completa",
+   "teleworking": "Presencial",
+   "publishedAt": "2026-09-25T06:56:03Z",
+   "companyName": "Aeternal Mentis",
+   "companyLogo": "https://multimedia-logos.infojobs.net/image/upload/bd/bd8cb061-d84d-426d-81e6-1a041d87a5dd",
+   "companyLink": "https://www.infojobs.net/aeternal-mentis/em-i40209fafd0427880da66aba1390949",
+   "states": [
+    "REUSED"
+   ],
+   "upsellings": [
+    "BUMP_WEEKLY",
+    "PROMOTED"
+   ],
+   "executive": false,
+   "newBOId": "f039f059-27d5-4497-8a57-a9b1907b4125"
+  },
+  {
+   "code": "694a872eb84b0ba839fa86d91335d9",
+   "title": "Desarrollador Senior Python (Híbrido)",
+   "description": "Como Desarrollador Senior Python, formarás parte de un equipo ágil centrado en la construcción y evolución de servicios backend escalables y robustos. Colaborarás con DevOps y Product para definir y entregar soluciones basadas en contenedores que se desplieguen en entornos de producción con alta disponibilidad, contribuyendo a la estabilidad y mejora continua del ecosistema tecnológico de la empresa.\nPython: Es el lenguaje principal de desarrollo; necesitamos que domines su ecosistema y buenas prácticas para construir código mantenible y de alto rendimiento.\nFastAPI: Debes tener experiencia en su uso para desarrollar APIs modernas, rápidas y bien documentadas, aprovechando sus capacidades asíncronas y validación de datos.\nAPIs REST y/o GraphQL: Es esencial que hayas diseñado e implementado APIs que se integren con múltiples sistemas, priorizando la claridad, seguridad y escalabilidad.\nContenedores: Debes entender cómo empaquetar y ejecutar aplicaciones en entornos aislados, asegurando consistencia entre desarrollo, prueba y producción.\nLa modalidad de trabajo es híbrida (2 - 3 días en las oficinas del cliente) en la zona de IFEMA.",
+   "city": "Madrid",
+   "link": "//www.infojobs.net/madrid/desarrollador-senior-python-hibrido/of-i694a872eb84b0ba839fa86d91335d9?applicationOrigin=search-new&page=1&sortBy=RELEVANCE",
+   "contractType": "Contrato indefinido",
+   "workday": "Jornada completa",
+   "teleworking": "Híbrido",
+   "publishedAt": "2026-09-17T08:16:28Z",
+   "companyName": "DEVOTEAM",
+   "companyLogo": "https://multimedia-logos.infojobs.net/image/upload/c8/c8ec5db1-715e-42b0-88b0-fc43822fc2eb",
+   "companyLink": "https://devoteam.ofertas-trabajo.infojobs.net",
+   "states": [],
+   "upsellings": [
+    "PROMOTED"
+   ],
+   "executive": false,
+   "newBOId": "ab33f2ae-c707-4945-a191-e4fbd970d48c"
+  },
+  {
+   "code": "e76c0c8167406f912a411d522bfd2a",
+   "title": "VB / Python Developer (AI-Assisted Migration)",
+   "description": "We are looking for a developer specialised in migrating legacy applications written in Visual Basic to modern Python, with strong command of the latest AI-assisted development tools. The role has both a technical and strategic component: it is not simply about rewriting code, but about designing a robust and sustainable Python architecture for the long term.\nMain Responsibilities\nAnalysis, documentation and in-depth understanding of existing Visual Basic codebases.\nSystematic migration of VB modules to Python, ensuring functional equivalence and performance improvements.\nIntensive use of AI tools (Claude, Cursor, GitHub Copilot and similar) to accelerate and validate the migration process.\nDesign of unit and integration tests to validate the equivalence of migrated code.\nTechnical documentation of the migration process and the new Python codebase.\nCollaboration with the infrastructure team to ensure integration with existing systems.\nEssential Requirements\nDemonstrable experience in Visual Basic (VB6, VBA or VB.NET) and Python (3.x).\nProven experience in legacy code migration or modernisation projects.\nCommand of AI-assisted development tools: Claude API, Cursor, GitHub Copilot or similar.\nHigh level of English (C1 or equivalent) – a test will be conducted.\nAbility to work independently and make technical decisions.\nValued Experience\nKnowledge of service-oriented or microservices architectures in Python.\nExperience with Python frameworks (FastAPI, Django, Flask).\nFamiliarity with Linux infrastructure environments and version control systems (Git).\nExperience in corporate environments with management systems or ERPs.",
+   "city": "Bilbao",
+   "link": "//www.infojobs.net/bilbao/vb-python-developer-ai-assisted-migration/of-ie76c0c8167406f912a411d522bfd2a?applicationOrigin=search-new&page=1&sortBy=RELEVANCE",
+   "contractType": "Contrato indefinido",
+   "salary": {
+    "range": {
+     "min": 40000,
+     "max": 50000
+    },
+    "period": "YEAR",
+    "currency": "EUR",
+    "type": "GROSS"
+   },
+   "workday": "Jornada completa",
+   "teleworking": "Presencial",
+   "publishedAt": "2026-09-25T06:56:03Z",
+   "companyName": "Aeternal Mentis",
+   "companyLogo": "https://multimedia-logos.infojobs.net/image/upload/bd/bd8cb061-d84d-426d-81e6-1a041d87a5dd",
+   "companyLink": "https://www.infojobs.net/aeternal-mentis/em-i40209fafd0427880da66aba1390949",
+   "states": [
+    "REUSED"
+   ],
+   "upsellings": [
+    "HIDDEN_PROMOTED",
+    "BUMP_WEEKLY"
+   ],
+   "executive": false,
+   "newBOId": "f039f059-27d5-4497-8a57-a9b1907b4125"
+  }
+ ],
+ "navigation": {
+  "self": 1,
+  "next": 2,
+  "pages": [
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "totalPages": 17,
+  "totalElements": 335,
+  "sortedBy": "RELEVANCE",
+  "availableSortingMethods": [
+   "PUBLICATION_DATE",
+   "RELEVANCE"
+  ]
+ }
+}

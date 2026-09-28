@@ -1,0 +1,18 @@
+{
+  "actorOutputSchemaVersion": 1,
+  "title": "Redfin Scraper output",
+  "properties": {
+    "listings": {
+      "type": "string",
+      "title": "Listings",
+      "description": "Homes for sale, sold homes and rentals with price, beds, baths, size, lot, year built, dates, address, coordinates and photos.",
+      "template": "{{links.apiDefaultDatasetUrl}}/items?view=overview"
+    },
+    "summary": {
+      "type": "string",
+      "title": "Run summary",
+      "description": "Listings found and saved for each location and search link, with errors.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/SUMMARY"
+    }
+  }
+}

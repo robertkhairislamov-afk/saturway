@@ -1,0 +1,28 @@
+{
+  "actorSpecification": 1,
+  "fields": {},
+  "views": {
+    "overview": {
+      "title": "Listings",
+      "transformation": {
+        "fields": ["photoUrl", "address", "price", "beds", "baths", "sqft", "propertyType", "status", "daysOnMarket", "soldDate", "url"]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "photoUrl": { "label": "Photo", "format": "image" },
+          "address": { "label": "Address", "format": "text" },
+          "price": { "label": "Price ($)", "format": "number" },
+          "beds": { "label": "Beds", "format": "number" },
+          "baths": { "label": "Baths", "format": "number" },
+          "sqft": { "label": "Sq ft", "format": "number" },
+          "propertyType": { "label": "Type", "format": "text" },
+          "status": { "label": "Status", "format": "text" },
+          "daysOnMarket": { "label": "Days on market", "format": "number" },
+          "soldDate": { "label": "Sold", "format": "date" },
+          "url": { "label": "Redfin link", "format": "link" }
+        }
+      }
+    }
+  }
+}

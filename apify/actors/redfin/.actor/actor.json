@@ -1,0 +1,15 @@
+{
+  "actorSpecification": 1,
+  "name": "redfin-scraper",
+  "title": "Redfin Scraper",
+  "description": "Scrape Redfin homes for sale, sold homes and rentals by city, ZIP code, county or search link: price, beds, baths, square feet, lot size, year built, days on market, sale date, photos and more. All Redfin filters.",
+  "version": "0.1",
+  "buildTag": "latest",
+  "input": "./input_schema.json",
+  "storages": {
+    "dataset": "./dataset_schema.json"
+  },
+  "output": "./output_schema.json",
+  "dockerfile": "../Dockerfile",
+  "readme": "../README.md"
+}

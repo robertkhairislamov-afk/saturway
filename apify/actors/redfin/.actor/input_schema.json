@@ -1,0 +1,286 @@
+{
+  "title": "Redfin Scraper",
+  "description": "Scrape Redfin homes for sale, sold homes and rentals by location or search link.",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "locations": {
+      "title": "Locations",
+      "type": "array",
+      "editor": "stringList",
+      "description": "US cities, ZIP codes, counties, neighborhoods or states, one per line, as you would type them into the Redfin search box: <code>Austin, TX</code>, <code>78701</code>, <code>Travis County, TX</code>, <code>Brooklyn, NY</code>. Add the state to get the right city.",
+      "prefill": [
+        "Austin, TX"
+      ],
+      "placeholderValue": "Denver, CO"
+    },
+    "searchUrls": {
+      "title": "Redfin search links",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Links of searches made on redfin.com, with any filters you set there, such as <code>https://www.redfin.com/city/30818/TX/Austin/filter/property-type=house,min-beds=3</code>. Rental searches (<code>/apartments-for-rent</code>) and sold searches work too. Each link keeps its own filters and listing type.",
+      "placeholderValue": "https://www.redfin.com/zipcode/78701"
+    },
+    "searchType": {
+      "title": "Listings",
+      "type": "string",
+      "editor": "select",
+      "description": "What to scrape for the locations. Search links keep their own listing type.",
+      "enum": [
+        "forSale",
+        "sold",
+        "forRent"
+      ],
+      "enumTitles": [
+        "For sale",
+        "Sold",
+        "For rent"
+      ],
+      "default": "forSale"
+    },
+    "soldWithinDays": {
+      "title": "Sold within",
+      "type": "string",
+      "editor": "select",
+      "description": "For sold homes: how far back the sales go.",
+      "enum": [
+        "7",
+        "30",
+        "90",
+        "180",
+        "365",
+        "730",
+        "1095",
+        "1825"
+      ],
+      "enumTitles": [
+        "Last week",
+        "Last month",
+        "Last 3 months",
+        "Last 6 months",
+        "Last year",
+        "Last 2 years",
+        "Last 3 years",
+        "Last 5 years"
+      ],
+      "default": "90"
+    },
+    "includePending": {
+      "title": "Include pending and under contract",
+      "type": "boolean",
+      "description": "For homes for sale: also get homes that are pending or under contract. By default only active and coming soon homes are included, as on Redfin.",
+      "default": false
+    },
+    "propertyTypes": {
+      "title": "Property types",
+      "type": "array",
+      "editor": "select",
+      "sectionCaption": "Filters",
+      "sectionDescription": "The same filters as on redfin.com. They apply to the locations and are added to the filters of search links.",
+      "description": "Leave empty for all types. For rent, multi-family means apartments, and land, manufactured, co-op and other do not apply.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "house",
+          "condo",
+          "townhouse",
+          "multifamily",
+          "land",
+          "manufactured",
+          "co-op",
+          "other"
+        ],
+        "enumTitles": [
+          "House",
+          "Condo",
+          "Townhouse",
+          "Multi-family (apartments for rent)",
+          "Land",
+          "Manufactured",
+          "Co-op",
+          "Other"
+        ]
+      }
+    },
+    "minPrice": {
+      "title": "Minimum price",
+      "type": "integer",
+      "minimum": 0,
+      "description": "In US dollars. For rentals, the monthly rent."
+    },
+    "maxPrice": {
+      "title": "Maximum price",
+      "type": "integer",
+      "minimum": 0,
+      "description": "In US dollars. For rentals, the monthly rent."
+    },
+    "minBeds": {
+      "title": "Minimum bedrooms",
+      "type": "integer",
+      "minimum": 0,
+      "description": "Homes with at least this many bedrooms."
+    },
+    "maxBeds": {
+      "title": "Maximum bedrooms",
+      "type": "integer",
+      "minimum": 0,
+      "description": "Homes with at most this many bedrooms."
+    },
+    "minBaths": {
+      "title": "Minimum bathrooms",
+      "type": "string",
+      "editor": "select",
+      "enum": [
+        "1",
+        "1.5",
+        "2",
+        "2.5",
+        "3",
+        "4",
+        "5"
+      ],
+      "enumTitles": [
+        "1+",
+        "1.5+",
+        "2+",
+        "2.5+",
+        "3+",
+        "4+",
+        "5+"
+      ],
+      "description": "Homes with at least this many bathrooms."
+    },
+    "minSqft": {
+      "title": "Minimum square feet",
+      "type": "integer",
+      "minimum": 0,
+      "description": "Living area of at least this many square feet."
+    },
+    "maxSqft": {
+      "title": "Maximum square feet",
+      "type": "integer",
+      "minimum": 0,
+      "description": "Living area of at most this many square feet."
+    },
+    "minLotSqft": {
+      "title": "Minimum lot size (square feet)",
+      "type": "integer",
+      "minimum": 0,
+      "description": "One acre is 43,560 square feet."
+    },
+    "minYearBuilt": {
+      "title": "Built in or after",
+      "type": "integer",
+      "minimum": 0,
+      "description": "Homes built in this year or later."
+    },
+    "maxYearBuilt": {
+      "title": "Built in or before",
+      "type": "integer",
+      "minimum": 0,
+      "description": "Homes built in this year or earlier."
+    },
+    "maxHoa": {
+      "title": "Maximum HOA fee per month",
+      "type": "integer",
+      "minimum": 0,
+      "description": "In US dollars. 0 means homes without an HOA fee. Leave empty for any."
+    },
+    "maxDaysOnMarket": {
+      "title": "Listed within",
+      "type": "string",
+      "editor": "select",
+      "description": "For homes for sale: only homes listed within this time, for example new listings of the last day.",
+      "enum": [
+        "1",
+        "3",
+        "7",
+        "14",
+        "30",
+        "90",
+        "180",
+        "365"
+      ],
+      "enumTitles": [
+        "Last day",
+        "Last 3 days",
+        "Last week",
+        "Last 2 weeks",
+        "Last month",
+        "Last 3 months",
+        "Last 6 months",
+        "Last year"
+      ]
+    },
+    "keywords": {
+      "title": "Keywords in the description",
+      "type": "string",
+      "editor": "textfield",
+      "description": "Only homes whose listing description contains these words, such as <code>pool</code> or <code>guest house</code>."
+    },
+    "sortBy": {
+      "title": "Sort by",
+      "type": "string",
+      "editor": "select",
+      "description": "Order of the results, as on Redfin. Very large searches are read by price range, and the order applies within each range.",
+      "enum": [
+        "recommended",
+        "newest",
+        "priceLow",
+        "priceHigh",
+        "largest",
+        "pricePerSqftLow",
+        "recentlySold"
+      ],
+      "enumTitles": [
+        "Recommended",
+        "Newest",
+        "Price: low to high",
+        "Price: high to low",
+        "Square feet: largest",
+        "Price per square foot: lowest",
+        "Recently sold"
+      ],
+      "default": "recommended"
+    },
+    "onlyNew": {
+      "title": "Only new listings since the last run",
+      "type": "boolean",
+      "sectionCaption": "Monitoring and limits",
+      "description": "Save only listings that earlier runs of the same saved task did not save. The first run saves all current listings. Use it with a schedule to get new listings every day.",
+      "default": false
+    },
+    "includeAllPhotos": {
+      "title": "Include all photo links",
+      "type": "boolean",
+      "description": "Add the links of all photos of each home in <code>photos</code>. The main photo is always in <code>photoUrl</code>.",
+      "default": false
+    },
+    "maxItems": {
+      "title": "Maximum listings in total",
+      "type": "integer",
+      "minimum": 0,
+      "description": "Stop after saving this many listings. Leave empty or 0 for no limit. The example is kept small so the first run takes seconds.",
+      "prefill": 100
+    },
+    "maxItemsPerSearch": {
+      "title": "Maximum listings per search",
+      "type": "integer",
+      "minimum": 0,
+      "description": "Limit for each location or search link, so that every search gets a share. Leave empty or 0 for no limit."
+    },
+    "proxyConfiguration": {
+      "title": "Proxy configuration",
+      "type": "object",
+      "editor": "proxy",
+      "sectionCaption": "Advanced",
+      "description": "The Actor connects directly, which is fastest. If Redfin starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it from the start.",
+      "prefill": {
+        "useApifyProxy": false
+      },
+      "default": {
+        "useApifyProxy": false
+      }
+    }
+  }
+}

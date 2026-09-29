@@ -56,6 +56,8 @@ Each site adds its own extra fields, such as `seniorityLevel`, `industries` and 
 3. Optionally add **company career site links**, limit the **job sites**, or turn on **remote only**, **only jobs with a salary** or a **date range**.
 4. Click **Start**. Download the jobs as JSON, CSV, Excel or HTML, or get them through the API.
 
+A step-by-step guide with Python examples, from salary medians in five countries to every job of a company from its career site: [How to Scrape Job Postings from LinkedIn and 12 More Job Sites in One Format](https://medium.com/@robertkhairislamov/how-to-scrape-job-postings-from-linkedin-and-12-more-job-sites-in-one-format-935bb79ba2d2).
+
 ### Example input
 
 ```json

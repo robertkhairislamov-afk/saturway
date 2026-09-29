@@ -35,6 +35,8 @@ Scrape every open job from any company that hires with **Lever** (`jobs.lever.co
 2. Optionally set filters: keywords such as `engineer` or `account executive`, locations such as `CA` or `Remote`, teams, a date range.
 3. Click **Start**. Download the jobs as JSON, CSV, Excel or HTML, or get them through the API.
 
+A step-by-step guide with Python examples for this and the other job scrapers, which all share one output format: [How to Scrape Job Postings from LinkedIn and 12 More Job Sites in One Format](https://medium.com/@robertkhairislamov/how-to-scrape-job-postings-from-linkedin-and-12-more-job-sites-in-one-format-935bb79ba2d2).
+
 ### Example input
 
 ```json

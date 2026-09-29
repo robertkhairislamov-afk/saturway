@@ -39,6 +39,8 @@ Scrape jobs from **LinkedIn**, the largest job site in the world, the way you se
 3. Optionally choose a **date range**, **Easy Apply only**, a **distance**, **job types** or **experience levels**.
 4. Click **Start**. Download the jobs as JSON, CSV, Excel or HTML, or get them through the API.
 
+A step-by-step guide with Python examples for this and the other job scrapers, which all share one output format: [How to Scrape Job Postings from LinkedIn and 12 More Job Sites in One Format](https://medium.com/@robertkhairislamov/how-to-scrape-job-postings-from-linkedin-and-12-more-job-sites-in-one-format-935bb79ba2d2).
+
 ### Example input
 
 ```json

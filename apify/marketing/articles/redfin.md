@@ -72,6 +72,7 @@ homes.to_csv("austin_homes.csv", index=False)
 It takes about 20 seconds for 500 homes. The first rows:
 
 ```
+500 homes
                                    address     price  beds  baths  sqft  daysOnMarket
 0        8634 Ephraim Rd, Austin, TX 78717  600000.0     4    2.5  2856             1
 1      2423 Lavendale Ct, Austin, TX 78748  525000.0     4    3.0  3482             1
@@ -116,6 +117,7 @@ print(by_zip.round(0).head(10))
 The result at the end of September 2026:
 
 ```
+$ python sold_comps.py
        sales  median_price  median_price_per_sqft
 zip
 78703     30     1787500.0                  699.0

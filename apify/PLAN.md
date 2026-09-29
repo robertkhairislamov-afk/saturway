@@ -445,7 +445,7 @@ Google Play, Lever, Ashby, Greenhouse и Google News пока дальше пе�
 | Ниша | Пользователей | Лидеры и их цены | Заметки |
 |---|---|---|---|
 | LinkedIn Jobs | 33 109 | curious_coder 17 765 ($2), cheap_scraper 3 967 ($0.70), valig 3 955 ($0.40) | Сделан 27.09, см. 8b |
-| Indeed | 11 857 | valig 3 857 ($0.10) | Сильная защита |
+| Indeed | 12 082 (29.09) | valig 3 942 ($0.10), borderline 2 510 ($5), misceres 2 204 ($6, рейтинг 3.0), kaix 1 478 ($0.05) | Сайт закрыт, но API поиска мобильного приложения отвечает на простой запрос без браузера: 29.09 вернул вакансии с зарплатами числами и курсором страниц |
 | Glassdoor | 3 209 | valig 1 367 ($0.40) | Cloudflare |
 | Xing | 560 | shahidirfan 182 ($1) | Германия, пара к StepStone |
 | Bayt | 491 | около $1 | Страны Персидского залива |
@@ -457,4 +457,4 @@ Google Play, Lever, Ashby, Greenhouse и Google News пока дальше пе�
 
 - Totaljobs и CWJobs отсюда рвут соединение (HTTP/2 INTERNAL_ERROR). stepstone.at отвечает 403, stepstone.be работает как stepstone.de. Открытый API Arbeitsagentur с ключом `jobboerse-jobsuche` отвечает 403.
 - Rightmove (212), Home Depot (181), Zoopla (127) — не вакансии.
-- Naukri — 5389 пользователей за 30 дней, но API отвечает «recaptcha required».
+- Naukri — 5389 пользователей за 30 дней, но API отвечает «recaptcha required», а страница поиска — пустая оболочка Next.js без вакансий (проверено 29.09). Нужен браузер, проходящий reCAPTCHA, — не берём.

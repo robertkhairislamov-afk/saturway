@@ -18,6 +18,8 @@ import * as wttj from './wttj.js';
 
 export const name = 'multi';
 export const title = 'Job sites';
+// The run log names no single site when one of them limits requests.
+export const limitNotice = 'A job site is limiting direct requests';
 export const sourceNames = ['source', 'sources'];
 export const companyConcurrency = 4;
 export const detailConcurrency = 6;

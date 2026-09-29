@@ -69,7 +69,7 @@ export async function runScraper(Actor, adapter, rawInput, log) {
     // Sites that limit every address (LinkedIn) get residential proxies on the Apify platform when
     // the input sets no proxy. Local runs connect directly.
     rotatingProxy: Actor.isAtHome?.() ? () => Actor.createProxyConfiguration({ useApifyProxy: true, apifyProxyGroups: ['RESIDENTIAL'] }) : undefined,
-    onFallback: () => log.info(`${adapter.title} is limiting direct requests; continuing through Apify Proxy.`),
+    onFallback: () => log.info(`${adapter.limitNotice ?? `${adapter.title} is limiting direct requests`}; continuing through Apify Proxy.`),
   });
   const context = { http, log, keywords: input.keywords, includeDescription: input.includeDescription };
   const filter = createJobFilter(input);

@@ -42,6 +42,8 @@ Scrape any US real estate search from **Redfin** (redfin.com) the way you search
 2. Pick **For sale**, **Sold** or **For rent**, and set the **filters** you need.
 3. Click **Start**. Download the homes as JSON, CSV, Excel or HTML, or get them through the API.
 
+A step-by-step guide with Python examples, including sold comps by ZIP code: [How to Scrape Redfin Listings: Homes for Sale, Sold Comps and Rentals](https://medium.com/@robertkhairislamov/how-to-scrape-redfin-listings-homes-for-sale-sold-comps-and-rentals-2386ce0b10aa).
+
 ### Example input
 
 ```json

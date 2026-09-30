@@ -1156,8 +1156,13 @@ function multiInputSchema() {
         site: 'Each job site',
         perSource: 'search or career site',
         details: 'the full description (text and HTML) and every detail the site offers',
-        proxyDescription: 'The Actor connects directly, which is fastest, and LinkedIn always goes through Apify residential proxies. If a site starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it for every site from the start.',
+        proxyDescription: 'The Actor connects directly, which is fastest; LinkedIn always goes through Apify residential proxies and Indeed through Apify Proxy. If a site starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it for every site from the start.',
       }),
+      // The first run shows jobs from several sites; Indeed alone would fill the 50 jobs of the form.
+      maxItemsPerCompany: {
+        ...commonSettings({ perSource: 'search or career site' }).maxItemsPerCompany,
+        prefill: 15,
+      },
     },
   };
 }

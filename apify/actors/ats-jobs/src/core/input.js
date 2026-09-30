@@ -21,10 +21,12 @@ export function normalizeInput(raw = {}, example = {}) {
   // One entry per line; commas also separate names, but not the parts of a link.
   let companies = toList(raw.companies, /\n+/).flatMap((entry) => (/^[a-z][a-z0-9+.-]*:\/\//i.test(entry) ? [entry] : toList(entry, ',')));
   let maxItems = wholeNumber(raw.maxItems, 'maxItems');
+  let maxItemsPerCompany = wholeNumber(raw.maxItemsPerCompany, 'maxItemsPerCompany');
   const usedExample = companies.length === 0;
   if (usedExample) {
     companies = [...(example.companies ?? [])];
     if (!maxItems && example.maxItems) maxItems = example.maxItems;
+    if (!maxItemsPerCompany && example.maxItemsPerCompany) maxItemsPerCompany = example.maxItemsPerCompany;
   }
   return {
     companies,
@@ -39,7 +41,7 @@ export function normalizeInput(raw = {}, example = {}) {
     onlyNew: raw.onlyNew === true,
     includeDescription: raw.includeDescription !== false,
     maxItems,
-    maxItemsPerCompany: wholeNumber(raw.maxItemsPerCompany, 'maxItemsPerCompany'),
+    maxItemsPerCompany,
     proxyConfiguration: raw.proxyConfiguration,
   };
 }

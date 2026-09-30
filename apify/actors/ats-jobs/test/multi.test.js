@@ -92,6 +92,15 @@ test('multi: career site links are recognized and keep the keywords as a title f
   assert.deepEqual(pages, [['1']]);
 });
 
+test('multi: the example takes a few jobs from each site', () => {
+  const example = normalizeInput({}, multi.exampleInput);
+  assert.equal(example.usedExample, true);
+  assert.deepEqual([example.maxItems, example.maxItemsPerCompany], [50, 15]);
+  assert.deepEqual([...new Set(sitesOf(example.companies))].sort(), ['dice', 'indeed', 'linkedin', 'wttj']);
+  // An input of its own keeps its own limits.
+  assert.equal(normalizeInput({ companies: example.companies }, multi.exampleInput).maxItemsPerCompany, 0);
+});
+
 test('multi: the same job on two sites has one key', () => {
   const a = multi.dedupeKey({ title: 'Senior Software Engineer', companyName: 'Zoë GmbH', location: 'Berlin, Germany' });
   const b = multi.dedupeKey({ title: 'senior software-engineer', companyName: 'Zoe GmbH', location: 'Berlin' });

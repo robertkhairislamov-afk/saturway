@@ -197,7 +197,8 @@ export function prepareInput(raw) {
   return { ...raw, companies: keys };
 }
 
-export const exampleInput = { companies: prepareInput({ searchQueries: ['python developer'], countries: ['US'] }).companies, maxItems: 50 };
+// The example takes a few jobs from each site, so that the fastest one (Indeed) does not fill it alone.
+export const exampleInput = { companies: prepareInput({ searchQueries: ['python developer'], countries: ['US'] }).companies, maxItems: 50, maxItemsPerCompany: 15 };
 
 export function parseCompany(value) {
   let text = String(value ?? '').trim();

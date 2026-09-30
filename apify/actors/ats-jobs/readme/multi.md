@@ -1,26 +1,27 @@
 # All-in-One Jobs Scraper
 
-**Search LinkedIn and 12 more job sites at once.** Enter keywords and countries, and get jobs from LinkedIn, Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet, JobsDB, Reed and InfoJobs, plus any Greenhouse, Lever, Ashby or Workday career site you add, in one format, without duplicates. Salary as numbers, full descriptions, apply links. **$1 per 1,000 jobs, no start fee.**
+**Search LinkedIn, Indeed and 12 more job sites at once.** Enter keywords and countries, and get jobs from LinkedIn, Indeed, Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet, JobsDB, Reed and InfoJobs, plus any Greenhouse, Lever, Ashby or Workday career site you add, in one format, without duplicates. Salary as numbers, full descriptions, apply links. **$1 per 1,000 jobs, no start fee.**
 
 One search, many job sites: the Actor sends your keywords to every job board that covers your countries, reads the career sites of the companies you list, and merges everything into one clean table. The same job posted on two sites is saved once, and duplicates are free. Each job keeps its source, so you always know where it came from. Run it on a schedule to get **only new jobs** from all sites at once. No browser, no login.
 
 ## What can this all-in-one jobs scraper do?
 
-- 🌍 **34 countries, 13 job sites**: pick countries, and the right sites are searched for each one (see the table below).
+- 🌍 **62 countries, 14 job sites**: pick countries, and the right sites are searched for each one (see the table below).
 - 🔗 **LinkedIn included**: public LinkedIn job listings in every country, without login, with seniority, job function and number of applicants. The residential proxies LinkedIn needs are included in the price.
+- 🌐 **Indeed included**: Indeed jobs in all 62 countries, with salaries, job types, benefits and company size, even past Indeed's limit of about 1,000 jobs per search.
 - 🔎 **One simple input**: keywords, countries and, for one country, a city. No site-specific settings needed.
 - 🏢 **Company career sites by link**: paste any Greenhouse, Lever, Ashby or Workday job board link; the system is recognized automatically. Your keywords pick jobs by title.
 - 🧹 **No duplicates**: the same job from two sites or two searches is saved once, and you do not pay for duplicates.
 - 💰 **Salary as numbers** in the local currency: "$120k - $140k p.a.", "RM 3,800 – RM 5,000 per month" or "€75,000-85,000" become `min`, `max`, `currency` and `interval`.
 - 🎛️ **Filters for all sites**: remote only, posted in the last N days, only jobs with a salary, title must contain, exclude words.
 - 🆕 **Only new jobs since the last run**: one daily job alert across all sites.
-- 🏷️ **Source of every job** in the `ats` field: `linkedin`, `dice`, `wttj`, `stepstone`, `seek`, `jobstreet`, `jobsdb`, `reed`, `infojobs`, `greenhouse`, `lever`, `ashby` or `workday`.
+- 🏷️ **Source of every job** in the `ats` field: `linkedin`, `indeed`, `dice`, `wttj`, `stepstone`, `seek`, `jobstreet`, `jobsdb`, `reed`, `infojobs`, `greenhouse`, `lever`, `ashby` or `workday`.
 
 ## Which sites cover which countries?
 
 | Countries | Job sites |
 |---|---|
-| Every country in this table | LinkedIn |
+| Every country in this table | LinkedIn, Indeed |
 | United States | Dice, Welcome to the Jungle |
 | Germany | StepStone, Welcome to the Jungle |
 | United Kingdom | Reed, Welcome to the Jungle |
@@ -29,7 +30,7 @@ One search, many job sites: the Actor sends your keywords to every job board tha
 | Australia, New Zealand | SEEK |
 | Malaysia, Singapore, Philippines, Indonesia | Jobstreet |
 | Hong Kong, Thailand | JobsDB |
-| Austria, Switzerland, Portugal, Poland, Sweden, Denmark, Norway, Finland, United Arab Emirates, Saudi Arabia, India, Japan, South Africa, Brazil, Mexico | LinkedIn |
+| Austria, Switzerland, Portugal, Poland, Czechia, Hungary, Romania, Greece, Ukraine, Sweden, Denmark, Norway, Finland, Türkiye, Israel, United Arab Emirates, Saudi Arabia, Qatar, Kuwait, Bahrain, Oman, Egypt, Morocco, Nigeria, South Africa, India, Pakistan, Japan, South Korea, China, Taiwan, Vietnam, Brazil, Mexico, Argentina, Chile, Colombia, Peru, Ecuador, Uruguay, Venezuela, Costa Rica, Panama | LinkedIn and Indeed only |
 | Any country | Greenhouse, Lever, Ashby and Workday career sites you add |
 
 ## What data does it extract?
@@ -47,7 +48,7 @@ One search, many job sites: the Actor sends your keywords to every job board tha
 | `jobUrl` / `applyUrl` | https://www.dice.com/job-detail/b707fbf4-… |
 | `descriptionText` / `descriptionHtml` | full job description |
 
-Each site adds its own extra fields, such as `seniorityLevel`, `industries` and `applicants` on LinkedIn, `skills` on Dice, `benefits` on StepStone, `companyIndustry` and `companySize` on SEEK, Jobstreet and JobsDB, or `department` on company career sites.
+Each site adds its own extra fields, such as `seniorityLevel`, `industries` and `applicants` on LinkedIn, `jobTypes`, `benefits` and `companySize` on Indeed, `skills` on Dice, `benefits` on StepStone, `companyIndustry` and `companySize` on SEEK, Jobstreet and JobsDB, or `department` on company career sites.
 
 ## How to scrape jobs from many sites at once
 
@@ -122,8 +123,6 @@ You pay only for the jobs you get: **$1 per 1,000 jobs**. There is no start fee,
 ## FAQ
 
 **Why are there no LinkedIn jobs in remote searches?** LinkedIn does not show visitors who are not logged in which jobs are remote, so **Remote jobs only** leaves LinkedIn out. To find remote LinkedIn jobs, add `remote` to your keywords instead.
-
-**Why is Indeed not included?** This Actor covers job sites with reliable public access. Indeed is not supported.
 
 **How are duplicates found?** Two jobs are the same when title, company and city match after normalizing case, accents and punctuation. Jobs from the same search are never merged, so several openings with one title stay.
 

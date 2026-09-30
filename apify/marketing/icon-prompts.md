@@ -1,12 +1,12 @@
 # Иконки акторов для Nano Banana
 
-17 промптов, один стиль: плоская векторная иконка, градиентный фон на весь квадрат, белый символ в центре. Логотипов сайтов и текста нет: чужие логотипы в иконке выглядят как выдача себя за бренд, а мелкий текст не читается.
+18 промптов, один стиль: плоская векторная иконка, градиентный фон на весь квадрат, белый символ в центре. Логотипов сайтов и текста нет: чужие логотипы в иконке выглядят как выдача себя за бренд, а мелкий текст не читается.
 
 ## Как генерировать
 
 1. Открой [Google AI Studio](https://aistudio.google.com), выбери модель Nano Banana (Gemini Image) и формат 1:1. Подойдёт и приложение Gemini, но там в углу картинки бывает значок-водяной знак. Если он появится, обрежь край или сгенерируй в AI Studio.
 2. Начни с Redfin (промпт 1). Сделай 2–3 варианта и выбери лучший: это эталон стиля.
-3. Для остальных иконок прикрепляй эталон и вставляй промпт. Первая фраза промпта просит повторить стиль прикреплённой картинки, так все 17 иконок получатся одним семейством.
+3. Для остальных иконок прикрепляй эталон и вставляй промпт. Первая фраза промпта просит повторить стиль прикреплённой картинки, так все 18 иконок получатся одним семейством.
 4. Если в картинке появились буквы, цифры или логотип, сгенерируй заново.
 5. Загрузка: Apify Console → Actors → актор → вкладка **Publication** → **Display information** → **Icon** → Save.
 
@@ -31,6 +31,7 @@
 | 15 | Workday Jobs Scraper | офисная башня и портфель | янтарный |
 | 16 | Google Play Scraper | смартфон с сеткой приложений и звезда | малиновый |
 | 17 | Google News Scraper | газета и лупа | пурпурный |
+| 18 | Indeed Jobs Scraper | веер из трёх карточек вакансий с портфелем и лупа | кобальт → бирюзовый |
 
 ## Промпты
 
@@ -134,4 +135,10 @@ If an icon is attached, copy its style exactly: the same flat look, stroke weigh
 
 ```
 If an icon is attached, copy its style exactly: the same flat look, stroke weight, symbol size and position, gradient direction and shadow; only the symbol and the colors change. Symbol: a folded newspaper with one thick headline bar and several thin line bars, and a small magnifying glass overlapping its lower right corner. Style: flat vector app icon, perfectly square 1:1. The background fills the whole canvas edge to edge with a smooth diagonal gradient from #6B21A8 at the top left to #C084FC at the bottom right; no border, no frame, no rounded corners, no outer shadow, no vignette. The symbol is centered, drawn in solid white with bold uniform strokes and simple geometric shapes, about 60% of the canvas width, with a very soft shadow under it. Clean, modern, premium SaaS look, high contrast, easy to read at 48 pixels. No text, no letters, no numbers, no logos, no brand marks, no watermark.
+```
+
+### 18. Indeed Jobs Scraper
+
+```
+If an icon is attached, copy its style exactly: the same flat look, stroke weight, symbol size and position, gradient direction and shadow; only the symbol and the colors change. Symbol: three overlapping job cards fanned out like playing cards, the front card showing a simple briefcase, and a small magnifying glass overlapping the bottom right corner of the cards. Style: flat vector app icon, perfectly square 1:1. The background fills the whole canvas edge to edge with a smooth diagonal gradient from #1E40AF at the top left to #0891B2 at the bottom right; no border, no frame, no rounded corners, no outer shadow, no vignette. The symbol is centered, drawn in solid white with bold uniform strokes and simple geometric shapes, about 60% of the canvas width, with a very soft shadow under it. Clean, modern, premium SaaS look, high contrast, easy to read at 48 pixels. No text, no letters, no numbers, no logos, no brand marks, no watermark.
 ```

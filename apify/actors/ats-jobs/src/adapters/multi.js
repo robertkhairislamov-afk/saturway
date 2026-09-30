@@ -1,12 +1,14 @@
 // One search across our job sites. Keywords and countries go to the job boards that cover those
-// countries (LinkedIn everywhere, Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet, JobsDB,
-// Reed, InfoJobs); career site links go to their applicant tracking system (Greenhouse, Lever,
-// Ashby, Workday). Each source runs with its own adapter, and a job found on two sites is saved once.
+// countries (LinkedIn and Indeed everywhere, Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet,
+// JobsDB, Reed, InfoJobs); career site links go to their applicant tracking system (Greenhouse,
+// Lever, Ashby, Workday). Each source runs with its own adapter, and a job found on two sites is
+// saved once.
 
 import { compileTerms, matchesAny } from '../core/match.js';
 import * as ashby from './ashby.js';
 import * as dice from './dice.js';
 import * as greenhouse from './greenhouse.js';
+import * as indeed from './indeed.js';
 import * as infojobs from './infojobs.js';
 import * as lever from './lever.js';
 import * as linkedin from './linkedin.js';
@@ -45,7 +47,7 @@ export const COUNTRIES = {
   ID: 'Indonesia',
   HK: 'Hong Kong',
   TH: 'Thailand',
-  // Covered by LinkedIn only.
+  // Covered by LinkedIn and Indeed only.
   AT: 'Austria',
   CH: 'Switzerland',
   PT: 'Portugal',
@@ -61,6 +63,34 @@ export const COUNTRIES = {
   ZA: 'South Africa',
   BR: 'Brazil',
   MX: 'Mexico',
+  VN: 'Vietnam',
+  TW: 'Taiwan',
+  KR: 'South Korea',
+  CN: 'China',
+  PK: 'Pakistan',
+  GR: 'Greece',
+  CZ: 'Czechia',
+  HU: 'Hungary',
+  RO: 'Romania',
+  UA: 'Ukraine',
+  TR: 'Türkiye',
+  IL: 'Israel',
+  QA: 'Qatar',
+  KW: 'Kuwait',
+  BH: 'Bahrain',
+  OM: 'Oman',
+  EG: 'Egypt',
+  MA: 'Morocco',
+  NG: 'Nigeria',
+  AR: 'Argentina',
+  CL: 'Chile',
+  CO: 'Colombia',
+  PE: 'Peru',
+  EC: 'Ecuador',
+  UY: 'Uruguay',
+  VE: 'Venezuela',
+  CR: 'Costa Rica',
+  PA: 'Panama',
 };
 
 // The job boards and the countries each one covers well.
@@ -73,6 +103,7 @@ export const BOARDS = {
   jobsdb: { adapter: seek.brandAdapter('jobsdb'), label: 'JobsDB', countries: ['HK', 'TH'] },
   reed: { adapter: reed, label: 'Reed', countries: ['GB'] },
   infojobs: { adapter: infojobs, label: 'InfoJobs', countries: ['ES'] },
+  indeed: { adapter: indeed, label: 'Indeed', countries: Object.keys(COUNTRIES).filter((code) => indeed.COUNTRIES[code]) },
   linkedin: { adapter: linkedin, label: 'LinkedIn', countries: Object.keys(COUNTRIES) },
 };
 
@@ -119,6 +150,8 @@ function boardForms(board, { queries, countries, location, remoteOnly, postedWit
   if (board === 'reed') return [{ ...common, location }];
   // InfoJobs searches by province; a city that is no province searches all of Spain.
   if (board === 'infojobs') return [{ ...common, provinces: [provinceOf(location)].filter(Boolean), teleworking: remoteOnly ? ['2'] : [] }];
+  // Indeed searches each country on its own site; remote jobs are an Indeed filter.
+  if (board === 'indeed') return countries.map((country) => ({ ...common, country, location, workplaceTypes: remoteOnly ? ['remote'] : [] }));
   // LinkedIn needs keywords and shows visitors no remote jobs; it searches a city with its country.
   if (board === 'linkedin') {
     if (queries.length === 0 || remoteOnly) return [];

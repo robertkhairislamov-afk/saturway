@@ -3,6 +3,7 @@
 // job board instead of company boards, so they have their own search forms.
 
 import { CLASSIFICATIONS, WORK_ARRANGEMENTS, WORK_TYPES } from '../src/adapters/seek.js';
+import * as indeed from '../src/adapters/indeed.js';
 import * as infojobs from '../src/adapters/infojobs.js';
 import * as linkedin from '../src/adapters/linkedin.js';
 import * as multi from '../src/adapters/multi.js';
@@ -154,14 +155,23 @@ export const ACTORS = {
     seoTitle: 'LinkedIn Jobs Scraper – No Login, Full Job Details',
     seoDescription: 'Scrape LinkedIn jobs by keyword and location without login: title, company, seniority, applicants, salary, full description. $0.50 per 1,000 jobs.',
   },
+  indeed: {
+    name: 'indeed-jobs-scraper',
+    title: 'Indeed Jobs Scraper',
+    tagline: 'Indeed jobs in 62 countries, with salaries, job types, benefits and company details',
+    apiExample: { searchQueries: ['data analyst'], country: 'US', location: 'Austin, TX', maxItems: 20 },
+    description: 'Scrape Indeed jobs in 62 countries by keyword and location: title, company, salary as numbers, job type, remote or hybrid, experience level, benefits, company size, full description and apply link. Past the 1,000-job limit.',
+    seoTitle: 'Indeed Jobs Scraper – Salaries, 62 Countries',
+    seoDescription: 'Scrape Indeed jobs in 62 countries by keyword and location: title, company, salary, job type, remote, benefits, full description. $1 per 1,000 jobs.',
+  },
   multi: {
     name: 'all-in-one-jobs-scraper',
     title: 'All-in-One Jobs Scraper',
-    tagline: 'LinkedIn and all of these job sites and career sites in one search, without duplicates',
+    tagline: 'LinkedIn, Indeed and all of these job sites and career sites in one search, without duplicates',
     apiExample: { searchQueries: ['data analyst'], countries: ['US', 'DE', 'AU'], maxItems: 30 },
-    description: 'Search LinkedIn and 12 more job sites at once by keyword and country: Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet, JobsDB, Reed, InfoJobs and Greenhouse, Lever, Ashby and Workday career sites. One format, no duplicates.',
-    seoTitle: 'All-in-One Jobs Scraper – LinkedIn & 12 More Job Sites',
-    seoDescription: 'Search LinkedIn, Dice, StepStone, SEEK, Reed, InfoJobs, Jobstreet, JobsDB and career sites at once. One format, no duplicates. $1 per 1,000 jobs.',
+    description: 'Search LinkedIn, Indeed and 12 more job sites at once by keyword and country: Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet, JobsDB, Reed, InfoJobs and Greenhouse, Lever, Ashby and Workday career sites. One format, no duplicates.',
+    seoTitle: 'All-in-One Jobs Scraper – LinkedIn, Indeed & 12 More',
+    seoDescription: 'Search LinkedIn, Indeed, Dice, StepStone, SEEK, Reed, InfoJobs, Jobstreet, JobsDB and career sites at once. One format, no duplicates. $1 per 1,000 jobs.',
   },
 };
 
@@ -210,6 +220,7 @@ export function inputSchema(ats) {
   if (ats === 'linkedin') return linkedinInputSchema();
   if (ats === 'reed') return reedInputSchema();
   if (ats === 'infojobs') return infojobsInputSchema();
+  if (ats === 'indeed') return indeedInputSchema();
   if (ats === 'multi') return multiInputSchema();
   const actor = ACTORS[ats];
   const properties = {
@@ -923,6 +934,95 @@ function infojobsInputSchema() {
   };
 }
 
+// Indeed options as select lists: id and name.
+const namesOf = (map) => Object.fromEntries(Object.entries(map).map(([id, [first, second]]) => [id, second ?? first]));
+
+function indeedInputSchema() {
+  return {
+    title: ACTORS.indeed.title,
+    description: 'Search Indeed like on the website, in any of 62 countries, and get every matching job in one clean format.',
+    type: 'object',
+    schemaVersion: 1,
+    properties: {
+      searchQueries: {
+        title: 'Job titles or keywords',
+        type: 'array',
+        editor: 'stringList',
+        description: 'What to search, for example <code>data analyst</code> or <code>registered nurse</code>. Each line is a separate search with the filters below. You can also paste links of searches from Indeed in any country.',
+        prefill: ['python developer'],
+        placeholderValue: 'data analyst',
+      },
+      country: {
+        title: 'Country',
+        type: 'string',
+        editor: 'select',
+        description: 'The Indeed site to search. Links of Indeed searches keep their own country.',
+        ...sortedSelectOf(Object.fromEntries(Object.entries(indeed.COUNTRIES).map(([code, [label]]) => [code, label]))),
+        default: 'US',
+      },
+      location: {
+        title: 'Location',
+        type: 'string',
+        editor: 'textfield',
+        description: 'A city, state, region or postal code, for example <code>New York, NY</code>, <code>London</code> or <code>Berlin</code>. Leave empty for the whole country.',
+        prefill: 'New York, NY',
+      },
+      distance: {
+        title: 'Distance around the location',
+        type: 'integer',
+        minimum: 0,
+        description: 'Also find jobs this far from the location: in miles in the United States and the United Kingdom, in kilometres elsewhere. Indeed uses 25 when this is empty.',
+      },
+      jobTypes: {
+        title: 'Job type',
+        type: 'array',
+        editor: 'select',
+        sectionCaption: 'Indeed filters',
+        description: 'Leave empty for all. With several types you get jobs of any of them.',
+        items: selectOf(namesOf(indeed.JOB_TYPES)),
+      },
+      workplaceTypes: {
+        title: 'Remote, hybrid or in-person',
+        type: 'array',
+        editor: 'select',
+        description: 'Leave empty for all.',
+        items: selectOf(namesOf(indeed.WORKPLACES)),
+      },
+      experienceLevels: {
+        title: 'Experience level',
+        type: 'array',
+        editor: 'select',
+        description: 'Leave empty for all. Indeed marks experience levels mostly on jobs in the United States.',
+        items: selectOf(namesOf(indeed.LEVELS)),
+      },
+      easyApplyOnly: {
+        title: 'Easily apply only',
+        type: 'boolean',
+        default: false,
+        description: 'Only jobs you can apply to on Indeed with an Indeed profile.',
+      },
+      postedWithinDays: {
+        title: 'Posted in the last days',
+        type: 'integer',
+        minimum: 0,
+        unit: 'days',
+        description: 'Keep jobs posted in the last N days: 1 means today and yesterday. Leave empty or 0 for any date.',
+      },
+      ...commonSettings({
+        site: 'Indeed',
+        proxyDescription: 'The Actor connects directly, which is fastest. If Indeed starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it from the start.',
+      }),
+      // Indeed's search results carry the whole job, so no job pages are opened.
+      includeDescription: {
+        title: 'Include job descriptions',
+        type: 'boolean',
+        default: true,
+        description: 'Save the full description (text and HTML) of each job. Turn off for smaller, faster results with every other field.',
+      },
+    },
+  };
+}
+
 const RESIDENTIAL_PROXY = { useApifyProxy: true, apifyProxyGroups: ['RESIDENTIAL'] };
 
 function linkedinInputSchema() {
@@ -1014,7 +1114,7 @@ function multiInputSchema() {
         title: 'Countries',
         type: 'array',
         editor: 'select',
-        description: 'Where to search. LinkedIn covers every country here, and each country also goes to the other sites that cover it: the United States to Dice and Welcome to the Jungle; Germany to StepStone and Welcome to the Jungle; the UK to Reed and Welcome to the Jungle; Spain to InfoJobs and Welcome to the Jungle; Australia and New Zealand to SEEK; Malaysia, Singapore, the Philippines and Indonesia to Jobstreet; Hong Kong and Thailand to JobsDB; Canada and western Europe to Welcome to the Jungle.',
+        description: 'Where to search. LinkedIn and Indeed cover every country here, and each country also goes to the other sites that cover it: the United States to Dice and Welcome to the Jungle; Germany to StepStone and Welcome to the Jungle; the UK to Reed and Welcome to the Jungle; Spain to InfoJobs and Welcome to the Jungle; Australia and New Zealand to SEEK; Malaysia, Singapore, the Philippines and Indonesia to Jobstreet; Hong Kong and Thailand to JobsDB; Canada and western Europe to Welcome to the Jungle.',
         items: selectOf(multi.COUNTRIES),
         prefill: ['US'],
       },
@@ -1077,6 +1177,7 @@ const EXTRA_COLUMN = {
   linkedin: ['employmentType', 'Employment'],
   multi: ['ats', 'Source'],
   stepstone: ['employmentType', 'Employment'],
+  indeed: ['employmentType', 'Job type'],
 };
 
 const COLUMNS = {

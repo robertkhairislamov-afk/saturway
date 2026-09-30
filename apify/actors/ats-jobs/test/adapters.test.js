@@ -95,6 +95,14 @@ test('workday: search results, job details and splitting big searches', () => {
   assert.deepEqual([job.salary.currency, job.salary.interval, job.salary.source], ['PLN', 'year', 'description']);
   assert.match(job.applyUrl, /_JR2026094\/apply$/);
 
+  // The company takes its name from the employing entity, in that entity's spelling.
+  assert.equal(job.companyName, 'nvidia');
+  assert.equal(workday.companyNameOf('nvidia', fixture('workday-job.json').hiringOrganization.name), 'Nvidia');
+  assert.equal(workday.companyNameOf('nvidia', '2100 NVIDIA USA'), 'NVIDIA');
+  assert.equal(workday.companyNameOf('wellsfargo', 'Wells Fargo Bank, N.A.'), 'Wells Fargo Bank, N.A.');
+  assert.equal(workday.companyNameOf('bah', '2100 Booz Allen Hamilton Inc.'), 'Booz Allen Hamilton Inc.');
+  assert.equal(workday.companyNameOf('acme', null), 'acme');
+
   const split = workday.chooseSplit(search.facets, {});
   assert.equal(split.parameter, 'jobFamilyGroup');
   assert.notEqual(workday.chooseSplit(search.facets, { jobFamilyGroup: ['x'] })?.parameter, 'jobFamilyGroup');

@@ -6,7 +6,7 @@
 import { makeJob } from '../core/job.js';
 import { searchTextOf } from '../core/match.js';
 import { salaryFromText } from '../core/salary.js';
-import { htmlToText } from '../core/text.js';
+import { cleanText, htmlToText } from '../core/text.js';
 
 export const name = 'workday';
 export const title = 'Workday';
@@ -99,6 +99,18 @@ export function toPartialJob(posting) {
   };
 }
 
+// Workday names the employing entity of each job, such as "2100 NVIDIA USA" or "PL01 Nvidia Poland
+// sp. z o.o.". The company is the career site's name as the entity spells it ("NVIDIA"), or else
+// the entity without its code.
+export function companyNameOf(tenant, organization) {
+  const entity = cleanText(organization);
+  if (!entity) return tenant;
+  const escaped = tenant.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const spelled = new RegExp(`(?<![\\p{L}\\p{N}])${escaped}(?![\\p{L}\\p{N}])`, 'iu').exec(entity);
+  if (spelled) return spelled[0];
+  return entity.replace(/^(?=[a-z]*\d)[a-z\d]{2,8}\s+(?=\S)/i, '');
+}
+
 export function toJob(info, partial, company) {
   const descriptionHtml = info.jobDescription?.trim() || null;
   const descriptionText = htmlToText(descriptionHtml) || null;
@@ -106,7 +118,7 @@ export function toJob(info, partial, company) {
   return makeJob({
     ats: name,
     company: company.id,
-    companyName: company.tenant,
+    companyName: company.companyName ?? company.tenant,
     jobId: partial.jobId,
     requisitionId: info.jobReqId,
     title: info.title ?? partial.title,
@@ -131,7 +143,10 @@ export async function completeJob(partial, company, { http }) {
     if (error.status === 404 || error.status === 410) return null;
     throw error;
   }
-  return data?.jobPostingInfo ? toJob(data.jobPostingInfo, partial, company) : null;
+  if (!data?.jobPostingInfo) return null;
+  // The first job names the company for the whole run.
+  company.companyName ??= companyNameOf(company.tenant, data.hiringOrganization?.name);
+  return toJob(data.jobPostingInfo, partial, company);
 }
 
 // Facet groups a search can be split by. Location facets are often nested in a group.

@@ -1,0 +1,547 @@
+{
+ "data": {
+  "jobSearch": {
+   "pageInfo": {
+    "nextCursor": null
+   },
+   "results": [
+    {
+     "job": {
+      "key": "59481e3778178d50",
+      "title": "Director Orthopedics",
+      "normalizedTitle": "director",
+      "datePublished": 1790658000000,
+      "dateOnIndeed": 1790742070603,
+      "language": "en",
+      "url": "https://careers.hcahealthcare.com/en/jobs/18290712-director-orthopedics?tm_job=1-INFOR-5004146&tm_event=view&tm_company=2537",
+      "location": {
+       "countryCode": "US",
+       "admin1Code": "VA",
+       "city": "Richmond",
+       "postalCode": "23225",
+       "formatted": {
+        "long": "Richmond, VA 23225"
+       }
+      },
+      "compensation": {
+       "currencyCode": "USD",
+       "baseSalary": {
+        "unitOfWork": "YEAR",
+        "range": {
+         "__typename": "Range",
+         "min": 110552,
+         "max": 176883.203125
+        }
+       }
+      },
+      "attributes": [
+       {
+        "key": "AV9NF",
+        "label": "Employee stock purchase plan"
+       },
+       {
+        "key": "CF3CP",
+        "label": "Full-time"
+       },
+       {
+        "key": "CFRGS",
+        "label": "Disability insurance"
+       },
+       {
+        "key": "EY33Q",
+        "label": "Health insurance"
+       },
+       {
+        "key": "FM8WH",
+        "label": "No weekends"
+       },
+       {
+        "key": "FQJ2X",
+        "label": "Dental insurance"
+       },
+       {
+        "key": "G85UP",
+        "label": "Flexible spending account"
+       },
+       {
+        "key": "HJUWZ",
+        "label": "Tuition reimbursement"
+       },
+       {
+        "key": "HW4J4",
+        "label": "Paid time off"
+       },
+       {
+        "key": "K5S2U",
+        "label": "Adoption assistance"
+       },
+       {
+        "key": "KFTUZ",
+        "label": "Family leave"
+       },
+       {
+        "key": "PMS5Q",
+        "label": "Day shift"
+       },
+       {
+        "key": "SENX8",
+        "label": "401(k) matching"
+       },
+       {
+        "key": "UB7SC",
+        "label": "Senior level"
+       }
+      ],
+      "occupations": [
+       {
+        "label": "Nursing Unit & Program Directors"
+       },
+       {
+        "label": "Executive Nurses & Nurse Administrators"
+       },
+       {
+        "label": "Healthcare Occupations"
+       },
+       {
+        "label": "Administrative & Consulting Nurses"
+       },
+       {
+        "label": "Nursing Occupations"
+       },
+       {
+        "label": "Healthcare Management Occupations"
+       }
+      ],
+      "indeedApply": {
+       "scopes": [
+        "DESKTOP",
+        "MOBILE"
+       ]
+      },
+      "hiringDemand": {
+       "isUrgentHire": false,
+       "isHighVolumeHiring": true
+      },
+      "source": {
+       "name": "HCA Inc"
+      },
+      "employer": {
+       "name": "Chippenham Hospital",
+       "relativeCompanyPageUrl": "/cmp/Chippenham-Hospital",
+       "dossier": {
+        "employerDetails": {
+         "industry": "Iv1_HEALTH_CARE",
+         "employeesLocalizedLabel": "1,001 to 5,000",
+         "revenueLocalizedLabel": "$100M to $500M (USD)"
+        },
+        "images": {
+         "squareLogoUrl": "https://d2q79iu7y748jz.cloudfront.net/s/_squarelogo/256x256/790b58459f7a39c6993412b4cbcecd84"
+        },
+        "links": {
+         "corporateWebsite": "https://careers.hcahealthcare.com/pages/chippenham-hospital"
+        }
+       }
+      },
+      "description": {
+       "html": "<div><p><b>About the role</b></p><ul><li>Provide patient care.</li><li>Work with the care team.</li></ul></div>"
+      }
+     }
+    },
+    {
+     "job": {
+      "key": "991c4a17bdfa72df",
+      "title": "Charge Nurse Nursery",
+      "normalizedTitle": "charge nurse",
+      "datePublished": 1790658000000,
+      "dateOnIndeed": 1790742251129,
+      "language": "en",
+      "url": "https://click.appcast.io/t/Qh26IUu3f97bh_odihhDIQ8pzsTKmEUFQ1D9Yz6rvDY=",
+      "location": {
+       "countryCode": "US",
+       "admin1Code": "CO",
+       "city": "Timnath",
+       "postalCode": "80547",
+       "formatted": {
+        "long": "Timnath, CO 80547"
+       }
+      },
+      "compensation": {
+       "currencyCode": "USD",
+       "baseSalary": {
+        "unitOfWork": "HOUR",
+        "range": {
+         "__typename": "Range",
+         "min": 40.86000061035156,
+         "max": 63.33000183105469
+        }
+       }
+      },
+      "attributes": [
+       {
+        "key": "24AZE",
+        "label": "Experience working with neonates"
+       },
+       {
+        "key": "2JWRK",
+        "label": "Collaborate with healthcare professionals"
+       },
+       {
+        "key": "43CGQ",
+        "label": "Direct patient care"
+       },
+       {
+        "key": "45TTM",
+        "label": "CPR Certification"
+       },
+       {
+        "key": "4KTGU",
+        "label": "Nursing"
+       },
+       {
+        "key": "6DWGU",
+        "label": "403(b) matching"
+       },
+       {
+        "key": "6NBQ9",
+        "label": "NRP Certification"
+       },
+       {
+        "key": "79D7W",
+        "label": "Performance bonus"
+       },
+       {
+        "key": "7KV6C",
+        "label": "Health savings account"
+       },
+       {
+        "key": "7ZM5D",
+        "label": "RN License"
+       },
+       {
+        "key": "8AD9K",
+        "label": "Hourly pay"
+       },
+       {
+        "key": "9C4KH",
+        "label": "457(b)"
+       },
+       {
+        "key": "9TE9M",
+        "label": "AD&D insurance"
+       },
+       {
+        "key": "ABTQJ",
+        "label": "BLS Certification"
+       }
+      ],
+      "occupations": [
+       {
+        "label": "Healthcare Occupations"
+       },
+       {
+        "label": "Patient Care Nursing Occupations"
+       },
+       {
+        "label": "Nursing Occupations"
+       },
+       {
+        "label": "Registered Nurses"
+       }
+      ],
+      "indeedApply": {
+       "scopes": []
+      },
+      "hiringDemand": {
+       "isUrgentHire": false,
+       "isHighVolumeHiring": false
+      },
+      "source": {
+       "name": "UCHealth"
+      },
+      "employer": {
+       "name": "UCHealth",
+       "relativeCompanyPageUrl": "/cmp/Uchealth-2",
+       "dossier": {
+        "employerDetails": {
+         "industry": null,
+         "employeesLocalizedLabel": "10,000+",
+         "revenueLocalizedLabel": "Decline to state"
+        },
+        "images": {
+         "squareLogoUrl": "https://d2q79iu7y748jz.cloudfront.net/s/_squarelogo/256x256/7907e7110956828b2c55894e04021df3"
+        },
+        "links": {
+         "corporateWebsite": "http://www.uchealth.org"
+        }
+       }
+      },
+      "description": {
+       "html": "<div><p><b>About the role</b></p><ul><li>Provide patient care.</li><li>Work with the care team.</li></ul></div>"
+      }
+     }
+    },
+    {
+     "job": {
+      "key": "83d29539580b254f",
+      "title": "RN",
+      "normalizedTitle": "registered nurse",
+      "datePublished": 1790658000000,
+      "dateOnIndeed": 1790741551057,
+      "language": "en",
+      "url": "https://pacs.wd108.myworkdayjobs.com/pacs/job/Orchard-View-Post-Acute/RN_JR183977",
+      "location": {
+       "countryCode": "US",
+       "admin1Code": "ID",
+       "city": "Lewiston",
+       "postalCode": "83501",
+       "formatted": {
+        "long": "Lewiston, ID 83501"
+       }
+      },
+      "compensation": {
+       "currencyCode": "USD",
+       "baseSalary": {
+        "unitOfWork": "HOUR",
+        "range": {
+         "__typename": "AtMost",
+         "max": 55
+        }
+       }
+      },
+      "attributes": [
+       {
+        "key": "3X28Q",
+        "label": "Record keeping"
+       },
+       {
+        "key": "45TTM",
+        "label": "CPR Certification"
+       },
+       {
+        "key": "583AH",
+        "label": "Skilled nursing facility experience"
+       },
+       {
+        "key": "5Z9BV",
+        "label": "Skilled nursing facility"
+       },
+       {
+        "key": "6WHZD",
+        "label": "Surgery"
+       },
+       {
+        "key": "7P2WC",
+        "label": "Electronic health records (EHR) management"
+       },
+       {
+        "key": "7ZM5D",
+        "label": "RN License"
+       },
+       {
+        "key": "8AD9K",
+        "label": "Hourly pay"
+       },
+       {
+        "key": "9CXGM",
+        "label": "Team leadership"
+       },
+       {
+        "key": "ABTQJ",
+        "label": "BLS Certification"
+       },
+       {
+        "key": "CF3CP",
+        "label": "Full-time"
+       },
+       {
+        "key": "D2S8K",
+        "label": "Shift management"
+       },
+       {
+        "key": "D7PTC",
+        "label": "Care documentation"
+       },
+       {
+        "key": "EY33Q",
+        "label": "Health insurance"
+       }
+      ],
+      "occupations": [
+       {
+        "label": "Healthcare Occupations"
+       },
+       {
+        "label": "Patient Care Nursing Occupations"
+       },
+       {
+        "label": "Nursing Occupations"
+       },
+       {
+        "label": "Registered Nurses"
+       }
+      ],
+      "indeedApply": {
+       "scopes": [
+        "DESKTOP",
+        "MOBILE"
+       ]
+      },
+      "hiringDemand": {
+       "isUrgentHire": false,
+       "isHighVolumeHiring": false
+      },
+      "source": {
+       "name": "Pacs"
+      },
+      "employer": {
+       "name": "Orchard View Post Acute",
+       "relativeCompanyPageUrl": "/cmp/Orchard-View-Post-Acute",
+       "dossier": {
+        "employerDetails": {
+         "industry": null,
+         "employeesLocalizedLabel": null,
+         "revenueLocalizedLabel": null
+        },
+        "images": {
+         "squareLogoUrl": null
+        },
+        "links": {
+         "corporateWebsite": null
+        }
+       }
+      },
+      "description": {
+       "html": "<div><p><b>About the role</b></p><ul><li>Provide patient care.</li><li>Work with the care team.</li></ul></div>"
+      }
+     }
+    },
+    {
+     "job": {
+      "key": "2dc5d67fcaed7f3a",
+      "title": "ED RN 7a-7p Full Time",
+      "normalizedTitle": "registered nurse - emergency room",
+      "datePublished": 1790744400000,
+      "dateOnIndeed": 1790742425342,
+      "language": "en",
+      "url": "https://careers.wellstar.org/us/en/job/WHWWHSUSJR77541EXTERNALENUS/ED-RN-7a-7p-Full-Time?utm_source=indeed&utm_medium=phenom-feeds",
+      "location": {
+       "countryCode": "US",
+       "admin1Code": "GA",
+       "city": "Hiram",
+       "postalCode": "30141",
+       "formatted": {
+        "long": "Hiram, GA 30141"
+       }
+      },
+      "compensation": {
+       "currencyCode": null,
+       "baseSalary": null
+      },
+      "attributes": [
+       {
+        "key": "29NWV",
+        "label": "Nursing policy compliance"
+       },
+       {
+        "key": "2JWRK",
+        "label": "Collaborate with healthcare professionals"
+       },
+       {
+        "key": "3HJ6W",
+        "label": "TJC"
+       },
+       {
+        "key": "3YW26",
+        "label": "Computer operation"
+       },
+       {
+        "key": "4KAB9",
+        "label": "Care plan evaluation"
+       },
+       {
+        "key": "4KTGU",
+        "label": "Nursing"
+       },
+       {
+        "key": "7ZM5D",
+        "label": "RN License"
+       },
+       {
+        "key": "8NFV9",
+        "label": "PALS Certification"
+       },
+       {
+        "key": "99B7P",
+        "label": "Customer service"
+       },
+       {
+        "key": "A6Q9N",
+        "label": "Professional ethics"
+       },
+       {
+        "key": "ABTQJ",
+        "label": "BLS Certification"
+       },
+       {
+        "key": "AYGWE",
+        "label": "Nursing Diploma"
+       },
+       {
+        "key": "CDGBV",
+        "label": "Patient safety measures implementation"
+       },
+       {
+        "key": "CEUFK",
+        "label": "Patient advocacy"
+       }
+      ],
+      "occupations": [
+       {
+        "label": "Healthcare Occupations"
+       },
+       {
+        "label": "Patient Care Nursing Occupations"
+       },
+       {
+        "label": "Nursing Occupations"
+       },
+       {
+        "label": "Registered Nurses"
+       }
+      ],
+      "indeedApply": {
+       "scopes": []
+      },
+      "hiringDemand": {
+       "isUrgentHire": false,
+       "isHighVolumeHiring": false
+      },
+      "source": {
+       "name": "Wellstar"
+      },
+      "employer": {
+       "name": "Wellstar Health System",
+       "relativeCompanyPageUrl": "/cmp/Wellstar-Health-System",
+       "dossier": {
+        "employerDetails": {
+         "industry": null,
+         "employeesLocalizedLabel": "10,000+",
+         "revenueLocalizedLabel": "$5B to $10B (USD)"
+        },
+        "images": {
+         "squareLogoUrl": "https://d2q79iu7y748jz.cloudfront.net/s/_squarelogo/256x256/4018e4057f1edc1f4315ddae647586ce"
+        },
+        "links": {
+         "corporateWebsite": "https://www.wellstar.org"
+        }
+       }
+      },
+      "description": {
+       "html": "<div><p><b>About the role</b></p><ul><li>Provide patient care.</li><li>Work with the care team.</li></ul></div>"
+      }
+     }
+    }
+   ]
+  }
+ }
+}

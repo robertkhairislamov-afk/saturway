@@ -398,6 +398,7 @@ StepStone на платформе иногда отдаёт карточки м�
 - Страница Insights: доход и расходы дают только платящие пользователи, запуски бесплатных не учитываются. Значит, цель — пользователи платных тарифов Apify (для них и скидки Bronze–Gold).
 - Успешных запусков 100% у всех, кроме Indeed: 62.5% из-за трёх тестовых запусков 30.09 до перехода на Apify Proxy. Статистика помесячная, в октябре начнётся заново.
 - Результаты за сентябрь (почти всё — тесты): All-in-One 7674, Redfin 7643, LinkedIn 3512, Indeed 3070, Google Play 2913, Lever 2606, StepStone 1811, Ashby 1848, SEEK 1783, Greenhouse 1748, Jobstreet 1710, Dice 1506, WTTJ 614, Workday 598, JobsDB 490, InfoJobs 443, Google News 200, Reed 173.
+- Места в поиске Store 30.09 (в скобках — утро 29.09): JobsDB 16 (22), Jobstreet 30 (36), InfoJobs 33 (46), Reed 35 (50), SEEK jobs 43 (56), StepStone 45 (53), WTTJ 45 (43), Redfin scraper 46 (61), Dice 50 (59), Workday 83 (72). LinkedIn, Indeed, Greenhouse, Ashby, Google Play, Google News и «jobs scraper» — дальше 300-го места.
 - Следующая проверка — 7.10 (напоминание в сессии): позиции в Store, пользователи, статьи в Google, скриншоты Insights за октябрь.
 
 ### Итог на 27.09

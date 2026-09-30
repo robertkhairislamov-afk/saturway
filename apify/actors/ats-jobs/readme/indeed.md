@@ -40,7 +40,7 @@ Scrape jobs from **Indeed**, one of the world's largest job sites, the way you s
 3. Optionally choose **job types**, **remote, hybrid or in-person**, an **experience level**, **Easily apply only** or a **date range**.
 4. Click **Start**. Download the jobs as JSON, CSV, Excel or HTML, or get them through the API.
 
-A step-by-step guide with Python examples for this and the other job scrapers, which all share one output format: [How to Scrape Job Postings from LinkedIn and 12 More Job Sites in One Format](https://medium.com/@robertkhairislamov/how-to-scrape-job-postings-from-linkedin-and-12-more-job-sites-in-one-format-935bb79ba2d2).
+A step-by-step guide with Python examples, from pay in five countries to 4,994 jobs past the 1,000-job limit: [How to Scrape Indeed Job Postings in 62 Countries with Python](https://medium.com/@robertkhairislamov/how-to-scrape-indeed-job-postings-in-62-countries-with-python-f038c81f8554). For Indeed, LinkedIn and 12 more job sites in one format: [How to Scrape Job Postings from LinkedIn and 12 More Job Sites in One Format](https://medium.com/@robertkhairislamov/how-to-scrape-job-postings-from-linkedin-and-12-more-job-sites-in-one-format-935bb79ba2d2).
 
 ### Example input
 

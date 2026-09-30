@@ -1010,7 +1010,7 @@ function indeedInputSchema() {
       },
       ...commonSettings({
         site: 'Indeed',
-        proxyDescription: 'The Actor connects directly, which is fastest. If Indeed starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it from the start.',
+        proxyDescription: 'On the Apify platform the Actor reaches Indeed through Apify Proxy, which is included in the price. Set a proxy here only to use your own.',
       }),
       // Indeed's search results carry the whole job, so no job pages are opened.
       includeDescription: {

@@ -1,7 +1,8 @@
 // HTTP helper for the job site APIs: retries rate limits, server errors and timeouts with
 // backoff and, when a proxy is used, moves to a new proxy session after a failure. Sites that
 // limit each address (LinkedIn) use rotating sessions: each serves a few requests in a row and is
-// replaced as soon as the site limits or blocks it.
+// replaced as soon as the site limits or blocks it. Sites that refuse the Apify platform's own
+// addresses (Indeed) go through Apify Proxy there.
 
 import { EnvHttpProxyAgent, ProxyAgent, fetch } from 'undici';
 
@@ -29,12 +30,15 @@ export class HttpError extends Error {
 }
 
 // `rotatingProxy` creates the proxy for rotating sessions when the input sets no proxy (Apify
-// residential proxies for LinkedIn); it is created on first use.
-export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback, rotatingProxy, maxRetries = 5, timeoutMs = 30000, backoffMs = 1000 } = {}) {
+// residential proxies for LinkedIn), and `datacenterProxy` the proxy for requests marked
+// `datacenter` (Apify Proxy for Indeed); both are created on first use.
+export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback, rotatingProxy, datacenterProxy, maxRetries = 5, timeoutMs = 30000, backoffMs = 1000 } = {}) {
   let proxy = proxyConfiguration;
   let session = null;
   let fallbackTried = false;
   let rotating = null;
+  let datacenter = null;
+  let datacenterSession = null;
   // Rotating sessions that may serve another request.
   const idle = [];
   // What happened to the requests, for the run log.
@@ -55,11 +59,23 @@ export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback
     return Boolean(proxy);
   }
 
+  // Requests marked `datacenter` use the proxy of the input, or else the datacenter proxy. Without
+  // either (as in local runs) they go out like any other request.
+  async function datacenterDispatcher() {
+    if (proxyConfiguration || !datacenterProxy) return dispatcherFor();
+    datacenter ??= datacenterProxy().catch(() => null);
+    const configuration = await datacenter;
+    if (!configuration) return dispatcherFor();
+    datacenterSession ??= new ProxyAgent(await configuration.newUrl(sessionName()));
+    return datacenterSession;
+  }
+
   function dropSession(agent) {
-    if (agent && session === agent) {
-      session = null;
-      agent.close().catch(() => {});
-    }
+    if (!agent) return;
+    if (session === agent) session = null;
+    else if (datacenterSession === agent) datacenterSession = null;
+    else return;
+    agent.close().catch(() => {});
   }
 
   // A rotating session: an idle one, or a new one from the proxy of the input, the rotating proxy
@@ -87,11 +103,11 @@ export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback
   // `rotate` takes a rotating session for every attempt. `accept(text)` tells a real answer from a
   // block page that comes with status 200 (such as an empty page or a login wall); a block page
   // is retried like a rate limit.
-  async function request(url, { method = 'GET', body, headers = {}, json = true, retries = maxRetries, rotate = false, accept } = {}) {
+  async function request(url, { method = 'GET', body, headers = {}, json = true, retries = maxRetries, rotate = false, datacenter: viaDatacenter = false, accept } = {}) {
     let lastError;
     for (let attempt = 1; attempt <= retries; attempt++) {
       const rotated = rotate ? await takeRotating() : null;
-      const dispatcher = rotated?.agent ?? await dispatcherFor();
+      const dispatcher = rotated?.agent ?? (viaDatacenter ? await datacenterDispatcher() : await dispatcherFor());
       let ok = false;
       stats.requests++;
       try {
@@ -139,6 +155,8 @@ export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback
         ok = true;
         return data;
       } catch (error) {
+        // "fetch failed" says nothing; its cause names the network error.
+        if (error.message === 'fetch failed' && error.cause) error.message = `fetch failed (${error.cause.code ?? error.cause.message}) for ${url}`;
         lastError = error;
         if (error.retryable === false) break;
         if (!rotated) dropSession(dispatcher === envAgent ? undefined : dispatcher);

@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
+import { connect } from 'node:net';
 import { after, before, test } from 'node:test';
 
 // Requests to the local test server must not go through a proxy from the environment.
@@ -55,6 +56,42 @@ test('http: the rotating proxy is set up once, on the first rotating request', a
   await client.getJson(`${base}/ok`, { rotate: true });
   assert.equal(created, 1);
   assert.deepEqual(client.stats, { requests: 3, retried: 0, limited: 0, blocked: 0 });
+});
+
+test('http: requests marked datacenter go through the datacenter proxy', async () => {
+  // A local proxy that tunnels (CONNECT) or forwards requests to the test server, and counts them.
+  let proxied = 0;
+  const proxy = createServer((req, res) => {
+    proxied++;
+    res.end('{"ok":true}');
+  });
+  proxy.on('connect', (req, client, head) => {
+    proxied++;
+    const [host, port] = req.url.split(':');
+    const target = connect(Number(port), host, () => {
+      client.write('HTTP/1.1 200 Connection Established\r\n\r\n');
+      target.write(head);
+      target.pipe(client);
+      client.pipe(target);
+    });
+  });
+  await new Promise((resolve) => proxy.listen(0, '127.0.0.1', resolve));
+  let created = 0;
+  const proxyUrl = `http://127.0.0.1:${proxy.address().port}`;
+  const client = createHttpClient({ backoffMs: 1, datacenterProxy: async () => { created++; return { newUrl: async () => proxyUrl }; } });
+  try {
+    await client.getJson(`${base}/ok`);
+    assert.equal(proxied, 0);
+    assert.deepEqual(await client.getJson(`${base}/ok`, { datacenter: true }), { ok: true });
+    await client.getJson(`${base}/ok`, { datacenter: true });
+    assert.equal(created, 1);
+    assert.ok(proxied >= 1);
+    // Without a datacenter proxy (local runs) the request goes out directly.
+    assert.deepEqual(await createHttpClient({ backoffMs: 1 }).getJson(`${base}/ok`, { datacenter: true }), { ok: true });
+  } finally {
+    proxy.closeAllConnections();
+    proxy.close();
+  }
 });
 
 test('http: a page that stays empty fails as blocked after the retries', async () => {

@@ -1,7 +1,8 @@
 // Indeed: the job search API of Indeed's mobile app (apis.indeed.com/graphql), in 62 countries.
 // Search results carry the whole job, so no job pages are opened. Indeed lists at most about
 // 1,000 jobs per search, newest first, so a bigger search goes on in further rounds with the jobs
-// older than the last one read. Recruiters and their contact details are never read.
+// older than the last one read. The API refuses the Apify platform's own addresses, so there it
+// is called through Apify Proxy. Recruiters and their contact details are never read.
 
 import { isoDate, makeJob } from '../core/job.js';
 import { makeSalary } from '../core/salary.js';
@@ -337,7 +338,7 @@ async function* readRound(search, context, codes, window, round) {
     if (search.where) variables.location = { where: search.where, radius: search.radius ?? DEFAULT_RADIUS, radiusUnit: MILES.has(search.country) ? 'MILES' : 'KILOMETERS' };
     const [, , locale] = COUNTRIES[search.country];
     const headers = { ...APP_HEADERS, 'indeed-co': search.country, 'indeed-locale': locale, 'accept-language': `${locale},en;q=0.8` };
-    const data = await http.postJson(API, { query, variables }, { headers, retries: 4 });
+    const data = await http.postJson(API, { query, variables }, { headers, retries: 4, datacenter: true });
     if (data?.errors?.length) throw new Error(`Indeed did not run the search: ${data.errors[0].message}`);
     const result = data?.data?.jobSearch;
     const jobs = (result?.results ?? []).map((item) => item?.job).filter((job) => job?.key);

@@ -145,6 +145,8 @@ test('indeed: a search past the limit of about 1,000 jobs goes on with older job
   const first = calls[0];
   assert.equal(first.url, 'https://apis.indeed.com/graphql');
   assert.deepEqual([first.options.headers['indeed-co'], first.options.headers['indeed-locale']], ['DE', 'de-DE']);
+  // Indeed refuses the Apify platform's own addresses.
+  assert.equal(first.options.datacenter, true);
   assert.deepEqual(first.body.variables.location, { where: 'Berlin', radius: 25, radiusUnit: 'KILOMETERS' });
   // Seven days ask Indeed for eight; the second round starts at the hour of the oldest job read.
   assert.deepEqual(first.body.variables.filters, [{ date: { field: 'dateOnIndeed', start: '192h' } }]);

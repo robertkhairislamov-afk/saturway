@@ -102,7 +102,7 @@ Job types are `perm`, `contract` and `temp`; working hours `fulltime` and `partt
 
 ## How much does it cost?
 
-You pay only for the jobs you get: **$1 per 1,000 jobs**. There is no start fee. Jobs filtered out by your settings are free. The Apify free plan covers about 5,000 jobs every month.
+You pay only for the jobs you get: **$1 per 1,000 jobs**. That is the price on the Apify Free plan. Paid Apify plans pay less: $0.90 per 1,000 jobs on Starter, $0.80 on Scale and $0.70 on Business, which is the "from" price shown in Apify Store. There is no start fee. Jobs filtered out by your settings are free. The Apify free plan covers about 5,000 jobs every month.
 
 ## Tips
 

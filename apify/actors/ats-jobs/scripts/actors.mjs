@@ -167,11 +167,11 @@ export const ACTORS = {
   multi: {
     name: 'all-in-one-jobs-scraper',
     title: 'All-in-One Jobs Scraper',
-    tagline: 'LinkedIn, Indeed and all of these job sites and career sites in one search, without duplicates',
+    tagline: 'LinkedIn, Indeed and the other job boards here in one search, plus career sites you add, with duplicates removed',
     apiExample: { searchQueries: ['data analyst'], countries: ['US', 'DE', 'AU'], maxItems: 30 },
-    description: 'Search LinkedIn, Indeed and 12 more job sites at once by keyword and country: Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet, JobsDB, Reed, InfoJobs and Greenhouse, Lever, Ashby and Workday career sites. One format, no duplicates.',
-    seoTitle: 'All-in-One Jobs Scraper – LinkedIn, Indeed & 12 More',
-    seoDescription: 'Search LinkedIn, Indeed, Dice, StepStone, SEEK, Reed, InfoJobs, Jobstreet, JobsDB and career sites at once. One format, no duplicates. $1 per 1,000 jobs.',
+    description: 'Search LinkedIn, Indeed, Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet, JobsDB, Reed and InfoJobs by keyword and country, plus Greenhouse, Lever, Ashby and Workday career sites you add. One format, duplicates removed.',
+    seoTitle: 'All-in-One Jobs Scraper – LinkedIn, Indeed & More',
+    seoDescription: 'Search LinkedIn, Indeed, Dice, StepStone, SEEK, Reed, InfoJobs, Jobstreet, JobsDB and company career sites at once. One format. $1 per 1,000 jobs.',
   },
 };
 

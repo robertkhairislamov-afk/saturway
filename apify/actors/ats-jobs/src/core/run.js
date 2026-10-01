@@ -211,7 +211,11 @@ export async function runScraper(Actor, adapter, rawInput, log) {
   if (saved >= budget) stopped = 'stopped at the maximum cost per run';
   else if (input.maxItems > 0 && saved >= input.maxItems) stopped = `stopped at the limit of ${input.maxItems} jobs`;
   const notes = [];
-  if (failed.length > 0) notes.push(`${failed.length} failed`);
+  // The status message names the sources that failed, so a run that finished is not mistaken for full coverage.
+  if (failed.length > 0) {
+    const names = failed.slice(0, 3).map((result) => result.company).join(', ');
+    notes.push(`${failed.length} failed: ${names}${failed.length > 3 ? ' and more, see the run summary' : ''}`);
+  }
   if (rejected.length > 0) notes.push(`${rejected.length} skipped as invalid`);
   if (stopped) notes.push(stopped);
   const companiesText = countOf(companies);

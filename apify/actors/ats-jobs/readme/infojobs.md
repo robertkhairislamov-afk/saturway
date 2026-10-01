@@ -92,7 +92,7 @@ Provinces are InfoJobs ids, for example `33` Madrid, `9` Barcelona and `49` Vale
 
 ## How much does it cost?
 
-You pay only for the jobs you get: **$2 per 1,000 jobs**. There is no start fee. Jobs filtered out by your settings are free. The Apify free plan covers about 2,500 jobs every month.
+You pay only for the jobs you get: **$2 per 1,000 jobs**. That is the price on the Apify Free plan. Paid Apify plans pay less: $1.80 per 1,000 jobs on Starter, $1.60 on Scale and $1.40 on Business, which is the "from" price shown in Apify Store. There is no start fee. Jobs filtered out by your settings are free. The Apify free plan covers about 2,500 jobs every month.
 
 ## Tips
 

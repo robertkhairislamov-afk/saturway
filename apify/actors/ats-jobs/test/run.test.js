@@ -102,7 +102,7 @@ test('an empty input scrapes the example board, and a run fails only when every 
   await runScraper(actor, fakeAdapter({ alpha: [[job('alpha', 1)]] }), {}, silentLog);
   assert.equal(actor.dataset.length, 1);
   const partlyBroken = await runScraper(fakeActor(), fakeAdapter({ alpha: [[job('alpha', 1)]] }), { companies: ['alpha', 'broken'] }, silentLog);
-  assert.match(partlyBroken.message, /1 failed/);
+  assert.match(partlyBroken.message, /\(1 failed: broken\)/);
   await assert.rejects(runScraper(fakeActor(), fakeAdapter({}), { companies: ['broken'] }, silentLog), /board is down/);
   await assert.rejects(runScraper(fakeActor(), fakeAdapter({}), { companies: ['bad name'] }, silentLog), /bad name/);
 });

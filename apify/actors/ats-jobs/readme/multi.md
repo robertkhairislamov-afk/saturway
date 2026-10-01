@@ -1,19 +1,20 @@
 # All-in-One Jobs Scraper
 
-**Search LinkedIn, Indeed and 12 more job sites at once.** Enter keywords and countries, and get jobs from LinkedIn, Indeed, Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet, JobsDB, Reed and InfoJobs, plus any Greenhouse, Lever, Ashby or Workday career site you add, in one format, without duplicates. Salary as numbers, full descriptions, apply links. **$1 per 1,000 jobs, no start fee.**
+**Search LinkedIn, Indeed and 8 more job boards at once, plus company career sites.** Enter keywords and countries, and get jobs from LinkedIn, Indeed, Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet, JobsDB, Reed and InfoJobs, plus the Greenhouse, Lever, Ashby or Workday career sites of the companies you add, in one format, with duplicates across sites removed. Salary as numbers, full descriptions, apply links. **$1 per 1,000 jobs, no start fee.**
 
-One search, many job sites: the Actor sends your keywords to every job board that covers your countries, reads the career sites of the companies you list, and merges everything into one clean table. The same job posted on two sites is saved once, and duplicates are free. Each job keeps its source, so you always know where it came from. Run it on a schedule to get **only new jobs** from all sites at once. No browser, no login.
+One search, many job sites: the Actor sends your keywords to every job board that covers your countries, reads the career sites of the companies you list, and merges everything into one clean table. A job with the same title, company and city on two sites is saved once, and duplicates are free. Each job keeps its source, so you always know where it came from. Run it on a schedule to get **only new jobs** from all sites at once. No browser, no login.
 
 ## What can this all-in-one jobs scraper do?
 
-- 🌍 **62 countries, 14 job sites**: pick countries, and the right sites are searched for each one (see the table below).
+- 🌍 **62 countries, 10 job boards searched by keyword**: pick countries, and every board that covers them is searched (see the table below).
 - 🔗 **LinkedIn included**: public LinkedIn job listings in every country, without login, with seniority, job function and number of applicants. The residential proxies LinkedIn needs are included in the price.
 - 🌐 **Indeed included**: Indeed jobs in all 62 countries, with salaries, job types, benefits and company size, even past Indeed's limit of about 1,000 jobs per search.
 - 🔎 **One simple input**: keywords, countries and, for one country, a city. No site-specific settings needed.
-- 🏢 **Company career sites by link**: paste any Greenhouse, Lever, Ashby or Workday job board link; the system is recognized automatically. Your keywords pick jobs by title.
-- 🧹 **No duplicates**: the same job from two sites or two searches is saved once, and you do not pay for duplicates.
+- 🏢 **Company career sites by link**: paste any Greenhouse, Lever, Ashby or Workday job board link; the system is recognized automatically. These systems have no search across companies, so only the companies you add are read. Your keywords pick their jobs by title.
+- 🧹 **Duplicates removed**: a job with the same title, company and city from two sites or two searches is saved once, and you do not pay for it. The FAQ explains what this match can miss.
 - 💰 **Salary as numbers** in the local currency: "$120k - $140k p.a.", "RM 3,800 – RM 5,000 per month" or "€75,000-85,000" become `min`, `max`, `currency` and `interval`.
-- 🎛️ **Filters for all sites**: remote only, posted in the last N days, only jobs with a salary, title must contain, exclude words.
+- 🎛️ **Filters for all sites**: remote only, posted in the last N days, only jobs with a salary, title must contain, exclude words. LinkedIn is left out of remote searches, because it does not show visitors which jobs are remote.
+- 📋 **A report for every run**: the status message names any site that failed, and the **Run summary** on the Output tab lists every site with jobs found, matched and saved.
 - 🆕 **Only new jobs since the last run**: one daily job alert across all sites.
 - 🏷️ **Source of every job** in the `ats` field: `linkedin`, `indeed`, `dice`, `wttj`, `stepstone`, `seek`, `jobstreet`, `jobsdb`, `reed`, `infojobs`, `greenhouse`, `lever`, `ashby` or `workday`.
 
@@ -73,33 +74,62 @@ A step-by-step guide with Python examples, from salary medians in five countries
 
 ### Example output
 
+Four of the 80 jobs from one run on 1 October 2026 (`data analyst` in the US, the UK and Germany), shortened to the main fields. Every job has all the fields of the table above.
+
 ```json
-{
-  "ats": "dice",
-  "company": "3ea34b07-fec0-5f54-a0e9-202d447a70d7",
-  "companyName": "Booz Allen Hamilton",
-  "jobId": "b707fbf4-050d-439f-9593-e4777bf0e0d7",
-  "title": "Human Capital and Personnel Data Analyst",
-  "location": "Springfield, Virginia, USA",
-  "locations": ["Springfield, Virginia, USA"],
-  "remote": false,
-  "workplaceType": "onsite",
-  "employmentType": "full-time",
-  "salary": { "min": 77600, "max": 176000, "currency": "USD", "interval": "year", "text": "USD 77,600.00 - 176,000.00 per year", "source": "listing" },
-  "postedAt": "2026-09-18T14:49:45.000Z",
-  "updatedAt": "2026-09-27T08:10:08.000Z",
-  "jobUrl": "https://www.dice.com/job-detail/b707fbf4-050d-439f-9593-e4777bf0e0d7",
-  "applyUrl": "https://www.dice.com/job-detail/b707fbf4-050d-439f-9593-e4777bf0e0d7",
-  "descriptionText": "Job Number: R0249209\n\nHuman Capital and Personnel Data Analyst\nThe Opportunity:…",
-  "descriptionHtml": "<b>Job Number: R0249209</b>…",
-  "skills": ["HR Analytics", "SQL", "Python", "Tableau", "Data Analysis"],
-  "employerType": "Direct Hire",
-  "validThrough": "2026-10-28T08:10:08.000Z",
-  "scrapedAt": "2026-09-27T11:14:02.769Z"
-}
+[
+  {
+    "ats": "indeed",
+    "title": "Public Health Data Analyst",
+    "companyName": "VAAS Professionals, LLC",
+    "location": "Atlanta, GA 30312",
+    "remote": false,
+    "workplaceType": "hybrid",
+    "employmentType": "full-time",
+    "salary": {"min": 85000, "max": 110000, "currency": "USD", "interval": "year", "text": "USD 85,000–110,000 per year"},
+    "postedAt": "2026-09-30T05:00:00.000Z",
+    "jobUrl": "https://www.indeed.com/viewjob?jk=936496ffedd5d6f2"
+  },
+  {
+    "ats": "reed",
+    "title": "Data Analyst",
+    "companyName": "Adecco",
+    "location": "Barking",
+    "remote": false,
+    "workplaceType": "hybrid",
+    "employmentType": "temporary",
+    "salary": {"min": 300, "max": 350, "currency": "GBP", "interval": "day", "text": "GBP 300–350 per day"},
+    "postedAt": "2026-09-29T13:30:56.117Z",
+    "jobUrl": "https://www.reed.co.uk/jobs/data-analyst/57402964"
+  },
+  {
+    "ats": "stepstone",
+    "title": "Projektmanager mit Schwerpunkt Data Analyst (m/w/d) Airbus",
+    "companyName": "expertum GmbH",
+    "location": "Hamburg",
+    "remote": false,
+    "workplaceType": null,
+    "employmentType": null,
+    "salary": null,
+    "postedAt": "2026-10-01T01:45:47.000Z",
+    "jobUrl": "https://www.stepstone.de/stellenangebote--Projektmanager-mit-Schwerpunkt-Data-Analyst-m-w-d-Airbus-Hamburg-expertum-GmbH--14559857-inline.html"
+  },
+  {
+    "ats": "linkedin",
+    "title": "Data Analyst",
+    "companyName": "Zelis",
+    "location": "Cottonwood Heights, UT",
+    "remote": false,
+    "workplaceType": null,
+    "employmentType": null,
+    "salary": null,
+    "postedAt": "2026-10-01T00:40:18.943Z",
+    "jobUrl": "https://www.linkedin.com/jobs/view/4472640743/"
+  }
+]
 ```
 
-In the same run, a StepStone job from Berlin ("€75,000-85,000" as EUR per year), a SEEK job from Melbourne (AUD) and a Jobstreet job from Singapore ("$3,800 – $4,500 per month" as SGD per month) arrive in the same format.
+Each job keeps its source in `ats`, and every salary keeps its currency and period: a yearly range in US dollars from Indeed, a day rate in pounds from Reed. The same run also returned jobs from Dice and Welcome to the Jungle.
 
 ## Use cases
 
@@ -111,20 +141,22 @@ In the same run, a StepStone job from Berlin ("€75,000-85,000" as EUR per year
 
 ## How much does it cost?
 
-You pay only for the jobs you get: **$1 per 1,000 jobs**. There is no start fee, and the residential proxies for LinkedIn are included. Duplicates and jobs filtered out by your settings are free. The Apify free plan covers about 5,000 jobs every month.
+You pay only for the jobs you get: **$1 per 1,000 jobs**. That is the price on the Apify Free plan. Paid Apify plans pay less: $0.90 per 1,000 jobs on Starter, $0.80 on Scale and $0.70 on Business, which is the "from" price shown in Apify Store. There is no start fee, and the residential proxies for LinkedIn are included. Duplicates and jobs filtered out by your settings are free. The Apify free plan covers about 5,000 jobs every month.
 
 ## Tips
 
 - **Daily job alerts**: save your input as a task, turn on **Only new jobs since the last run** and add a schedule.
 - **Big searches**: set **Maximum jobs per search or career site** to keep every site in the results.
 - **Site-specific filters**: for filters that only one site has, such as SEEK classifications or StepStone contract types, use our single-site scrapers listed at the end of this page. They have the same output.
-- **Errors per source**: if one site fails, the others still run. See the `SUMMARY` record in the run's key-value store.
+- **Errors per source**: if one site fails, the others still run. The status message names it, and the **Run summary** on the Output tab shows the error.
 
 ## FAQ
 
 **Why are there no LinkedIn jobs in remote searches?** LinkedIn does not show visitors who are not logged in which jobs are remote, so **Remote jobs only** leaves LinkedIn out. To find remote LinkedIn jobs, add `remote` to your keywords instead.
 
-**How are duplicates found?** Two jobs are the same when title, company and city match after normalizing case, accents and punctuation. Jobs from the same search are never merged, so several openings with one title stay.
+**How are duplicates found?** Two jobs are the same when title, company and city match after normalizing case, accents and punctuation. Jobs from the same search are never merged, so several openings with one title stay. The match catches the usual case of one job posted on several sites. It can miss a job whose title or company is written differently on two sites, and it merges two different openings with the same title, company and city found on two sites.
+
+**What if a site fails?** The other sites still run, and the run finishes with their jobs. The status message names the sites that failed, and the **Run summary** on the Output tab lists every site and career site with jobs found, matched and saved, and the error. A run fails only when every site fails.
 
 **Does it collect recruiter contact details?** No. There are no fields for recruiters' names, emails or phone numbers. The job description is saved as the employer wrote it.
 

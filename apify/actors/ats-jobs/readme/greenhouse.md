@@ -87,7 +87,7 @@ A step-by-step guide with Python examples for this and the other job scrapers, w
 
 ## How much does it cost?
 
-You pay only for the jobs you get: **$1 per 1,000 jobs**. No start fee and no monthly rent. Jobs that don't match your filters are free. The Apify free plan covers thousands of jobs every month.
+You pay only for the jobs you get: **$1 per 1,000 jobs**. That is the price on the Apify Free plan. Paid Apify plans pay less: $0.90 per 1,000 jobs on Starter, $0.80 on Scale and $0.70 on Business, which is the "from" price shown in Apify Store. No start fee and no monthly rent. Jobs that don't match your filters are free. The Apify free plan covers thousands of jobs every month.
 
 ## Tips
 

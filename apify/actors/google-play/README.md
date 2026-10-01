@@ -122,7 +122,7 @@ Scrape the Google Play Store: **top charts** (top free, top paid, top grossing) 
 
 ## How much does it cost?
 
-You pay only for results: **$0.50 per 1,000 results**. There is no start fee. The Apify free plan covers about 10,000 results every month.
+You pay only for results: **$0.50 per 1,000 results**. That is the price on the Apify Free plan. Paid Apify plans pay less: $0.45 per 1,000 results on Starter, $0.40 on Scale and $0.35 on Business, which is the "from" price shown in Apify Store. There is no start fee. The Apify free plan covers about 10,000 results every month.
 
 ## Tips
 

@@ -77,7 +77,7 @@ Search Google News by keyword or collect the latest headlines by topic, for 38 c
 
 ## How much does it cost?
 
-You pay only for results: **$2 per 1,000 articles**, and **$1 per 1,000 resolved publisher URLs** when that option is on. There is no start fee. The Apify free plan covers thousands of articles per month.
+You pay only for results: **$2 per 1,000 articles**, and **$1 per 1,000 resolved publisher URLs** when that option is on. These are the prices on the Apify Free plan. Paid Apify plans pay less: 10% less on Starter, 20% on Scale and 30% on Business, which is the "from" price shown in Apify Store. There is no start fee. The Apify free plan covers thousands of articles per month.
 
 ## Tips
 

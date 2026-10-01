@@ -119,7 +119,7 @@ Every record has the same fields; fields that do not apply are `null`, such as t
 
 ## How much does it cost?
 
-You pay only for the listings you get: **$2 per 1,000 listings**. There is no start fee. The same home found by two searches is saved once, and you do not pay for duplicates. The Apify free plan covers about 2,500 listings every month.
+You pay only for the listings you get: **$2 per 1,000 listings**. That is the price on the Apify Free plan. Paid Apify plans pay less: $1.80 per 1,000 listings on Starter, $1.60 on Scale and $1.40 on Business, which is the "from" price shown in Apify Store. There is no start fee. The same home found by two searches is saved once, and you do not pay for duplicates. The Apify free plan covers about 2,500 listings every month.
 
 ## Tips
 

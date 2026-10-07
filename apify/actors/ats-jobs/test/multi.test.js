@@ -105,7 +105,7 @@ test('multi: career site links are recognized and keep the keywords as a title f
 test('multi: the example takes a few jobs from each site', () => {
   const example = normalizeInput({}, multi.exampleInput);
   assert.equal(example.usedExample, true);
-  assert.deepEqual([example.maxItems, example.maxItemsPerCompany], [50, 15]);
+  assert.deepEqual([example.maxItems, example.maxItemsPerCompany], [50, 10]);
   assert.deepEqual([...new Set(sitesOf(example.companies))].sort(), ['dice', 'glassdoor', 'indeed', 'linkedin', 'wttj']);
   // An input of its own keeps its own limits.
   assert.equal(normalizeInput({ companies: example.companies }, multi.exampleInput).maxItemsPerCompany, 0);

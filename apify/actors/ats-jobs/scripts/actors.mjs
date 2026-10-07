@@ -1263,10 +1263,11 @@ function multiInputSchema() {
         details: 'the full description (text and HTML) and every detail the site offers',
         proxyDescription: 'The Actor connects directly, which is fastest; LinkedIn always goes through Apify residential proxies and Indeed through Apify Proxy. If a site starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it for every site from the start.',
       }),
-      // The first run shows jobs from several sites; Indeed alone would fill the 50 jobs of the form.
+      // The first run shows 10 jobs from each of the five sites that cover the United States; the fastest
+      // ones would fill the 50 jobs of the form alone.
       maxItemsPerCompany: {
         ...commonSettings({ perSource: 'search or career site' }).maxItemsPerCompany,
-        prefill: 15,
+        prefill: 10,
       },
     },
   };

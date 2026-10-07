@@ -1,0 +1,218 @@
+[
+ {
+  "data": {
+   "jobListings": {
+    "totalJobsCount": 4,
+    "jobListings": [
+     {
+      "jobview": {
+       "header": {
+        "ageInDays": 60,
+        "easyApply": false,
+        "employer": {
+         "id": 252591,
+         "shortName": "The New York Foundling"
+        },
+        "employerNameFromSearch": "The New York Foundling",
+        "goc": "registered nurse",
+        "jobCountryId": 1,
+        "jobTitleText": "Registered Nurse - Brooklyn (Hegeman, Schenck, Montgomery)",
+        "jobTypeKeys": [
+         "search-jobs.job-type-options.fulltime"
+        ],
+        "locationName": "Brooklyn, NY",
+        "locationType": "C",
+        "normalizedJobTitle": "registered nurse",
+        "payCurrency": "USD",
+        "payPeriod": "ANNUAL",
+        "payPeriodAdjustedPay": {
+         "p10": 95351,
+         "p50": 98851,
+         "p90": 102351
+        },
+        "rating": 3.4,
+        "remoteWorkTypes": null,
+        "salarySource": "EMPLOYER_PROVIDED",
+        "seoJobLink": "https://www.glassdoor.com/job-listing/registered-nurse-brooklyn-hegeman-schenck-montgomery-the-new-york-foundling-JV_IC1132200_KO0,52_KE53,75.htm?jl=1010225215460",
+        "sponsored": false
+       },
+       "job": {
+        "discoverDate": "2026-09-08T00:00:00",
+        "jobTitleText": "Registered Nurse - Brooklyn (Hegeman, Schenck, Montgomery)",
+        "listingId": 1010225215460
+       },
+       "overview": {
+        "headquarters": "New York, NY",
+        "primaryIndustry": {
+         "industryName": "Civic & Social Services"
+        },
+        "revenue": "$100 to $500 million (USD)",
+        "shortName": "The New York Foundling",
+        "size": "1001 to 5000 Employees",
+        "squareLogoUrl": "https://media.glassdoor.com/sql/252591/new-york-foundling-squarelogo.png",
+        "type": "Nonprofit Organization",
+        "website": "www.nyfoundling.org",
+        "yearFounded": 1869
+       }
+      }
+     },
+     {
+      "jobview": {
+       "header": {
+        "ageInDays": 117,
+        "easyApply": false,
+        "employer": {
+         "id": 1670100,
+         "shortName": "Clinical Staffing Resources"
+        },
+        "employerNameFromSearch": "Clinical Staffing Resources",
+        "goc": "non title",
+        "jobCountryId": 1,
+        "jobTitleText": "School Nurse FT or Per DIem M-F No Weekends",
+        "jobTypeKeys": [
+         "search-jobs.job-type-options.fulltime",
+         "search-jobs.job-type-options.parttime"
+        ],
+        "locationName": "New York, NY",
+        "locationType": "C",
+        "normalizedJobTitle": "non title",
+        "payCurrency": "USD",
+        "payPeriod": "HOURLY",
+        "payPeriodAdjustedPay": {
+         "p10": 60,
+         "p50": 61.5,
+         "p90": 63
+        },
+        "rating": 4.1,
+        "remoteWorkTypes": null,
+        "salarySource": "EMPLOYER_PROVIDED",
+        "seoJobLink": "https://www.glassdoor.com/job-listing/school-nurse-ft-or-per-diem-mf-no-weekends-clinical-staffing-resources-JV_IC1132348_KO0,42_KE43,70.htm?jl=1010165797032",
+        "sponsored": false
+       },
+       "job": {
+        "discoverDate": "2026-09-11T00:00:00",
+        "jobTitleText": "School Nurse FT or Per DIem M-F No Weekends",
+        "listingId": 1010165797032
+       },
+       "overview": {
+        "headquarters": "Brooklyn, NY",
+        "primaryIndustry": {
+         "industryName": "Health Care Services & Hospitals"
+        },
+        "revenue": "$1 to $5 million (USD)",
+        "shortName": "Clinical Staffing Resources",
+        "size": "1 to 50 Employees",
+        "squareLogoUrl": "https://media.glassdoor.com/sql/1670100/clinical-staffing-resources-squarelogo-1634635841015.png",
+        "type": "Contract",
+        "website": "www.clinicalstaffingresources.com",
+        "yearFounded": null
+       }
+      }
+     },
+     {
+      "jobview": {
+       "header": {
+        "ageInDays": 128,
+        "easyApply": true,
+        "employer": {
+         "id": 400136,
+         "shortName": "PSI"
+        },
+        "employerNameFromSearch": "PSI Solutions",
+        "goc": "school nurse",
+        "jobCountryId": 1,
+        "jobTitleText": "RN School Based - School Nurse Float -Edison, New Jersey",
+        "jobTypeKeys": [
+         "search-jobs.job-type-options.contract"
+        ],
+        "locationName": "Edison, NJ",
+        "locationType": "C",
+        "normalizedJobTitle": "school nurse",
+        "payCurrency": "USD",
+        "payPeriod": "ANNUAL",
+        "payPeriodAdjustedPay": {
+         "p10": 81144,
+         "p50": 97659,
+         "p90": 117536
+        },
+        "rating": 3.2,
+        "remoteWorkTypes": null,
+        "salarySource": "ESTIMATED",
+        "seoJobLink": "https://www.glassdoor.com/job-listing/rn-school-based-school-nurse-float-edison-new-jersey-psi-JV_IC1126748_KO0,52_KE53,56.htm?jl=1009915152202",
+        "sponsored": true
+       },
+       "job": {
+        "discoverDate": "2026-10-01T00:00:00",
+        "jobTitleText": "RN School Based - School Nurse Float -Edison, New Jersey",
+        "listingId": 1009915152202
+       },
+       "overview": {
+        "headquarters": "Twinsburg, OH",
+        "primaryIndustry": {
+         "industryName": "Education & Training Services"
+        },
+        "revenue": "Unknown / Non-Applicable",
+        "shortName": "PSI",
+        "size": "501 to 1000 Employees",
+        "squareLogoUrl": "https://media.glassdoor.com/sql/400136/psi-squareLogo-1711630754358.png",
+        "type": "Company - Private",
+        "website": "https://www.psi-solutions.org",
+        "yearFounded": 1977
+       }
+      }
+     },
+     {
+      "jobview": {
+       "header": {
+        "ageInDays": 7,
+        "easyApply": false,
+        "employer": {
+         "id": 658,
+         "shortName": "Thermo Fisher Scientific"
+        },
+        "employerNameFromSearch": "Thermo Fisher Scientific",
+        "goc": "data analyst",
+        "jobCountryId": 1,
+        "jobTitleText": "Data Analyst, Project Manager",
+        "jobTypeKeys": [
+         "search-jobs.job-type-options.fulltime"
+        ],
+        "locationName": "Pennsylvania",
+        "locationType": "S",
+        "normalizedJobTitle": "data analyst",
+        "payCurrency": "USD",
+        "payPeriod": null,
+        "payPeriodAdjustedPay": null,
+        "rating": 3.5,
+        "remoteWorkTypes": [
+         "WORK_FROM_HOME"
+        ],
+        "salarySource": null,
+        "seoJobLink": "https://www.glassdoor.com/job-listing/data-analyst-project-manager-thermo-fisher-scientific-JV_KO0,28_KE29,53.htm?jl=1010278465891",
+        "sponsored": false
+       },
+       "job": {
+        "discoverDate": "2026-09-29T00:00:00",
+        "jobTitleText": "Data Analyst, Project Manager",
+        "listingId": 1010278465891
+       },
+       "overview": {
+        "headquarters": "Waltham, MA",
+        "primaryIndustry": {
+         "industryName": "Biotech & Pharmaceuticals"
+        },
+        "revenue": "$10+ billion (USD)",
+        "shortName": "Thermo Fisher Scientific",
+        "size": "10000+ Employees",
+        "squareLogoUrl": "https://media.glassdoor.com/sql/658/thermo-fisher-scientific-squareLogo-1622674704280.png",
+        "type": "Company - Public",
+        "website": "https://corporate.thermofisher.com/us/en/index.html",
+        "yearFounded": 1902
+       }
+      }
+     }
+    ]
+   }
+  }
+ }
+]

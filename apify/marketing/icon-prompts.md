@@ -142,3 +142,9 @@ If an icon is attached, copy its style exactly: the same flat look, stroke weigh
 ```
 If an icon is attached, copy its style exactly: the same flat look, stroke weight, symbol size and position, gradient direction and shadow; only the symbol and the colors change. Symbol: three overlapping job cards fanned out like playing cards, the front card showing a simple briefcase, and a small magnifying glass overlapping the bottom right corner of the cards. Style: flat vector app icon, perfectly square 1:1. The background fills the whole canvas edge to edge with a smooth diagonal gradient from #1E40AF at the top left to #0891B2 at the bottom right; no border, no frame, no rounded corners, no outer shadow, no vignette. The symbol is centered, drawn in solid white with bold uniform strokes and simple geometric shapes, about 60% of the canvas width, with a very soft shadow under it. Clean, modern, premium SaaS look, high contrast, easy to read at 48 pixels. No text, no letters, no numbers, no logos, no brand marks, no watermark.
 ```
+
+### 19. Glassdoor Jobs Scraper
+
+```
+If an icon is attached, copy its style exactly: the same flat look, stroke weight, symbol size and position, gradient direction and shadow; only the symbol and the colors change. Symbol: a briefcase, and a round badge with a five-point star inside it overlapping the top right corner of the briefcase. Style: flat vector app icon, perfectly square 1:1. The background fills the whole canvas edge to edge with a smooth diagonal gradient from #065F46 at the top left to #34D399 at the bottom right; no border, no frame, no rounded corners, no outer shadow, no vignette. The symbol is centered, drawn in solid white with bold uniform strokes and simple geometric shapes, about 60% of the canvas width, with a very soft shadow under it. Clean, modern, premium SaaS look, high contrast, easy to read at 48 pixels. No text, no letters, no numbers, no logos, no brand marks, no watermark.
+```

@@ -1,5 +1,6 @@
 import * as ashby from './ashby.js';
 import * as dice from './dice.js';
+import * as glassdoor from './glassdoor.js';
 import * as greenhouse from './greenhouse.js';
 import * as indeed from './indeed.js';
 import * as infojobs from './infojobs.js';
@@ -27,5 +28,6 @@ export const ADAPTERS = {
   reed,
   infojobs,
   indeed,
+  glassdoor,
   multi,
 };

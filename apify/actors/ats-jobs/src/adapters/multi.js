@@ -1,12 +1,13 @@
 // One search across our job sites. Keywords and countries go to the job boards that cover those
-// countries (LinkedIn and Indeed everywhere, Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet,
-// JobsDB, Reed, InfoJobs); career site links go to their applicant tracking system (Greenhouse,
+// countries (LinkedIn, Indeed and Glassdoor everywhere, Dice, Welcome to the Jungle, StepStone,
+// SEEK, Jobstreet, JobsDB, Reed, InfoJobs); career site links go to their applicant tracking system (Greenhouse,
 // Lever, Ashby, Workday). Each source runs with its own adapter, and a job found on two sites is
 // saved once.
 
 import { compileTerms, matchesAny } from '../core/match.js';
 import * as ashby from './ashby.js';
 import * as dice from './dice.js';
+import * as glassdoor from './glassdoor.js';
 import * as greenhouse from './greenhouse.js';
 import * as indeed from './indeed.js';
 import * as infojobs from './infojobs.js';
@@ -47,7 +48,7 @@ export const COUNTRIES = {
   ID: 'Indonesia',
   HK: 'Hong Kong',
   TH: 'Thailand',
-  // Covered by LinkedIn and Indeed only.
+  // Covered by LinkedIn, Indeed and Glassdoor only.
   AT: 'Austria',
   CH: 'Switzerland',
   PT: 'Portugal',
@@ -104,6 +105,7 @@ export const BOARDS = {
   reed: { adapter: reed, label: 'Reed', countries: ['GB'] },
   infojobs: { adapter: infojobs, label: 'InfoJobs', countries: ['ES'] },
   indeed: { adapter: indeed, label: 'Indeed', countries: Object.keys(COUNTRIES).filter((code) => indeed.COUNTRIES[code]) },
+  glassdoor: { adapter: glassdoor, label: 'Glassdoor', countries: Object.keys(COUNTRIES).filter((code) => glassdoor.COUNTRIES[code]) },
   linkedin: { adapter: linkedin, label: 'LinkedIn', countries: Object.keys(COUNTRIES) },
 };
 
@@ -152,6 +154,8 @@ function boardForms(board, { queries, countries, location, remoteOnly, postedWit
   if (board === 'infojobs') return [{ ...common, provinces: [provinceOf(location)].filter(Boolean), teleworking: remoteOnly ? ['2'] : [] }];
   // Indeed searches each country on its own site; remote jobs are an Indeed filter.
   if (board === 'indeed') return countries.map((country) => ({ ...common, country, location, workplaceTypes: remoteOnly ? ['remote'] : [] }));
+  // Glassdoor needs keywords or a place: without them it answers with jobs from anywhere.
+  if (board === 'glassdoor') return queries.length > 0 || location ? countries.map((country) => ({ ...common, country, location, remoteOnly })) : [];
   // LinkedIn needs keywords and shows visitors no remote jobs; it searches a city with its country.
   if (board === 'linkedin') {
     if (queries.length === 0 || remoteOnly) return [];

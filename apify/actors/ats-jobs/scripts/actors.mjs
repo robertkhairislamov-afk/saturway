@@ -3,6 +3,7 @@
 // job board instead of company boards, so they have their own search forms.
 
 import { CLASSIFICATIONS, WORK_ARRANGEMENTS, WORK_TYPES } from '../src/adapters/seek.js';
+import * as glassdoor from '../src/adapters/glassdoor.js';
 import * as indeed from '../src/adapters/indeed.js';
 import * as infojobs from '../src/adapters/infojobs.js';
 import * as linkedin from '../src/adapters/linkedin.js';
@@ -164,14 +165,23 @@ export const ACTORS = {
     seoTitle: 'Indeed Jobs Scraper – Salaries, 62 Countries',
     seoDescription: 'Scrape Indeed jobs in 62 countries by keyword and location: title, company, salary, job type, remote, benefits, full description. $1 per 1,000 jobs.',
   },
+  glassdoor: {
+    name: 'glassdoor-jobs-scraper',
+    title: 'Glassdoor Jobs Scraper',
+    tagline: 'Glassdoor jobs in 62 countries, with company ratings, salaries and company details',
+    apiExample: { searchQueries: ['data analyst'], country: 'US', location: 'Chicago, IL', maxItems: 20 },
+    description: 'Scrape Glassdoor jobs in 62 countries by keyword and location: title, company rating, salary or Glassdoor estimate, job type, remote, company size, revenue and industry, full description. Past the 30-page limit.',
+    seoTitle: 'Glassdoor Jobs Scraper – Ratings, Salaries, 62 Countries',
+    seoDescription: 'Scrape Glassdoor jobs by keyword and location: company rating, salary and estimate, job type, company size, full description. 62 countries. $1 per 1,000 jobs.',
+  },
   multi: {
     name: 'all-in-one-jobs-scraper',
     title: 'All-in-One Jobs Scraper',
-    tagline: 'LinkedIn, Indeed and the other job boards here in one search, plus career sites you add, with duplicates removed',
+    tagline: 'LinkedIn, Indeed, Glassdoor and the other job boards here in one search, plus career sites you add, with duplicates removed',
     apiExample: { searchQueries: ['data analyst'], countries: ['US', 'DE', 'AU'], maxItems: 30 },
-    description: 'Search LinkedIn, Indeed, Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet, JobsDB, Reed and InfoJobs by keyword and country, plus Greenhouse, Lever, Ashby and Workday career sites you add. One format, duplicates removed.',
-    seoTitle: 'All-in-One Jobs Scraper – LinkedIn, Indeed & More',
-    seoDescription: 'Search LinkedIn, Indeed, Dice, StepStone, SEEK, Reed, InfoJobs, Jobstreet, JobsDB and company career sites at once. One format. $1 per 1,000 jobs.',
+    description: 'Search LinkedIn, Indeed, Glassdoor, Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet, JobsDB, Reed and InfoJobs by keyword and country, plus Greenhouse, Lever, Ashby and Workday career sites you add. One format, duplicates removed.',
+    seoTitle: 'All-in-One Jobs Scraper – LinkedIn, Indeed, Glassdoor',
+    seoDescription: 'Search LinkedIn, Indeed, Glassdoor, Dice, StepStone, SEEK, Reed, InfoJobs, Jobstreet, JobsDB and career sites at once. One format. $1 per 1,000 jobs.',
   },
 };
 
@@ -221,6 +231,7 @@ export function inputSchema(ats) {
   if (ats === 'reed') return reedInputSchema();
   if (ats === 'infojobs') return infojobsInputSchema();
   if (ats === 'indeed') return indeedInputSchema();
+  if (ats === 'glassdoor') return glassdoorInputSchema();
   if (ats === 'multi') return multiInputSchema();
   const actor = ACTORS[ats];
   const properties = {
@@ -1023,6 +1034,100 @@ function indeedInputSchema() {
   };
 }
 
+function glassdoorInputSchema() {
+  return {
+    title: ACTORS.glassdoor.title,
+    description: 'Search Glassdoor like on the website, in any of 62 countries, and get every matching job with its company rating in one clean format.',
+    type: 'object',
+    schemaVersion: 1,
+    properties: {
+      searchQueries: {
+        title: 'Job titles or keywords',
+        type: 'array',
+        editor: 'stringList',
+        description: 'What to search, for example <code>data analyst</code> or <code>registered nurse</code>. Each line is a separate search with the filters below. You can also paste links of searches from Glassdoor in any country.',
+        prefill: ['python developer'],
+        placeholderValue: 'data analyst',
+      },
+      country: {
+        title: 'Country',
+        type: 'string',
+        editor: 'select',
+        description: 'Where to search. Links of Glassdoor searches keep their own place.',
+        ...sortedSelectOf(Object.fromEntries(Object.entries(glassdoor.COUNTRIES).map(([code, [label]]) => [code, label]))),
+        default: 'US',
+      },
+      location: {
+        title: 'Location',
+        type: 'string',
+        editor: 'textfield',
+        description: 'A city, state or region in that country, for example <code>New York, NY</code>, <code>London</code> or <code>Bavaria</code>. Leave empty for the whole country; Glassdoor then needs keywords.',
+        prefill: 'New York, NY',
+      },
+      distance: {
+        title: 'Distance around the city',
+        type: 'integer',
+        minimum: 0,
+        maximum: 100,
+        unit: 'miles',
+        description: 'Also find jobs this far from the city. Glassdoor offers 0, 5, 10, 15, 25, 50 and 100 miles; other numbers go to the next of these. Glassdoor uses 25 when this is empty.',
+      },
+      jobTypes: {
+        title: 'Job type',
+        type: 'array',
+        editor: 'select',
+        sectionCaption: 'Glassdoor filters',
+        description: 'Leave empty for all. With several types you get jobs of any of them.',
+        items: selectOf(namesOf(glassdoor.JOB_TYPES)),
+      },
+      experienceLevels: {
+        title: 'Experience level',
+        type: 'array',
+        editor: 'select',
+        description: 'Leave empty for all. Each level is searched on its own, and every job gets its level in <code>seniorityLevel</code>.',
+        items: selectOf(namesOf(glassdoor.LEVELS)),
+      },
+      remoteOnly: {
+        title: 'Remote jobs only',
+        type: 'boolean',
+        default: false,
+        description: 'Only jobs Glassdoor marks as remote or work from home.',
+      },
+      minCompanyRating: {
+        title: 'Minimum company rating',
+        type: 'string',
+        editor: 'select',
+        description: 'Only jobs at companies rated this high by their employees on Glassdoor.',
+        enum: ['1', '2', '3', '4'],
+        enumTitles: ['1 star or more', '2 stars or more', '3 stars or more', '4 stars or more'],
+      },
+      easyApplyOnly: {
+        title: 'Easy Apply only',
+        type: 'boolean',
+        default: false,
+        description: 'Only jobs you can apply to on Glassdoor directly.',
+      },
+      postedWithinDays: {
+        title: 'Posted in the last days',
+        type: 'integer',
+        minimum: 0,
+        unit: 'days',
+        description: 'Keep jobs posted in the last N days: 1 means today and yesterday. Leave empty or 0 for any date.',
+      },
+      ...commonSettings({
+        site: 'Glassdoor',
+        proxyDescription: 'The Actor connects directly, which is fastest. If Glassdoor starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it from the start.',
+      }),
+      includeDescription: {
+        title: 'Include job descriptions',
+        type: 'boolean',
+        default: true,
+        description: 'Save the full description (text and HTML) of each job. Turn off for smaller, faster results with every other field.',
+      },
+    },
+  };
+}
+
 const RESIDENTIAL_PROXY = { useApifyProxy: true, apifyProxyGroups: ['RESIDENTIAL'] };
 
 function linkedinInputSchema() {
@@ -1114,7 +1219,7 @@ function multiInputSchema() {
         title: 'Countries',
         type: 'array',
         editor: 'select',
-        description: 'Where to search. LinkedIn and Indeed cover every country here, and each country also goes to the other sites that cover it: the United States to Dice and Welcome to the Jungle; Germany to StepStone and Welcome to the Jungle; the UK to Reed and Welcome to the Jungle; Spain to InfoJobs and Welcome to the Jungle; Australia and New Zealand to SEEK; Malaysia, Singapore, the Philippines and Indonesia to Jobstreet; Hong Kong and Thailand to JobsDB; Canada and western Europe to Welcome to the Jungle.',
+        description: 'Where to search. LinkedIn, Indeed and Glassdoor cover every country here, and each country also goes to the other sites that cover it: the United States to Dice and Welcome to the Jungle; Germany to StepStone and Welcome to the Jungle; the UK to Reed and Welcome to the Jungle; Spain to InfoJobs and Welcome to the Jungle; Australia and New Zealand to SEEK; Malaysia, Singapore, the Philippines and Indonesia to Jobstreet; Hong Kong and Thailand to JobsDB; Canada and western Europe to Welcome to the Jungle.',
         items: selectOf(multi.COUNTRIES),
         prefill: ['US'],
       },
@@ -1183,6 +1288,7 @@ const EXTRA_COLUMN = {
   multi: ['ats', 'Source'],
   stepstone: ['employmentType', 'Employment'],
   indeed: ['employmentType', 'Job type'],
+  glassdoor: ['companyRating', 'Rating'],
 };
 
 const COLUMNS = {
@@ -1200,12 +1306,13 @@ const COLUMNS = {
 const OVERVIEW = ['title', 'companyName', 'location', 'workplaceType', 'salary.text', 'postedAt', 'jobUrl'];
 // Where a site almost never fills a column of the table, a column it does fill takes its place:
 // LinkedIn shows visitors no workplace, Workday career sites rarely state it, StepStone employers
-// rarely publish pay, and in All-in-One most jobs come from LinkedIn.
+// rarely publish pay, in All-in-One most jobs come from LinkedIn, and Glassdoor marks only remote jobs.
 const SWAPPED = {
   linkedin: { workplaceType: 'applicants' },
   workday: { workplaceType: 'employmentType' },
   stepstone: { 'salary.text': 'industry' },
   multi: { workplaceType: 'employmentType' },
+  glassdoor: { workplaceType: 'employmentType' },
 };
 
 export const datasetSchema = (ats) => {

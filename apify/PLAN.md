@@ -467,6 +467,8 @@ StepStone на платформе иногда отдаёт карточки м�
 - Узел Apify — проверенный community-узел `@apify/n8n-nodes-apify` (0.7.0), операция «Run actor and get dataset». «Только новые» работает и при запуске из n8n: память хранится в аккаунте пользователя на каждый поиск.
 - Проверка 13.10: все три импортированы и запущены в локальном n8n 2.42.7 (Node 24, `N8N_EXPRESSION_ENGINE=legacy`) с настоящим узлом Apify на живых акторах; Google Sheets и Slack заменены пустыми узлами, остальное прошло: Indeed — 6 вакансий в столбцах, Glassdoor — сообщение на 5 вакансий, лиды — 52 компании из 60 вакансий.
 - Отправка в библиотеку n8n — на владельце: аккаунт n8n.io, Creator portal, Share new template, по одному шаблону. Страница для копирования с планшета: https://claude.ai/artifact/FdC5f37ek8p44RrRmjW9xR
+- 13.10 владелец завёл аккаунт автора на creators.n8n.io (`robertosan16`, отдельный от n8n Cloud) и через Claude в Chrome подал шаблон 1. Форма: файл JSON, цена (Free) и согласие с условиями. ИИ n8n сам ставит название (стало «Log daily Indeed job searches to Google Sheets with Apify», поменять нельзя) и раскладывает описание по разделам: Quick overview, How it works, Setup, Requirements, Customization. Мы оставили его текст и дописали требования и настройку. Шаблон на проверке у человека, это 3–5 рабочих дней. ИИ также предложил улучшенные стикеры (ссылка «copy the updated JSON here» на странице подачи).
+- На портале: «Publish 3 more workflows to become a verified creator». Проверенные авторы могут продавать шаблоны. Подать шаблоны 2 и 3 после ответа по первому.
 
 ### Правки по разбору страницы All-in-One, 1.10
 

@@ -10,6 +10,7 @@ import * as multi from './multi.js';
 import * as reed from './reed.js';
 import * as seek from './seek.js';
 import * as stepstone from './stepstone.js';
+import * as wellfound from './wellfound.js';
 import * as workday from './workday.js';
 import * as wttj from './wttj.js';
 
@@ -29,5 +30,6 @@ export const ADAPTERS = {
   infojobs,
   indeed,
   glassdoor,
+  wellfound,
   multi,
 };

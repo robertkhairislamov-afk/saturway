@@ -103,7 +103,7 @@ export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback
   // `rotate` takes a rotating session for every attempt. `accept(text)` tells a real answer from a
   // block page that comes with status 200 (such as an empty page or a login wall); a block page
   // is retried like a rate limit.
-  async function request(url, { method = 'GET', body, headers = {}, json = true, retries = maxRetries, rotate = false, datacenter: viaDatacenter = false, accept } = {}) {
+  async function request(url, { method = 'GET', body, headers = {}, json = true, retries = maxRetries, rotate = false, datacenter: viaDatacenter = false, accept, redirect = 'follow' } = {}) {
     let lastError;
     for (let attempt = 1; attempt <= retries; attempt++) {
       const rotated = rotate ? await takeRotating() : null;
@@ -115,7 +115,7 @@ export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback
           method,
           body,
           dispatcher,
-          redirect: 'follow',
+          redirect,
           signal: AbortSignal.timeout(timeoutMs),
           headers: {
             'user-agent': USER_AGENT,
@@ -125,6 +125,11 @@ export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback
           },
         });
         const text = await res.text();
+        // With redirect "manual", a redirect is an answer of its own: the caller reads where it leads.
+        if (redirect === 'manual' && res.status >= 300 && res.status < 400) {
+          ok = true;
+          throw Object.assign(new HttpError(`Redirected (HTTP ${res.status}) from ${url} to ${res.headers.get('location')}`, { status: res.status, retryable: false }), { location: res.headers.get('location') });
+        }
         if (res.status === 404 || res.status === 410) {
           ok = true;
           throw new HttpError(`Not found (HTTP ${res.status}): ${url}`, { status: res.status, retryable: false });

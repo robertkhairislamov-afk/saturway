@@ -10,6 +10,7 @@ import * as linkedin from '../src/adapters/linkedin.js';
 import * as multi from '../src/adapters/multi.js';
 import * as reed from '../src/adapters/reed.js';
 import * as stepstone from '../src/adapters/stepstone.js';
+import * as wellfound from '../src/adapters/wellfound.js';
 
 export const ACTORS = {
   greenhouse: {
@@ -174,6 +175,15 @@ export const ACTORS = {
     seoTitle: 'Glassdoor Jobs Scraper – Ratings, Salaries, 62 Countries',
     seoDescription: 'Scrape Glassdoor jobs by keyword and location: company rating, salary and estimate, job type, company size, full description. 62 countries. $1 per 1,000 jobs.',
   },
+  wellfound: {
+    name: 'wellfound-jobs-scraper',
+    title: 'Wellfound Jobs Scraper',
+    tagline: 'startup jobs from Wellfound (AngelList Talent) with salary, equity and company stage',
+    apiExample: { searchQueries: ['software engineer'], location: 'San Francisco', maxItems: 20 },
+    description: 'Scrape startup jobs from Wellfound (formerly AngelList Talent) by role, city or remote: title, salary and equity, experience, remote policy, company stage, size and badges, full description. No login.',
+    seoTitle: 'Wellfound Jobs Scraper – Startup Jobs, Salary & Equity',
+    seoDescription: 'Scrape Wellfound (AngelList) startup jobs by role and location: salary, equity, remote policy, company stage and size, full description. $2 per 1,000 jobs.',
+  },
   multi: {
     name: 'all-in-one-jobs-scraper',
     title: 'All-in-One Jobs Scraper',
@@ -232,6 +242,7 @@ export function inputSchema(ats) {
   if (ats === 'infojobs') return infojobsInputSchema();
   if (ats === 'indeed') return indeedInputSchema();
   if (ats === 'glassdoor') return glassdoorInputSchema();
+  if (ats === 'wellfound') return wellfoundInputSchema();
   if (ats === 'multi') return multiInputSchema();
   const actor = ACTORS[ats];
   const properties = {
@@ -1128,6 +1139,63 @@ function glassdoorInputSchema() {
   };
 }
 
+function wellfoundInputSchema() {
+  return {
+    title: ACTORS.wellfound.title,
+    description: 'Get startup jobs from Wellfound by role, city or remote, with salary, equity and company details, in one clean format.',
+    type: 'object',
+    schemaVersion: 1,
+    properties: {
+      searchQueries: {
+        title: 'Roles',
+        type: 'array',
+        editor: 'stringList',
+        description: 'Job titles as Wellfound names its job pages, for example <code>software engineer</code>, <code>data scientist</code>, <code>product manager</code>, <code>account executive</code> or <code>growth marketer</code>. Each line is a separate search. You can also paste Wellfound links such as <code>https://wellfound.com/role/l/software-engineer/new-york</code>. Leave empty to list every job of the location or every remote job.',
+        prefill: ['software engineer'],
+        placeholderValue: 'data scientist',
+      },
+      location: {
+        title: 'Location',
+        type: 'string',
+        editor: 'textfield',
+        description: 'A city or country as Wellfound names it, for example <code>New York</code>, <code>San Francisco</code>, <code>London</code>, <code>Bangalore</code>, <code>United States</code> or <code>India</code>. Leave empty for every place.',
+        prefill: 'New York',
+      },
+      remoteOnly: {
+        title: 'Remote jobs only',
+        type: 'boolean',
+        default: false,
+        description: 'Search Wellfound\'s remote jobs instead of a location.',
+      },
+      jobTypes: {
+        title: 'Job type',
+        type: 'array',
+        editor: 'select',
+        sectionCaption: 'Wellfound filters',
+        description: 'Leave empty for all.',
+        items: selectOf(wellfound.JOB_TYPES),
+      },
+      postedWithinDays: {
+        title: 'Posted in the last days',
+        type: 'integer',
+        minimum: 0,
+        unit: 'days',
+        description: 'Keep jobs posted in the last N days: 1 means today and yesterday. Leave empty or 0 for any date.',
+      },
+      ...commonSettings({
+        site: 'Wellfound',
+        proxyDescription: 'The Actor connects directly, which is fastest. If Wellfound starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it from the start.',
+      }),
+      includeDescription: {
+        title: 'Include job descriptions',
+        type: 'boolean',
+        default: true,
+        description: 'Save the full description of each job. Turn off for smaller results with every other field.',
+      },
+    },
+  };
+}
+
 const RESIDENTIAL_PROXY = { useApifyProxy: true, apifyProxyGroups: ['RESIDENTIAL'] };
 
 function linkedinInputSchema() {
@@ -1290,6 +1358,7 @@ const EXTRA_COLUMN = {
   stepstone: ['employmentType', 'Employment'],
   indeed: ['employmentType', 'Job type'],
   glassdoor: ['companyRating', 'Rating'],
+  wellfound: ['companyStage', 'Stage'],
 };
 
 const COLUMNS = {
@@ -1314,6 +1383,7 @@ const SWAPPED = {
   stepstone: { 'salary.text': 'industry' },
   multi: { workplaceType: 'employmentType' },
   glassdoor: { workplaceType: 'employmentType' },
+  wellfound: { workplaceType: 'employmentType' },
 };
 
 export const datasetSchema = (ats) => {

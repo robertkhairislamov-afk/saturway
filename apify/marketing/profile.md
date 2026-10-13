@@ -5,7 +5,7 @@
 ## Bio
 
 ```
-Clean data APIs: 15 job sites and ATS (LinkedIn, Indeed, Glassdoor, SEEK, Workday…) in one format, Redfin homes, Google Play and Google News.
+Clean data APIs: 16 job sites and ATS (LinkedIn, Indeed, Glassdoor, Wellfound, Workday…) in one format, Redfin homes, Google Play and Google News.
 ```
 
 ## Описание профиля

@@ -1,0 +1,159 @@
+{
+  "name": "Send new Glassdoor jobs at top-rated companies to Slack with Apify",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## New jobs at top-rated companies, in Slack\n\nEvery weekday morning this workflow finds new remote jobs at companies rated 4 stars or more by their employees on Glassdoor and posts them to a Slack channel as one message, best-rated companies first, with the salary or Glassdoor's salary estimate.\n\n### How it works\n1. **Weekday mornings** starts the workflow at 9:00, Monday to Friday.\n2. **Search Glassdoor** runs the [Glassdoor Jobs Scraper](https://apify.com/robertosan16/glassdoor-jobs-scraper) on Apify with a minimum company rating of 4. With `onlyNew` it returns only jobs it has not returned before for the same search.\n3. **Write the message** turns the jobs into one Slack message with links. When there are no new jobs, nothing is posted.\n4. **Post to Slack** sends it to your channel.\n\n### Set up\n1. Create a free [Apify account](https://console.apify.com/sign-up) and add an Apify credential to the **Search Glassdoor** node: the API token from Apify Console → Settings → API & Integrations, or OAuth on n8n Cloud. If the Apify node is missing, install the verified community node `@apify/n8n-nodes-apify`.\n2. In **Search Glassdoor**, change the search: `searchQueries`, `country`, and `remoteOnly` or a `location`.\n3. Connect Slack in **Post to Slack** and pick the channel.\n4. Activate the workflow.\n\n### Cost\nThe scraper charges $1 per 1,000 jobs. The Apify free plan includes $5 of usage every month.",
+        "height": 740,
+        "width": 460
+      },
+      "id": "overview-0001",
+      "name": "Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -520,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### Your search\n`minCompanyRating` takes 1 to 4. Swap `remoteOnly` for a `location` such as `Chicago, IL` or `London`, and add `jobTypes` or `experienceLevels` if you like.",
+        "height": 240,
+        "width": 300,
+        "color": 5
+      },
+      "id": "search-note-0002",
+      "name": "Search note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "id": "weekday-mornings-0003",
+      "name": "Weekday mornings",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        40,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "Actors",
+        "operation": "Run actor and get dataset",
+        "actorId": "robertosan16~glassdoor-jobs-scraper",
+        "customBody": "{\n  \"searchQueries\": [\n    \"product manager\"\n  ],\n  \"country\": \"US\",\n  \"remoteOnly\": true,\n  \"minCompanyRating\": \"4\",\n  \"postedWithinDays\": 1,\n  \"onlyNew\": true,\n  \"includeDescription\": false,\n  \"maxItems\": 100\n}",
+        "timeout": null,
+        "memory": 512
+      },
+      "id": "search-glassdoor-0004",
+      "name": "Search Glassdoor",
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        300,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// One Slack message with the new jobs, best-rated companies first. The same job posted twice by a\n// company (same title) is listed once.\nconst seen = new Set();\nconst jobs = $input.all().map((item) => item.json).filter((job) => {\n  const key = `${job.title}|${job.companyName}`.toLowerCase();\n  if (seen.has(key)) return false;\n  seen.add(key);\n  return true;\n});\njobs.sort((a, b) => (b.companyRating ?? 0) - (a.companyRating ?? 0));\nconst shown = 20;\nconst lines = jobs.slice(0, shown).map((job) => {\n  const rating = job.companyRating ? ` (${job.companyRating}★)` : '';\n  const place = job.remote ? 'remote' : job.location;\n  const pay = job.salary?.text ?? (job.salaryEstimate ? `${job.salaryEstimate.text}, Glassdoor estimate` : '');\n  return `• <${job.jobUrl}|${job.title}> at ${job.companyName}${rating}${place ? `, ${place}` : ''}${pay ? ` — ${pay}` : ''}`;\n});\nconst more = jobs.length > shown ? `\\n…and ${jobs.length - shown} more in the Apify run.` : '';\nreturn [{ json: { text: `*${jobs.length} new jobs at companies rated 4+ on Glassdoor*\\n${lines.join('\\n')}${more}` } }];"
+      },
+      "id": "write-the-message-0005",
+      "name": "Write the message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#jobs",
+          "mode": "name"
+        },
+        "text": "={{ $json.text }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false,
+          "unfurl_links": false
+        }
+      },
+      "id": "post-to-slack-0006",
+      "name": "Post to Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        820,
+        260
+      ]
+    }
+  ],
+  "connections": {
+    "Weekday mornings": {
+      "main": [
+        [
+          {
+            "node": "Search Glassdoor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Glassdoor": {
+      "main": [
+        [
+          {
+            "node": "Write the message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write the message": {
+      "main": [
+        [
+          {
+            "node": "Post to Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

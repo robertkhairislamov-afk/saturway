@@ -458,6 +458,16 @@ StepStone на платформе иногда отдаёт карточки м�
 - Store 12.10 (всего / 30 дней / 7 дней, вместе с нашими тестами): All-in-One 5/4/2, InfoJobs 3/2/2, Jobstreet 3/2/2, у остальных 2/1/1, у Indeed 2/0/0, у WTTJ 1/0/0. За неделю посторонние пользователи были у All-in-One, InfoJobs и Jobstreet.
 - API Apify показывает по каждому актору число запусков и пользователей, но не кто платил. Чужие запуски чужим аккаунтом не видны, а наши запуски старше недели удалены, поэтому точно разделить запуски нельзя. Пользователей (вместе с нами и ежедневной проверкой Apify) 12.10: All-in-One 6, InfoJobs 3, Jobstreet 3, у остальных по 2. All-in-One пользуются бесплатные пользователи (7 в Insights, 3836 результатов, платящих 0), поэтому $0.02, скорее всего, от InfoJobs ($2 за 1000, это 10 вакансий) или Jobstreet ($1, 20 вакансий). Точно видно только в таблице Insights.
 
+### Шаблоны n8n, 13.10
+
+- Три шаблона в `marketing/n8n/` (собираются `build-templates.mjs`, код узлов Code — в `code/`, тексты для библиотеки — `descriptions.md`):
+  - «Get daily Indeed job alerts in Google Sheets with Apify»: каждое утро Indeed Jobs Scraper с `onlyNew` → столбцы → Google Sheets;
+  - «Send new Glassdoor jobs at top-rated companies to Slack with Apify»: по будням Glassdoor с рейтингом от 4 и удалёнкой → одно сообщение в Slack, лучшие компании первыми, повторы убраны;
+  - «Find companies hiring on Glassdoor and save them as sales leads in Google Sheets»: по понедельникам вакансии за неделю → одна строка на компанию (число вакансий, рейтинг, размер, выручка, отрасль, сайт) → Google Sheets с обновлением по названию компании.
+- Узел Apify — проверенный community-узел `@apify/n8n-nodes-apify` (0.7.0), операция «Run actor and get dataset». «Только новые» работает и при запуске из n8n: память хранится в аккаунте пользователя на каждый поиск.
+- Проверка 13.10: все три импортированы и запущены в локальном n8n 2.42.7 (Node 24, `N8N_EXPRESSION_ENGINE=legacy`) с настоящим узлом Apify на живых акторах; Google Sheets и Slack заменены пустыми узлами, остальное прошло: Indeed — 6 вакансий в столбцах, Glassdoor — сообщение на 5 вакансий, лиды — 52 компании из 60 вакансий.
+- Отправка в библиотеку n8n — на владельце: аккаунт n8n.io, Creator portal, Share new template, по одному шаблону. Страница для копирования с планшета: https://claude.ai/artifact/FdC5f37ek8p44RrRmjW9xR
+
 ### Правки по разбору страницы All-in-One, 1.10
 
 - Цена: карточка Store показывает «from $0.70» (цена тарифа Business), а README — $1. Во все 18 README добавлены цены по тарифам: Free — базовая, Starter −10%, Scale −20%, Business −30% (соответствие тарифов и скидок Bronze, Silver, Gold — по документации Apify).
@@ -532,7 +542,7 @@ Google Play, Lever, Ashby, Greenhouse и Google News пока дальше пе�
 Дальше:
 - Workday: `companyName` сейчас берётся из адреса сайта (`nvidia` строчными). Проверить, есть ли в ответе карточки вакансии `hiringOrganization.name`, и брать имя оттуда;
 - репозиторий с примерами на GitHub;
-- шаблоны n8n;
+- шаблоны n8n (сделаны 13.10, см. «Шаблоны n8n, 13.10»);
 - через 1–2 недели посмотреть Insights и оценку качества.
 
 ### 9. Потом

@@ -1,0 +1,166 @@
+{
+  "name": "Find companies hiring on Glassdoor and save them as sales leads in Google Sheets",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Companies hiring for a role, as sales leads\n\nA company that hires for a role is often about to buy what that role uses: hiring SDRs means a sales team is growing, hiring nurses means a clinic is expanding. Every Monday this workflow finds the companies that posted such jobs on Glassdoor in the last week and keeps one row per company in a Google Sheet, with the number of open jobs, size, revenue, industry, website and Glassdoor rating.\n\n### How it works\n1. **Every Monday** starts the workflow at 7:00.\n2. **Search Glassdoor** runs the [Glassdoor Jobs Scraper](https://apify.com/robertosan16/glassdoor-jobs-scraper) on Apify for jobs posted in the last 7 days.\n3. **One row per company** counts the jobs of each company and keeps its Glassdoor profile.\n4. **Save leads** adds new companies to the sheet and updates the ones already there, matched by name.\n\n### Set up\n1. Create a free [Apify account](https://console.apify.com/sign-up) and add an Apify credential to the **Search Glassdoor** node: the API token from Apify Console → Settings → API & Integrations, or OAuth on n8n Cloud. If the Apify node is missing, install the verified community node `@apify/n8n-nodes-apify`.\n2. In **Search Glassdoor**, set the role you sell to in `searchQueries`, the `country`, and optionally a `location`.\n3. Create a Google Sheet whose first row holds the column names: Company, Open jobs, Rating, Size, Revenue, Industry, Website, Headquarters, Glassdoor page, Latest posting, Job titles, Locations, Updated. Connect Google Sheets and select the sheet in **Save leads**.\n4. Activate the workflow.\n\n### Cost\nThe scraper charges $1 per 1,000 jobs; 500 jobs a week cost $0.50. The Apify free plan includes $5 of usage every month.",
+        "height": 800,
+        "width": 460
+      },
+      "id": "overview-0001",
+      "name": "Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -520,
+        -260
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### Your search\nUse the job titles your buyers hire for. `maxItems` caps the jobs read per run; raise it for big searches.",
+        "height": 200,
+        "width": 300,
+        "color": 5
+      },
+      "id": "search-note-0002",
+      "name": "Search note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -40
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "id": "every-monday-0003",
+      "name": "Every Monday",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        40,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "Actors",
+        "operation": "Run actor and get dataset",
+        "actorId": "robertosan16~glassdoor-jobs-scraper",
+        "customBody": "{\n  \"searchQueries\": [\n    \"sales development representative\"\n  ],\n  \"country\": \"US\",\n  \"postedWithinDays\": 7,\n  \"includeDescription\": false,\n  \"maxItems\": 500\n}",
+        "timeout": null,
+        "memory": 512
+      },
+      "id": "search-glassdoor-0004",
+      "name": "Search Glassdoor",
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        300,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// One row per company: how many matching jobs it posted and what Glassdoor knows about it.\nconst companies = new Map();\nfor (const { json: job } of $input.all()) {\n  if (!job.companyName) continue;\n  const row = companies.get(job.companyName) ?? {\n    Company: job.companyName,\n    'Open jobs': 0,\n    titles: new Set(),\n    places: new Set(),\n    Rating: job.companyRating ?? '',\n    Size: job.companySize ?? '',\n    Revenue: job.companyRevenue ?? '',\n    Industry: job.companyIndustry ?? '',\n    Website: job.companyWebsite ?? '',\n    Headquarters: job.companyHeadquarters ?? '',\n    'Glassdoor page': job.companyUrl ?? '',\n    'Latest posting': '',\n  };\n  row['Open jobs'] += 1;\n  row.titles.add(job.title);\n  if (job.location) row.places.add(job.location);\n  const posted = (job.postedAt ?? '').slice(0, 10);\n  if (posted > row['Latest posting']) row['Latest posting'] = posted;\n  companies.set(job.companyName, row);\n}\nconst today = new Date().toISOString().slice(0, 10);\nreturn [...companies.values()]\n  .sort((a, b) => b['Open jobs'] - a['Open jobs'])\n  .map(({ titles, places, ...row }) => ({\n    json: { ...row, 'Job titles': [...titles].slice(0, 5).join('; '), Locations: [...places].slice(0, 5).join('; '), Updated: today },\n  }));"
+      },
+      "id": "one-row-per-company-0005",
+      "name": "One row per company",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "",
+          "mode": "list"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "Company"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "save-leads-0006",
+      "name": "Save leads",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        820,
+        260
+      ]
+    }
+  ],
+  "connections": {
+    "Every Monday": {
+      "main": [
+        [
+          {
+            "node": "Search Glassdoor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Glassdoor": {
+      "main": [
+        [
+          {
+            "node": "One row per company",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "One row per company": {
+      "main": [
+        [
+          {
+            "node": "Save leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

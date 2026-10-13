@@ -171,7 +171,8 @@ function salaryOf(raw, posting) {
 }
 
 export function toJob(raw, posting = null) {
-  const jobUrl = `${SITE}${String(raw.url).split('?')[0]}`;
+  // Job links come as a path or, since October 2026, as a full address.
+  const jobUrl = new URL(String(raw.url).split('?')[0], SITE).href;
   const types = [].concat(posting?.employmentType ?? []);
   const locations = String(raw.location ?? '').split(/,\s*/).map(cleanText).filter(Boolean);
   const snippetHtml = raw.textSnippet ? `<p>${String(raw.textSnippet).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\n+/g, '</p><p>')}</p>` : '';

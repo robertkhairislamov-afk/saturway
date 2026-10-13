@@ -55,6 +55,8 @@ test('stepstone: jobs in the shared format, with the job page details', () => {
   const partial = stepstone.toJob(raw);
   assert.equal(partial.ats, 'stepstone');
   assert.equal(partial.jobUrl, `https://www.stepstone.de${raw.url.split('?')[0]}`);
+  // StepStone now also gives full addresses.
+  assert.equal(stepstone.toJob({ ...raw, url: `https://www.stepstone.de${raw.url}` }).jobUrl, partial.jobUrl);
   assert.deepEqual(partial.locations, raw.location.split(', '));
   assert.equal(partial.workplaceType, 'hybrid');
   assert.ok(partial.benefits.length > 0 && partial.benefits.every((benefit) => !benefit.includes('<')));

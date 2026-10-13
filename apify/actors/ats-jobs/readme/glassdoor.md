@@ -119,6 +119,7 @@ You pay only for the jobs you get: **$1 per 1,000 jobs**. That is the price on t
 ## Tips
 
 - **Daily job alerts**: save your input as a task, turn on **Only new jobs since the last run** and add a schedule. Send new jobs to Slack, email or Google Sheets with Apify integrations.
+- **Ready-made n8n workflows**: [new jobs at companies rated 4+ posted to Slack every weekday](https://github.com/robertkhairislamov-afk/saturway/blob/claude/gifted-dirac-sv0ed6/apify/marketing/n8n/glassdoor-top-rated-jobs-slack.json), and [companies hiring for a role saved as sales leads in Google Sheets every week](https://github.com/robertkhairislamov-afk/saturway/blob/claude/gifted-dirac-sv0ed6/apify/marketing/n8n/glassdoor-hiring-companies-leads.json). Import the file into n8n, add your Apify credential and set your search.
 - **Big searches**: a search such as `nurse` in the whole United States has hundreds of thousands of jobs, more than Glassdoor lists for one search. Set **Maximum jobs in total**, or search city by city or with filters.
 - **Faster runs**: turn off **Include job descriptions**. You still get every other field.
 - **Stricter results**: Glassdoor also matches words in the description. Use **Title must contain** to keep only jobs with your keyword in the title.

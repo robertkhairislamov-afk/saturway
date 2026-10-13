@@ -1,0 +1,100 @@
+{
+  "jobDetailStatus": 200,
+  "jobDetailResponse": {
+    "id": "70000001",
+    "jobId": 70000001,
+    "title": "Java Developer",
+    "locations": [
+      {
+        "city": "Pune",
+        "state": "Maharashtra",
+        "country": "India",
+        "isoCode": "IN"
+      },
+      {
+        "city": "Bengaluru / Bangalore",
+        "state": "Karnataka",
+        "country": "India",
+        "isoCode": "IN"
+      }
+    ],
+    "minimumExperience": {
+      "years": 3
+    },
+    "maximumExperience": {
+      "years": 6
+    },
+    "minimumSalary": {
+      "currency": "INR",
+      "absoluteValue": 600000,
+      "absoluteMonthlyValue": 50000
+    },
+    "maximumSalary": {
+      "currency": "INR",
+      "absoluteValue": 900000,
+      "absoluteMonthlyValue": 75000
+    },
+    "createdAt": 1791800000000,
+    "closedAt": 1796000000000,
+    "updatedAt": "2 days ago",
+    "industries": [
+      "Information Technology"
+    ],
+    "functions": [
+      "IT"
+    ],
+    "roles": [
+      "Software Engineer"
+    ],
+    "jobTypes": [
+      "Permanent Job"
+    ],
+    "employmentTypes": [
+      "Full time"
+    ],
+    "skills": "Java, Spring Boot, SQL",
+    "companyId": 1001,
+    "companyName": "Beispiel Tech Pvt Ltd",
+    "recruiterName": "Example Recruiter",
+    "employerTypes": [
+      "Company"
+    ],
+    "applyUrl": "",
+    "redirectUrl": "",
+    "currencyCode": "INR",
+    "hideSalary": 0,
+    "hideCompanyName": 0,
+    "showContactDetails": 0,
+    "totalApplicants": 42,
+    "jobSalaryConfidential": false,
+    "isUrgentlyHiring": false,
+    "quickApplyJob": 1,
+    "jdUrl": "/job/java-developer-beispiel-tech-pune-70000001",
+    "seoJdUrl": "/job/java-developer-beispiel-tech-pvt-ltd-pune-india-70000001",
+    "seoCompanyUrl": "/search/beispiel-tech-pvt-ltd-1001-jobs-career",
+    "order": 0,
+    "description": "<p><strong>About the role</strong></p><ul><li>Build services in Java</li><li>Review code</li></ul>",
+    "company": {
+      "id": "1001",
+      "name": "Beispiel Tech Pvt Ltd",
+      "employerType": "company",
+      "email": "**********",
+      "phone": "**********",
+      "address": "Example Street 1, Pune",
+      "city": "Pune",
+      "country": "India"
+    },
+    "itSkills": [
+      {
+        "text": "Java",
+        "synonyms": [
+          "Core Java"
+        ]
+      },
+      {
+        "text": "Spring Boot",
+        "synonyms": []
+      }
+    ]
+  }
+}

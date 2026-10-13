@@ -3,6 +3,7 @@
 // job board instead of company boards, so they have their own search forms.
 
 import { CLASSIFICATIONS, WORK_ARRANGEMENTS, WORK_TYPES } from '../src/adapters/seek.js';
+import * as foundit from '../src/adapters/foundit.js';
 import * as glassdoor from '../src/adapters/glassdoor.js';
 import * as indeed from '../src/adapters/indeed.js';
 import * as infojobs from '../src/adapters/infojobs.js';
@@ -194,6 +195,15 @@ export const ACTORS = {
     seoTitle: 'Xing Jobs Scraper – Jobs in Germany, Austria, Switzerland',
     seoDescription: 'Scrape Xing jobs by keyword and city in Germany, Austria and Switzerland: salary or estimate, job type, career level, full description. $1 per 1,000 jobs.',
   },
+  foundit: {
+    name: 'foundit-jobs-scraper',
+    title: 'Foundit Jobs Scraper',
+    tagline: 'jobs in India, the Gulf, Singapore, Malaysia, the Philippines and Hong Kong from Foundit (formerly Monster), with experience, skills and salary',
+    apiExample: { searchQueries: ['java developer'], location: 'Bangalore', maxItems: 20 },
+    description: 'Scrape Foundit (Monster India, Gulf, Singapore) jobs by keyword and city: title, company, salary, experience, skills, industry, applicants, full description. India, UAE, Saudi Arabia and more.',
+    seoTitle: 'Foundit Jobs Scraper – Monster India, Gulf & Singapore',
+    seoDescription: 'Scrape Foundit (Monster) jobs in India, UAE, Saudi Arabia, Singapore and more: salary, experience, skills, applicants, full description. $2 per 1,000 jobs.',
+  },
   multi: {
     name: 'all-in-one-jobs-scraper',
     title: 'All-in-One Jobs Scraper',
@@ -254,6 +264,7 @@ export function inputSchema(ats) {
   if (ats === 'glassdoor') return glassdoorInputSchema();
   if (ats === 'wellfound') return wellfoundInputSchema();
   if (ats === 'xing') return xingInputSchema();
+  if (ats === 'foundit') return founditInputSchema();
   if (ats === 'multi') return multiInputSchema();
   const actor = ACTORS[ats];
   const properties = {
@@ -1280,6 +1291,81 @@ function xingInputSchema() {
   };
 }
 
+function founditInputSchema() {
+  return {
+    title: ACTORS.foundit.title,
+    description: 'Search Foundit like on the website, in India, the Gulf countries and Southeast Asia, and get every matching job in one clean format.',
+    type: 'object',
+    schemaVersion: 1,
+    properties: {
+      searchQueries: {
+        title: 'Job titles or keywords',
+        type: 'array',
+        editor: 'stringList',
+        description: 'What to search, for example <code>java developer</code>, <code>accountant</code> or <code>sales executive</code>. Each line is a separate search with the filters below. You can also paste links of searches from Foundit.',
+        prefill: ['java developer'],
+        placeholderValue: 'data analyst',
+      },
+      country: {
+        title: 'Country',
+        type: 'string',
+        editor: 'select',
+        description: 'Where to search. India is foundit.in; the Gulf countries and Egypt are founditgulf.com. Links of Foundit searches keep their own site.',
+        ...sortedSelectOf(Object.fromEntries(Object.entries(foundit.COUNTRIES).map(([code, [label]]) => [code, label]))),
+        default: 'IN',
+      },
+      location: {
+        title: 'City',
+        type: 'string',
+        editor: 'textfield',
+        description: 'A city in that country, for example <code>Bangalore</code>, <code>Pune</code>, <code>Dubai</code> or <code>Riyadh</code>. Separate several cities with <code>;</code>. Leave empty for the whole country.',
+        prefill: 'Bangalore',
+      },
+      experienceYears: {
+        title: 'Your experience',
+        type: 'integer',
+        minimum: 0,
+        maximum: 40,
+        unit: 'years',
+        sectionCaption: 'Foundit filters',
+        description: 'Only jobs that fit this many years of experience. Leave empty for all.',
+      },
+      remoteOnly: {
+        title: 'Work from home only',
+        type: 'boolean',
+        default: false,
+        description: 'Only jobs Foundit marks as work from home.',
+      },
+      sortBy: {
+        title: 'Sort by',
+        type: 'string',
+        editor: 'select',
+        description: 'Relevance, as on Foundit, or newest jobs first.',
+        enum: ['relevance', 'date'],
+        enumTitles: ['Relevance', 'Newest first'],
+        default: 'relevance',
+      },
+      postedWithinDays: {
+        title: 'Posted in the last days',
+        type: 'integer',
+        minimum: 0,
+        unit: 'days',
+        description: 'Keep jobs posted in the last N days: 1 means today and yesterday. Leave empty or 0 for any date.',
+      },
+      ...commonSettings({
+        site: 'Foundit',
+        proxyDescription: 'The Actor connects directly, which is fastest. If Foundit starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it from the start.',
+      }),
+      includeDescription: {
+        title: 'Include job descriptions',
+        type: 'boolean',
+        default: true,
+        description: 'Load the full description (text and HTML), every location and the skills of each job, one request per job. Turn off for much faster runs with every other field.',
+      },
+    },
+  };
+}
+
 const RESIDENTIAL_PROXY = { useApifyProxy: true, apifyProxyGroups: ['RESIDENTIAL'] };
 
 function linkedinInputSchema() {
@@ -1444,6 +1530,7 @@ const EXTRA_COLUMN = {
   glassdoor: ['companyRating', 'Rating'],
   wellfound: ['companyStage', 'Stage'],
   xing: ['seniorityLevel', 'Career level'],
+  foundit: ['applicants', 'Applicants'],
 };
 
 const COLUMNS = {
@@ -1470,6 +1557,7 @@ const SWAPPED = {
   glassdoor: { workplaceType: 'employmentType' },
   wellfound: { workplaceType: 'employmentType' },
   xing: { 'salary.text': 'employmentType' },
+  foundit: { workplaceType: 'employmentType' },
 };
 
 export const datasetSchema = (ats) => {

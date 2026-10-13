@@ -1,5 +1,6 @@
 import * as ashby from './ashby.js';
 import * as dice from './dice.js';
+import * as foundit from './foundit.js';
 import * as glassdoor from './glassdoor.js';
 import * as greenhouse from './greenhouse.js';
 import * as indeed from './indeed.js';
@@ -33,5 +34,6 @@ export const ADAPTERS = {
   glassdoor,
   wellfound,
   xing,
+  foundit,
   multi,
 };

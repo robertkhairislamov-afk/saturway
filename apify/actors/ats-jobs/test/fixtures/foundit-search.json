@@ -1,0 +1,254 @@
+{
+  "jobSearchStatus": 200,
+  "jobSearchResponse": {
+    "data": [
+      {
+        "id": "70000001",
+        "jobId": 70000001,
+        "title": "Java Developer",
+        "locations": "Pune, India",
+        "minimumExperience": {
+          "years": 3
+        },
+        "maximumExperience": {
+          "years": 6
+        },
+        "minimumSalary": {
+          "currency": "INR",
+          "absoluteValue": 600000,
+          "absoluteMonthlyValue": 50000
+        },
+        "maximumSalary": {
+          "currency": "INR",
+          "absoluteValue": 900000,
+          "absoluteMonthlyValue": 75000
+        },
+        "createdAt": 1791800000000,
+        "closedAt": 1796000000000,
+        "updatedAt": "2 days ago",
+        "industries": [
+          "Information Technology"
+        ],
+        "functions": [
+          "IT"
+        ],
+        "roles": [
+          "Software Engineer"
+        ],
+        "jobTypes": [],
+        "employmentTypes": [
+          "Full time"
+        ],
+        "skills": "Java, Spring Boot, SQL",
+        "companyId": 1001,
+        "companyName": "Beispiel Tech Pvt Ltd",
+        "recruiterName": "Example Recruiter",
+        "employerTypes": [
+          "Company"
+        ],
+        "applyUrl": "",
+        "redirectUrl": "",
+        "currencyCode": "INR",
+        "hideSalary": 0,
+        "hideCompanyName": 0,
+        "showContactDetails": 0,
+        "totalApplicants": 42,
+        "jobSalaryConfidential": false,
+        "isUrgentlyHiring": false,
+        "quickApplyJob": 1,
+        "jdUrl": "/job/java-developer-beispiel-tech-pune-70000001",
+        "seoJdUrl": "/job/java-developer-beispiel-tech-pvt-ltd-pune-india-70000001",
+        "seoCompanyUrl": "/search/beispiel-tech-pvt-ltd-1001-jobs-career",
+        "order": 0
+      },
+      {
+        "id": "70000001",
+        "jobId": 70000001,
+        "title": "Java Developer",
+        "locations": "Pune, India",
+        "minimumExperience": {
+          "years": 3
+        },
+        "maximumExperience": {
+          "years": 6
+        },
+        "minimumSalary": {
+          "currency": "INR",
+          "absoluteValue": 600000,
+          "absoluteMonthlyValue": 50000
+        },
+        "maximumSalary": {
+          "currency": "INR",
+          "absoluteValue": 900000,
+          "absoluteMonthlyValue": 75000
+        },
+        "createdAt": 1791800000000,
+        "closedAt": 1796000000000,
+        "updatedAt": "2 days ago",
+        "industries": [
+          "Information Technology"
+        ],
+        "functions": [
+          "IT"
+        ],
+        "roles": [
+          "Software Engineer"
+        ],
+        "jobTypes": [],
+        "employmentTypes": [
+          "Full time"
+        ],
+        "skills": "Java, Spring Boot, SQL",
+        "companyId": 1001,
+        "companyName": "Beispiel Tech Pvt Ltd",
+        "recruiterName": "Example Recruiter",
+        "employerTypes": [
+          "Company"
+        ],
+        "applyUrl": "",
+        "redirectUrl": "",
+        "currencyCode": "INR",
+        "hideSalary": 0,
+        "hideCompanyName": 0,
+        "showContactDetails": 0,
+        "totalApplicants": 42,
+        "jobSalaryConfidential": false,
+        "isUrgentlyHiring": false,
+        "quickApplyJob": 1,
+        "jdUrl": "/job/java-developer-beispiel-tech-pune-70000001",
+        "seoJdUrl": "/job/java-developer-beispiel-tech-pvt-ltd-pune-india-70000001",
+        "seoCompanyUrl": "/search/beispiel-tech-pvt-ltd-1001-jobs-career"
+      },
+      {
+        "id": "70000002",
+        "jobId": 70000002,
+        "title": "Remote Backend Engineer",
+        "locations": "Remote",
+        "minimumExperience": {
+          "years": 0
+        },
+        "maximumExperience": {
+          "years": 0
+        },
+        "minimumSalary": {
+          "currency": "INR",
+          "absoluteValue": 0,
+          "absoluteMonthlyValue": 0
+        },
+        "maximumSalary": {
+          "currency": "INR",
+          "absoluteValue": 0,
+          "absoluteMonthlyValue": 0
+        },
+        "createdAt": 1791800000000,
+        "closedAt": 1796000000000,
+        "updatedAt": "2 days ago",
+        "industries": [
+          "Information Technology"
+        ],
+        "functions": [
+          "IT"
+        ],
+        "roles": [
+          "Software Engineer"
+        ],
+        "jobTypes": [
+          "Work From Home"
+        ],
+        "employmentTypes": [
+          "Full time"
+        ],
+        "skills": "Java, Spring Boot, SQL",
+        "companyId": 1002,
+        "companyName": "Muster Staffing LLP",
+        "recruiterName": "Example Recruiter",
+        "employerTypes": [
+          "Consultant"
+        ],
+        "applyUrl": "https://careers.example.com/apply/2",
+        "redirectUrl": "",
+        "currencyCode": "INR",
+        "hideSalary": 0,
+        "hideCompanyName": 0,
+        "showContactDetails": 0,
+        "totalApplicants": 0,
+        "jobSalaryConfidential": false,
+        "isUrgentlyHiring": true,
+        "quickApplyJob": 0,
+        "jdUrl": "/job/java-developer-beispiel-tech-pune-70000002",
+        "seoJdUrl": "/job/java-developer-beispiel-tech-pvt-ltd-pune-india-70000002",
+        "seoCompanyUrl": "/search/beispiel-tech-pvt-ltd-1001-jobs-career",
+        "order": 1
+      },
+      {
+        "id": "70000003",
+        "jobId": 70000003,
+        "title": "Accounts Manager",
+        "locations": "Pune, India",
+        "minimumExperience": {
+          "years": 3
+        },
+        "maximumExperience": {
+          "years": 6
+        },
+        "minimumSalary": {
+          "currency": "INR",
+          "absoluteValue": 600000,
+          "absoluteMonthlyValue": 50000
+        },
+        "maximumSalary": {
+          "currency": "INR",
+          "absoluteValue": 900000,
+          "absoluteMonthlyValue": 75000
+        },
+        "createdAt": 1791800000000,
+        "closedAt": 1796000000000,
+        "updatedAt": "2 days ago",
+        "industries": [
+          "Other"
+        ],
+        "functions": [
+          "Finance"
+        ],
+        "roles": [
+          "Software Engineer"
+        ],
+        "jobTypes": [],
+        "employmentTypes": [
+          "Full time"
+        ],
+        "skills": "Java, Spring Boot, SQL",
+        "companyId": 1001,
+        "companyName": "Confidential",
+        "recruiterName": "Example Recruiter",
+        "employerTypes": [
+          "Company"
+        ],
+        "applyUrl": "",
+        "redirectUrl": "",
+        "currencyCode": "INR",
+        "hideSalary": 1,
+        "hideCompanyName": 1,
+        "showContactDetails": 0,
+        "totalApplicants": 42,
+        "jobSalaryConfidential": false,
+        "isUrgentlyHiring": false,
+        "quickApplyJob": 1,
+        "jdUrl": "/job/java-developer-beispiel-tech-pune-70000003",
+        "seoJdUrl": "/job/java-developer-beispiel-tech-pvt-ltd-pune-india-70000003",
+        "seoCompanyUrl": "/search/beispiel-tech-pvt-ltd-1001-jobs-career",
+        "order": 2
+      }
+    ],
+    "meta": {
+      "paging": {
+        "cursors": {
+          "next": "100",
+          "previous": "0"
+        },
+        "total": 3,
+        "limit": 100
+      }
+    }
+  }
+}

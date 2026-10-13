@@ -1,0 +1,388 @@
+{
+  "data": {
+    "jobSearchByQuery": {
+      "collection": [
+        {
+          "position": 0,
+          "jobDetail": {
+            "__typename": "VisibleJob",
+            "language": "de",
+            "keywords": [
+              "sql",
+              "power bi",
+              "berlin"
+            ],
+            "summary": {
+              "content": {
+                "introduction": "A data team is looking for an analyst.",
+                "qualifications": [
+                  "SQL",
+                  "Power BI"
+                ],
+                "keyResponsibilities": [
+                  "Build dashboards",
+                  "Define KPIs"
+                ]
+              }
+            },
+            "slug": "berlin-data-analyst-158000001",
+            "url": "https://www.xing.com/jobs/berlin-data-analyst-158000001",
+            "title": "Data Analyst (m/w/d)",
+            "activatedAt": "2026-10-01T08:00:00Z",
+            "refreshedAt": "2026-10-10T08:00:00Z",
+            "activeUntil": "2026-11-01T08:00:00Z",
+            "remoteOptions": [
+              "PARTLY_REMOTE"
+            ],
+            "location": {
+              "city": "Berlin",
+              "zipCode": "10115",
+              "region": "Land Berlin",
+              "country": {
+                "countryCode": "DE"
+              }
+            },
+            "locations": [
+              {
+                "city": "Berlin",
+                "zipCode": "10115",
+                "region": "Land Berlin",
+                "country": {
+                  "countryCode": "DE"
+                }
+              },
+              {
+                "city": "Hamburg",
+                "zipCode": "20095",
+                "region": "Hamburg",
+                "country": {
+                  "countryCode": "DE"
+                }
+              }
+            ],
+            "employmentType": {
+              "id": "FULL_TIME.ef2fe9",
+              "localizationValue": "Full-time"
+            },
+            "careerLevel": {
+              "id": "3.2ebf16",
+              "localizationValue": "Professional/Experienced"
+            },
+            "discipline": {
+              "localizationValue": "Analysis and statistics"
+            },
+            "industry": {
+              "localizationValue": "Computer software"
+            },
+            "companyInfo": {
+              "companyNameOverride": "Beispiel Software GmbH",
+              "company": {
+                "id": "1111.d4e5f6",
+                "companyName": "Beispiel Software GmbH",
+                "companySize": "51-200 employees",
+                "links": {
+                  "public": "https://www.xing.com/pages/beispiel-software"
+                },
+                "logos": {
+                  "logo96px": "https://www.xing.com/imagecache/public/scaled_original_image/example-logo"
+                },
+                "industry": {
+                  "localizationValue": "Computer software"
+                },
+                "address": {
+                  "city": "Berlin"
+                }
+              }
+            },
+            "salary": {
+              "__typename": "SalaryRange",
+              "currency": "EUR",
+              "minimum": 60000,
+              "maximum": 75000
+            },
+            "application": {
+              "__typename": "JobXingApplication"
+            },
+            "description": {
+              "__typename": "TemplateData",
+              "genericDescription": null,
+              "companyDescriptionTitle": "About us",
+              "companyDescriptionContent": "<p>We build software for logistics.</p>",
+              "responsibilityTitle": "Your tasks",
+              "responsibilityContent": "<ul><li>Build dashboards</li><li>Define KPIs</li></ul>",
+              "skillsTitle": "Your profile",
+              "skillsContent": "<ul><li>SQL</li></ul>",
+              "weOfferTitle": "We offer",
+              "weOfferContent": "<p>30 days of holiday</p>"
+            },
+            "id": "158000001.a1b2c3"
+          }
+        },
+        {
+          "position": 1,
+          "jobDetail": {
+            "__typename": "VisibleJob",
+            "language": "de",
+            "keywords": [
+              "sql",
+              "power bi",
+              "berlin"
+            ],
+            "summary": {
+              "content": {
+                "introduction": "A data team is looking for an analyst.",
+                "qualifications": [
+                  "SQL",
+                  "Power BI"
+                ],
+                "keyResponsibilities": [
+                  "Build dashboards",
+                  "Define KPIs"
+                ]
+              }
+            },
+            "slug": "muenchen-controller-158000002",
+            "url": "https://www.xing.com/jobs/muenchen-controller-158000002",
+            "title": "Controller (w/m/d)",
+            "activatedAt": "2026-09-20T10:30:00Z",
+            "refreshedAt": "2026-10-12T10:30:00Z",
+            "activeUntil": "2026-10-30T10:30:00Z",
+            "remoteOptions": [
+              "NON_REMOTE"
+            ],
+            "location": {
+              "city": "München",
+              "zipCode": null,
+              "region": "Bayern",
+              "country": {
+                "countryCode": "DE"
+              }
+            },
+            "locations": [
+              {
+                "city": "München",
+                "zipCode": null,
+                "region": "Bayern",
+                "country": {
+                  "countryCode": "DE"
+                }
+              }
+            ],
+            "employmentType": {
+              "id": "PART_TIME.58889d",
+              "localizationValue": "Part-time"
+            },
+            "careerLevel": {
+              "id": "2.24d1f6",
+              "localizationValue": "Entry Level"
+            },
+            "discipline": {
+              "localizationValue": "Finance, accounting and controlling"
+            },
+            "industry": {
+              "localizationValue": "Other services"
+            },
+            "companyInfo": {
+              "companyNameOverride": "Muster Personal GmbH",
+              "company": {
+                "id": "2222.0a0b0c",
+                "companyName": "Hafen Beispiel e.V.",
+                "companySize": "11-50 employees",
+                "links": {
+                  "public": "https://www.xing.com/pages/hafen-beispiel"
+                },
+                "logos": {
+                  "logo96px": "https://www.xing.com/imagecache/public/scaled_original_image/example-logo"
+                },
+                "industry": {
+                  "localizationValue": "Marketing"
+                },
+                "address": {
+                  "city": "Hamburg"
+                }
+              }
+            },
+            "salary": {
+              "__typename": "SalaryEstimate",
+              "currency": "EUR",
+              "minimum": 48000,
+              "maximum": 61000,
+              "median": 54500
+            },
+            "application": {
+              "__typename": "UrlApplication",
+              "applyUrl": "https://jobs.example.com/apply/2"
+            },
+            "description": {
+              "__typename": "HtmlDescription",
+              "content": "<b>Die Stelle</b><br><ul><li>Monatsabschluss</li><li>Reporting</li></ul>"
+            },
+            "id": "158000002.a1b2c3"
+          }
+        },
+        {
+          "position": 2,
+          "jobDetail": {
+            "__typename": "VisibleJob",
+            "language": "de",
+            "keywords": [
+              "sql",
+              "power bi",
+              "berlin"
+            ],
+            "summary": null,
+            "slug": "remote-product-manager-158000003",
+            "url": "https://www.xing.com/jobs/remote-product-manager-158000003",
+            "title": "Product Manager",
+            "activatedAt": "2026-10-11T07:00:00Z",
+            "refreshedAt": "2026-10-11T07:00:00Z",
+            "activeUntil": "2026-12-11T07:00:00Z",
+            "remoteOptions": [
+              "FULL_REMOTE",
+              "PARTLY_REMOTE"
+            ],
+            "location": {
+              "city": "Zürich",
+              "zipCode": "8001",
+              "region": "Zürich",
+              "country": {
+                "countryCode": "CH"
+              }
+            },
+            "locations": [
+              {
+                "city": "Zürich",
+                "zipCode": "8001",
+                "region": "Zürich",
+                "country": {
+                  "countryCode": "CH"
+                }
+              }
+            ],
+            "employmentType": {
+              "id": "CONTRACTOR.0ed397",
+              "localizationValue": "Self-employed"
+            },
+            "careerLevel": {
+              "id": "4.83b992",
+              "localizationValue": "Manager/Supervisor"
+            },
+            "discipline": {
+              "localizationValue": "Product management"
+            },
+            "industry": {
+              "localizationValue": "Internet and online media"
+            },
+            "companyInfo": {
+              "companyNameOverride": null,
+              "company": {
+                "id": "3333.1d2e3f",
+                "companyName": "Muster AG",
+                "companySize": null,
+                "links": {
+                  "public": null
+                },
+                "logos": {
+                  "logo96px": "https://www.xing.com/imagecache/public/scaled_original_image/example-logo"
+                },
+                "industry": {
+                  "localizationValue": "Internet and online media"
+                },
+                "address": {
+                  "city": "Zürich"
+                }
+              }
+            },
+            "salary": {
+              "__typename": "Salary",
+              "currency": "CHF",
+              "amount": 120000
+            },
+            "application": {
+              "__typename": "JobXingCustomApplication"
+            },
+            "description": {
+              "__typename": "ExternalUrlDescription",
+              "htmlContent": "<p>Own the roadmap.</p>"
+            },
+            "id": "158000003.a1b2c3"
+          }
+        },
+        {
+          "position": 3,
+          "jobDetail": {
+            "__typename": "VisibleJob",
+            "language": "de",
+            "keywords": [
+              "sql",
+              "power bi",
+              "berlin"
+            ],
+            "summary": {
+              "content": {
+                "introduction": "A data team is looking for an analyst.",
+                "qualifications": [
+                  "SQL",
+                  "Power BI"
+                ],
+                "keyResponsibilities": [
+                  "Build dashboards",
+                  "Define KPIs"
+                ]
+              }
+            },
+            "slug": "wien-pflegefachkraft-158000004",
+            "url": "https://www.xing.com/jobs/wien-pflegefachkraft-158000004",
+            "title": "Pflegefachkraft (m/w/d)",
+            "activatedAt": "2026-10-05T12:00:00Z",
+            "refreshedAt": "2026-10-05T12:00:00Z",
+            "activeUntil": "2026-11-05T12:00:00Z",
+            "remoteOptions": [],
+            "location": {
+              "city": "Wien",
+              "zipCode": "1010",
+              "region": "Wien",
+              "country": {
+                "countryCode": "AT"
+              }
+            },
+            "locations": [
+              {
+                "city": "Wien",
+                "zipCode": "1010",
+                "region": "Wien",
+                "country": {
+                  "countryCode": "AT"
+                }
+              }
+            ],
+            "employmentType": {
+              "id": "FULL_TIME.ef2fe9",
+              "localizationValue": "Full-time"
+            },
+            "careerLevel": {
+              "id": "3.2ebf16",
+              "localizationValue": "Professional/Experienced"
+            },
+            "discipline": {
+              "localizationValue": "Health, medical and social"
+            },
+            "industry": {
+              "localizationValue": "Health and social"
+            },
+            "companyInfo": {
+              "companyNameOverride": "Pflegeheim Beispiel",
+              "company": null
+            },
+            "salary": null,
+            "application": {
+              "__typename": "JobXingApplication"
+            },
+            "description": null,
+            "id": "158000004.a1b2c3"
+          }
+        }
+      ]
+    }
+  }
+}

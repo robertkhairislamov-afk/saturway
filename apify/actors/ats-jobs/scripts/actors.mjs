@@ -11,6 +11,7 @@ import * as multi from '../src/adapters/multi.js';
 import * as reed from '../src/adapters/reed.js';
 import * as stepstone from '../src/adapters/stepstone.js';
 import * as wellfound from '../src/adapters/wellfound.js';
+import * as xing from '../src/adapters/xing.js';
 
 export const ACTORS = {
   greenhouse: {
@@ -184,6 +185,15 @@ export const ACTORS = {
     seoTitle: 'Wellfound Jobs Scraper – Startup Jobs, Salary & Equity',
     seoDescription: 'Scrape Wellfound (AngelList) startup jobs by role and location: salary, equity, remote policy, company stage and size, full description. $2 per 1,000 jobs.',
   },
+  xing: {
+    name: 'xing-jobs-scraper',
+    title: 'Xing Jobs Scraper',
+    tagline: 'jobs in Germany, Austria and Switzerland from Xing, with salary or Xing\'s salary estimate and career level',
+    apiExample: { searchQueries: ['data analyst'], location: 'München', maxItems: 20 },
+    description: 'Scrape Xing jobs in Germany, Austria and Switzerland by keyword and city: title, company, salary or Xing estimate, job type, career level, remote, full description. No login.',
+    seoTitle: 'Xing Jobs Scraper – Jobs in Germany, Austria, Switzerland',
+    seoDescription: 'Scrape Xing jobs by keyword and city in Germany, Austria and Switzerland: salary or estimate, job type, career level, full description. $1 per 1,000 jobs.',
+  },
   multi: {
     name: 'all-in-one-jobs-scraper',
     title: 'All-in-One Jobs Scraper',
@@ -243,6 +253,7 @@ export function inputSchema(ats) {
   if (ats === 'indeed') return indeedInputSchema();
   if (ats === 'glassdoor') return glassdoorInputSchema();
   if (ats === 'wellfound') return wellfoundInputSchema();
+  if (ats === 'xing') return xingInputSchema();
   if (ats === 'multi') return multiInputSchema();
   const actor = ACTORS[ats];
   const properties = {
@@ -1196,6 +1207,79 @@ function wellfoundInputSchema() {
   };
 }
 
+function xingInputSchema() {
+  return {
+    title: ACTORS.xing.title,
+    description: 'Search Xing like on the website, in Germany, Austria and Switzerland, and get every matching job in one clean format.',
+    type: 'object',
+    schemaVersion: 1,
+    properties: {
+      searchQueries: {
+        title: 'Job titles or keywords',
+        type: 'array',
+        editor: 'stringList',
+        description: 'What to search, for example <code>data analyst</code>, <code>Pflegefachkraft</code> or <code>Projektmanager</code>. Each line is a separate search with the filters below. You can also paste links of searches from xing.com/jobs.',
+        prefill: ['software engineer'],
+        placeholderValue: 'data analyst',
+      },
+      location: {
+        title: 'City',
+        type: 'string',
+        editor: 'textfield',
+        description: 'A city in Germany, Austria or Switzerland, for example <code>Berlin</code>, <code>München</code>, <code>Wien</code> or <code>Zürich</code>. Leave empty to search everywhere. Xing does not search by state or country.',
+        prefill: 'Berlin',
+      },
+      distance: {
+        title: 'Distance around the city',
+        type: 'integer',
+        minimum: 0,
+        maximum: 200,
+        unit: 'km',
+        description: 'Also find jobs this far from the city. Leave empty for Xing\'s default.',
+      },
+      jobTypes: {
+        title: 'Job type',
+        type: 'array',
+        editor: 'select',
+        sectionCaption: 'Xing filters',
+        description: 'Leave empty for all. With several types you get jobs of any of them.',
+        items: selectOf(namesOf(xing.JOB_TYPES)),
+      },
+      experienceLevels: {
+        title: 'Career level',
+        type: 'array',
+        editor: 'select',
+        description: 'Leave empty for all. With several levels you get jobs of any of them.',
+        items: selectOf(namesOf(xing.LEVELS)),
+      },
+      workplaceTypes: {
+        title: 'Remote, hybrid or on-site',
+        type: 'array',
+        editor: 'select',
+        description: 'Leave empty for all.',
+        items: selectOf(namesOf(xing.WORKPLACES)),
+      },
+      postedWithinDays: {
+        title: 'Posted in the last days',
+        type: 'integer',
+        minimum: 0,
+        unit: 'days',
+        description: 'Keep jobs posted in the last N days: 1 means today and yesterday. Leave empty or 0 for any date.',
+      },
+      ...commonSettings({
+        site: 'Xing',
+        proxyDescription: 'The Actor connects directly, which is fastest. If Xing starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it from the start.',
+      }),
+      includeDescription: {
+        title: 'Include job descriptions',
+        type: 'boolean',
+        default: true,
+        description: 'Save the full description (text and HTML) of each job. Turn off for smaller, faster results with every other field.',
+      },
+    },
+  };
+}
+
 const RESIDENTIAL_PROXY = { useApifyProxy: true, apifyProxyGroups: ['RESIDENTIAL'] };
 
 function linkedinInputSchema() {
@@ -1359,6 +1443,7 @@ const EXTRA_COLUMN = {
   indeed: ['employmentType', 'Job type'],
   glassdoor: ['companyRating', 'Rating'],
   wellfound: ['companyStage', 'Stage'],
+  xing: ['seniorityLevel', 'Career level'],
 };
 
 const COLUMNS = {
@@ -1384,6 +1469,7 @@ const SWAPPED = {
   multi: { workplaceType: 'employmentType' },
   glassdoor: { workplaceType: 'employmentType' },
   wellfound: { workplaceType: 'employmentType' },
+  xing: { 'salary.text': 'employmentType' },
 };
 
 export const datasetSchema = (ats) => {

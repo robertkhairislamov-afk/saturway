@@ -13,6 +13,7 @@ import * as stepstone from './stepstone.js';
 import * as wellfound from './wellfound.js';
 import * as workday from './workday.js';
 import * as wttj from './wttj.js';
+import * as xing from './xing.js';
 
 export const ADAPTERS = {
   greenhouse,
@@ -31,5 +32,6 @@ export const ADAPTERS = {
   indeed,
   glassdoor,
   wellfound,
+  xing,
   multi,
 };

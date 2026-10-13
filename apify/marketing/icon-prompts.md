@@ -154,3 +154,9 @@ If an icon is attached, copy its style exactly: the same flat look, stroke weigh
 ```
 If an icon is attached, copy its style exactly: the same flat look, stroke weight, symbol size and position, gradient direction and shadow; only the symbol and the colors change. Symbol: a briefcase, and a small rocket taking off diagonally toward the top right from behind the briefcase, with a short trail of three round puffs under it. Style: flat vector app icon, perfectly square 1:1. The background fills the whole canvas edge to edge with a smooth diagonal gradient from #1E1B4B at the top left to #EA580C at the bottom right; no border, no frame, no rounded corners, no outer shadow, no vignette. The symbol is centered, drawn in solid white with bold uniform strokes and simple geometric shapes, about 60% of the canvas width, with a very soft shadow under it. Clean, modern, premium SaaS look, high contrast, easy to read at 48 pixels. No text, no letters, no numbers, no logos, no brand marks, no watermark.
 ```
+
+### 21. Xing Jobs Scraper
+
+```
+If an icon is attached, copy its style exactly: the same flat look, stroke weight, symbol size and position, gradient direction and shadow; only the symbol and the colors change. Symbol: a briefcase, and a round map pin overlapping the top right corner of the briefcase. Style: flat vector app icon, perfectly square 1:1. The background fills the whole canvas edge to edge with a smooth diagonal gradient from #134E4A at the top left to #A3E635 at the bottom right; no border, no frame, no rounded corners, no outer shadow, no vignette. The symbol is centered, drawn in solid white with bold uniform strokes and simple geometric shapes, about 60% of the canvas width, with a very soft shadow under it. Clean, modern, premium SaaS look, high contrast, easy to read at 48 pixels. No text, no letters, no numbers, no logos, no brand marks, no watermark.
+```

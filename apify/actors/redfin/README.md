@@ -155,4 +155,4 @@ curl -X POST "https://api.apify.com/v2/acts/robertosan16~redfin-scraper/run-sync
   -d '{"locations":["Austin, TX"],"minBeds":3,"maxItems":20}'
 ```
 
-Missing a field or a feature? Open an issue in the Issues tab and we will reply quickly.
+Missing a field or a feature? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.

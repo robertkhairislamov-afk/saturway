@@ -163,4 +163,4 @@ You pay only for the jobs you get: **$1 per 1,000 jobs**. That is the price on t
 
 **Is it legal to scrape these sites?** The Actor reads public job listings that the sites show to every visitor. Check the terms that apply to your use case.
 
-Missing a field or a feature? Open an issue in the Issues tab and we will reply quickly.
+Missing a field or a feature? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.

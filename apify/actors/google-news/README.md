@@ -107,4 +107,4 @@ curl -X POST "https://api.apify.com/v2/acts/robertosan16~google-news-scraper/run
   -d '{"queries":["artificial intelligence"],"maxItems":20}'
 ```
 
-Found a bug or need a feature? Open an issue in the Issues tab and we will reply quickly.
+Found a bug or need a feature? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.

@@ -155,4 +155,4 @@ curl -X POST "https://api.apify.com/v2/acts/robertosan16~google-play-scraper/run
   -d '{"searchTerms":["habit tracker"],"countries":["US"],"maxItems":20}'
 ```
 
-Missing a field or a feature? Open an issue in the Issues tab and we will reply quickly.
+Missing a field or a feature? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.

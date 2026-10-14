@@ -112,4 +112,4 @@ You pay only for the jobs you get: **$0.50 per 1,000 jobs**. That is the price o
 
 **Is it legal to scrape Dice?** The Actor reads the public job listings Dice shows to every visitor. Check the terms that apply to your use case.
 
-Missing a field or a feature? Open an issue in the Issues tab and we will reply quickly.
+Missing a field or a feature? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.

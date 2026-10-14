@@ -10,27 +10,26 @@ Clean data APIs: 18 job sites and ATS (LinkedIn, Indeed, Glassdoor, Foundit, Xin
 
 ## Описание профиля
 
-Apify разрешает не больше 2000 знаков; этот текст — 1998 знаков.
+Apify разрешает не больше 2000 знаков; этот текст — 1994 знака (обновлён 14.10: Wellfound, Xing, Foundit и почта поддержки).
 
 ```markdown
 ### Clean data from job sites, real estate and app stores
 
-I build Apify Actors that turn public websites into clean, structured data: numbers as numbers, the same fields across sources. Pay only for results, no start fees.
+Public websites as clean, structured data: numbers as numbers, the same fields across sources. Pay only for results, no start fees.
 
 **Jobs**, one output format for all sites:
 
-- [All-in-One Jobs Scraper](https://apify.com/robertosan16/all-in-one-jobs-scraper): LinkedIn, Indeed, Glassdoor and 12 more sites in one search
-- [LinkedIn](https://apify.com/robertosan16/linkedin-jobs-scraper), [Indeed](https://apify.com/robertosan16/indeed-jobs-scraper) (62 countries), [Glassdoor](https://apify.com/robertosan16/glassdoor-jobs-scraper) (ratings), [Reed](https://apify.com/robertosan16/reed-jobs-scraper) (UK), [InfoJobs](https://apify.com/robertosan16/infojobs-jobs-scraper) (Spain), [StepStone](https://apify.com/robertosan16/stepstone-jobs-scraper) (Germany), [Welcome to the Jungle](https://apify.com/robertosan16/welcome-to-the-jungle-jobs-scraper) (Europe), [Dice](https://apify.com/robertosan16/dice-jobs-scraper) (US tech)
-- [SEEK](https://apify.com/robertosan16/seek-jobs-scraper) (Australia, NZ), [Jobstreet](https://apify.com/robertosan16/jobstreet-jobs-scraper) (Southeast Asia), [JobsDB](https://apify.com/robertosan16/jobsdb-jobs-scraper) (Hong Kong, Thailand)
+- [All-in-One Jobs Scraper](https://apify.com/robertosan16/all-in-one-jobs-scraper): many job sites in one search
+- [LinkedIn](https://apify.com/robertosan16/linkedin-jobs-scraper), [Indeed](https://apify.com/robertosan16/indeed-jobs-scraper), [Glassdoor](https://apify.com/robertosan16/glassdoor-jobs-scraper), [Dice](https://apify.com/robertosan16/dice-jobs-scraper), [Wellfound](https://apify.com/robertosan16/wellfound-jobs-scraper) (startups)
+- Europe: [Xing](https://apify.com/robertosan16/xing-jobs-scraper), [StepStone](https://apify.com/robertosan16/stepstone-jobs-scraper), [Reed](https://apify.com/robertosan16/reed-jobs-scraper), [InfoJobs](https://apify.com/robertosan16/infojobs-jobs-scraper), [Welcome to the Jungle](https://apify.com/robertosan16/welcome-to-the-jungle-jobs-scraper)
+- Asia, Gulf, Pacific: [Foundit](https://apify.com/robertosan16/foundit-jobs-scraper), [SEEK](https://apify.com/robertosan16/seek-jobs-scraper), [Jobstreet](https://apify.com/robertosan16/jobstreet-jobs-scraper), [JobsDB](https://apify.com/robertosan16/jobsdb-jobs-scraper)
 - Career sites: [Greenhouse](https://apify.com/robertosan16/greenhouse-jobs-scraper), [Lever](https://apify.com/robertosan16/lever-jobs-scraper), [Ashby](https://apify.com/robertosan16/ashby-jobs-scraper), [Workday](https://apify.com/robertosan16/workday-jobs-scraper)
 
-**Real estate**: [Redfin Scraper](https://apify.com/robertosan16/redfin-scraper), US homes for sale, sold and for rent
-
-**Apps and news**: [Google Play Scraper](https://apify.com/robertosan16/google-play-scraper), [Google News Scraper](https://apify.com/robertosan16/google-news-scraper)
+**Also**: [Redfin](https://apify.com/robertosan16/redfin-scraper) (US homes), [Google Play](https://apify.com/robertosan16/google-play-scraper), [Google News](https://apify.com/robertosan16/google-news-scraper)
 
 **Why these Actors**
 
 - Only new records since the last run, for daily alerts
-- Works with Make, Zapier, n8n and AI agents (MCP)
-- Need a field? Open an issue, I reply quickly
+- Make, Zapier, n8n and AI agents (MCP)
+- Need a field or a custom scraper? Open an issue or email support@mozartstandard.com
 ```

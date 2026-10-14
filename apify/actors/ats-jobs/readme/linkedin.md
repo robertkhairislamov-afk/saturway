@@ -125,6 +125,6 @@ You pay only for the jobs you get: **$0.50 per 1,000 jobs**. That is the price o
 
 **Is it legal to scrape LinkedIn?** The Actor reads only public job listings that LinkedIn shows to every visitor, without login, and collects no personal data. Check LinkedIn's terms and the laws that apply to your use case.
 
-Missing a field or a feature? Open an issue in the Issues tab and we will reply quickly.
+Missing a field or a feature? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.
 
 *This Actor is not affiliated with, endorsed or sponsored by LinkedIn. LinkedIn is a trademark of LinkedIn Corporation.*

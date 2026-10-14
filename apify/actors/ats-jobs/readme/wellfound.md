@@ -122,4 +122,4 @@ You pay only for the jobs you get: **$2 per 1,000 jobs**. That is the price on t
 
 **Is it legal to scrape Wellfound?** The Actor reads the public job pages Wellfound shows to every visitor, without logging in. Check the terms that apply to your use case. This Actor is not affiliated with Wellfound.
 
-Missing a field or a feature? Open an issue in the Issues tab and we will reply quickly.
+Missing a field or a feature? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.

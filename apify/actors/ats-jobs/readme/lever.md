@@ -104,4 +104,4 @@ You pay only for the jobs you get: **$1 per 1,000 jobs**. That is the price on t
 
 **Why do some jobs have no salary?** Companies decide whether to publish pay. When a range is set on Lever or written in the description, it is extracted, and `salary.source` says where it came from.
 
-Missing a field or a feature? Open an issue in the Issues tab and we will reply quickly.
+Missing a field or a feature? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.

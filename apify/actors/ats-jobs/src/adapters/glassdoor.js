@@ -433,8 +433,8 @@ function descriptionLoader(http, log) {
       batch.forEach(({ resolve }, index) => resolve(result?.data?.[`j${index}`]?.job?.description ?? null));
     } catch (error) {
       // The jobs are saved without descriptions rather than lost.
-      if (!warned) log?.warning?.(`Glassdoor did not send some job descriptions: ${error.message}`);
-      warned = true;
+      if (!warned && !error.stopped) log?.warning?.(`Glassdoor did not send some job descriptions: ${error.message}`);
+      warned = warned || !error.stopped;
       batch.forEach(({ resolve }) => resolve(null));
     }
   }

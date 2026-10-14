@@ -219,6 +219,8 @@ export function parseCompany(value) {
   const queries = keywordPart ? keywordPart.split('|').map(decodeURIComponent).filter(Boolean) : [];
   return {
     id: `${adapter.title}: ${source.id}`,
+    // The progress message names job boards by site and career sites by company.
+    label: BOARDS[site] ? adapter.title : `${adapter.title}: ${source.id}`,
     key: keyOf(site, source.key, queries),
     site,
     adapter,

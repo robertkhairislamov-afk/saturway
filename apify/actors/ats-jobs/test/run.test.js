@@ -122,3 +122,66 @@ test('adapters with a dedupe key skip the same job from another source, not from
   assert.equal(result.saved, 3);
   assert.equal(actor.values.SUMMARY.companies.find((c) => c.company === 'beta').duplicates, 1);
 });
+
+test('once other sources fill the run, the remaining details are not loaded', async () => {
+  const actor = fakeActor();
+  const statuses = [];
+  actor.setStatusMessage = async (text) => { statuses.push(text); };
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  const loaded = [];
+  const adapter = {
+    name: 'fake',
+    title: 'Fake',
+    detailConcurrency: 1,
+    parseCompany: (value) => ({ id: value, key: value, label: value.toUpperCase() }),
+    async *listJobs(company) {
+      if (company.id === 'fast') {
+        await sleep(10);
+        yield [1, 2, 3].map((id) => job('fast', `f${id}`));
+      } else {
+        yield [1, 2, 3, 4].map((id) => ({ ...job('slow', `s${id}`), partial: true }));
+      }
+    },
+    async completeJob(partial) {
+      if (partial.company === 'slow') {
+        loaded.push(partial.jobId);
+        await sleep(40);
+      }
+      return { ...partial, partial: undefined };
+    },
+  };
+  const result = await runScraper(actor, adapter, { companies: ['slow', 'fast'], maxItems: 3, onlyNew: false }, silentLog);
+  assert.deepEqual(actor.dataset.map((j) => j.jobId), ['f1', 'f2', 'f3']);
+  // The slow source started one job page before the fast one filled the run, then stopped.
+  assert.deepEqual(loaded, ['s1']);
+  assert.match(result.message, /stopped at the limit of 3 jobs/);
+  // Progress names the sources in progress and ends with every source finished.
+  assert.ok(statuses.some((text) => /^Saved 0 jobs, finished 0 of 2 companies; working on SLOW/.test(text)));
+  assert.ok(statuses.some((text) => /working on SLOW, FAST|working on FAST, SLOW/.test(text)));
+  assert.equal(statuses.at(-1), 'Saved 3 jobs, finished 2 of 2 companies');
+});
+
+test('a source stopped because the run is full is not reported as failed', async () => {
+  const actor = fakeActor();
+  const warnings = [];
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  const adapter = {
+    name: 'fake',
+    title: 'Fake',
+    parseCompany: (value) => ({ id: value, key: value }),
+    async *listJobs(company) {
+      if (company.id === 'fast') {
+        yield [1, 2].map((id) => job('fast', `f${id}`));
+        return;
+      }
+      await sleep(30);
+      // What the HTTP client throws for a request in progress when the run stops it.
+      throw Object.assign(new Error('Stopped before the next page'), { stopped: true, retryable: false });
+    },
+  };
+  const result = await runScraper(actor, adapter, { companies: ['slow', 'fast'], maxItems: 2 }, { ...silentLog, warning: (text) => warnings.push(text) });
+  assert.equal(actor.dataset.length, 2);
+  assert.ok(actor.values.SUMMARY.companies.every((company) => company.error === null));
+  assert.deepEqual(warnings, []);
+  assert.doesNotMatch(result.message, /failed/);
+});

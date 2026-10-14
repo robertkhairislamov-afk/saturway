@@ -9,6 +9,8 @@ import { nextSeenIds, openSeenJobs } from './state.js';
 // Pay-per-event: the platform charges this event for every item pushed to the default dataset.
 const ITEM_EVENT = 'apify-default-dataset-item';
 const DETAIL_BATCH = 48;
+// The progress message is sent at most this often while jobs are saved.
+const STATUS_EVERY_MS = 3000;
 
 export async function mapWithConcurrency(items, limit, fn) {
   const results = new Array(items.length);
@@ -84,6 +86,21 @@ export async function runScraper(Actor, adapter, rawInput, log) {
   const savedKeys = new Map();
   const roomLeft = () => Math.min(input.maxItems > 0 ? input.maxItems - saved : Infinity, budget - saved);
 
+  // Progress while the run works: jobs saved, sources finished and the ones in progress, so a long
+  // source does not look like a stalled run. Messages go out in order, at most every few seconds.
+  const working = new Set();
+  let statusSentAt = 0;
+  let statusChain = Promise.resolve();
+  const showProgress = (force = false) => {
+    if (!force && Date.now() - statusSentAt < STATUS_EVERY_MS) return statusChain;
+    statusSentAt = Date.now();
+    const names = [...new Set([...working].map((company) => company.label ?? company.id))];
+    const now = names.length > 0 ? `; working on ${names.slice(0, 3).join(', ')}${names.length > 3 ? ` and ${names.length - 3} more` : ''}` : '';
+    const text = `Saved ${saved} jobs, finished ${finished} of ${countOf(companies)}${now}`;
+    statusChain = statusChain.then(() => Actor.setStatusMessage(text)).catch(() => {});
+    return statusChain;
+  };
+
   const toOutput = (job, scrapedAt) => {
     if (input.includeDescription) return { ...job, scrapedAt };
     const { descriptionText, descriptionHtml, ...rest } = job;
@@ -97,6 +114,8 @@ export async function runScraper(Actor, adapter, rawInput, log) {
     const listed = new Set();
     const handled = new Set();
     let listingComplete = true;
+    // Set when the limit was reached while details of listed jobs were still to load.
+    let cutShort = false;
     const room = () => Math.min(roomLeft(), input.maxItemsPerCompany > 0 ? input.maxItemsPerCompany - stats.jobsSaved : Infinity);
 
     // Saves as many jobs as the limits allow and reports whether all of them fit.
@@ -118,15 +137,27 @@ export async function runScraper(Actor, adapter, rawInput, log) {
       if (taken.length > 0) {
         const scrapedAt = new Date().toISOString();
         await Actor.pushData(taken.map((job) => toOutput(job, scrapedAt)));
+        showProgress();
       }
+      // A full run needs no more pages: requests still in progress for other sources end now.
+      if (roomLeft() <= 0) http.stop?.();
       return taken.length === fresh.length;
     }
 
     async function loadDetails(partials) {
       const jobs = await mapWithConcurrency(partials, adapter.detailConcurrency ?? 8, async (partial) => {
+        // Once other sources fill the run, the remaining details are not loaded.
+        if (room() <= 0) {
+          cutShort = true;
+          return null;
+        }
         try {
           return await adapter.completeJob(partial, company, context);
         } catch (error) {
+          if (error.stopped) {
+            cutShort = true;
+            return null;
+          }
           log.warning(`${company.id}: could not load job ${partial.jobId}: ${error.message}`);
           return null;
         }
@@ -175,10 +206,14 @@ export async function runScraper(Actor, adapter, rawInput, log) {
         }
       }
       if (listingComplete && !(await processQueue(true))) listingComplete = false;
+      if (cutShort) listingComplete = false;
     } catch (error) {
-      stats.error = error.message;
       listingComplete = false;
-      log.warning(`${company.id}: ${error.message}`);
+      // Stopped because other sources filled the run: not a failure of this source.
+      if (!error.stopped) {
+        stats.error = error.message;
+        log.warning(`${company.id}: ${error.message}`);
+      }
     }
 
     if (seenJobs && (!stats.error || handled.size > 0)) {
@@ -192,11 +227,16 @@ export async function runScraper(Actor, adapter, rawInput, log) {
 
   const results = await mapWithConcurrency(companies, adapter.companyConcurrency ?? 5, async (company) => {
     if (roomLeft() <= 0) return { input: company.input, company: company.id, jobsFound: 0, jobsMatched: 0, jobsSaved: 0, error: null, skipped: 'limit reached' };
+    working.add(company);
+    await showProgress(true);
     const stats = await scrapeCompany(company);
+    working.delete(company);
     finished++;
-    await Actor.setStatusMessage(`Saved ${saved} jobs from ${finished} of ${countOf(companies)}`);
+    await showProgress(true);
     return stats;
   });
+  // The final message of the run comes after every progress message.
+  await statusChain;
 
   const summary = [...results, ...rejected];
   await Actor.setValue('SUMMARY', { ats: adapter.name, jobsSaved: saved, companies: summary });

@@ -349,8 +349,8 @@ export async function completeJob(partial, source, { http, includeDescription, l
   try {
     page = parseJobPage(await http.getText(jobPageUrl(partial.jobId), { rotate: true, accept: isJobPage, retries: 5 }));
   } catch (error) {
-    // The job was taken down after the search listed it.
-    if (error.status === 404 || error.status === 410) return null;
+    // The job was taken down after the search listed it, or the run is already full.
+    if (error.status === 404 || error.status === 410 || error.stopped) return null;
     // Blocked from every address tried: the search result is still worth saving, unless the
     // filters needed the page.
     log.warning(`${source.id}: could not load the page of job ${partial.jobId} (${error.message}); ${filter ? 'skipping it, as the filters need the page' : 'saving the search result only'}.`);

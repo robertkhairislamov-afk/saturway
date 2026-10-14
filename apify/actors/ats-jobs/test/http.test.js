@@ -23,6 +23,8 @@ before(async () => {
     }
     if (req.url === '/always-empty') return res.end(EMPTY);
     if (req.url === '/ok') return res.end('{"ok":true}');
+    // Answers after two seconds.
+    if (req.url === '/slow') return setTimeout(() => res.end('{"ok":true}'), 2000);
     res.statusCode = 404;
     return res.end();
   });
@@ -101,4 +103,15 @@ test('http: a page that stays empty fails as blocked after the retries', async (
   assert.equal(http.stats.blocked - before.blocked, 3);
   assert.equal(http.stats.retried - before.retried, 2);
   await assert.rejects(http.getText(`${base}/missing`), (error) => error.status === 404 && error.retryable === false);
+});
+
+test('http: stop ends the requests in progress at once and refuses new ones, without retries', async () => {
+  const client = createHttpClient({ backoffMs: 1, maxRetries: 4 });
+  const started = Date.now();
+  const pending = client.getJson(`${base}/slow`);
+  setTimeout(() => client.stop(), 50);
+  await assert.rejects(pending, (error) => error.stopped === true && error.retryable === false);
+  assert.ok(Date.now() - started < 1000);
+  assert.equal(hits.get('/slow'), 1);
+  await assert.rejects(client.getJson(`${base}/ok`), (error) => error.stopped === true);
 });

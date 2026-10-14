@@ -19,13 +19,15 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const sessionName = () => `ats${Math.random().toString(36).slice(2, 12)}`;
 
 export class HttpError extends Error {
-  constructor(message, { status, retryable = true, blocked = false } = {}) {
+  constructor(message, { status, retryable = true, blocked = false, stopped = false } = {}) {
     super(message);
     this.name = 'HttpError';
     this.status = status;
     this.retryable = retryable;
     // The site answered, but with a block page or an empty page instead of the data.
     this.blocked = blocked;
+    // The run stopped the client (it has all the jobs it may save); nothing went wrong.
+    this.stopped = stopped;
   }
 }
 
@@ -43,6 +45,9 @@ export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback
   const idle = [];
   // What happened to the requests, for the run log.
   const stats = { requests: 0, retried: 0, limited: 0, blocked: 0 };
+  // `stop()` ends the requests in progress and refuses new ones, once the run is full.
+  const stopper = new AbortController();
+  const stoppedError = (url) => new HttpError(`Stopped before ${url}: the run has all the jobs it may save`, { retryable: false, stopped: true });
 
   async function dispatcherFor() {
     if (!proxy) return envAgent;
@@ -106,6 +111,7 @@ export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback
   async function request(url, { method = 'GET', body, headers = {}, json = true, retries = maxRetries, rotate = false, datacenter: viaDatacenter = false, accept, redirect = 'follow' } = {}) {
     let lastError;
     for (let attempt = 1; attempt <= retries; attempt++) {
+      if (stopper.signal.aborted) throw stoppedError(url);
       const rotated = rotate ? await takeRotating() : null;
       const dispatcher = rotated?.agent ?? (viaDatacenter ? await datacenterDispatcher() : await dispatcherFor());
       let ok = false;
@@ -116,7 +122,7 @@ export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback
           body,
           dispatcher,
           redirect,
-          signal: AbortSignal.timeout(timeoutMs),
+          signal: AbortSignal.any([AbortSignal.timeout(timeoutMs), stopper.signal]),
           headers: {
             'user-agent': USER_AGENT,
             accept: json ? 'application/json' : 'text/html,application/xhtml+xml,*/*',
@@ -160,6 +166,7 @@ export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback
         ok = true;
         return data;
       } catch (error) {
+        if (stopper.signal.aborted) throw stoppedError(url);
         // "fetch failed" says nothing; its cause names the network error.
         if (error.message === 'fetch failed' && error.cause) error.message = `fetch failed (${error.cause.code ?? error.cause.message}) for ${url}`;
         lastError = error;
@@ -178,6 +185,7 @@ export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback
 
   return {
     stats,
+    stop: () => stopper.abort(),
     getJson: (url, options) => request(url, options),
     getText: (url, options) => request(url, { ...options, json: false }),
     postJson: (url, data, options = {}) => request(url, {

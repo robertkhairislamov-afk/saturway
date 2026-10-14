@@ -513,6 +513,13 @@ StepStone на платформе иногда отдаёт карточки м�
 - Статьи (Redfin, вакансии, Indeed) поиск по точному заголовку пока не находит.
 - Конкуренция в Indeed растёт: в выдаче несколько новых акторов «62 countries».
 
+### Проверка 14.10 — сутки после Wellfound, Xing и Foundit
+
+- Места в поиске Store 14.10 (в скобках 7.10). Новые: «foundit» 25 из 1292, «foundit jobs» 20, «monster india» 17; «xing» 43, «xing jobs» 36; «wellfound» 62, «wellfound jobs» 49, «angellist» 47. Старые: JobsDB 19 (21), SEEK jobs 40 (52), Reed 40 (37), StepStone 48 (40), InfoJobs 50 (28), WTTJ 53 (48), Dice 57 (63), Jobstreet 64 (35), Redfin 72 (68), Redfin scraper 47 (44), «indeed jobs» 85 (82), «glassdoor jobs» 59, «glassdoor scraper» 81. LinkedIn, Greenhouse, Lever, Ashby, Workday, Google Play, Google News, «jobs scraper» — дальше 300-го. InfoJobs и Jobstreet заметно сползли — в выдаче новые конкуренты.
+- Пользователи (всего / 7 дней, вместе с нами и ежедневной проверкой Apify): All-in-One 6/1, Indeed 3/0, у новых и большинства старых 2/1. Посторонних пользователей у Wellfound, Xing и Foundit пока нет — у каждого 1 чужой запуск за сутки (ежедневная проверка Apify).
+- Запуски за 30 дней (`publicActorRunStats30Days`; база — около 16–17 от ежедневной проверки Apify и наших тестов): All-in-One 114 (7 прерваны, 0 ошибок) — основная посторонняя активность; Indeed 30 и Jobstreet 26 — несколько посторонних запусков; у остальных 14–17, то есть почти только проверка. Glassdoor 6, новые по 1.
+- Доход по API не виден — только в Insights в Console.
+
 ### Glassdoor — проверка 7.10: делать можно
 
 - Спрос (Store, 7.10): у акторов вакансий Glassdoor около 2250 пользователей за 30 дней. Лидеры: valig 1387 ($0.40 за 1000), bebity 310 ($0.40), cheap_scraper 264 ($1), orgupdate 148 ($150), kaix 68 ($0.05). Ещё около 600 пользователей у акторов отзывов и зарплат; их не берём, отзывы — тексты людей.

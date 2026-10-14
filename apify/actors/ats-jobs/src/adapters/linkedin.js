@@ -372,9 +372,13 @@ export function stateSearches(params) {
   return US_STATES.map((state) => [state, { ...rest, location: `${state}, United States` }]);
 }
 
+// LinkedIn can limit about half of the requests at busy times; every try uses a new address, so a
+// search page gets enough tries that one refused page rarely ends a search.
+const SEARCH_PAGE_TRIES = 8;
+
 async function loadPage(http, params, start) {
   try {
-    return parseSearchPage(await http.getText(searchUrl(params, start), { rotate: true, accept: hasJobs, retries: 4 }));
+    return parseSearchPage(await http.getText(searchUrl(params, start), { rotate: true, accept: hasJobs, retries: SEARCH_PAGE_TRIES }));
   } catch (error) {
     // Still empty from several addresses: the search has no more jobs.
     if (error.blocked) return [];
@@ -389,8 +393,16 @@ async function* searchPages(source, params, context, seen, label = source.id) {
   batches: for (let first = 0; first <= MAX_START; first += PAGE_SIZE * PAGE_BATCH) {
     const starts = [];
     for (let start = first; start <= MAX_START && starts.length < PAGE_BATCH; start += PAGE_SIZE) starts.push(start);
-    const pages = await Promise.all(starts.map((start) => loadPage(http, params, start)));
-    for (const [index, cards] of pages.entries()) {
+    const pages = await Promise.allSettled(starts.map((start) => loadPage(http, params, start)));
+    for (const [index, page] of pages.entries()) {
+      // A page LinkedIn kept refusing ends the search, but the jobs found before it are kept.
+      // With nothing found yet, or when the run is already full, the error stands.
+      if (page.status === 'rejected') {
+        if (page.reason?.stopped || seen.size === 0) throw page.reason;
+        log.warning(`${label}: LinkedIn kept limiting requests after ${seen.size} jobs (${page.reason?.message}); keeping the jobs found so far.`);
+        return;
+      }
+      const cards = page.value;
       if (cards.length === 0) break batches;
       if (starts[index] === MAX_START) reachedLimit = true;
       yield cards.filter((card) => !seen.has(card.jobId) && seen.add(card.jobId)).map((card) => toPartialJob(card, known));

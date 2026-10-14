@@ -181,6 +181,20 @@ test('linkedin: pages are read from new addresses until an empty page', async ()
   assert.ok(http.requests.every(({ options }) => options.rotate === true && options.accept === linkedin.hasJobs));
 });
 
+test('linkedin: a page LinkedIn keeps refusing ends the search, keeping the jobs found before it', async () => {
+  const limited = () => Object.assign(new Error('HTTP 429'), { status: 429 });
+  const pageFor = (url) => {
+    const start = Number(url.searchParams.get('start'));
+    return start === 20 ? limited() : cardsHtml([start + 1, start + 2]);
+  };
+  const warnings = [];
+  const jobs = await listAll(linkedin.parseCompany('python'), fakeHttp(pageFor), { ...quietLog, warning: (text) => warnings.push(text) });
+  assert.deepEqual(jobs.map((job) => job.jobId), ['1', '2', '11', '12']);
+  assert.match(warnings[0], /kept limiting requests after 4 jobs \(HTTP 429\); keeping the jobs found so far/);
+  // With nothing found yet, the search fails as before.
+  await assert.rejects(() => listAll(linkedin.parseCompany('python'), fakeHttp(limited)), /HTTP 429/);
+});
+
 test('linkedin: a US search that reaches 1,000 jobs is searched again in every state', async () => {
   const messages = [];
   const log = { info: (message) => messages.push(message), warning: (message) => messages.push(message) };

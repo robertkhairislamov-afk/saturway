@@ -1,0 +1,45 @@
+{
+  "feed": {
+    "title": {
+      "label": "iTunes Store: Top Free Applications"
+    },
+    "entry": [
+      {
+        "im:name": {
+          "label": "Example App 1000002"
+        },
+        "id": {
+          "label": "https://apps.apple.com/us/app/example/id1000002?uo=2",
+          "attributes": {
+            "im:id": "1000002",
+            "im:bundleId": "com.example.app1000002"
+          }
+        }
+      },
+      {
+        "im:name": {
+          "label": "Example App 1000001"
+        },
+        "id": {
+          "label": "https://apps.apple.com/us/app/example/id1000001?uo=2",
+          "attributes": {
+            "im:id": "1000001",
+            "im:bundleId": "com.example.app1000001"
+          }
+        }
+      },
+      {
+        "im:name": {
+          "label": "Example App 1000003"
+        },
+        "id": {
+          "label": "https://apps.apple.com/us/app/example/id1000003?uo=2",
+          "attributes": {
+            "im:id": "1000003",
+            "im:bundleId": "com.example.app1000003"
+          }
+        }
+      }
+    ]
+  }
+}

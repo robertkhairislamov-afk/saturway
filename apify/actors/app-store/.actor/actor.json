@@ -1,0 +1,15 @@
+{
+  "actorSpecification": 1,
+  "name": "app-store-scraper",
+  "title": "App Store Scraper: Apps & Top Charts",
+  "description": "Scrape Apple App Store apps, top charts (free, paid, grossing, iPhone and iPad) for any country and category, keyword search rankings and developer catalogs: ratings, prices, versions, sizes.",
+  "version": "0.1",
+  "buildTag": "latest",
+  "input": "./input_schema.json",
+  "storages": {
+    "dataset": "./dataset_schema.json"
+  },
+  "output": "./output_schema.json",
+  "dockerfile": "../Dockerfile",
+  "readme": "../README.md"
+}

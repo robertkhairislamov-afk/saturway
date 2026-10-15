@@ -1,0 +1,65 @@
+{
+  "resultCount": 2,
+  "results": [
+    {
+      "wrapperType": "artist",
+      "artistType": "Software Artist",
+      "artistName": "Example Studio Ltd",
+      "artistId": 900001
+    },
+    {
+      "wrapperType": "software",
+      "kind": "software",
+      "trackId": 1000001,
+      "trackName": "Example App 1000001",
+      "bundleId": "com.example.app1000001",
+      "trackViewUrl": "https://apps.apple.com/us/app/example-app/id1000001?uo=4",
+      "artistId": 900001,
+      "artistName": "Example Studio Ltd",
+      "artistViewUrl": "https://apps.apple.com/us/developer/example-studio-ltd/id900001?uo=4",
+      "sellerName": "Example Studio Ltd",
+      "sellerUrl": "https://example.com",
+      "primaryGenreName": "Productivity",
+      "primaryGenreId": 6007,
+      "genres": [
+        "Productivity",
+        "Business"
+      ],
+      "genreIds": [
+        "6007",
+        "6000"
+      ],
+      "averageUserRating": 4.61234,
+      "userRatingCount": 12345,
+      "averageUserRatingForCurrentVersion": 4.5,
+      "userRatingCountForCurrentVersion": 678,
+      "price": 0,
+      "currency": "USD",
+      "formattedPrice": "Free",
+      "trackContentRating": "4+",
+      "contentAdvisoryRating": "4+",
+      "advisories": [],
+      "releaseDate": "2020-01-02T08:00:00Z",
+      "currentVersionReleaseDate": "2026-10-01T07:00:00Z",
+      "version": "3.2.1",
+      "releaseNotes": "Bug fixes.",
+      "minimumOsVersion": "16.0",
+      "fileSizeBytes": "123456789",
+      "languageCodesISO2A": [
+        "EN",
+        "DE"
+      ],
+      "supportedDevices": [
+        "iPhone15-iPhone15",
+        "iPadAir5-iPadAir5"
+      ],
+      "isGameCenterEnabled": false,
+      "description": "An example app.",
+      "artworkUrl512": "https://is1-ssl.mzstatic.com/example/512x512bb.jpg",
+      "screenshotUrls": [
+        "https://is1-ssl.mzstatic.com/example/1.jpg"
+      ],
+      "ipadScreenshotUrls": []
+    }
+  ]
+}

@@ -1,0 +1,209 @@
+{
+  "title": "App Store Scraper",
+  "description": "Scrape Apple App Store apps, top charts, keyword search results and developer catalogs for any country.",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "appIds": {
+      "title": "Apps",
+      "type": "array",
+      "editor": "stringList",
+      "description": "App Store links such as <code>https://apps.apple.com/us/app/instagram/id389801252</code>, numeric app IDs such as <code>389801252</code>, or bundle IDs such as <code>com.spotify.client</code>.",
+      "placeholderValue": "389801252"
+    },
+    "searchTerms": {
+      "title": "Search keywords",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Keywords to search on the App Store. Each search returns up to 200 apps with their rank, which is useful for ASO keyword tracking.",
+      "prefill": [
+        "habit tracker"
+      ],
+      "placeholderValue": "budget planner"
+    },
+    "charts": {
+      "title": "Top charts",
+      "type": "array",
+      "editor": "select",
+      "description": "App Store top charts to scrape, with the rank of each app.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "top_free",
+          "top_paid",
+          "top_grossing",
+          "top_free_ipad",
+          "top_paid_ipad",
+          "top_grossing_ipad",
+          "new",
+          "new_free",
+          "new_paid"
+        ],
+        "enumTitles": [
+          "Top free iPhone apps",
+          "Top paid iPhone apps",
+          "Top grossing iPhone apps",
+          "Top free iPad apps",
+          "Top paid iPad apps",
+          "Top grossing iPad apps",
+          "New apps",
+          "New free apps",
+          "New paid apps"
+        ]
+      },
+      "prefill": [
+        "top_free"
+      ]
+    },
+    "chartGenres": {
+      "title": "Chart categories",
+      "type": "array",
+      "editor": "select",
+      "description": "Categories of the top charts. \"All apps\" is the main chart; \"Games: …\" are the kinds of games.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "ALL",
+          "6018",
+          "6000",
+          "6026",
+          "6017",
+          "6016",
+          "6015",
+          "6023",
+          "6014",
+          "7001",
+          "7002",
+          "7004",
+          "7005",
+          "7006",
+          "7003",
+          "7009",
+          "7011",
+          "7012",
+          "7013",
+          "7014",
+          "7015",
+          "7016",
+          "7017",
+          "7018",
+          "7019",
+          "6027",
+          "6013",
+          "6012",
+          "6021",
+          "6020",
+          "6011",
+          "6010",
+          "6009",
+          "6008",
+          "6007",
+          "6006",
+          "6024",
+          "6005",
+          "6004",
+          "6003",
+          "6002",
+          "6001"
+        ],
+        "enumTitles": [
+          "All apps",
+          "Books",
+          "Business",
+          "Developer Tools",
+          "Education",
+          "Entertainment",
+          "Finance",
+          "Food & Drink",
+          "Games",
+          "Games: Action",
+          "Games: Adventure",
+          "Games: Board",
+          "Games: Card",
+          "Games: Casino",
+          "Games: Casual",
+          "Games: Family",
+          "Games: Music",
+          "Games: Puzzle",
+          "Games: Racing",
+          "Games: Role Playing",
+          "Games: Simulation",
+          "Games: Sports",
+          "Games: Strategy",
+          "Games: Trivia",
+          "Games: Word",
+          "Graphics & Design",
+          "Health & Fitness",
+          "Lifestyle",
+          "Magazines & Newspapers",
+          "Medical",
+          "Music",
+          "Navigation",
+          "News",
+          "Photo & Video",
+          "Productivity",
+          "Reference",
+          "Shopping",
+          "Social Networking",
+          "Sports",
+          "Travel",
+          "Utilities",
+          "Weather"
+        ]
+      },
+      "default": [
+        "ALL"
+      ],
+      "prefill": [
+        "ALL"
+      ]
+    },
+    "chartDepth": {
+      "title": "Apps per chart",
+      "type": "integer",
+      "description": "How many places of each chart to scrape, from 1 to 100 (Apple lists 100).",
+      "minimum": 1,
+      "maximum": 100,
+      "default": 100,
+      "prefill": 50
+    },
+    "developers": {
+      "title": "Developers",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Developer page links such as <code>https://apps.apple.com/us/developer/meta-platforms-inc/id284882218</code> or numeric developer IDs. All apps of each developer are scraped.",
+      "placeholderValue": "https://apps.apple.com/us/developer/meta-platforms-inc/id284882218"
+    },
+    "countries": {
+      "title": "Countries",
+      "type": "array",
+      "editor": "stringList",
+      "sectionCaption": "Countries and limits",
+      "description": "Two-letter country codes such as <code>US</code>, <code>GB</code>, <code>DE</code> or <code>JP</code>. Prices, charts, ratings and search results differ by country. Every source is scraped for each country.",
+      "default": [
+        "US"
+      ],
+      "prefill": [
+        "US"
+      ]
+    },
+    "maxItems": {
+      "title": "Maximum results",
+      "type": "integer",
+      "minimum": 0,
+      "description": "Stop after this many results. Leave empty or 0 for no limit."
+    },
+    "proxyConfiguration": {
+      "title": "Proxy configuration",
+      "type": "object",
+      "editor": "proxy",
+      "description": "The Actor connects directly, which is fastest. If the App Store starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it from the start.",
+      "prefill": {
+        "useApifyProxy": false
+      },
+      "default": {
+        "useApifyProxy": false
+      }
+    }
+  }
+}

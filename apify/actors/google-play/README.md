@@ -11,6 +11,7 @@ Scrape the Google Play Store: **top charts** (top free, top paid, top grossing) 
 - 📇 **Developer contacts for B2B research**: the support email, website and privacy policy each app publishes on Google Play.
 - 🌍 **Many countries in one run**: prices, charts and rankings differ by country, so every source is scraped for each country you add, in 30+ languages.
 - ⚡ **Lists without details** when you need speed: thousands of chart positions in seconds.
+- 🤝 **Same output as our [App Store Scraper](https://apify.com/robertosan16/app-store-scraper)**: the same field names for title, developer, rating, price, version and dates, so Android and iOS apps fit into one table.
 
 ## What data does it extract?
 
@@ -117,6 +118,7 @@ Scrape the Google Play Store: **top charts** (top free, top paid, top grossing) 
 - **Market and competitor research**: see which apps lead a category, how they monetize, how often they update and how users rate them.
 - **Top chart monitoring**: record top free, paid and grossing charts over time to spot rising apps and trends.
 - **B2B lead generation**: build lists of app publishers in a category with their support email and website.
+- **Android and iOS side by side**: run this Actor and our [App Store Scraper](https://apify.com/robertosan16/app-store-scraper) with the same keywords and countries, and compare both stores in one table.
 - **Investors and analysts**: follow installs, ratings and chart positions of apps and publishers.
 - **Datasets and AI**: clean, structured app metadata and descriptions for classification, search and LLM pipelines.
 

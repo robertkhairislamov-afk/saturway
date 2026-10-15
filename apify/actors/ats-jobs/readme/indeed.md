@@ -127,6 +127,8 @@ You pay only for the jobs you get: **$1 per 1,000 jobs**. That is the price on t
 
 ## FAQ
 
+**Why not just ask an AI chatbot?** A chatbot with web search reads a few pages and retells them, so it finds a handful of jobs. In our test in October 2026, a chatbot asked for every nurse and dental assistant job in Adelaide listed about 10; our [All-in-One Jobs Scraper](https://apify.com/robertosan16/all-in-one-jobs-scraper), which shares this Actor's code, returned 1,480 from SEEK, Indeed, Glassdoor and LinkedIn in three minutes, each with its link and date. This Actor gives you every job the site shows for your search, word for word and in the same fields every time, so you can load them into a spreadsheet, database or CRM, get only new jobs on a schedule, and pay a fixed price per 1,000 jobs instead of paying an AI to read every page. AI agents use it the same way: through Apify's MCP server, an agent can call this Actor whenever it needs real job data.
+
 **Why do some jobs have no salary?** The Actor includes only pay the employer states. Indeed shows its own estimates for some jobs; those are left out. Outside the United States fewer employers state pay.
 
 **Why are some benefits in another language?** Benefits, schedules and other tags come in the language of the country's Indeed site, such as German on Indeed Germany. Job types, workplace and experience level are always in English.

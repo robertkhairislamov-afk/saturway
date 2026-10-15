@@ -153,6 +153,8 @@ You pay only for the jobs you get: **$1 per 1,000 jobs**. That is the price on t
 
 ## FAQ
 
+**Why not just ask an AI chatbot?** A chatbot with web search reads a few pages and retells them, so it finds a handful of jobs. In our test in October 2026, a chatbot asked for every nurse and dental assistant job in Adelaide listed about 10; this Actor returned 1,480 from SEEK, Indeed, Glassdoor and LinkedIn in three minutes, each with its link and date. This Actor gives you every job the site shows for your search, word for word and in the same fields every time, so you can load them into a spreadsheet, database or CRM, get only new jobs on a schedule, and pay a fixed price per 1,000 jobs instead of paying an AI to read every page. AI agents use it the same way: through Apify's MCP server, an agent can call this Actor whenever it needs real job data.
+
 **Why are there no LinkedIn jobs in remote searches?** LinkedIn does not show visitors who are not logged in which jobs are remote, so **Remote jobs only** leaves LinkedIn out. To find remote LinkedIn jobs, add `remote` to your keywords instead.
 
 **How are duplicates found?** Two jobs are the same when title, company and city match after normalizing case, accents and punctuation. Jobs from the same search are never merged, so several openings with one title stay. The match catches the usual case of one job posted on several sites. It can miss a job whose title or company is written differently on two sites, and it merges two different openings with the same title, company and city found on two sites.

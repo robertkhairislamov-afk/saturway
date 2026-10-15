@@ -133,6 +133,8 @@ You pay only for results: **$0.50 per 1,000 results**. That is the price on the 
 
 ## FAQ
 
+**Why not just ask an AI chatbot?** A chatbot with web search knows some popular apps and reads a few store pages, so it cannot give you a full top chart for a country or every app that ranks for a keyword, and the ratings and installs it repeats may be old. This Actor reads Google Play itself: whole charts, keyword rankings and developer catalogs, with ratings, installs, prices and versions as numbers in the same fields every time, at a fixed price per 1,000 results. AI agents can call it as a tool through Apify's MCP server.
+
 **Does it scrape reviews?** No. This Actor focuses on app data, charts and rankings, and does not collect reviewers' names or texts.
 
 **Why does a search return at most 30 apps?** That is how many apps Google Play shows for a keyword. For more apps of a category, use the top charts (up to 200 per chart).

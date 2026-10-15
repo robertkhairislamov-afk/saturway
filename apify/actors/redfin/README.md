@@ -131,6 +131,8 @@ You pay only for the listings you get: **$2 per 1,000 listings**. That is the pr
 
 ## FAQ
 
+**Why not just ask an AI chatbot?** A chatbot with web search reads a few pages and retells them, so it lists a handful of homes, and the prices it repeats may be out of date. This Actor returns every home Redfin shows for your search, with price, beds, baths, size and location as numbers in the same fields every time: ready for a spreadsheet or database, on a schedule if you need it, at a fixed price per 1,000 listings. AI agents can call it as a tool through Apify's MCP server whenever they need real listings.
+
 **Does it collect agent contact details?** No. There are no fields for agents' names, phone numbers or emails, and for rentals the leasing phone numbers are left out too. Where Redfin shows it, the listing brokerage is included.
 
 **Why is the description short?** Redfin's search results carry the first 700 characters of the listing description. The full text, price history, taxes and schools are on the page of each home, which this Actor does not open.

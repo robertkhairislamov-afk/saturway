@@ -87,6 +87,8 @@ You pay only for results: **$2 per 1,000 articles**, and **$1 per 1,000 resolved
 
 ## FAQ
 
+**Why not just ask an AI chatbot?** A chatbot with web search reads a few articles and retells them, so you get a summary, not the coverage. This Actor returns every article Google News lists for your query, day by day over the dates you choose, with title, source, date and link in the same fields every time, ready for monitoring, analytics or an AI pipeline, at a fixed price per 1,000 articles. AI agents can call it as a tool through Apify's MCP server.
+
 **Is scraping Google News legal?** This Actor collects publicly available headlines and links, not personal data. Check the terms of the sources and your local laws for your use case.
 
 **Why do some articles have `url: null`?** Resolving publisher URLs is optional. When it is on, a small share of links can still fail to resolve because of temporary Google limits; the Google News link is always present.

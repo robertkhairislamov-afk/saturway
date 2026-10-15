@@ -112,6 +112,8 @@ You pay only for the jobs you get: **$0.50 per 1,000 jobs**. That is the price o
 
 ## FAQ
 
+**Why not just ask an AI chatbot?** A chatbot with web search reads a few pages and retells them, so it finds a handful of jobs. In our test in October 2026, a chatbot asked for every nurse and dental assistant job in Adelaide listed about 10; our [All-in-One Jobs Scraper](https://apify.com/robertosan16/all-in-one-jobs-scraper), which shares this Actor's code, returned 1,480 from SEEK, Indeed, Glassdoor and LinkedIn in three minutes, each with its link and date. This Actor gives you every job the site shows for your search, word for word and in the same fields every time, so you can load them into a spreadsheet, database or CRM, get only new jobs on a schedule, and pay a fixed price per 1,000 jobs instead of paying an AI to read every page. AI agents use it the same way: through Apify's MCP server, an agent can call this Actor whenever it needs real job data.
+
 **Why do some jobs have no salary?** Many ads show text such as "Competitive" instead of numbers. When numbers are given, they are parsed; `salary.text` keeps the original wording.
 
 **Does it collect recruiter contact details?** No. There are no fields for recruiters' names, emails or phone numbers, and they are not requested. The job description is saved as the employer wrote it.

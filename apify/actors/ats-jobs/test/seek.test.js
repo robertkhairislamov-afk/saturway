@@ -71,6 +71,34 @@ test('seek: search results and job details in the shared format', () => {
   assert.equal(seek.toJob(data[1], null, 'NZ').salary.currency, 'NZD');
 });
 
+test('seek: job details SEEK does not send are asked again, and the job is never lost', async () => {
+  const { data } = fixture('seek-search.json');
+  const source = seek.parseCompany(seek.prepareInput({ searchQueries: ['nurse'], location: 'Adelaide SA' }).companies[0]);
+  const partial = { ...seek.toJob(data[0]), partial: true, raw: data[0] };
+  const answers = (list) => {
+    const calls = [];
+    return { calls, http: { async postJson(url, body) { calls.push(body.variables.jobId); return list[Math.min(calls.length - 1, list.length - 1)]; } } };
+  };
+  const none = { data: { jobDetails: null } };
+  const found = { data: { jobDetails: fixture('seek-job.json') } };
+  const fast = { pauseMs: 1 };
+  // Busy: no details at first, then the details.
+  let run = answers([none, found]);
+  const full = await seek.completeJob(partial, source, { http: run.http, includeDescription: true }, fast);
+  assert.equal(run.calls.length, 2);
+  assert.ok(full.descriptionText.length > 500);
+  // Never any details: the job is kept as the search listed it.
+  run = answers([none]);
+  const kept = await seek.completeJob(partial, source, { http: run.http, includeDescription: true }, fast);
+  assert.equal(run.calls.length, 3);
+  assert.deepEqual([kept.jobId, kept.title], [partial.jobId, partial.title]);
+  // A job SEEK marks expired is gone.
+  const expired = fixture('seek-job.json');
+  expired.job.isExpired = true;
+  run = answers([{ data: { jobDetails: expired } }]);
+  assert.equal(await seek.completeJob(partial, source, { http: run.http, includeDescription: true }, fast), null);
+});
+
 test('seek: bare salary numbers on full-time jobs are thousands a year', () => {
   const pick = (salary) => salary && [salary.min, salary.max, salary.interval];
   assert.deepEqual(pick(seek.salaryOf('85 - 105', 'Full time', 'AU')), [85000, 105000, 'year']);

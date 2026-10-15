@@ -302,19 +302,29 @@ function toPartialJob(raw, siteCode) {
   return { ...toJob(raw, null, siteCode), partial: true, raw };
 }
 
-export async function completeJob(partial, source, { http, includeDescription }) {
+// Tries for a job's details when SEEK sends none.
+const DETAIL_TRIES = 3;
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export async function completeJob(partial, source, { http, includeDescription }, { pauseMs = 1000 } = {}) {
   if (!includeDescription) return toJob(partial.raw, null, source.site);
   const site = SITES[source.site] ?? SITES.AU;
-  const result = await http.postJson(`https://${site.host}/graphql`, {
-    operationName: 'jobDetails',
-    query: JOB_DETAILS_QUERY,
-    variables: { jobId: String(partial.raw.id), zone: site.zone, locale: site.locale },
-  });
-  if (!result?.data && result?.errors?.length) throw new Error(`Job details failed: ${result.errors[0]?.message}`);
-  const details = result?.data?.jobDetails;
-  // The job was taken down after the search listed it.
-  if (!details?.job || details.job.isExpired) return null;
-  return toJob(partial.raw, details, source.site);
+  for (let attempt = 1; attempt <= DETAIL_TRIES; attempt++) {
+    const result = await http.postJson(`https://${site.host}/graphql`, {
+      operationName: 'jobDetails',
+      query: JOB_DETAILS_QUERY,
+      variables: { jobId: String(partial.raw.id), zone: site.zone, locale: site.locale },
+    });
+    if (!result?.data && result?.errors?.length) throw new Error(`Job details failed: ${result.errors[0]?.message}`);
+    const details = result?.data?.jobDetails;
+    // The job was taken down after the search listed it.
+    if (details?.job) return details.job.isExpired ? null : toJob(partial.raw, details, source.site);
+    // SEEK answers "no details" both for a job that is gone and, when busy, for a job it just
+    // listed; on the platform this hid up to a quarter of a search's jobs. Such jobs are asked again.
+    if (attempt < DETAIL_TRIES) await sleep(pauseMs * attempt);
+  }
+  // Still no details: the job is saved as the search listed it, without its description.
+  return toJob(partial.raw, null, source.site);
 }
 
 // --- Searching ----------------------------------------------------------------------------------

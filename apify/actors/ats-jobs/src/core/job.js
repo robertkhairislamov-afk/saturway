@@ -21,6 +21,8 @@ export function normalizeEmployment(value) {
   if (text.includes('intern') || text.includes('trainee')) return 'internship';
   if (text.includes('contract') || text.includes('freelance') || text.includes('contingent')) return 'contract';
   if (text.includes('temp') || text.includes('fixedterm') || text.includes('seasonal')) return 'temporary';
+  // Casual work (Australia, New Zealand) is its own type; sites write "Casual" or "Casual/Vacation".
+  if (text.includes('casual')) return 'casual';
   return original;
 }
 

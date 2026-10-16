@@ -119,7 +119,7 @@ You pay only for the jobs you get: **$1 per 1,000 jobs**. That is the price on t
 ## Tips
 
 - **Daily job alerts**: save your input as a task, turn on **Only new jobs since the last run** and add a schedule. Send new jobs to Slack, email or Google Sheets with Apify integrations.
-- **Ready-made n8n workflow**: [new Indeed jobs in Google Sheets every morning](https://github.com/robertkhairislamov-afk/saturway/blob/claude/gifted-dirac-sv0ed6/apify/marketing/n8n/indeed-job-alerts-google-sheets.json). Import the file into n8n, add your Apify and Google Sheets credentials and set your search.
+- **Ready-made n8n workflow**: [new Indeed jobs in Google Sheets every morning](https://n8n.io/workflows/20851), in the official n8n template library. Open it in n8n, add your Apify and Google Sheets credentials and set your search.
 - **Big searches**: a search such as `nurse` in the United States has many thousands of jobs. Set **Maximum jobs in total** when you need fewer.
 - **Faster runs**: turn off **Include job descriptions**. You still get every other field.
 - **Stricter results**: Indeed also matches words in the description. Use **Title must contain** to keep only jobs with your keyword in the title.

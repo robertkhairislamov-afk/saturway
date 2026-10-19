@@ -235,7 +235,184 @@ const hiringLeads = workflow('Find companies hiring on Glassdoor and save them a
 // Weekly, on Mondays.
 hiringLeads.nodes.find((node) => node.name === 'Every Monday').parameters.rule.interval = [{ field: 'weeks', triggerAtDay: [1], triggerAtHour: 7 }];
 
+// --- 4. Jobs abroad: work-rights screen, AI fit check, tracker and email drafts ------------------
+
+counter = 0;
+const condition = (leftValue, operator, rightValue = '') => ({ id: id('condition'), leftValue, rightValue, operator });
+const conditions = (list, combinator = 'and') => ({
+  options: { caseSensitive: true, leftValue: '', typeValidation: 'loose', version: 2 },
+  conditions: list,
+  combinator,
+});
+const node = (name, type, typeVersion, position, parameters) => ({ parameters, id: id(name), name, type, typeVersion, position });
+const SHEET_COLUMNS = 'Job link, Found, Recommendation, Priority, Fit, Visa, Sponsorship, Evidence, Missing, Why, Title, Company, Location, Base salary, Extra pay, Apply link, Status';
+const FIT_PROMPT = [
+  'You check one job ad for one candidate. Read only what is written; never guess.',
+  '',
+  'fitScore (0-100): how well the candidate, as described in the profile, meets this job: role, duties, required experience, industry and level. Count only experience the profile states. A required industry, licence, degree or number of years the profile does not show lowers the score.',
+  'sponsorshipStatus:',
+  '- NO: the ad requires citizenship, permanent residency, existing or unrestricted work rights, a security clearance, or says it does not sponsor visas.',
+  '- YES: the ad explicitly offers visa sponsorship for this job.',
+  '- YES_CONDITIONAL: sponsorship is offered only later or only to some people (after probation, top performers, applicants already in the country).',
+  '- ASK: the ad says nothing either way. A large or international company is not evidence of sponsorship.',
+  'sponsorshipEvidence: the exact sentence from the ad that decided the status; empty for ASK.',
+  'missingRequirements: requirements of the ad that the profile does not show, each a few words.',
+  'seniorityFit: FIT, TOO_SENIOR or TOO_JUNIOR for the candidate.',
+  'reason: one sentence on why the job fits or not.',
+].join('\n');
+const EMAIL_PROMPT = [
+  'You write a short first email from a job seeker to an employer about one job.',
+  'Rules:',
+  '- Use only facts from the candidate profile. Never invent experience, numbers, employers, degrees or visa status.',
+  '- 120 to 170 words, plain and friendly English, no cliches such as "I am excited to apply".',
+  '- Name the job and one or two concrete reasons the candidate fits it, taken from the profile and the ad.',
+  '- In one honest sentence say the candidate is based abroad and would need visa sponsorship.',
+  '  Sponsorship status ASK: politely ask whether they would consider sponsoring the right person.',
+  '  YES_CONDITIONAL: ask whether the visa could be arranged before the start date.',
+  '  YES: mention that the ad offers sponsorship.',
+  '- Ask for a 15-minute video call and sign with the candidate name.',
+  '- Return a subject line and the email body.',
+].join('\n');
+
+const jobsAbroad = workflow('Find jobs abroad that can sponsor your visa and draft the emails with Apify, AI and Gmail', [
+  sticky('Overview', [
+    '## Jobs abroad that can sponsor your visa, with the emails drafted for you',
+    '',
+    'For people who look for work in another country and need an employer to sponsor their work visa. Most job ads never say it, and many quietly rule you out: "citizens or permanent residents only", "full working rights required". This workflow reads every new ad on 10+ job sites, drops the ones that rule you out, has AI check the rest against your profile, keeps everything in a Google Sheet and writes email drafts for the best matches. **Nothing is sent**: the drafts wait in Gmail for you to read, edit and send.',
+    '',
+    '### How it works',
+    '1. **Every morning** starts the workflow; **Your profile** holds your CV summary and limits.',
+    '2. **Search job sites** runs the [All-in-One Jobs Scraper](https://apify.com/robertosan16/all-in-one-jobs-scraper) on Apify: LinkedIn, Indeed, Glassdoor, SEEK and more in one call, one format, duplicates across sites removed. `onlyNew` returns each job once.',
+    '3. **Screen work rights** finds ads that require citizenship, PR, existing work rights or a clearance, or say they do not sponsor, with the exact quote. It also splits the salary into guaranteed base and extras (OTE, bonus, commission). No AI is spent on these jobs.',
+    '4. **Check fit and sponsorship** (AI) scores how well you fit each remaining job and reads the ad for sponsorship: YES, YES_CONDITIONAL (after probation, onshore only), ASK or NO, with the sentence that decided it.',
+    '5. **Rank jobs** keeps two separate scores, fit and visa, and decides: APPLY, ASK SPONSORSHIP FIRST, REVIEW, LOW PRIORITY or SKIP.',
+    '6. **Update job tracker** writes every job, skipped ones included, to your sheet.',
+    '7. The best jobs, up to `maxDraftsPerDay`, get an honest email from **Write the email** (AI) and land in Gmail as drafts.',
+    '',
+    '### Set up',
+    `1. ${APIFY_SETUP.replace('{node}', 'Search job sites')}`,
+    '2. In **Your profile**, replace the example with your own CV summary, and set `minBaseSalary` (the base pay your visa needs) and `maxDraftsPerDay`.',
+    '3. In **Search job sites**, set the job titles, `countries` and `location`.',
+    '4. Add an OpenAI credential to **OpenAI Chat Model**, or swap it for Anthropic, Gemini or any chat model.',
+    `5. Create a Google Sheet whose first row is: ${SHEET_COLUMNS}. Select it in **Update job tracker**. The Status column is yours for notes; the workflow never writes it.`,
+    '6. Connect Gmail in **Save Gmail draft** and activate the workflow.',
+    '',
+    '### Cost',
+    'The scraper charges $1 per 1,000 jobs, and the Apify free plan includes $5 of usage every month. AI runs only on jobs that pass the screen; with a small model such as gpt-4.1-mini a day of 50 jobs costs a few cents.',
+  ].join('\n'), [-600, -360], [540, 1140]),
+  sticky('Search note', '### Your search\nJob titles, `countries` (two-letter codes) and `location`. `postedWithinDays: 3` and `onlyNew: true` keep each run to new jobs. `sources` limits the sites if you want.', [380, 60], [300, 200], 5),
+  sticky('Screen note', '### Work-rights screen\nRules, not AI: each ban needs an exact quote from the ad. If you already have the right to work there, set `needsVisaSponsorship` to false in **Your profile** and nothing is skipped.', [620, 460], [320, 200], 5),
+  sticky('Drafts note', '### Drafts, not emails\nNothing is sent. Read each draft, add the recipient from the ad, fix anything that is not right and send it yourself. `maxDraftsPerDay` keeps it to a few personal emails a day.', [2280, -120], [320, 200], 5),
+  schedule('Every morning', 7, [40, 300]),
+  node('Your profile', 'n8n-nodes-base.set', 3.4, [260, 300], {
+    assignments: {
+      assignments: [
+        ['candidateProfile', 'string', [
+          'Name: Alex Example',
+          'Current role: Sales Manager, 7 years in B2B sales of consumer goods, leading a team of 6',
+          'Strengths: key accounts, wholesale and retail partners, CRM, KPIs and sales planning, training new sales staff',
+          'Education: Bachelor of Business (Marketing)',
+          'English: upper intermediate',
+          'Location: lives abroad, ready to relocate, needs employer visa sponsorship',
+        ].join('\n')],
+        ['needsVisaSponsorship', 'boolean', true],
+        ['minBaseSalary', 'number', 80000],
+        ['maxDraftsPerDay', 'number', 5],
+      ].map(([name, type, value], index) => ({ id: `profile-${index + 1}`, name, type, value })),
+    },
+    options: {},
+  }),
+  apify('Search job sites', 'all-in-one-jobs-scraper', {
+    searchQueries: ['sales manager', 'business development manager'],
+    countries: ['AU'],
+    location: 'Adelaide',
+    postedWithinDays: 3,
+    onlyNew: true,
+    includeDescription: true,
+    maxItems: 100,
+  }, [480, 300]),
+  codeNode('Screen work rights', 'jobs-abroad-screen.js', [700, 300]),
+  node('Can apply?', 'n8n-nodes-base.if', 2.2, [920, 300], {
+    conditions: conditions([condition('={{ $json.canApply }}', { type: 'boolean', operation: 'true', singleValue: true })]),
+    options: {},
+  }),
+  node('Check fit and sponsorship', '@n8n/n8n-nodes-langchain.informationExtractor', 1.2, [1160, 180], {
+    text: "=CANDIDATE PROFILE:\n{{ $('Your profile').first().json.candidateProfile }}\n\nJOB: {{ $json.title }} at {{ $json.company }}, {{ $json.location }}\nSALARY: {{ $json.salaryText || 'not stated' }}\n\nJOB AD:\n{{ $json.description }}",
+    schemaType: 'manual',
+    inputSchema: JSON.stringify({
+      type: 'object',
+      properties: {
+        fitScore: { type: 'integer', minimum: 0, maximum: 100 },
+        sponsorshipStatus: { type: 'string', enum: ['YES', 'YES_CONDITIONAL', 'ASK', 'NO'] },
+        sponsorshipEvidence: { type: 'string' },
+        missingRequirements: { type: 'array', items: { type: 'string' } },
+        seniorityFit: { type: 'string', enum: ['FIT', 'TOO_SENIOR', 'TOO_JUNIOR'] },
+        reason: { type: 'string' },
+      },
+      required: ['fitScore', 'sponsorshipStatus', 'sponsorshipEvidence', 'missingRequirements', 'seniorityFit', 'reason'],
+    }, null, 2),
+    options: { systemPromptTemplate: FIT_PROMPT },
+  }),
+  node('OpenAI Chat Model', '@n8n/n8n-nodes-langchain.lmChatOpenAi', 1.2, [1500, 520], {
+    model: { __rl: true, value: 'gpt-4.1-mini', mode: 'list', cachedResultName: 'gpt-4.1-mini' },
+    options: { temperature: 0.2 },
+  }),
+  codeNode('Skipped jobs', 'jobs-abroad-skipped.js', [1160, 460]),
+  codeNode('Rank jobs', 'jobs-abroad-rank.js', [1460, 180]),
+  sheet('Update job tracker', 'appendOrUpdate', [1760, 400], ['Job link']),
+  node('Worth an email?', 'n8n-nodes-base.filter', 2.2, [1760, 100], {
+    conditions: conditions([
+      condition('={{ $json.Recommendation }}', { type: 'string', operation: 'equals' }, 'APPLY'),
+      condition('={{ $json.Recommendation }}', { type: 'string', operation: 'equals' }, 'ASK SPONSORSHIP FIRST'),
+    ], 'or'),
+    options: {},
+  }),
+  node('Best first', 'n8n-nodes-base.sort', 1, [1980, 100], {
+    sortFieldsUi: { sortField: [{ fieldName: 'Priority', order: 'descending' }] },
+    options: {},
+  }),
+  node('Daily limit', 'n8n-nodes-base.limit', 1, [2200, 100], {
+    maxItems: "={{ $('Your profile').first().json.maxDraftsPerDay }}",
+  }),
+  node('Write the email', '@n8n/n8n-nodes-langchain.chainLlm', 1.6, [2420, 100], {
+    promptType: 'define',
+    text: "=CANDIDATE PROFILE:\n{{ $('Your profile').first().json.candidateProfile }}\n\nJOB: {{ $json.Title }} at {{ $json.Company }}, {{ $json.Location }}\nSPONSORSHIP STATUS: {{ $json.sponsorshipStatus }}\nWHY IT FITS: {{ $json.Why }}\n\nJOB AD:\n{{ $json.description.slice(0, 3000) }}",
+    hasOutputParser: true,
+    messages: { messageValues: [{ message: EMAIL_PROMPT }] },
+  }),
+  node('Email format', '@n8n/n8n-nodes-langchain.outputParserStructured', 1.2, [2560, 340], {
+    schemaType: 'manual',
+    inputSchema: JSON.stringify({
+      type: 'object',
+      properties: { subject: { type: 'string' }, body: { type: 'string' } },
+      required: ['subject', 'body'],
+    }, null, 2),
+  }),
+  node('Save Gmail draft', 'n8n-nodes-base.gmail', 2.1, [2740, 100], {
+    resource: 'draft',
+    subject: '={{ $json.output.subject }}',
+    emailType: 'text',
+    message: "={{ $json.output.body }}\n\nJob ad: {{ $('Daily limit').item.json['Apply link'] }}",
+    options: {},
+  }),
+], {
+  ...chain('Every morning', 'Your profile', 'Search job sites', 'Screen work rights', 'Can apply?'),
+  'Can apply?': { main: [[{ node: 'Check fit and sponsorship', type: 'main', index: 0 }], [{ node: 'Skipped jobs', type: 'main', index: 0 }]] },
+  'Check fit and sponsorship': { main: [[{ node: 'Rank jobs', type: 'main', index: 0 }]] },
+  'Skipped jobs': { main: [[{ node: 'Update job tracker', type: 'main', index: 0 }]] },
+  'Rank jobs': { main: [[{ node: 'Update job tracker', type: 'main', index: 0 }, { node: 'Worth an email?', type: 'main', index: 0 }]] },
+  ...chain('Worth an email?', 'Best first', 'Daily limit', 'Write the email', 'Save Gmail draft'),
+  'OpenAI Chat Model': { ai_languageModel: [[
+    { node: 'Check fit and sponsorship', type: 'ai_languageModel', index: 0 },
+    { node: 'Write the email', type: 'ai_languageModel', index: 0 },
+  ]] },
+  'Email format': { ai_outputParser: [[{ node: 'Write the email', type: 'ai_outputParser', index: 0 }]] },
+});
+// The tracker keeps only the sheet's own columns; the job text for the email step is not written.
+jobsAbroad.nodes.find((n) => n.name === 'Update job tracker').parameters.options = { handlingExtraData: 'ignoreIt' };
+
 const templates = {
+  'jobs-abroad-visa-sponsorship-gmail-drafts.json': jobsAbroad,
   'indeed-job-alerts-google-sheets.json': indeedSheets,
   'glassdoor-top-rated-jobs-slack.json': glassdoorSlack,
   'glassdoor-hiring-companies-leads.json': hiringLeads,

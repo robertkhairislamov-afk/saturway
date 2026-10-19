@@ -90,3 +90,41 @@ Every Monday the workflow runs the [Glassdoor Jobs Scraper](https://apify.com/ro
 - Keep only companies of a certain size or industry with a Filter node after **One row per company**.
 - Send new companies to your CRM, such as HubSpot or Pipedrive, instead of a sheet.
 ```
+
+---
+
+## 4. Find jobs abroad that can sponsor your visa and draft the emails with Apify, AI and Gmail
+
+File: `jobs-abroad-visa-sponsorship-gmail-drafts.json`
+
+Tested 19.10 in a local n8n 2.42.7 with the Apify community node 0.7.0 against the live All-in-One Jobs Scraper (Adelaide, sales roles): 40 jobs → 38 unique → 9 skipped by the work-rights screen with exact quotes → 29 checked → 5 drafts. The two AI steps were replaced by stubs with the same output shape (no OpenAI key here); the real AI nodes load and stop only at the missing credential. Google Sheets and Gmail were replaced by empty nodes; the Gmail subject and body expressions were checked in a Set node.
+
+```markdown
+## Who is this for
+People looking for work in another country who need an employer to sponsor their work visa. Most job ads never say whether they sponsor, and many quietly rule foreign candidates out ("citizens or permanent residents only", "full working rights required"). Recruiters and career coaches who help such candidates can use it too.
+
+## What it does
+Every morning the workflow runs the [All-in-One Jobs Scraper](https://apify.com/robertosan16/all-in-one-jobs-scraper) on Apify (LinkedIn, Indeed, Glassdoor, SEEK and more in one call, duplicates removed) and then:
+1. Screens each ad with rules, not AI: ads that require citizenship, permanent residency, existing or unrestricted work rights or a security clearance, or say they do not sponsor, are skipped with the exact quote. The salary is split into guaranteed base and extras (OTE, bonus, commission).
+2. Has AI check the remaining jobs against your profile: a fit score, the sponsorship status (YES, YES_CONDITIONAL, ASK, NO) with the sentence that decided it, missing requirements and seniority.
+3. Keeps two separate scores, fit and visa, and labels every job APPLY, ASK SPONSORSHIP FIRST, REVIEW, LOW PRIORITY or SKIP in a Google Sheet.
+4. Writes short, honest emails for the best few jobs a day and saves them as Gmail drafts. Nothing is sent automatically.
+
+## How to set up
+1. Create a free Apify account and add your Apify credential to **Search job sites** (API token or OAuth). The Apify node is the verified community node `@apify/n8n-nodes-apify`.
+2. In **Your profile**, replace the example with your CV summary and set `minBaseSalary` and `maxDraftsPerDay`.
+3. In **Search job sites**, set the job titles, `countries` and `location`.
+4. Add an OpenAI credential to **OpenAI Chat Model**, or swap in Anthropic, Gemini or another chat model.
+5. Create a Google Sheet whose first row is: Job link, Found, Recommendation, Priority, Fit, Visa, Sponsorship, Evidence, Missing, Why, Title, Company, Location, Base salary, Extra pay, Apply link, Status. Select it in **Update job tracker**.
+6. Connect Gmail in **Save Gmail draft** and activate the workflow.
+
+## Requirements
+- An Apify account. The free plan includes $5 of usage a month; the scraper costs $1 per 1,000 jobs.
+- An OpenAI API key or another chat model. AI runs only on jobs that pass the screen.
+- A Google account for Google Sheets and Gmail.
+
+## How to customize
+- Already have the right to work there? Set `needsVisaSponsorship` to false and the screen skips nothing.
+- Change the rules in **Rank jobs**, for example the fit score needed for an email.
+- Send the best jobs to Slack or Telegram instead of drafting emails, or add a Wait node to review them first.
+```

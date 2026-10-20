@@ -1,0 +1,292 @@
+{
+  "title": "Google Trends Scraper",
+  "description": "Export Google Trends interest over time, interest by region and related queries for any number of keywords and countries, and the Trending now lists.",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "keywords": {
+      "title": "Keywords",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Search terms to check, one per line. Each keyword gets its own record for every location. You can also enter Google topic IDs such as <code>/m/02vqfm</code>.",
+      "prefill": [
+        "matcha",
+        "cold brew"
+      ],
+      "placeholderValue": "electric bike"
+    },
+    "locations": {
+      "title": "Locations",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Countries or regions: codes such as <code>US</code>, <code>GB</code>, <code>US-CA</code>, <code>DE-BY</code>, or names such as <code>Germany</code>. Leave empty or enter <code>Worldwide</code> for the whole world. Every keyword is checked in every location.",
+      "prefill": [
+        "US"
+      ],
+      "placeholderValue": "GB"
+    },
+    "timeRange": {
+      "title": "Time range",
+      "type": "string",
+      "editor": "select",
+      "description": "The period of the data, as on the Google Trends website. Google sets the step: minutes for the past hours, hours for 7 days, days up to 9 months, weeks up to 5 years, months beyond.",
+      "enum": [
+        "now 1-H",
+        "now 4-H",
+        "now 1-d",
+        "now 7-d",
+        "today 1-m",
+        "today 3-m",
+        "today 12-m",
+        "today 5-y",
+        "all",
+        "custom"
+      ],
+      "enumTitles": [
+        "Past hour",
+        "Past 4 hours",
+        "Past day",
+        "Past 7 days",
+        "Past 30 days",
+        "Past 90 days",
+        "Past 12 months",
+        "Past 5 years",
+        "2004 to present",
+        "Custom dates (below)"
+      ],
+      "default": "today 12-m"
+    },
+    "startDate": {
+      "title": "Start date (custom range)",
+      "type": "string",
+      "editor": "datepicker",
+      "dateType": "absolute",
+      "description": "First day of a custom range, from 2004-01-01. Used when the time range is \"Custom dates\".",
+      "pattern": "^(\\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$"
+    },
+    "endDate": {
+      "title": "End date (custom range)",
+      "type": "string",
+      "editor": "datepicker",
+      "dateType": "absolute",
+      "description": "Last day of a custom range. Defaults to today.",
+      "pattern": "^(\\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$"
+    },
+    "compareOnOneScale": {
+      "title": "Compare all keywords and locations on one scale",
+      "type": "boolean",
+      "description": "Off: each keyword and location gets its own 0-100 scale, which shows the shape of its trend best. On: everything shares one 0-100 scale, so you can compare popularity. Google compares at most 5 terms at a time; the Actor has no such limit, and small keywords get decimals (0.37) instead of Google's 0 and \"<1\".",
+      "default": false,
+      "sectionCaption": "Comparison and data"
+    },
+    "searchAsTopic": {
+      "title": "Search as Google topics",
+      "type": "boolean",
+      "description": "Look up each keyword as a Google topic (\"Coffee\", the drink) instead of the exact search term. A topic counts searches in all languages and spellings and leaves out other meanings.",
+      "default": false
+    },
+    "category": {
+      "title": "Category",
+      "type": "string",
+      "editor": "select",
+      "description": "Limit the data to searches in one category. For subcategories, use an explore link with <code>cat=</code>.",
+      "enum": [
+        "0",
+        "3",
+        "47",
+        "44",
+        "22",
+        "12",
+        "5",
+        "7",
+        "71",
+        "8",
+        "45",
+        "65",
+        "11",
+        "13",
+        "958",
+        "19",
+        "16",
+        "299",
+        "14",
+        "66",
+        "29",
+        "533",
+        "174",
+        "18",
+        "20",
+        "67"
+      ],
+      "enumTitles": [
+        "All categories",
+        "Arts & Entertainment",
+        "Autos & Vehicles",
+        "Beauty & Fitness",
+        "Books & Literature",
+        "Business & Industrial",
+        "Computers & Electronics",
+        "Finance",
+        "Food & Drink",
+        "Games",
+        "Health",
+        "Hobbies & Leisure",
+        "Home & Garden",
+        "Internet & Telecom",
+        "Jobs & Education",
+        "Law & Government",
+        "News",
+        "Online Communities",
+        "People & Society",
+        "Pets & Animals",
+        "Real Estate",
+        "Reference",
+        "Science",
+        "Shopping",
+        "Sports",
+        "Travel"
+      ],
+      "default": "0"
+    },
+    "searchType": {
+      "title": "Search type",
+      "type": "string",
+      "editor": "select",
+      "description": "Which Google search to measure.",
+      "enum": [
+        "web",
+        "images",
+        "news",
+        "shopping",
+        "youtube"
+      ],
+      "enumTitles": [
+        "Web search",
+        "Image search",
+        "News search",
+        "Google Shopping",
+        "YouTube search"
+      ],
+      "default": "web"
+    },
+    "includeInterestByRegion": {
+      "title": "Interest by region",
+      "type": "boolean",
+      "description": "Add the interest of every region (states, countries or cities) to each record.",
+      "default": true
+    },
+    "regionResolution": {
+      "title": "Region level",
+      "type": "string",
+      "editor": "select",
+      "description": "Default: countries for worldwide, regions (states) for a country. Cities works everywhere Google has enough data; metro areas (DMA) only in the United States.",
+      "enum": [
+        "default",
+        "CITY",
+        "DMA"
+      ],
+      "enumTitles": [
+        "Default",
+        "Cities",
+        "Metro areas (US only)"
+      ],
+      "default": "default"
+    },
+    "includeRelatedQueries": {
+      "title": "Related queries",
+      "type": "boolean",
+      "description": "Add the top and rising related queries to each record, with flags for queries that do not contain the keyword and for spam.",
+      "default": true
+    },
+    "exploreUrls": {
+      "title": "Google Trends explore links",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Links copied from the Google Trends website, such as <code>https://trends.google.com/trends/explore?date=today%205-y&geo=US&q=tesla,rivian</code>. Each link is repeated exactly: its terms, places, dates, category and search type.",
+      "sectionCaption": "Explore links"
+    },
+    "trendingLocations": {
+      "title": "Trending now: locations",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Countries or regions for the Trending now lists, such as <code>US</code>, <code>GB</code> or <code>US-NY</code>. Each trending search becomes one record with its search volume, growth, start time and related searches.",
+      "placeholderValue": "US",
+      "sectionCaption": "Trending now"
+    },
+    "trendingHours": {
+      "title": "Trending now: period",
+      "type": "string",
+      "editor": "select",
+      "description": "Searches trending in the past 4 hours, 24 hours, 48 hours or 7 days.",
+      "enum": [
+        "4",
+        "24",
+        "48",
+        "168"
+      ],
+      "enumTitles": [
+        "Past 4 hours",
+        "Past 24 hours",
+        "Past 48 hours",
+        "Past 7 days"
+      ],
+      "default": "24"
+    },
+    "trendingCategories": {
+      "title": "Trending now: categories",
+      "type": "array",
+      "editor": "select",
+      "description": "Keep only trending searches in these categories. Leave empty for all.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Autos and Vehicles",
+          "Beauty and Fashion",
+          "Business and Finance",
+          "Climate",
+          "Entertainment",
+          "Food and Drink",
+          "Games",
+          "Health",
+          "Hobbies and Leisure",
+          "Jobs and Education",
+          "Law and Government",
+          "Other",
+          "Pets and Animals",
+          "Politics",
+          "Science",
+          "Shopping",
+          "Sports",
+          "Technology",
+          "Travel and Transportation"
+        ]
+      }
+    },
+    "trendingActiveOnly": {
+      "title": "Trending now: active only",
+      "type": "boolean",
+      "description": "Keep only searches that are still trending.",
+      "default": false
+    },
+    "maxTrendingPerLocation": {
+      "title": "Trending now: maximum per location",
+      "type": "integer",
+      "minimum": 0,
+      "description": "Keep at most this many trending searches per location, in Google's order. 0 keeps all (often 200-500 for 24 hours).",
+      "default": 0
+    },
+    "proxyConfiguration": {
+      "title": "Proxy configuration",
+      "type": "object",
+      "editor": "proxy",
+      "description": "Google Trends limits busy addresses. The Actor starts on Apify Proxy, opens a new session when Google limits one, and moves to residential addresses if limits continue.",
+      "prefill": {
+        "useApifyProxy": true
+      },
+      "default": {
+        "useApifyProxy": true
+      },
+      "sectionCaption": "Proxy"
+    }
+  }
+}

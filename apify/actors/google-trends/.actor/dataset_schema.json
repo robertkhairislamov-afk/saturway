@@ -1,0 +1,150 @@
+{
+  "actorSpecification": 1,
+  "fields": {},
+  "views": {
+    "overview": {
+      "title": "Keyword insights",
+      "transformation": {
+        "fields": [
+          "keyword",
+          "locationName",
+          "averageInterest",
+          "latestInterest",
+          "peakInterest",
+          "peakDate",
+          "recentChangePercent",
+          "yearOverYearPercent",
+          "trendDirection",
+          "bestMonth",
+          "topRegion",
+          "topRisingQuery",
+          "timeRangeName",
+          "trendsUrl"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "keyword": {
+            "label": "Keyword",
+            "format": "text"
+          },
+          "locationName": {
+            "label": "Location",
+            "format": "text"
+          },
+          "averageInterest": {
+            "label": "Average",
+            "format": "number"
+          },
+          "latestInterest": {
+            "label": "Latest",
+            "format": "number"
+          },
+          "peakInterest": {
+            "label": "Peak",
+            "format": "number"
+          },
+          "peakDate": {
+            "label": "Peak date",
+            "format": "text"
+          },
+          "recentChangePercent": {
+            "label": "Change, last 4 vs 4 before (%)",
+            "format": "number"
+          },
+          "yearOverYearPercent": {
+            "label": "Year over year (%)",
+            "format": "number"
+          },
+          "trendDirection": {
+            "label": "Trend",
+            "format": "text"
+          },
+          "bestMonth": {
+            "label": "Best month",
+            "format": "text"
+          },
+          "topRegion": {
+            "label": "Top region",
+            "format": "text"
+          },
+          "topRisingQuery": {
+            "label": "Top rising query",
+            "format": "text"
+          },
+          "timeRangeName": {
+            "label": "Time range",
+            "format": "text"
+          },
+          "trendsUrl": {
+            "label": "Google Trends",
+            "format": "link"
+          }
+        }
+      }
+    },
+    "trending": {
+      "title": "Trending now",
+      "transformation": {
+        "fields": [
+          "locationName",
+          "rank",
+          "term",
+          "searchVolumeText",
+          "increasePercent",
+          "startedAt",
+          "isActive",
+          "categories",
+          "relatedSearches",
+          "exploreUrl"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "locationName": {
+            "label": "Location",
+            "format": "text"
+          },
+          "rank": {
+            "label": "Rank",
+            "format": "number"
+          },
+          "term": {
+            "label": "Trending search",
+            "format": "text"
+          },
+          "searchVolumeText": {
+            "label": "Searches",
+            "format": "text"
+          },
+          "increasePercent": {
+            "label": "Growth (%)",
+            "format": "number"
+          },
+          "startedAt": {
+            "label": "Started",
+            "format": "date"
+          },
+          "isActive": {
+            "label": "Active",
+            "format": "boolean"
+          },
+          "categories": {
+            "label": "Categories",
+            "format": "array"
+          },
+          "relatedSearches": {
+            "label": "Related searches",
+            "format": "array"
+          },
+          "exploreUrl": {
+            "label": "Google Trends",
+            "format": "link"
+          }
+        }
+      }
+    }
+  }
+}

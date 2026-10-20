@@ -1,0 +1,24 @@
+{
+  "actorOutputSchemaVersion": 1,
+  "title": "Google Trends Scraper output",
+  "properties": {
+    "insights": {
+      "type": "string",
+      "title": "Keyword insights",
+      "description": "One record per keyword and location: average, peak, latest value, change, trend, season, top region and rising query, with the full timeline, regions and related queries.",
+      "template": "{{links.apiDefaultDatasetUrl}}/items?view=overview"
+    },
+    "trending": {
+      "type": "string",
+      "title": "Trending now",
+      "description": "Trending searches with search volume, growth, start time, categories and related searches.",
+      "template": "{{links.apiDefaultDatasetUrl}}/items?view=trending"
+    },
+    "summary": {
+      "type": "string",
+      "title": "Run summary",
+      "description": "Records saved for every comparison and trending list, with errors and request statistics.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/SUMMARY"
+    }
+  }
+}

@@ -281,28 +281,48 @@ const jobsAbroad = workflow('Find jobs abroad that can sponsor your visa and dra
     'For people who look for work in another country and need an employer to sponsor their work visa. Most job ads never say it, and many quietly rule you out: "citizens or permanent residents only", "full working rights required". This workflow reads every new ad on 10+ job sites, drops the ones that rule you out, has AI check the rest against your profile, keeps everything in a Google Sheet and writes email drafts for the best matches. **Nothing is sent**: the drafts wait in Gmail for you to read, edit and send.',
     '',
     '### How it works',
-    '1. **Every morning** starts the workflow; **Your profile** holds your CV summary and limits.',
-    '2. **Search job sites** runs the [All-in-One Jobs Scraper](https://apify.com/robertosan16/all-in-one-jobs-scraper) on Apify: LinkedIn, Indeed, Glassdoor, SEEK and more in one call, one format, duplicates across sites removed. `onlyNew` returns each job once.',
-    '3. **Screen work rights** finds ads that require citizenship, PR, existing work rights or a clearance, or say they do not sponsor, with the exact quote. It also splits the salary into guaranteed base and extras (OTE, bonus, commission). No AI is spent on these jobs.',
-    '4. **Check fit and sponsorship** (AI) scores how well you fit each remaining job and reads the ad for sponsorship: YES, YES_CONDITIONAL (after probation, onshore only), ASK or NO, with the sentence that decided it.',
-    '5. **Rank jobs** keeps two separate scores, fit and visa, and decides: APPLY, ASK SPONSORSHIP FIRST, REVIEW, LOW PRIORITY or SKIP.',
-    '6. **Update job tracker** writes every job, skipped ones included, to your sheet.',
-    '7. The best jobs, up to `maxDraftsPerDay`, get an honest email from **Write the email** (AI) and land in Gmail as drafts.',
-    '',
-    '### Set up',
+    '1. **Search new jobs**: every morning the [All-in-One Jobs Scraper](https://apify.com/robertosan16/all-in-one-jobs-scraper) on Apify searches LinkedIn, Indeed, Glassdoor, SEEK and more in one call.',
+    '2. **Screen work rights**: rules, not AI, skip ads that rule out foreign candidates, each with the exact quote.',
+    '3. **AI check and ranking**: AI scores your fit and reads the ad for sponsorship; each job gets APPLY, ASK SPONSORSHIP FIRST, REVIEW, LOW PRIORITY or SKIP.',
+    '4. **Job tracker**: every job, skipped ones included, goes to your Google Sheet.',
+    '5. **Email drafts**: the best few jobs a day get an honest email, saved as a Gmail draft.',
+  ].join('\n'), [-1200, -240], [560, 760]),
+  sticky('Setup', [
+    '## Set up',
     `1. ${APIFY_SETUP.replace('{node}', 'Search job sites')}`,
     '2. In **Your profile**, replace the example with your own CV summary, and set `minBaseSalary` (the base pay your visa needs) and `maxDraftsPerDay`.',
     '3. In **Search job sites**, set the job titles, `countries` and `location`.',
     '4. Add an OpenAI credential to **OpenAI Chat Model**, or swap it for Anthropic, Gemini or any chat model.',
-    `5. Create a Google Sheet whose first row is: ${SHEET_COLUMNS}. Select it in **Update job tracker**. The Status column is yours for notes; the workflow never writes it.`,
+    `5. Create a Google Sheet whose first row is: ${SHEET_COLUMNS}. Select it in **Update job tracker**.`,
     '6. Connect Gmail in **Save Gmail draft** and activate the workflow.',
     '',
     '### Cost',
     'The scraper charges $1 per 1,000 jobs, and the Apify free plan includes $5 of usage every month. AI runs only on jobs that pass the screen; with a small model such as gpt-4.1-mini a day of 50 jobs costs a few cents.',
-  ].join('\n'), [-600, -360], [540, 1140]),
-  sticky('Search note', '### Your search\nJob titles, `countries` (two-letter codes) and `location`. `postedWithinDays: 3` and `onlyNew: true` keep each run to new jobs. `sources` limits the sites if you want.', [380, 60], [300, 200], 5),
-  sticky('Screen note', '### Work-rights screen\nRules, not AI: each ban needs an exact quote from the ad. If you already have the right to work there, set `needsVisaSponsorship` to false in **Your profile** and nothing is skipped.', [620, 460], [320, 200], 5),
-  sticky('Drafts note', '### Drafts, not emails\nNothing is sent. Read each draft, add the recipient from the ad, fix anything that is not right and send it yourself. `maxDraftsPerDay` keeps it to a few personal emails a day.', [2280, -120], [320, 200], 5),
+  ].join('\n'), [-620, -240], [560, 760], 7),
+  sticky('Group: search', [
+    '## 1. Search new jobs',
+    'Starts every morning at 7:00. **Your profile** holds your CV summary, whether you need a visa, the minimum base salary and the number of drafts a day.',
+    '**Search job sites** runs the All-in-One Jobs Scraper with your job titles, `countries` (two-letter codes) and `location`. `postedWithinDays: 3` and `onlyNew: true` keep each run to new jobs; duplicates across sites are removed.',
+  ].join('\n\n'), [0, -240], [700, 620], 5),
+  sticky('Group: screen', [
+    '## 2. Screen work rights (rules, no AI)',
+    '**Screen work rights** skips ads that require citizenship, permanent residency, existing or unrestricted work rights or a security clearance, or say they do not sponsor, and keeps the exact quote. It also splits the salary into guaranteed base and extras (OTE, bonus, commission).',
+    '**Skipped jobs** still go to the tracker, so you can check every decision. Already have the right to work there? Set `needsVisaSponsorship` to false in **Your profile** and nothing is skipped.',
+  ].join('\n\n'), [740, -240], [700, 860], 3),
+  sticky('Group: AI', [
+    '## 3. AI check and ranking',
+    '**Check fit and sponsorship** reads each remaining ad against your profile: a fit score, the sponsorship status (YES, YES_CONDITIONAL, ASK or NO) with the sentence that decided it, missing requirements and seniority. It counts only experience your profile states.',
+    '**Rank jobs** keeps fit and visa as two scores and labels the job APPLY, ASK SPONSORSHIP FIRST, REVIEW, LOW PRIORITY or SKIP. Swap **OpenAI Chat Model** for any chat model.',
+  ].join('\n\n'), [1480, -240], [760, 860], 6),
+  sticky('Group: tracker', [
+    '## 4. Job tracker',
+    'One row per job in Google Sheets, matched by Job link, so a job is never added twice. The Status column is yours for notes; the workflow never writes it.',
+  ].join('\n\n'), [2280, 560], [440, 440], 4),
+  sticky('Group: emails', [
+    '## 5. Email drafts for the best jobs',
+    '**Worth an email?**, **Best first** and **Daily limit** keep the APPLY and ASK SPONSORSHIP FIRST jobs, best first, up to `maxDraftsPerDay`.',
+    '**Write the email** uses only facts from your profile and asks honestly about sponsorship. **Save Gmail draft** saves it as a draft: nothing is sent. Add the recipient from the ad, edit and send it yourself.',
+  ].join('\n\n'), [2280, -240], [1320, 760], 2),
   schedule('Every morning', 7, [40, 300]),
   node('Your profile', 'n8n-nodes-base.set', 3.4, [260, 300], {
     assignments: {
@@ -408,6 +428,16 @@ const jobsAbroad = workflow('Find jobs abroad that can sponsor your visa and dra
   ]] },
   'Email format': { ai_outputParser: [[{ node: 'Write the email', type: 'ai_outputParser', index: 0 }]] },
 });
+// Node positions inside the group stickies.
+const JOBS_ABROAD_POSITIONS = {
+  'Every morning': [80, 200], 'Your profile': [300, 200], 'Search job sites': [520, 200],
+  'Screen work rights': [800, 200], 'Can apply?': [1020, 200], 'Skipped jobs': [1240, 460],
+  'Check fit and sponsorship': [1540, 200], 'OpenAI Chat Model': [1580, 460], 'Rank jobs': [1980, 200],
+  'Update job tracker': [2440, 800],
+  'Worth an email?': [2340, 200], 'Best first': [2560, 200], 'Daily limit': [2780, 200], 'Write the email': [3000, 200],
+  'Email format': [3160, 420], 'Save Gmail draft': [3380, 200],
+};
+for (const n of jobsAbroad.nodes) if (JOBS_ABROAD_POSITIONS[n.name]) n.position = JOBS_ABROAD_POSITIONS[n.name];
 // The tracker keeps only the sheet's own columns; the job text for the email step is not written.
 jobsAbroad.nodes.find((n) => n.name === 'Update job tracker').parameters.options = { handlingExtraData: 'ignoreIt' };
 

@@ -1,8 +1,8 @@
 {
   "actorSpecification": 1,
   "name": "aliexpress-search-scraper",
-  "title": "AliExpress Search Scraper: Products, Prices & Sales",
-  "description": "Scrape AliExpress search and category results: price, discount, sold count, rating, delivery days, Choice and ad labels, badges and store names. Any keyword or category link, sorting, price range, ship-to country and currency.",
+  "title": "AliExpress Product Scraper: Exact Sales & Prices",
+  "description": "Find best-selling AliExpress products: exact sold count instead of \"10,000+ sold\", price and regular price, discount, rating, delivery days, Choice and ad labels, store and search position. Keywords or category links, any ship-to country.",
   "version": "0.1",
   "buildTag": "latest",
   "input": "./input_schema.json",

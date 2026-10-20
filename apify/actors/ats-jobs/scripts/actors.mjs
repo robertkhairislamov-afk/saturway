@@ -161,12 +161,12 @@ export const ACTORS = {
   },
   indeed: {
     name: 'indeed-jobs-scraper',
-    title: 'Indeed Jobs Scraper',
+    title: 'Indeed Jobs Scraper & API: 62 Countries, Salaries',
     tagline: 'Indeed jobs in 62 countries, with salaries, job types, benefits and company details',
     apiExample: { searchQueries: ['data analyst'], country: 'US', location: 'Austin, TX', maxItems: 20 },
-    description: 'Scrape Indeed jobs in 62 countries by keyword and location: title, company, salary as numbers, job type, remote or hybrid, experience level, benefits, company size, full description and apply link. Past the 1,000-job limit.',
-    seoTitle: 'Indeed Jobs Scraper – Salaries, 62 Countries',
-    seoDescription: 'Scrape Indeed jobs in 62 countries by keyword and location: title, company, salary, job type, remote, benefits, full description. $1 per 1,000 jobs.',
+    description: 'Indeed scraper for 62 countries: search jobs by keyword and location and get title, company, salary as numbers, job type, remote or hybrid, experience level, benefits, full description and apply link. Past the 1,000-job limit, no login.',
+    seoTitle: 'Indeed Scraper & Jobs API – 62 Countries, Salaries',
+    seoDescription: 'Scrape Indeed job postings in 62 countries: title, company, salary as numbers, remote, job type, full description and apply link. No login. $1 per 1,000 jobs.',
   },
   glassdoor: {
     name: 'glassdoor-jobs-scraper',
@@ -206,12 +206,12 @@ export const ACTORS = {
   },
   multi: {
     name: 'all-in-one-jobs-scraper',
-    title: 'All-in-One Jobs Scraper',
+    title: 'All-in-One Job Scraper: LinkedIn, Indeed, Glassdoor',
     tagline: 'LinkedIn, Indeed, Glassdoor and the other job boards here in one search, plus career sites you add, with duplicates removed',
     apiExample: { searchQueries: ['data analyst'], countries: ['US', 'DE', 'AU'], maxItems: 30 },
     description: 'Search LinkedIn, Indeed, Glassdoor, Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet, JobsDB, Reed and InfoJobs by keyword and country, plus Greenhouse, Lever, Ashby and Workday career sites you add. One format, duplicates removed.',
-    seoTitle: 'All-in-One Jobs Scraper – LinkedIn, Indeed, Glassdoor',
-    seoDescription: 'Search LinkedIn, Indeed, Glassdoor, Dice, StepStone, SEEK, Reed, InfoJobs, Jobstreet, JobsDB and career sites at once. One format. $1 per 1,000 jobs.',
+    seoTitle: 'Job Scraper API – LinkedIn, Indeed, Glassdoor + 8 Sites',
+    seoDescription: 'Job scraper for LinkedIn, Indeed, Glassdoor, Dice, StepStone, SEEK, Reed, InfoJobs, Jobstreet, JobsDB and career sites in one run. One format. $1/1,000 jobs.',
   },
 };
 

@@ -2,7 +2,7 @@
   "actorSpecification": 1,
   "name": "google-trends-scraper",
   "title": "Google Trends Scraper: Unlimited Keywords & Trending Now",
-  "description": "Export Google Trends for any number of keywords and countries on one scale: daily data for years, interest by region and city, related and rising queries, ready insights (trend, peak, season) and Trending now lists with search volumes.",
+  "description": "Google Trends API alternative with no 5-keyword limit: any number of keywords and countries on one scale, daily data for years, interest by region and city, related and rising queries, ready insights and Trending now with search volumes.",
   "version": "0.1",
   "buildTag": "latest",
   "input": "./input_schema.json",

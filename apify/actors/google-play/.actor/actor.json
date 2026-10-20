@@ -1,8 +1,8 @@
 {
   "actorSpecification": 1,
   "name": "google-play-scraper",
-  "title": "Google Play Scraper: Apps & Top Charts",
-  "description": "Scrape Google Play apps, top charts (free, paid, grossing) for any country and category, keyword search rankings and developer catalogs: ratings, installs, prices, versions, contacts. No browser.",
+  "title": "Google Play Store Scraper: Apps, Charts & ASO",
+  "description": "Scrape Google Play Store app data: top free, paid and grossing charts for any country and category, keyword search rankings for ASO, developer catalogs, ratings, installs, prices, versions and contacts. No browser, no API key.",
   "version": "0.1",
   "buildTag": "latest",
   "input": "./input_schema.json",

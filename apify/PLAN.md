@@ -677,6 +677,13 @@ StepStone на платформе иногда отдаёт карточки м�
 - Вывод: нового индийского актора не делаем — большой спрос только у Naukri, и он закрыт; индийские вакансии уже покрывает наш Foundit. Возможная мелочь — Shine как ещё один источник в ядре вакансий (101 пользователь).
 - Вторая проверка 20.10 (по просьбе владельца «в Индии точно что-то есть»): жилые адреса Индии открывают 99acres (27 квартир в JSON-LD + `window.__initialData__`) и Magicbricks (`SERVER_PRELOADED_STATE_`: название, цена, площадь, район — 30 на странице, страница 2 тоже), но **оба запрещают ИИ-агентам Anthropic весь сайт** в robots.txt (99acres: `User-agent: Anthropic`, Magicbricks: ClaudeBot, Claude-Web, Claude-SearchBot, anthropic-ai) — соблюдаем, не делаем. Housing.com и Zepto — блокировка (2 КБ), Blinkit — 403, 99acres режет даже robots.txt с дата-центра (Akamai). Flipkart запрещает всем `/search?` в robots.txt. JustDial разрешает Claude-User, но страница — пустая оболочка, данные идут через `/api/`, закрытый в robots.txt для всех. Открыт и без запретов только Shine (вакансии, 9 514 по «python developer», 101 пользователь).
 
+### Тексты в Store под поиск, 20.10
+
+- Второй сеанс (без плагинов: Marketing и другие в облачных сеансах не загрузились) сравнил наши тексты с лидерами и места в поиске Store: «play store» — Google Play 227-й, «aliexpress product scraper» — AliExpress 117-й, «google trends api» и «job scraper» — Trends и All-in-One вне первых 500. Предложения и скрипт — `marketing/store-seo/` (`apply.mjs` без `--apply` только сравнивает; `previous.json` — тексты до правки для отката; `rank.py` — места в поиске).
+- **Применено 20.10 с согласия владельца** (заголовок, описание, SEO-поля) для Indeed, Google Play, AliExpress, Trends, All-in-One; цены и адреса не менялись. SEO-заголовок Trends сокращён до 58 знаков (лимит Apify — 60). Те же тексты внесены в исходники (`ats-jobs/scripts/actors.mjs`, `actor.json` Google Play, AliExpress, Trends) и в локальные скрипты метаданных, чтобы пересборки их не затёрли.
+- Посты о статьях — `marketing/community-posts.md`: Reddit закрыт в robots.txt для всех роботов, правила r/dataisbeautiful, r/webscraping, r/dropship нужно вставить вручную; Hacker News — только тезисы, текст пишет владелец (их правила запрещают сгенерированный текст); r/SEO и Indie Hackers не подходят.
+- **27.10 проверить места в поиске (`rank.py`) и пользователей.**
+
 ### Индия — конкуренты и деньги, 20.10
 
 - Публичная статистика Store (лидеры ниш: пользователи за 30 дней, запуски за 30 дней, цена). Грубая оценка выручки лидера = запуски × цена × (10…100 результатов на запуск), до комиссии Apify 20%:

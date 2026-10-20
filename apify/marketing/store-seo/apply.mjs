@@ -7,7 +7,7 @@ import { readFile } from 'node:fs/promises';
 
 const USER = 'robertosan16';
 const FIELDS = ['title', 'description', 'seoTitle', 'seoDescription'];
-const LIMITS = { title: 60, seoTitle: 62, seoDescription: 160, description: 260 };
+const LIMITS = { title: 60, seoTitle: 60, seoDescription: 160, description: 260 };
 
 const args = process.argv.slice(2);
 const apply = args.includes('--apply');

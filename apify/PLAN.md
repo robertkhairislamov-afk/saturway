@@ -675,6 +675,7 @@ StepStone на платформе иногда отдаёт карточки м�
 - Naukri закрыт дважды: API требует reCAPTCHA с любых адресов (29.09, 13.10), а robots.txt прямо запрещает ИИ-агентам, включая Claude-User и ClaudeBot, весь сайт, кроме блога. Не трогаем.
 - robots.txt: Internshala запрещает Anthropic-AI, Claude-Web, ClaudeBot, Claude-SearchBot весь сайт; IndiaMART — ClaudeBot; JustDial прямо разрешает Claude-User; у Shine и Flipkart запретов для Claude нет.
 - Вывод: нового индийского актора не делаем — большой спрос только у Naukri, и он закрыт; индийские вакансии уже покрывает наш Foundit. Возможная мелочь — Shine как ещё один источник в ядре вакансий (101 пользователь).
+- Вторая проверка 20.10 (по просьбе владельца «в Индии точно что-то есть»): жилые адреса Индии открывают 99acres (27 квартир в JSON-LD + `window.__initialData__`) и Magicbricks (`SERVER_PRELOADED_STATE_`: название, цена, площадь, район — 30 на странице, страница 2 тоже), но **оба запрещают ИИ-агентам Anthropic весь сайт** в robots.txt (99acres: `User-agent: Anthropic`, Magicbricks: ClaudeBot, Claude-Web, Claude-SearchBot, anthropic-ai) — соблюдаем, не делаем. Housing.com и Zepto — блокировка (2 КБ), Blinkit — 403, 99acres режет даже robots.txt с дата-центра (Akamai). Flipkart запрещает всем `/search?` в robots.txt. JustDial разрешает Claude-User, но страница — пустая оболочка, данные идут через `/api/`, закрытый в robots.txt для всех. Открыт и без запретов только Shine (вакансии, 9 514 по «python developer», 101 пользователь).
 
 ### Лиды — разбор 20.10 (вопрос владельца «что есть для лидов»)
 

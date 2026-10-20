@@ -84,6 +84,7 @@ You pay only for results: **$2 per 1,000 articles**, and **$1 per 1,000 resolved
 - **Scheduled monitoring**: run the Actor on a schedule with *From date* set to a relative date such as `1 day`, and get every new article since yesterday.
 - **Big datasets**: set a long date range and keep *Search each day separately* on.
 - **Precise searches**: use operators like `"exact phrase"`, `site:` and `-exclude` in the query.
+- **What is trending, and how much**: our [Google Trends Scraper](https://apify.com/robertosan16/google-trends-scraper) gives the Trending now lists with search volumes and the interest in any keyword over time; run this Actor with a trending term to get the news behind it.
 
 ## FAQ
 

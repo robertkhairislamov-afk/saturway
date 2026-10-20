@@ -40,6 +40,8 @@ export function normalizeInput(raw = {}, example = {}) {
     onlyWithSalary: raw.onlyWithSalary === true,
     onlyNew: raw.onlyNew === true,
     includeDescription: raw.includeDescription !== false,
+    outputMode: raw.outputMode === 'companies' ? 'companies' : 'jobs',
+    excludeStaffingAgencies: raw.excludeStaffingAgencies !== false,
     maxItems,
     maxItemsPerCompany,
     proxyConfiguration: raw.proxyConfiguration,

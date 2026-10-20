@@ -16,6 +16,9 @@ export const companyConcurrency = 3;
 // Descriptions are loaded several jobs per request, so every job of a batch is asked for at once.
 export const detailConcurrency = 48;
 export const proxyFallback = true;
+// Jobs carry the employer's size, revenue, industry, website and rating, so a run can also save
+// one record per hiring company.
+export const companyMode = true;
 
 const API = 'https://api.glassdoor.com/graph';
 const SUGGEST = 'https://api.glassdoor.com/autocomplete/location';

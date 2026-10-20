@@ -1,6 +1,8 @@
 // Runs one ATS adapter: reads every company board, filters the jobs, optionally skips jobs seen
 // in earlier runs, respects the item limits and the user's maximum charge, and saves the jobs.
+// Adapters with `companyMode` can instead save one record per hiring company (see companies.js).
 
+import { createCompanyCollector } from './companies.js';
 import { createJobFilter } from './filters.js';
 import { createHttpClient } from './http.js';
 import { normalizeInput } from './input.js';
@@ -75,7 +77,12 @@ export async function runScraper(Actor, adapter, rawInput, log) {
     datacenterProxy: Actor.isAtHome?.() ? () => Actor.createProxyConfiguration({ useApifyProxy: true }) : undefined,
     onFallback: () => log.info(`${adapter.limitNotice ?? `${adapter.title} is limiting direct requests`}; continuing through Apify Proxy.`),
   });
-  const context = { http, log, keywords: input.keywords, includeDescription: input.includeDescription };
+  // "Hiring companies": jobs are grouped by employer and only the companies are saved, at the end.
+  const companyMode = input.outputMode === 'companies' && adapter.companyMode === true;
+  if (input.outputMode === 'companies' && !companyMode) log.warning(`${adapter.title} has no hiring-companies output; saving jobs.`);
+  const collector = companyMode ? createCompanyCollector({ excludeStaffingAgencies: input.excludeStaffingAgencies }) : null;
+  // Company records need no job descriptions.
+  const context = { http, log, keywords: input.keywords, includeDescription: companyMode ? false : input.includeDescription };
   const filter = createJobFilter(input);
   const seenJobs = input.onlyNew ? await openSeenJobs(Actor, adapter.name) : null;
   const budget = Actor.getChargingManager().calculateMaxEventChargeCountWithinLimit(ITEM_EVENT);
@@ -84,7 +91,10 @@ export async function runScraper(Actor, adapter, rawInput, log) {
   let finished = 0;
   // Adapters that search several sites name each job; the same job from another source is skipped.
   const savedKeys = new Map();
-  const roomLeft = () => Math.min(input.maxItems > 0 ? input.maxItems - saved : Infinity, budget - saved);
+  // In company mode the limits count companies, saved at the end, so every job is read.
+  const roomLeft = () => (companyMode
+    ? (budget > 0 ? Infinity : 0)
+    : Math.min(input.maxItems > 0 ? input.maxItems - saved : Infinity, budget - saved));
 
   // Progress while the run works: jobs saved, sources finished and the ones in progress, so a long
   // source does not look like a stalled run. Messages go out in order, at most every few seconds.
@@ -96,7 +106,9 @@ export async function runScraper(Actor, adapter, rawInput, log) {
     statusSentAt = Date.now();
     const names = [...new Set([...working].map((company) => company.label ?? company.id))];
     const now = names.length > 0 ? `; working on ${names.slice(0, 3).join(', ')}${names.length > 3 ? ` and ${names.length - 3} more` : ''}` : '';
-    const text = `Saved ${saved} jobs, finished ${finished} of ${countOf(companies)}${now}`;
+    const text = companyMode
+      ? `Read ${saved} jobs of ${collector.size} companies, finished ${finished} of ${countOf(companies)}${now}`
+      : `Saved ${saved} jobs, finished ${finished} of ${countOf(companies)}${now}`;
     statusChain = statusChain.then(() => Actor.setStatusMessage(text)).catch(() => {});
     return statusChain;
   };
@@ -135,8 +147,12 @@ export async function runScraper(Actor, adapter, rawInput, log) {
         if (adapter.dedupeKey) savedKeys.set(adapter.dedupeKey(job), company.key);
       }
       if (taken.length > 0) {
-        const scrapedAt = new Date().toISOString();
-        await Actor.pushData(taken.map((job) => toOutput(job, scrapedAt)));
+        if (companyMode) {
+          for (const job of taken) collector.add(job, company.id);
+        } else {
+          const scrapedAt = new Date().toISOString();
+          await Actor.pushData(taken.map((job) => toOutput(job, scrapedAt)));
+        }
         showProgress();
       }
       // A full run needs no more pages: requests still in progress for other sources end now.
@@ -239,7 +255,21 @@ export async function runScraper(Actor, adapter, rawInput, log) {
   await statusChain;
 
   const summary = [...results, ...rejected];
-  await Actor.setValue('SUMMARY', { ats: adapter.name, jobsSaved: saved, companies: summary });
+  // Company mode: the companies with most jobs first, as many as the limits allow.
+  let companiesSaved = 0;
+  let companiesFound = 0;
+  if (companyMode) {
+    const records = collector.records();
+    companiesFound = records.length;
+    const kept = records.slice(0, Math.min(input.maxItems > 0 ? input.maxItems : Infinity, budget));
+    for (let start = 0; start < kept.length; start += 500) await Actor.pushData(kept.slice(start, start + 500));
+    companiesSaved = kept.length;
+  }
+  await Actor.setValue('SUMMARY', {
+    ats: adapter.name,
+    ...(companyMode ? { output: 'companies', companiesSaved, companiesFound, jobsRead: saved, companiesSkipped: collector.skipped } : { jobsSaved: saved }),
+    companies: summary,
+  });
   const { requests, retried, limited, blocked } = http.stats;
   if (retried > 0) log.info(`${requests} requests; ${retried} tried again after ${limited} rate limits and ${blocked} empty or blocked pages.`);
 
@@ -248,7 +278,10 @@ export async function runScraper(Actor, adapter, rawInput, log) {
     throw new Error(failed.length === 1 ? failed[0].error : `All ${failed.length} ${many} failed. First error: ${failed[0].error}`);
   }
   let stopped = null;
-  if (saved >= budget) stopped = 'stopped at the maximum cost per run';
+  if (companyMode) {
+    if (companiesSaved < companiesFound && companiesSaved >= budget) stopped = 'stopped at the maximum cost per run';
+    else if (companiesSaved < companiesFound) stopped = `kept the ${companiesSaved} companies with most jobs of ${companiesFound}`;
+  } else if (saved >= budget) stopped = 'stopped at the maximum cost per run';
   else if (input.maxItems > 0 && saved >= input.maxItems) stopped = `stopped at the limit of ${input.maxItems} jobs`;
   const notes = [];
   // The status message names the sources that failed, so a run that finished is not mistaken for full coverage.
@@ -257,11 +290,16 @@ export async function runScraper(Actor, adapter, rawInput, log) {
     notes.push(`${failed.length} failed: ${names}${failed.length > 3 ? ' and more, see the run summary' : ''}`);
   }
   if (rejected.length > 0) notes.push(`${rejected.length} skipped as invalid`);
+  if (companyMode && collector.skipped.staffing > 0) notes.push(`${collector.skipped.staffing} staffing agencies left out`);
+  if (companyMode && collector.skipped.hidden > 0) notes.push(`${collector.skipped.hidden} jobs of confidential employers left out`);
   if (stopped) notes.push(stopped);
   const companiesText = countOf(companies);
-  const message = saved === 0 && failed.length === 0 && !stopped
-    ? `No ${input.onlyNew ? 'new ' : ''}jobs matched the filters in ${companiesText}.`
-    : `Saved ${saved} ${input.onlyNew ? 'new ' : ''}jobs from ${companiesText}${notes.length > 0 ? ` (${notes.join(', ')})` : ''}.`;
+  const newText = input.onlyNew ? 'new ' : '';
+  const notesText = notes.length > 0 ? ` (${notes.join(', ')})` : '';
+  let message;
+  if (saved === 0 && failed.length === 0 && !stopped) message = `No ${newText}jobs matched the filters in ${companiesText}.`;
+  else if (companyMode) message = `Saved ${companiesSaved} hiring companies from ${saved} ${newText}jobs in ${companiesText}${notesText}.`;
+  else message = `Saved ${saved} ${newText}jobs from ${companiesText}${notesText}.`;
   log.info(message);
-  return { saved, message, summary };
+  return { saved: companyMode ? companiesSaved : saved, message, summary };
 }

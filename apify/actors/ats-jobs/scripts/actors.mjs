@@ -173,7 +173,7 @@ export const ACTORS = {
     title: 'Glassdoor Jobs Scraper',
     tagline: 'Glassdoor jobs in 62 countries, with company ratings, salaries and company details',
     apiExample: { searchQueries: ['data analyst'], country: 'US', location: 'Chicago, IL', maxItems: 20 },
-    description: 'Scrape Glassdoor jobs in 62 countries by keyword and location: title, company rating, salary or Glassdoor estimate, job type, remote, company size, revenue and industry, full description. Past the 30-page limit.',
+    description: 'Scrape Glassdoor jobs in 62 countries by keyword and location: company rating, salary or Glassdoor estimate, job type, remote, company size, revenue, industry, full description. Past the 30-page limit. Or get a lead list of hiring companies.',
     seoTitle: 'Glassdoor Jobs Scraper – Ratings, Salaries, 62 Countries',
     seoDescription: 'Scrape Glassdoor jobs by keyword and location: company rating, salary and estimate, job type, company size, full description. 62 countries. $1 per 1,000 jobs.',
   },
@@ -1147,15 +1147,38 @@ function glassdoorInputSchema() {
         unit: 'days',
         description: 'Keep jobs posted in the last N days: 1 means today and yesterday. Leave empty or 0 for any date.',
       },
+      outputMode: {
+        title: 'What to save',
+        type: 'string',
+        editor: 'select',
+        sectionCaption: 'Output',
+        description: 'Jobs: one row per job. Hiring companies: one row per employer with its number of matching jobs, jobs of the last 7 and 30 days, teams it hires for, top job titles, places, pay range, rating, size, revenue, industry and website: a lead list of companies that are growing.',
+        enum: ['jobs', 'companies'],
+        enumTitles: ['Jobs', 'Hiring companies (lead list)'],
+        default: 'jobs',
+      },
+      excludeStaffingAgencies: {
+        title: 'Hiring companies: leave out staffing agencies',
+        type: 'boolean',
+        default: true,
+        description: 'Skip recruiters and staffing agencies that post jobs for other employers. Jobs of employers hidden as "Confidential" are always left out.',
+      },
       ...commonSettings({
         site: 'Glassdoor',
         proxyDescription: 'The Actor connects directly, which is fastest. If Glassdoor starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it from the start.',
       }),
+      maxItems: {
+        title: 'Maximum results in total',
+        type: 'integer',
+        minimum: 0,
+        description: 'Stop after saving this many jobs. With Hiring companies, this is the number of companies: every job is read and the companies with most jobs are kept. Leave empty or 0 for no limit. The example is kept small so the first run takes seconds.',
+        prefill: 50,
+      },
       includeDescription: {
         title: 'Include job descriptions',
         type: 'boolean',
         default: true,
-        description: 'Save the full description (text and HTML) of each job. Turn off for smaller, faster results with every other field.',
+        description: 'Save the full description (text and HTML) of each job. Turn off for smaller, faster results with every other field. Hiring companies never load descriptions.',
       },
     },
   };
@@ -1560,6 +1583,21 @@ const SWAPPED = {
   foundit: { workplaceType: 'employmentType' },
 };
 
+// The table of hiring companies, for Actors whose adapter has a company mode.
+const COMPANY_COLUMNS = {
+  companyName: { label: 'Company', format: 'text' },
+  jobs: { label: 'Jobs', format: 'number' },
+  jobsLast7Days: { label: 'Last 7 days', format: 'number' },
+  jobsLast30Days: { label: 'Last 30 days', format: 'number' },
+  companyRating: { label: 'Rating', format: 'number' },
+  companySize: { label: 'Size', format: 'text' },
+  companyRevenue: { label: 'Revenue', format: 'text' },
+  companyIndustry: { label: 'Industry', format: 'text' },
+  companyDomain: { label: 'Website', format: 'text' },
+  companyUrl: { label: 'Company page', format: 'link' },
+};
+const COMPANY_VIEW_ATS = new Set(['glassdoor']);
+
 export const datasetSchema = (ats) => {
   const [extraField, extraLabel] = EXTRA_COLUMN[ats] ?? [];
   const columns = OVERVIEW.map((field) => SWAPPED[ats]?.[field] ?? field);
@@ -1576,6 +1614,13 @@ export const datasetSchema = (ats) => {
           properties: Object.fromEntries(fields.map((field) => [field, field === extraField ? { label: extraLabel, format: 'text' } : COLUMNS[field]])),
         },
       },
+      ...(COMPANY_VIEW_ATS.has(ats) ? {
+        companies: {
+          title: 'Hiring companies',
+          transformation: { fields: Object.keys(COMPANY_COLUMNS) },
+          display: { component: 'table', properties: COMPANY_COLUMNS },
+        },
+      } : {}),
     },
   };
 };
@@ -1590,6 +1635,14 @@ export const outputSchema = (ats) => ({
       description: 'Job postings with title, company, locations, salary, dates, description and links.',
       template: '{{links.apiDefaultDatasetUrl}}/items?view=overview',
     },
+    ...(COMPANY_VIEW_ATS.has(ats) ? {
+      hiringCompanies: {
+        type: 'string',
+        title: 'Hiring companies',
+        description: 'With "What to save: Hiring companies": one record per employer with its job counts and company details.',
+        template: '{{links.apiDefaultDatasetUrl}}/items?view=companies',
+      },
+    } : {}),
     summary: {
       type: 'string',
       title: 'Run summary',

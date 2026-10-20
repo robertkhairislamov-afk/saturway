@@ -1,0 +1,30 @@
+{
+  "indeed-jobs-scraper": {
+    "title": "Indeed Jobs Scraper & API: 62 Countries, Salaries",
+    "description": "Indeed scraper for 62 countries: search jobs by keyword and location and get title, company, salary as numbers, job type, remote or hybrid, experience level, benefits, full description and apply link. Past the 1,000-job limit, no login.",
+    "seoTitle": "Indeed Scraper & Jobs API – 62 Countries, Salaries",
+    "seoDescription": "Scrape Indeed job postings in 62 countries: title, company, salary as numbers, remote, job type, full description and apply link. No login. $1 per 1,000 jobs."
+  },
+  "google-play-scraper": {
+    "title": "Google Play Store Scraper: Apps, Charts & ASO",
+    "description": "Scrape Google Play Store app data: top free, paid and grossing charts for any country and category, keyword search rankings for ASO, developer catalogs, ratings, installs, prices, versions and contacts. No browser, no API key.",
+    "seoTitle": "Google Play Store Scraper & API – Apps, Top Charts, ASO",
+    "seoDescription": "Scrape Google Play Store apps: details, ratings, installs, top free, paid and grossing charts by country and category, ASO keyword ranks. JSON, CSV, Excel."
+  },
+  "aliexpress-search-scraper": {
+    "title": "AliExpress Product Scraper: Exact Sales & Prices",
+    "description": "Find best-selling AliExpress products: exact sold count instead of \"10,000+ sold\", price and regular price, discount, rating, delivery days, Choice and ad labels, store and search position. Keywords or category links, any ship-to country.",
+    "seoTitle": "AliExpress Product Scraper – Exact Sold Count & Prices",
+    "seoDescription": "Scrape AliExpress products from search and category pages: exact sold count, price and regular price, rating, delivery days, Choice. For product research."
+  },
+  "google-trends-scraper": {
+    "description": "Google Trends API alternative with no 5-keyword limit: any number of keywords and countries on one scale, daily data for years, interest by region and city, related and rising queries, ready insights and Trending now with search volumes.",
+    "seoTitle": "Google Trends API & Scraper – Unlimited Keywords, Trending Now",
+    "seoDescription": "Google Trends API alternative: compare unlimited keywords on one scale, daily data for years, regions, rising queries, Trending now with volumes. $2/1,000."
+  },
+  "all-in-one-jobs-scraper": {
+    "title": "All-in-One Job Scraper: LinkedIn, Indeed, Glassdoor",
+    "seoTitle": "Job Scraper API – LinkedIn, Indeed, Glassdoor + 8 Sites",
+    "seoDescription": "Job scraper for LinkedIn, Indeed, Glassdoor, Dice, StepStone, SEEK, Reed, InfoJobs, Jobstreet, JobsDB and career sites in one run. One format. $1/1,000 jobs."
+  }
+}

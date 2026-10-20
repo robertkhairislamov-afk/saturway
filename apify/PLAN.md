@@ -843,6 +843,12 @@ Google Play, Lever, Ashby, Greenhouse и Google News пока дальше пе�
 - шаблоны n8n (сделаны 13.10, см. «Шаблоны n8n, 13.10»);
 - через 1–2 недели посмотреть Insights и оценку качества.
 
+### Продвижение через тексты Store и сообщества, 20.10
+
+- Плагины Apify, Marketing, Community & Reddit Marketing и n8n Knowledge Base в сеансе не включены (владельцу показана карточка установки). Работа сделана вручную тем же методом; подключение Apify (коннектор) работает.
+- **Тексты Store:** разбор лидеров Indeed, Google Play, AliExpress, Google Trends и наши места в поиске — `marketing/store-seo/README.md`. Вывод: тексты лидеров не лучше наших, наверх поднимают пользователи; у нас не хватает слов «Play Store», «AliExpress Product», «Google Trends API», «Job Scraper». Предложения для 5 акторов — `marketing/store-seo/proposals.json`; применяет владелец: `node apply.mjs` (сравнить), `APIFY_TOKEN=… node apply.mjs --apply <актор>`. Потом обновить исходники (`actors.mjs`, `actor.json`). Повторная проверка мест — 27.10, `python3 rank.py …`.
+- **Посты о статьях Trends и AliExpress:** `marketing/community-posts.md`. Reddit закрыт в robots.txt — правила сабреддитов не читали, вердикты предварительные, владелец вставляет правила в чат. HN запрещает сгенерированный текст — комментарий владелец пишет сам. Indie Hackers запрещает ботов Anthropic — не используем. Ничего не опубликовано.
+
 ### 9. Потом
 
 Спрос по данным Store 27.09 (пользователи за 30 дней, сумма по всем акторам ниши):

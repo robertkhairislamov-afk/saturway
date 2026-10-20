@@ -188,7 +188,27 @@ both["new_sales"] = both["soldCount"] - both["soldCount_before"]
 print(both.sort_values("new_sales", ascending=False).head(5)[["searchQuery", "position", "soldCount", "new_sales"]].to_string(index=False))
 ```
 
-__TRACK_OUTPUT__
+We ran it 0.9 hours after the first run:
+
+```
+92 products in both runs, 0.9 hours apart
+soldCount      changed for 2
+originalPrice  changed for 5
+price          changed for 4
+position       changed for 72
+     searchQuery  position  soldCount  new_sales
+pet hair remover        31       5386         17
+car phone holder         1     162169          0
+car phone holder         3      83675          0
+car phone holder         2      86983          0
+car phone holder         5      81790          0
+```
+
+Two lessons from this run:
+
+- **Sold counts update in batches.** In 0.9 hours only two changed: one pet hair remover gained 17 sales, and another one's count went down by 11. Compare runs a day or a week apart, and treat small changes as noise.
+- **Positions shift all the time.** 72 of the 92 products moved; 44 moved by more than 5 places, one by 52. If you track where a product ranks, average its position over several runs instead of trusting one.
+- **Promotions rotate.** This time the search-page price differed for only 4 products, against 26 in the run four minutes after the first. The promotional price jumps around; the regular price is the one to track.
 
 To do this without code, save your input as a **task** in Apify Console and add a **schedule**, for example every Monday at 8:00. Then download each week's results, or connect Google Sheets in the task's **Integrations** tab, and compare the weeks in a spreadsheet.
 

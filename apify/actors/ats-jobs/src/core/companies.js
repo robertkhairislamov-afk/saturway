@@ -31,9 +31,27 @@ export const departmentOf = (title) => DEPARTMENTS.find(([, pattern]) => pattern
 
 // Employers hidden behind "Confidential" are no lead.
 const HIDDEN = /^(company )?confidential\b|^confidential company\b|^(private|undisclosed|anonymous)( company| employer)?$/i;
+const JOB_SITES = /^(indeed|glassdoor|linkedin|seek|jobstreet|jobsdb|stepstone|reed|dice|xing|infojobs|foundit|wellfound)(\.com)?$/i;
 const STAFFING_INDUSTRY = /staffing|recruit|hr consulting|employment (agenc|services)|temporary help|outsourc/i;
 const STAFFING_NAME = /\b(staffing|recruit(ment|ing|ers)?|personnel|employment (agency|services)|talent solutions|workforce solutions|headhunt\w*)\b/i;
-export const isStaffingAgency = (job) => STAFFING_INDUSTRY.test(job.companyIndustry ?? '') || STAFFING_NAME.test(job.companyName ?? '');
+export const isStaffingAgency = (job) => STAFFING_INDUSTRY.test(industryOf(job) ?? '') || STAFFING_NAME.test(job.companyName ?? '');
+
+// Sites name some details differently: LinkedIn gives the job's industries and a logo URL.
+function industryOf(job) {
+  if (job.companyIndustry) return job.companyIndustry;
+  if (Array.isArray(job.industries)) return job.industries.join(', ') || null;
+  return cleanText(job.industries);
+}
+const detailOf = (job, field) => {
+  if (field === 'companyLogo') return job.companyLogo ?? job.companyLogoUrl ?? null;
+  if (field === 'companyIndustry') return industryOf(job);
+  return job[field] ?? null;
+};
+
+// "Acme Widgets, Inc." and "ACME WIDGETS" are one company when jobs come from several sites.
+const LEGAL_FORMS = /\b(inc|incorporated|llc|l\.l\.c|ltd|limited|corp|corporation|co|company|plc|gmbh|ag|sa|s\.a|bv|b\.v|pty|pvt|private|lp|llp)\b\.?/g;
+export const nameKey = (name) => String(name).normalize('NFKD').replace(/\p{M}+/gu, '').toLowerCase()
+  .replace(/&/g, ' and ').replace(LEGAL_FORMS, ' ').replace(/[^\p{L}\p{N}]+/gu, ' ').replace(/^the /, '').trim();
 
 // The details of a company that its jobs carry; the first job that names a detail gives it.
 const COMPANY_FIELDS = ['companyRating', 'companyUrl', 'companyWebsite', 'companyLogo', 'companySize', 'companyRevenue', 'companyType', 'companyIndustry', 'companyFounded', 'companyHeadquarters'];
@@ -45,7 +63,7 @@ export const EMPTY_COMPANY = {
   isStaffingAgency: null,
   jobs: null, jobsLast7Days: null, jobsLast30Days: null, remoteJobs: null, jobsWithSalary: null,
   departments: null, topJobTitles: null, locations: null, countries: null, salaryRange: null,
-  newestJobAt: null, oldestJobAt: null, sampleJobs: null, searches: null, scrapedAt: null,
+  newestJobAt: null, oldestJobAt: null, sampleJobs: null, searches: null, sites: null, scrapedAt: null,
 };
 
 const domainOf = (website) => {
@@ -57,7 +75,9 @@ const domainOf = (website) => {
 };
 const counted = (map, limit = TOP) => [...map.entries()].sort((a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0]))).slice(0, limit);
 
-export function createCompanyCollector({ excludeStaffingAgencies = false } = {}) {
+// `byName` groups jobs by the company's name instead of its id on the site: for runs that search
+// several sites, where each site has its own ids.
+export function createCompanyCollector({ excludeStaffingAgencies = false, byName = false } = {}) {
   const companies = new Map();
   const skipped = { hidden: 0, staffing: 0, unnamed: 0 };
 
@@ -67,7 +87,8 @@ export function createCompanyCollector({ excludeStaffingAgencies = false } = {})
       skipped.unnamed++;
       return false;
     }
-    if (HIDDEN.test(name)) {
+    // Without an employer of its own, a job board names itself ("Indeed") as the company.
+    if (HIDDEN.test(name) || (!job.company && JOB_SITES.test(name))) {
       skipped.hidden++;
       return false;
     }
@@ -76,15 +97,17 @@ export function createCompanyCollector({ excludeStaffingAgencies = false } = {})
       skipped.staffing++;
       return false;
     }
-    const key = job.company ? `id:${job.company}` : `name:${name.toLowerCase()}`;
+    const key = job.company && !byName ? `id:${job.company}` : `name:${nameKey(name) || name.toLowerCase()}`;
     let company = companies.get(key);
     if (!company) {
-      company = { name, id: job.company ?? null, details: {}, staffing, jobs: [], titles: new Map(), places: new Map(), countries: new Set(), departments: new Map(), searches: new Set() };
+      company = { name, id: byName ? null : job.company ?? null, details: {}, staffing, jobs: [], titles: new Map(), places: new Map(), countries: new Set(), departments: new Map(), searches: new Set(), sites: new Set() };
       companies.set(key, company);
     }
+    company.staffing = company.staffing || staffing;
     for (const field of COMPANY_FIELDS) {
-      if (company.details[field] == null && job[field] != null) company.details[field] = job[field];
+      if (company.details[field] == null) company.details[field] = detailOf(job, field);
     }
+    if (job.ats) company.sites.add(job.ats);
     company.jobs.push(job);
     // Glassdoor's normalized title groups variants ("sr. account executive, west"); its catch-alls
     // "other" and "… non title" say nothing, so the job's own title is used instead.
@@ -143,6 +166,7 @@ export function createCompanyCollector({ excludeStaffingAgencies = false } = {})
         oldestJobAt: dates.length > 0 ? new Date(Math.min(...dates)).toISOString() : null,
         sampleJobs: newestFirst.slice(0, SAMPLE_JOBS).map((job) => ({ title: job.title, location: job.location, postedAt: job.postedAt, jobUrl: job.jobUrl })),
         searches: [...company.searches],
+        sites: [...company.sites],
         scrapedAt,
       });
     }

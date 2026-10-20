@@ -145,6 +145,7 @@ In a test search for `account executive` in Austin, TX, 960 jobs became 590 comp
   "oldestJobAt": "2026-09-21T00:00:00.000Z",
   "sampleJobs": [{ "title": "Account Manager, Emerging Enterprise", "location": "Austin, TX", "postedAt": "2026-10-17T00:00:00.000Z", "jobUrl": "https://www.glassdoor.com/job-listing/account-manager-emerging-enterprise-braze-JV_IC1139761_KO0,35_KE36,41.htm?jl=1010267039083" }],
   "searches": ["account executive in Austin, TX, United States"],
+  "sites": ["glassdoor"],
   "scrapedAt": "2026-10-20T06:58:39.230Z"
 }
 ```

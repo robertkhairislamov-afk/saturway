@@ -13,6 +13,9 @@ export const title = 'Indeed';
 export const sourceNames = ['search', 'searches'];
 export const companyConcurrency = 3;
 export const proxyFallback = true;
+// Jobs carry the employer's size, revenue, industry and website, so a run can also save one record
+// per hiring company.
+export const companyMode = true;
 
 const API = 'https://apis.indeed.com/graphql';
 // The public key and identity of Indeed's iPhone app, which the job search API expects. The
@@ -283,8 +286,17 @@ export function toJob(raw, country = 'US') {
     companyLogo: dossier.images?.squareLogoUrl ?? null,
     companySize: cleanText(dossier.employerDetails?.employeesLocalizedLabel),
     companyRevenue: cleanText(dossier.employerDetails?.revenueLocalizedLabel),
-    companyIndustry: cleanText(dossier.employerDetails?.industry),
+    companyIndustry: industryName(dossier.employerDetails?.industry),
   };
+}
+
+// Indeed sends some industries as codes: "Iv1_CONSULTING_AND_BUSINESS_SERVICES" becomes
+// "Consulting and business services".
+export function industryName(value) {
+  const text = cleanText(value);
+  if (!text || !/^Iv\d+_[A-Z0-9_]+$/.test(text)) return text;
+  const words = text.replace(/^Iv\d+_/, '').toLowerCase().replace(/_/g, ' ');
+  return words.charAt(0).toUpperCase() + words.slice(1);
 }
 
 // --- Searching ----------------------------------------------------------------------------------

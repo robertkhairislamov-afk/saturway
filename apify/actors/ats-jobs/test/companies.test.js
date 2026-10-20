@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { EMPTY_COMPANY, createCompanyCollector, departmentOf, isStaffingAgency } from '../src/core/companies.js';
+import { EMPTY_COMPANY, createCompanyCollector, departmentOf, isStaffingAgency, nameKey } from '../src/core/companies.js';
 import { runScraper } from '../src/core/run.js';
 
 const NOW = Date.parse('2026-10-20T12:00:00Z');
@@ -50,6 +50,7 @@ test('the collector groups jobs into one record per company', () => {
   collector.add(job(ACME, 3, { title: 'Data Analyst', location: 'Dallas, TX', postedAt: daysAgo(40), salary: { min: 30, max: 40, currency: 'USD', interval: 'hour' } }), 'analyst in Texas');
   collector.add(job(BOLT, 4, { companyWebsite: null, companyRating: null, normalizedTitle: 'director non title', title: 'Director of Sales' }), 'sales in Austin');
   collector.add(job({ id: null, name: 'Confidential' }, 5), 'sales in Austin');
+  collector.add(job({ id: null, name: 'Indeed' }, 7), 'sales in Austin');
   collector.add(job({ id: '303', name: 'Northwind Staffing' }, 6), 'sales in Austin');
   const [acme, ...rest] = collector.records(NOW);
   assert.deepEqual(Object.keys(acme), Object.keys(EMPTY_COMPANY));
@@ -71,11 +72,32 @@ test('the collector groups jobs into one record per company', () => {
   // Confidential employers are dropped; staffing agencies are kept and flagged unless excluded.
   assert.deepEqual(rest.map((r) => [r.companyName, r.isStaffingAgency]), [['Bolt Robotics', false], ['Northwind Staffing', true]]);
   assert.deepEqual(rest[0].topJobTitles, [{ title: 'Director of Sales', jobs: 1 }]);
-  assert.equal(collector.skipped.hidden, 1);
+  assert.equal(collector.skipped.hidden, 2);
   const strict = createCompanyCollector({ excludeStaffingAgencies: true });
   strict.add(job({ id: '303', name: 'Northwind Staffing' }, 6));
   assert.equal(strict.size, 0);
   assert.equal(strict.skipped.staffing, 1);
+});
+
+test('runs over several sites match companies by name and keep each site\'s details', () => {
+  assert.equal(nameKey('Acme Widgets, Inc.'), nameKey('ACME WIDGETS'));
+  assert.equal(nameKey('The Home Depot'), nameKey('Home Depot'));
+  assert.notEqual(nameKey('Acme Widgets'), nameKey('Acme Robotics'));
+  const collector = createCompanyCollector({ byName: true });
+  collector.add({ ...job(ACME, 1), ats: 'indeed', company: 'acme-widgets', companyName: 'Acme Widgets, Inc.', companyRating: null, companySize: '201 to 500' });
+  collector.add({ ...job(ACME, 2), ats: 'linkedin', company: '998877', companyName: 'ACME WIDGETS', companySize: null, companyLogo: undefined, companyLogoUrl: 'https://example.com/logo.png', industries: 'Machinery Manufacturing', companyIndustry: undefined });
+  collector.add({ ...job(BOLT, 3), ats: 'linkedin', company: '112233' });
+  const [acme, bolt] = collector.records(NOW);
+  assert.equal(acme.jobs, 2);
+  assert.equal(acme.companyId, null);
+  assert.deepEqual(acme.sites, ['indeed', 'linkedin']);
+  assert.equal(acme.companySize, '201 to 500');
+  assert.equal(acme.companyLogo, 'https://example.com/logo.png');
+  assert.equal(bolt.companyName, 'Bolt Robotics');
+  // LinkedIn names the industry of the job page; staffing agencies are found by it too.
+  const linkedin = createCompanyCollector({ excludeStaffingAgencies: true });
+  linkedin.add({ ...job({ id: '5', name: 'Northwind' }, 4), companyIndustry: undefined, industries: 'Staffing and Recruiting' });
+  assert.equal(linkedin.size, 0);
 });
 
 // --- The run in company mode ---------------------------------------------------------------------
@@ -120,7 +142,7 @@ test('company mode saves companies, most jobs first, within maxItems and the cha
   let result = await runScraper(actor, fakeAdapter(pages), { companies: ['sales', 'data'], outputMode: 'companies', maxItems: 2 }, silentLog);
   assert.deepEqual(actor.dataset.map((r) => [r.companyName, r.jobs]), [['Acme Widgets', 3], ['Bolt Robotics', 1]]);
   assert.equal(result.saved, 2);
-  assert.match(result.message, /Saved 2 hiring companies from 6 jobs in 2 companies \(1 jobs of confidential employers left out, kept the 2 companies with most jobs of 3\)/);
+  assert.match(result.message, /Saved 2 hiring companies from 6 jobs in 2 companies \(1 jobs of unnamed or confidential employers left out, kept the 2 companies with most jobs of 3\)/);
   assert.equal(actor.values.SUMMARY.companiesFound, 3);
   assert.equal(actor.values.SUMMARY.jobsRead, 6);
   actor = fakeActor({ maxCharges: 1 });

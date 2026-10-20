@@ -27,6 +27,10 @@ export const sourceNames = ['source', 'sources'];
 export const companyConcurrency = 4;
 export const detailConcurrency = 6;
 export const proxyFallback = true;
+// A run can also save one record per hiring company. Each site has its own company ids, so the
+// same employer found on several sites is matched by name.
+export const companyMode = true;
+export const companyKeyByName = true;
 
 export const COUNTRIES = {
   US: 'United States',

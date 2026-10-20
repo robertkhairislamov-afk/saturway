@@ -18,6 +18,8 @@ export const sourceNames = ['search', 'searches'];
 export const companyConcurrency = 2;
 export const detailConcurrency = 16;
 export const proxyFallback = true;
+// A run can also save one record per hiring company: name, LinkedIn page, logo and its jobs.
+export const companyMode = true;
 
 const API = 'https://www.linkedin.com/jobs-guest/jobs/api';
 const PAGE_SIZE = 10;

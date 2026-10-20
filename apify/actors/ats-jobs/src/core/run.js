@@ -80,7 +80,7 @@ export async function runScraper(Actor, adapter, rawInput, log) {
   // "Hiring companies": jobs are grouped by employer and only the companies are saved, at the end.
   const companyMode = input.outputMode === 'companies' && adapter.companyMode === true;
   if (input.outputMode === 'companies' && !companyMode) log.warning(`${adapter.title} has no hiring-companies output; saving jobs.`);
-  const collector = companyMode ? createCompanyCollector({ excludeStaffingAgencies: input.excludeStaffingAgencies }) : null;
+  const collector = companyMode ? createCompanyCollector({ excludeStaffingAgencies: input.excludeStaffingAgencies, byName: adapter.companyKeyByName === true }) : null;
   // Company records need no job descriptions.
   const context = { http, log, keywords: input.keywords, includeDescription: companyMode ? false : input.includeDescription };
   const filter = createJobFilter(input);
@@ -291,7 +291,7 @@ export async function runScraper(Actor, adapter, rawInput, log) {
   }
   if (rejected.length > 0) notes.push(`${rejected.length} skipped as invalid`);
   if (companyMode && collector.skipped.staffing > 0) notes.push(`${collector.skipped.staffing} staffing agencies left out`);
-  if (companyMode && collector.skipped.hidden > 0) notes.push(`${collector.skipped.hidden} jobs of confidential employers left out`);
+  if (companyMode && collector.skipped.hidden > 0) notes.push(`${collector.skipped.hidden} jobs of unnamed or confidential employers left out`);
   if (stopped) notes.push(stopped);
   const companiesText = countOf(companies);
   const newText = input.onlyNew ? 'new ' : '';

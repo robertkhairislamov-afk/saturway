@@ -13,6 +13,7 @@ Scrape jobs from **LinkedIn**, the largest job site in the world, the way you se
 - 📄 **Full job details**: description as text and HTML, seniority, employment type, job function, industries, number of applicants, and whether you apply with Easy Apply or on the company site.
 - 💰 **Salary as numbers**: pay ranges from the listing or the description, such as "$81,499.00 - $138,549.00", become `min`, `max`, `currency` and `interval`.
 - 🛡️ **Built not to break**: requests go through rotating residential proxy addresses, and a blocked or empty page is tried again from another one. If a job page still fails, the job is saved with the search result data instead of being lost.
+- 📈 **Hiring companies (lead lists)**: switch **What to save** to *Hiring companies* and get one row per employer instead of one per job, with its number of matching jobs, jobs of the last 7 and 30 days, the teams it hires for, top job titles, places, pay range, LinkedIn company page and logo. Staffing agencies are left out.
 - 🆕 **Only new jobs since the last run**: for job alerts, recruiting pipelines and market monitoring.
 - 🧩 **Same output as our other job scrapers**, listed at the end of this page, so LinkedIn jobs and jobs from other boards and career sites fit into one table.
 
@@ -92,17 +93,29 @@ Job types are `F` full-time, `P` part-time, `C` contract, `T` temporary, `V` vol
 
 `seniorityLevel` is empty when LinkedIn shows "Not Applicable". LinkedIn does not show visitors whether a job is on-site, hybrid or remote, so `workplaceType` stays empty.
 
+## Hiring companies: a lead list of growing employers
+
+A company that hires is growing, and growing companies buy. Set **What to save** to **Hiring companies** and the Actor reads every job of your searches and saves **one row per employer**, the companies with most jobs first:
+
+- `jobs`, `jobsLast7Days`, `jobsLast30Days`: how many matching jobs the company posts, and how many are new.
+- `departments`: the teams it hires for, from the job titles, for example `{ "Sales": 6, "Engineering & IT": 2 }`.
+- `topJobTitles`, `locations`, `countries`, `remoteJobs`, `salaryRange`: what, where and for how much.
+- `sampleJobs`: the newest jobs with links, to quote in your first message; `searches`: which of your searches found the company.
+- `companyUrl` and `companyLogo`: the company's LinkedIn page and logo. LinkedIn shows visitors no company size or website; for those, run the same search in our [Indeed Jobs Scraper](https://apify.com/robertosan16/indeed-jobs-scraper) or [Glassdoor Jobs Scraper](https://apify.com/robertosan16/glassdoor-jobs-scraper), which have the same option.
+
+In a test on October 20, 2026, `account executive` in Austin, TX, posted in the last 7 days, gave 213 companies from 300 jobs in one minute. You pay per company, $0.50 per 1,000; the jobs read to build the list are free. The records hold company data only, no names, emails or phone numbers of people.
+
 ## Use cases
 
 - **Recruiters and staffing agencies**: see every new role for your niche and region each morning, with the number of applicants.
 - **Job boards and aggregators**: fill a job board with fresh listings from the largest job site.
-- **Sales and lead generation**: companies hiring are growing. Industries and company pages turn job ads into leads.
+- **Sales and lead generation**: companies hiring are growing. **Hiring companies** turns a search into a ranked lead list with each company's LinkedIn page and the teams it hires for.
 - **Labor market research**: track demand, seniority and pay by role, industry and location over time.
 - **AI agents**: give an agent one tool to search LinkedIn jobs.
 
 ## How much does it cost?
 
-You pay only for the jobs you get: **$0.50 per 1,000 jobs**. That is the price on the Apify Free plan. Paid Apify plans pay less: $0.45 per 1,000 jobs on Starter, $0.40 on Scale and $0.35 on Business, which is the "from" price shown in Apify Store. There is no start fee, and the residential proxies are included in the price. Jobs filtered out by your settings are free. The Apify free plan covers about 10,000 jobs every month.
+You pay only for the results you get: **$0.50 per 1,000 jobs**, or $0.50 per 1,000 companies with **Hiring companies**. That is the price on the Apify Free plan. Paid Apify plans pay less: $0.45 per 1,000 jobs on Starter, $0.40 on Scale and $0.35 on Business, which is the "from" price shown in Apify Store. There is no start fee, and the residential proxies are included in the price. Jobs filtered out by your settings are free. The Apify free plan covers about 10,000 jobs every month.
 
 ## Tips
 

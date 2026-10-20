@@ -16,6 +16,7 @@ One search, many job sites: the Actor sends your keywords to every job board tha
 - 💰 **Salary as numbers** in the local currency: "$120k - $140k p.a.", "RM 3,800 – RM 5,000 per month" or "€75,000-85,000" become `min`, `max`, `currency` and `interval`.
 - 🎛️ **Filters for all sites**: remote only, posted in the last N days, only jobs with a salary, title must contain, exclude words. LinkedIn is left out of remote searches, because it does not show visitors which jobs are remote.
 - 📋 **A report for every run**: the status message names any site that failed, and the **Run summary** on the Output tab lists every site with jobs found, matched and saved.
+- 📈 **Hiring companies (lead lists)**: switch **What to save** to *Hiring companies* and get one row per employer across all sites: the same company found on Indeed, Glassdoor, LinkedIn and SEEK becomes one record, with its number of matching jobs, jobs of the last 7 and 30 days, the teams it hires for, places, pay range, company details and the sites it posts on. Staffing agencies are left out.
 - 🆕 **Only new jobs since the last run**: one daily job alert across all sites.
 - 🏷️ **Source of every job** in the `ats` field: `linkedin`, `indeed`, `glassdoor`, `dice`, `wttj`, `stepstone`, `seek`, `jobstreet`, `jobsdb`, `reed`, `infojobs`, `greenhouse`, `lever`, `ashby` or `workday`.
 
@@ -132,17 +133,29 @@ Four of the 80 jobs from one run on 1 October 2026 (`data analyst` in the US, th
 
 Each job keeps its source in `ats`, and every salary keeps its currency and period: a yearly range in US dollars from Indeed, a day rate in pounds from Reed. The same run also returned jobs from Dice and Welcome to the Jungle.
 
+## Hiring companies: a lead list across job sites
+
+Set **What to save** to **Hiring companies** and the Actor reads every job of your searches on every site and saves **one row per employer**, the companies with most jobs first. Each site has its own company ids, so companies are matched by name: "Acme Widgets, Inc." on Indeed and "ACME WIDGETS" on LinkedIn are one company, and `sites` lists where it posts.
+
+- `jobs`, `jobsLast7Days`, `jobsLast30Days`: how many matching jobs the company posts, and how many are new.
+- `departments`: the teams it hires for, from the job titles, for example `{ "Sales": 6, "Engineering & IT": 2 }`.
+- `topJobTitles`, `locations`, `countries`, `remoteJobs`, `salaryRange`: what, where and for how much.
+- `sampleJobs`: the newest jobs with links, to quote in your first message; `searches`: which of your searches found the company.
+- `companyDomain`, `companySize`, `companyRevenue`, `companyIndustry`, `companyRating`: from the sites that show them (Indeed and Glassdoor).
+
+In a test on October 20, 2026, `registered nurse` in Adelaide, Australia, posted in the last 7 days, gave 118 employers from 345 jobs on SEEK, Indeed, Glassdoor and LinkedIn in 96 seconds; 28 of them were found on two sites or more. You pay per company, $1 per 1,000; the jobs read to build the list are free.
+
 ## Use cases
 
 - **International recruiting**: one daily feed of new roles for a skill across the US, Europe and Asia-Pacific.
 - **Job boards and aggregators**: fill a multi-country job board from one Actor and one schema.
 - **Labor market research**: compare demand and pay for a role across countries and sites.
-- **Sales and lead generation**: find companies hiring for a function in many markets at once.
+- **Sales and lead generation**: find companies hiring for a function in many markets at once, as one lead list with **Hiring companies**.
 - **AI agents**: give an agent one tool that searches every supported job site.
 
 ## How much does it cost?
 
-You pay only for the jobs you get: **$1 per 1,000 jobs**. That is the price on the Apify Free plan. Paid Apify plans pay less: $0.90 per 1,000 jobs on Starter, $0.80 on Scale and $0.70 on Business, which is the "from" price shown in Apify Store. There is no start fee, and the residential proxies for LinkedIn are included. Duplicates and jobs filtered out by your settings are free. The Apify free plan covers about 5,000 jobs every month.
+You pay only for the results you get: **$1 per 1,000 jobs**, or $1 per 1,000 companies with **Hiring companies**. That is the price on the Apify Free plan. Paid Apify plans pay less: $0.90 per 1,000 jobs on Starter, $0.80 on Scale and $0.70 on Business, which is the "from" price shown in Apify Store. There is no start fee, and the residential proxies for LinkedIn are included. Duplicates and jobs filtered out by your settings are free. The Apify free plan covers about 5,000 jobs every month.
 
 ## Tips
 

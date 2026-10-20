@@ -11,7 +11,8 @@ Scrape jobs from **Indeed**, one of the world's largest job sites, the way you s
 - 🎛️ **Indeed filters**: job type (full-time, part-time, contract, temporary, internship and more), remote, hybrid or in-person, experience level, "Easily apply" and date posted. Pick several job types to get jobs of any of them.
 - ♾️ **Past the 1,000-job limit**: Indeed stops a search after about 1,000 jobs. The Actor reads the newest jobs first and goes on with the older ones in further rounds.
 - 💰 **Salary as numbers**: pay the employer states becomes `{ "min": 145000, "max": 188000, "currency": "USD", "interval": "year" }`, also "from" and "up to" amounts. Indeed's own estimates are left out.
-- 🏢 **Company details**: company size, revenue, website, logo and Indeed company page for every job that has them.
+- 🏢 **Company details**: company size, revenue, industry, website, logo and Indeed company page for every job that has them.
+- 📈 **Hiring companies (lead lists)**: switch **What to save** to *Hiring companies* and get one row per employer instead of one per job, with its number of matching jobs, jobs of the last 7 and 30 days, the teams it hires for, top job titles, places, pay range, size, revenue, industry and website domain. Staffing agencies and unnamed employers are left out.
 - 🎁 **Benefits and schedule**: health insurance, paid time off, retirement plans, day or night shifts and more, as lists.
 - 🆕 **Only new jobs since the last run**: for job alerts, recruiting pipelines and market monitoring.
 - 🧩 **Same output as our other job scrapers**, listed at the end of this page, so Indeed jobs, other job boards and company career sites fit into one table.
@@ -103,24 +104,37 @@ Countries are two-letter codes such as `US`, `GB`, `CA`, `IN` or `DE`. Job types
 }
 ```
 
+## Hiring companies: a lead list of growing employers
+
+A company that hires is growing, and growing companies buy. Set **What to save** to **Hiring companies** and the Actor reads every job of your searches and saves **one row per employer**, the companies with most jobs first:
+
+- `jobs`, `jobsLast7Days`, `jobsLast30Days`: how many matching jobs the company posts, and how many are new.
+- `departments`: the teams it hires for, from the job titles, for example `{ "Sales": 6, "Engineering & IT": 2 }`.
+- `topJobTitles`, `locations`, `countries`, `remoteJobs`, `salaryRange`: what, where and for how much.
+- `sampleJobs`: the newest jobs with links, to quote in your first message; `searches`: which of your searches found the company.
+- `companyDomain`, `companyWebsite`, `companySize`, `companyRevenue`, `companyIndustry`, `companyUrl`: to qualify the lead and match it in your CRM.
+
+In a test on October 20, 2026, `sales representative` in Denver, CO, posted in the last 7 days, gave 178 companies from 236 jobs in half a minute; two thirds came with a website and company size. Jobs Indeed lists without an employer's name are left out. You pay per company, $1 per 1,000; the jobs read to build the list are free. The records hold company data only, no names, emails or phone numbers of people.
+
 ## Use cases
 
 - **Job boards and aggregators**: fill your board with fresh Indeed jobs from any of 62 countries.
 - **Recruitment and staffing agencies**: see every new role in your niche and region each morning, with pay, job type and company size.
 - **Salary research**: compare stated pay by role, city and country, with the pay period kept.
-- **Sales and lead generation**: companies that hire are growing. Company size, revenue and website help to qualify them.
+- **Sales and lead generation**: companies that hire are growing. **Hiring companies** turns a search into a ranked lead list with size, revenue, industry, website and the teams each company hires for.
 - **Labor market analytics**: track demand by occupation, job type, remote share and benefits over time.
 - **AI agents**: give an agent one tool that searches jobs worldwide.
 
 ## How much does it cost?
 
-You pay only for the jobs you get: **$1 per 1,000 jobs**. That is the price on the Apify Free plan. Paid Apify plans pay less: $0.90 per 1,000 jobs on Starter, $0.80 on Scale and $0.70 on Business, which is the "from" price shown in Apify Store. There is no start fee. The same job found by two searches is saved once, and you do not pay for duplicates or for jobs filtered out by your settings. The Apify free plan covers about 5,000 jobs every month.
+You pay only for the results you get: **$1 per 1,000 jobs**, or $1 per 1,000 companies with **Hiring companies**. That is the price on the Apify Free plan. Paid Apify plans pay less: $0.90 per 1,000 jobs on Starter, $0.80 on Scale and $0.70 on Business, which is the "from" price shown in Apify Store. There is no start fee. The same job found by two searches is saved once, and you do not pay for duplicates or for jobs filtered out by your settings. The Apify free plan covers about 5,000 jobs every month.
 
 ## Tips
 
 - **Daily job alerts**: save your input as a task, turn on **Only new jobs since the last run** and add a schedule. Send new jobs to Slack, email or Google Sheets with Apify integrations.
 - **Ready-made n8n workflow**: [new Indeed jobs in Google Sheets every morning](https://n8n.io/workflows/20851), in the official n8n template library. Open it in n8n, add your Apify and Google Sheets credentials and set your search.
-- **Big searches**: a search such as `nurse` in the United States has many thousands of jobs. Set **Maximum jobs in total** when you need fewer.
+- **Fresh leads every week**: choose **Hiring companies**, set **Posted in the last days** to 7 and schedule the task weekly. Sort by `jobsLast7Days` to see who is hiring most right now.
+- **Big searches**: a search such as `nurse` in the United States has many thousands of jobs. Set **Maximum results in total** when you need fewer.
 - **Faster runs**: turn off **Include job descriptions**. You still get every other field.
 - **Stricter results**: Indeed also matches words in the description. Use **Title must contain** to keep only jobs with your keyword in the title.
 - **Errors per search**: see the `SUMMARY` record in the run's key-value store.

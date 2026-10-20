@@ -171,3 +171,10 @@ test('indeed: "any of" filters run one search each, and API errors stop the sear
     for await (const batch of indeed.listJobs(indeed.parseCompany('nurse'), { http: failing, log: { info() {} } })) assert.ok(batch);
   }, /Indeed did not run the search: Invalid date filter/);
 });
+
+test('industryName reads Indeed industry codes', () => {
+  assert.equal(indeed.industryName('Iv1_CONSULTING_AND_BUSINESS_SERVICES'), 'Consulting and business services');
+  assert.equal(indeed.industryName('Iv1_INSURANCE'), 'Insurance');
+  assert.equal(indeed.industryName('Restaurants & Food Service'), 'Restaurants & Food Service');
+  assert.equal(indeed.industryName(null), null);
+});

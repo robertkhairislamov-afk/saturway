@@ -427,6 +427,34 @@ const commonSettings = ({ proxyDescription, site, perSource = 'search', details 
   },
 });
 
+// "What to save: Hiring companies" for the Actors whose adapter has a company mode: one record per
+// employer instead of one per job. `details` names the company facts the site gives.
+const companyOutput = (site, details = 'rating, size, revenue, industry and website') => ({
+  outputMode: {
+    title: 'What to save',
+    type: 'string',
+    editor: 'select',
+    sectionCaption: 'Output',
+    description: `Jobs: one row per job. Hiring companies: one row per employer with its number of matching jobs, jobs of the last 7 and 30 days, teams it hires for, top job titles, places, pay range and the ${details} ${site} shows: a lead list of companies that are growing. Job descriptions are not loaded in this mode.`,
+    enum: ['jobs', 'companies'],
+    enumTitles: ['Jobs', 'Hiring companies (lead list)'],
+    default: 'jobs',
+  },
+  excludeStaffingAgencies: {
+    title: 'Hiring companies: leave out staffing agencies',
+    type: 'boolean',
+    default: true,
+    description: 'Skip recruiters and staffing agencies that post jobs for other employers. Jobs of employers hidden as "Confidential" are always left out.',
+  },
+});
+const COMPANY_MAX_ITEMS = {
+  title: 'Maximum results in total',
+  type: 'integer',
+  minimum: 0,
+  description: 'Stop after saving this many jobs. With Hiring companies, this is the number of companies: every job is read and the companies with most jobs are kept. Leave empty or 0 for no limit. The example is kept small so the first run takes seconds.',
+  prefill: 50,
+};
+
 function diceInputSchema() {
   return {
     title: ACTORS.dice.title,
@@ -1052,10 +1080,12 @@ function indeedInputSchema() {
         unit: 'days',
         description: 'Keep jobs posted in the last N days: 1 means today and yesterday. Leave empty or 0 for any date.',
       },
+      ...companyOutput('Indeed', 'size, revenue, industry and website'),
       ...commonSettings({
         site: 'Indeed',
         proxyDescription: 'On the Apify platform the Actor reaches Indeed through Apify Proxy, which is included in the price. Set a proxy here only to use your own.',
       }),
+      maxItems: COMPANY_MAX_ITEMS,
       // Indeed's search results carry the whole job, so no job pages are opened.
       includeDescription: {
         title: 'Include job descriptions',
@@ -1147,33 +1177,12 @@ function glassdoorInputSchema() {
         unit: 'days',
         description: 'Keep jobs posted in the last N days: 1 means today and yesterday. Leave empty or 0 for any date.',
       },
-      outputMode: {
-        title: 'What to save',
-        type: 'string',
-        editor: 'select',
-        sectionCaption: 'Output',
-        description: 'Jobs: one row per job. Hiring companies: one row per employer with its number of matching jobs, jobs of the last 7 and 30 days, teams it hires for, top job titles, places, pay range, rating, size, revenue, industry and website: a lead list of companies that are growing.',
-        enum: ['jobs', 'companies'],
-        enumTitles: ['Jobs', 'Hiring companies (lead list)'],
-        default: 'jobs',
-      },
-      excludeStaffingAgencies: {
-        title: 'Hiring companies: leave out staffing agencies',
-        type: 'boolean',
-        default: true,
-        description: 'Skip recruiters and staffing agencies that post jobs for other employers. Jobs of employers hidden as "Confidential" are always left out.',
-      },
+      ...companyOutput('Glassdoor'),
       ...commonSettings({
         site: 'Glassdoor',
         proxyDescription: 'The Actor connects directly, which is fastest. If Glassdoor starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it from the start.',
       }),
-      maxItems: {
-        title: 'Maximum results in total',
-        type: 'integer',
-        minimum: 0,
-        description: 'Stop after saving this many jobs. With Hiring companies, this is the number of companies: every job is read and the companies with most jobs are kept. Leave empty or 0 for no limit. The example is kept small so the first run takes seconds.',
-        prefill: 50,
-      },
+      maxItems: COMPANY_MAX_ITEMS,
       includeDescription: {
         title: 'Include job descriptions',
         type: 'boolean',
@@ -1454,7 +1463,9 @@ function linkedinInputSchema() {
         default: false,
         description: 'Only jobs you can apply to on LinkedIn with Easy Apply.',
       },
+      ...companyOutput('LinkedIn', 'company page and logo'),
       ...settings,
+      maxItems: COMPANY_MAX_ITEMS,
       proxyConfiguration: { ...settings.proxyConfiguration, prefill: RESIDENTIAL_PROXY, default: RESIDENTIAL_PROXY },
     },
   };
@@ -1518,6 +1529,7 @@ function multiInputSchema() {
         unit: 'days',
         description: 'Keep jobs published in the last N days: 1 means today and yesterday. Leave empty or 0 for any date.',
       },
+      ...companyOutput('each site', 'company details (rating, size, revenue, industry, website) that'),
       ...commonSettings({
         site: 'Each job site',
         perSource: 'search or career site',
@@ -1530,6 +1542,7 @@ function multiInputSchema() {
         ...commonSettings({ perSource: 'search or career site' }).maxItemsPerCompany,
         prefill: 10,
       },
+      maxItems: COMPANY_MAX_ITEMS,
     },
   };
 }
@@ -1596,7 +1609,7 @@ const COMPANY_COLUMNS = {
   companyDomain: { label: 'Website', format: 'text' },
   companyUrl: { label: 'Company page', format: 'link' },
 };
-const COMPANY_VIEW_ATS = new Set(['glassdoor']);
+const COMPANY_VIEW_ATS = new Set(['glassdoor', 'indeed', 'linkedin', 'multi']);
 
 export const datasetSchema = (ats) => {
   const [extraField, extraLabel] = EXTRA_COLUMN[ats] ?? [];

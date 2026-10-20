@@ -108,6 +108,7 @@ You pay only for results: **$1.50 per 1,000 products**. That is the price on the
 
 - **Best sellers**: choose **Orders** sorting and set **Minimum sold**; the search stops as soon as a whole page is below that number, so you do not pay for products you would filter out anyway.
 - **Prices for new customers**: AliExpress often shows a lower first-order price to new visitors. Such products have `isNewShopperPrice: true` and a badge such as "New shoppers save £12.32"; `originalPrice` is the regular price shown next to it.
+- **Promotional prices change**: the price on the search page is often a promotion and can differ from one visit to the next, while the regular price stays put. In our test, 26 of 99 products showed a different search-page price four minutes later; the regular price changed for 5. For margins and price tracking, use `originalPrice` as well as `price`.
 - **Only real search results**: AliExpress sometimes fills a page with recommendations of other products, especially when shipping to Canada. The Actor loads such pages again from a new address and saves only the search results, so the positions and the sorting stay right.
 - **Category links**: category pages are empty when shipping to France or Spain. Search keywords there, or use another ship-to country for the category.
 - **Store names**: AliExpress puts the store on some cards only (most often on sponsored products), so `storeName` is empty for many products.

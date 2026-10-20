@@ -441,7 +441,146 @@ for (const n of jobsAbroad.nodes) if (JOBS_ABROAD_POSITIONS[n.name]) n.position 
 // The tracker keeps only the sheet's own columns; the job text for the email step is not written.
 jobsAbroad.nodes.find((n) => n.name === 'Update job tracker').parameters.options = { handlingExtraData: 'ignoreIt' };
 
+// --- 5. Hiring-signal leads: new and growing companies, AI notes, sheet and Slack -------------
+
+counter = 0;
+const LEADS_COLUMNS = 'Company, Signal, Open jobs, Previous open jobs, Fits ICP, Priority, Why now, Angle, Opener, Rating, Size, Revenue, Industry, Website, Headquarters, Glassdoor page, Latest posting, Job titles, Locations, First seen, Updated, Status';
+const LEAD_PROMPT = [
+  'You prepare one sales lead from public hiring data for a seller.',
+  'Use only the data given. Never invent facts about the company, its people, its revenue or its plans.',
+  'priority: HIGH if the company clearly fits what the seller offers and the hiring shows a team being built or grown now; MEDIUM if it fits but the signal is weaker; LOW otherwise.',
+  'whyNow: one sentence on what the hiring says (which team, how many open jobs, new or growing).',
+  'angle: one sentence on how the seller\'s offer helps with that, in plain words.',
+  'opener: the first sentence of a cold email that mentions the hiring, friendly and specific, no flattery.',
+].join('\n');
+
+const hiringSignals = workflow('Find companies building a team from Glassdoor jobs and research them as sales leads with AI', [
+  sticky('Overview', [
+    '## Sales leads from hiring signals',
+    '',
+    'A company that is hiring for a role is often about to buy what that role needs: a growing sales team needs sales tools and training, a new clinic needs supplies. This workflow finds the companies that post such jobs on Glassdoor, notices which ones are **new** to your list or **hiring more** than last week, keeps those that match your ideal customer, has AI write why now, an angle and an email opener for each, and posts the hottest ones to Slack.',
+    '',
+    '### How it works',
+    '1. **Find companies hiring**: every Monday the [Glassdoor Jobs Scraper](https://apify.com/robertosan16/glassdoor-jobs-scraper) on Apify reads last week\'s jobs for the roles you track; one row per company with size, revenue, industry and website.',
+    '2. **Compare with last week**: reads your sheet and marks each company NEW, GROWING or STEADY, and checks size, industry and open jobs against your ideal customer.',
+    '3. **AI lead research**: only for hot leads (fit and NEW or GROWING): priority, why now, angle and opener.',
+    '4. **Save leads**: every company goes to the sheet, matched by name, so the next run can compare.',
+    '5. **Slack digest**: one message with the hottest leads, high priority first.',
+  ].join('\n'), [-1200, -240], [560, 760]),
+  sticky('Setup', [
+    '## Set up',
+    `1. ${APIFY_SETUP.replace('{node}', 'Search Glassdoor')}`,
+    '2. In **Search Glassdoor**, set the roles your buyers hire for in `searchQueries`, the `country` and optionally a `location`.',
+    '3. In **Your ideal customer**, describe what you sell and set `minEmployees`, `industries` (comma-separated words, empty for all) and `minOpenJobs`.',
+    '4. Add an OpenAI credential to **OpenAI Chat Model**, or swap it for Anthropic, Gemini or any chat model.',
+    `5. Create a Google Sheet whose first row is: ${LEADS_COLUMNS}. Select it in **Read saved leads** and **Save leads**.`,
+    '6. Connect Slack in **Post to Slack**, pick the channel and activate the workflow.',
+    '',
+    '### Cost',
+    'The scraper charges $1 per 1,000 jobs, so 500 jobs a week cost $0.50; the Apify free plan includes $5 of usage every month. AI runs only on hot leads, usually a handful a week.',
+  ].join('\n'), [-620, -240], [560, 760], 7),
+  sticky('Group: find', [
+    '## 1. Find companies hiring',
+    'Every Monday at 7:00. **Your ideal customer** holds what you sell and your filters. **Search Glassdoor** reads the jobs posted in the last 7 days for the roles you track, with Glassdoor\'s company profile.',
+    '**One row per company** counts the open jobs of each company and lists their titles and places.',
+  ].join('\n\n'), [0, -240], [940, 620], 5),
+  sticky('Group: compare', [
+    '## 2. Compare with last week',
+    '**Read saved leads** loads your sheet. **Compare with last week** marks each company NEW (not in the sheet), GROWING (more open jobs than last time) or STEADY, and checks it against your ideal customer.',
+    '**Hot lead?** sends only companies that fit and are NEW or GROWING to the AI; the rest go straight to the sheet.',
+  ].join('\n\n'), [980, -240], [700, 620], 3),
+  sticky('Group: AI', [
+    '## 3. AI lead research',
+    '**Research the lead** writes priority, why now, an angle for what you sell and an email opener from the hiring data alone; it is told never to invent facts.',
+    '**Add AI notes** puts the notes on the company row. Swap **OpenAI Chat Model** for any chat model.',
+  ].join('\n\n'), [1720, -240], [720, 860], 6),
+  sticky('Group: save', [
+    '## 4. Save leads',
+    'Adds new companies and updates known ones, matched by Company. The Status column is yours; the workflow never writes it.',
+  ].join('\n\n'), [2480, 420], [440, 480], 4),
+  sticky('Group: slack', [
+    '## 5. Slack digest',
+    '**Write the digest** builds one message with up to 10 hot leads, high priority first. On a week without hot leads nothing is posted.',
+  ].join('\n\n'), [2480, -240], [700, 620], 2),
+  schedule('Every Monday', 7, [80, 200]),
+  node('Your ideal customer', 'n8n-nodes-base.set', 3.4, [300, 200], {
+    assignments: {
+      assignments: [
+        ['whatYouSell', 'string', 'Sales training and coaching for B2B sales teams of 5 to 50 people'],
+        ['minEmployees', 'number', 50],
+        ['industries', 'string', ''],
+        ['minOpenJobs', 'number', 2],
+      ].map(([name, type, value], index) => ({ id: `icp-${index + 1}`, name, type, value })),
+    },
+    options: {},
+  }),
+  apify('Search Glassdoor', 'glassdoor-jobs-scraper', {
+    searchQueries: ['sales development representative', 'account executive'],
+    country: 'US',
+    postedWithinDays: 7,
+    includeDescription: false,
+    maxItems: 500,
+  }, [520, 200]),
+  codeNode('One row per company', 'glassdoor-company-leads.js', [740, 200]),
+  {
+    ...node('Read saved leads', 'n8n-nodes-base.googleSheets', 4.6, [1040, 200], {
+      operation: 'read',
+      documentId: { __rl: true, value: '', mode: 'list' },
+      sheetName: { __rl: true, value: '', mode: 'list' },
+      options: {},
+    }),
+    executeOnce: true,
+    alwaysOutputData: true,
+  },
+  codeNode('Compare with last week', 'leads-compare.js', [1260, 200]),
+  node('Hot lead?', 'n8n-nodes-base.if', 2.2, [1480, 200], {
+    conditions: conditions([condition('={{ $json.hotLead }}', { type: 'boolean', operation: 'true', singleValue: true })]),
+    options: {},
+  }),
+  node('Research the lead', '@n8n/n8n-nodes-langchain.informationExtractor', 1.2, [1780, 200], {
+    text: "=WHAT THE SELLER OFFERS: {{ $('Your ideal customer').first().json.whatYouSell }}\n\nCOMPANY: {{ $json.Company }}\nINDUSTRY: {{ $json.Industry || 'unknown' }}\nSIZE: {{ $json.Size || 'unknown' }}\nREVENUE: {{ $json.Revenue || 'unknown' }}\nGLASSDOOR RATING: {{ $json.Rating || 'unknown' }}\nSIGNAL: {{ $json.Signal }}, {{ $json['Open jobs'] }} open jobs this week{{ $json['Previous open jobs'] !== '' ? ' (' + $json['Previous open jobs'] + ' last time)' : '' }}\nJOB TITLES: {{ $json['Job titles'] }}\nLOCATIONS: {{ $json.Locations }}",
+    schemaType: 'manual',
+    inputSchema: JSON.stringify({
+      type: 'object',
+      properties: {
+        priority: { type: 'string', enum: ['HIGH', 'MEDIUM', 'LOW'] },
+        whyNow: { type: 'string' },
+        angle: { type: 'string' },
+        opener: { type: 'string' },
+      },
+      required: ['priority', 'whyNow', 'angle', 'opener'],
+    }, null, 2),
+    options: { systemPromptTemplate: LEAD_PROMPT },
+  }),
+  node('OpenAI Chat Model', '@n8n/n8n-nodes-langchain.lmChatOpenAi', 1.2, [1800, 460], {
+    model: { __rl: true, value: 'gpt-4.1-mini', mode: 'list', cachedResultName: 'gpt-4.1-mini' },
+    options: { temperature: 0.3 },
+  }),
+  codeNode('Add AI notes', 'leads-ai-notes.js', [2200, 200]),
+  sheet('Save leads', 'appendOrUpdate', [2640, 660], ['Company']),
+  codeNode('Write the digest', 'leads-slack-digest.js', [2560, 200]),
+  {
+    ...node('Post to Slack', 'n8n-nodes-base.slack', 2.3, [2840, 200], {
+      select: 'channel',
+      channelId: { __rl: true, value: '#sales-leads', mode: 'name' },
+      text: '={{ $json.text }}',
+      otherOptions: { includeLinkToWorkflow: false, unfurl_links: false },
+    }),
+  },
+], {
+  ...chain('Every Monday', 'Your ideal customer', 'Search Glassdoor', 'One row per company', 'Read saved leads', 'Compare with last week', 'Hot lead?'),
+  'Hot lead?': { main: [[{ node: 'Research the lead', type: 'main', index: 0 }], [{ node: 'Save leads', type: 'main', index: 0 }]] },
+  'Research the lead': { main: [[{ node: 'Add AI notes', type: 'main', index: 0 }]] },
+  'Add AI notes': { main: [[{ node: 'Save leads', type: 'main', index: 0 }, { node: 'Write the digest', type: 'main', index: 0 }]] },
+  'Write the digest': { main: [[{ node: 'Post to Slack', type: 'main', index: 0 }]] },
+  'OpenAI Chat Model': { ai_languageModel: [[{ node: 'Research the lead', type: 'ai_languageModel', index: 0 }]] },
+});
+hiringSignals.nodes.find((n) => n.name === 'Every Monday').parameters.rule.interval = [{ field: 'weeks', triggerAtDay: [1], triggerAtHour: 7 }];
+// The sheet keeps only its own columns (the hotLead flag is not written).
+hiringSignals.nodes.find((n) => n.name === 'Save leads').parameters.options = { handlingExtraData: 'ignoreIt' };
+
 const templates = {
+  'glassdoor-hiring-signal-leads.json': hiringSignals,
   'jobs-abroad-visa-sponsorship-gmail-drafts.json': jobsAbroad,
   'indeed-job-alerts-google-sheets.json': indeedSheets,
   'glassdoor-top-rated-jobs-slack.json': glassdoorSlack,

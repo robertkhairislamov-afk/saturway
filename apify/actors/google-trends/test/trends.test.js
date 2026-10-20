@@ -4,6 +4,7 @@ import { test } from 'node:test';
 import {
   compareOnSharedScale,
   containsKeyword,
+  dailyWindows,
   insightsOf,
   looksLikeSpam,
   parseExplore,
@@ -15,6 +16,8 @@ import {
   parseTopics,
   parseTrending,
   pointDate,
+  stitchDaily,
+  toHundred,
   trendsPageUrl,
   widgetUrl,
 } from '../src/trends.js';
@@ -267,4 +270,51 @@ test('parseTrending reads the trending list', () => {
   assert.equal(out[1].isActive, false);
   assert.equal(out[1].searchVolumeText, '500+');
   assert.throws(() => parseTrending(`${GUARD}[["di",1]]`, { geo: 'US', hours: 24 }), /no trending/);
+});
+
+// --- Daily data for long periods -----------------------------------------------------------------
+
+
+test('dailyWindows covers the range in windows of 250 days without a short tail', () => {
+  const windows = dailyWindows('2024-01-07', '2025-10-18');
+  assert.equal(windows[0], '2024-01-07 2024-09-12');
+  assert.equal(windows[1], '2024-09-13 2025-05-20');
+  const [lastStart, lastEnd] = windows[windows.length - 1].split(' ');
+  assert.equal(lastEnd, '2025-10-18');
+  assert.ok((Date.parse(lastEnd) - Date.parse(lastStart)) / 86400000 >= 60);
+  assert.deepEqual(dailyWindows('2024-01-01', '2024-03-01'), ['2024-01-01 2024-03-01']);
+});
+
+test('stitchDaily ties each window to the weekly series, so windows on their own scales line up', () => {
+  // A made-up daily truth that grows over 3 x 70 days; Google gives weeks on one scale and each
+  // window of days on its own 0-100 scale.
+  const start = Date.parse('2024-01-07T00:00:00Z');
+  const day = (i) => new Date(start + i * 86400000).toISOString().slice(0, 10);
+  const truth = Array.from({ length: 210 }, (_, i) => 20 + i * 0.5 + (i % 7 === 0 ? 10 : 0));
+  const weeks = Array.from({ length: 30 }, (_, w) => {
+    const days = truth.slice(w * 7, w * 7 + 7);
+    return { date: day(w * 7), value: days.reduce((a, b) => a + b, 0) / 7, isPartial: false };
+  });
+  const top = Math.max(...weeks.map((w) => w.value));
+  const weekly = weeks.map((w) => ({ ...w, value: Math.round((w.value / top) * 100) }));
+  const windows = [0, 70, 140].map((from) => {
+    const part = truth.slice(from, from + 70);
+    const max = Math.max(...part);
+    return part.map((v, i) => ({ date: day(from + i), value: Math.round((v / max) * 100), isPartial: false }));
+  });
+  const { series, approximate } = stitchDaily(weekly, 'WEEK', windows);
+  assert.equal(approximate, 0);
+  assert.equal(series.length, 210);
+  const [scaled] = toHundred([series]);
+  const truthTop = Math.max(...truth);
+  scaled.forEach((point, i) => assert.ok(Math.abs(point.value - (truth[i] / truthTop) * 100) < 2.5, `day ${i}: ${point.value}`));
+  assert.equal(Math.max(...scaled.map((p) => p.value)), 100);
+});
+
+test('stitchDaily places windows whose weeks read 0 approximately', () => {
+  const weekly = [{ date: '2024-01-07', value: 0, isPartial: false }];
+  const window = Array.from({ length: 7 }, (_, i) => ({ date: `2024-01-${String(7 + i).padStart(2, '0')}`, value: 50, isPartial: false }));
+  const { series, approximate } = stitchDaily(weekly, 'WEEK', [window]);
+  assert.equal(approximate, 1);
+  assert.ok(series.every((p) => p.value > 0 && p.value < 0.5));
 });

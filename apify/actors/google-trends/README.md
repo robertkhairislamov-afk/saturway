@@ -5,10 +5,12 @@ Export Google Trends data for **any number of keywords and countries**: interest
 ## What can this Google Trends scraper do?
 
 - 📈 **Interest over time** for any time range on the Google Trends website: past hour, 4 hours, day, 7 days, 30 days, 90 days, 12 months, 5 years, since 2004, or your own dates.
+- 📅 **Daily data for 5 years or since 2004**: Google gives days only for periods up to about 9 months. Turn on **Daily data for long periods** and every keyword gets one value per day for any period. The Actor reads the days in windows and ties each window to Google's weekly or monthly series, so the days stay on one scale: in our test, 5 years of daily "matcha" matched Google's weekly curve with a correlation of 0.998 and no drift between windows.
 - ⚖️ **Unlimited keywords on one scale**: Google compares at most 5 terms at a time. Turn on **Compare on one scale** and the Actor compares 10, 50 or 200 keywords and countries on one 0–100 scale. The numbers equal Google's own comparison, and small keywords get decimals (`0.37`) instead of Google's `0` and `<1`.
-- 💡 **Insights in every record**: average interest, peak and its date, latest complete value, change of the last 4 periods against the 4 before, year-over-year change, trend direction (rising, stable, falling), and the best and worst month of the season. Ready to sort and filter, with no spreadsheet formulas.
+- 💡 **Insights in every record**: average interest, peak and its date, latest complete value, change of the last 4 periods against the 4 before (the last week against the week before for daily data), year-over-year change, trend direction (rising, stable, falling), and the best and worst month of the season. Ready to sort and filter, with no spreadsheet formulas.
 - 🗺️ **Interest by region**: states and provinces, countries for worldwide searches, **cities** (with coordinates) or US **metro areas (DMA)**.
 - 🔎 **Related queries**: top and rising, with `Breakout` marked. Each query is flagged when it does not contain your keyword and when it looks like spam (web addresses, emoji), because rising lists also carry bot traffic.
+- 🆕 **Only new rising queries**: for weekly monitoring, save a keyword only when it has rising queries that earlier runs did not see, listed in `newRisingQueries`. Keywords without anything new are not saved and not charged.
 - 🔥 **Trending now**: the full list for a country or region for the past 4 hours, 24 hours, 48 hours or 7 days, often 200–500 searches, not just the 10 of Google's RSS feed. Each comes with its search volume (`200K+`), growth, start time, whether it is still trending, categories and related searches.
 - 🌍 **Many countries in one run**: every keyword is checked in every country or region you add (`US`, `GB`, `US-CA`, `DE-BY`), by code or by name.
 - 🏷️ **Topics, categories and search types**: search a keyword as a Google topic ("Coffee", the drink, in all languages), limit data to one of Google's categories, and measure web, image, news, Google Shopping or YouTube search.
@@ -32,6 +34,7 @@ Export Google Trends data for **any number of keywords and countries**: interest
 | `interestOverTime` | every point: `date`, `value`, `isPartial` |
 | `interestByRegion` | `geoCode`, `geoName`, `value` (and `lat`, `lng` for cities) |
 | `relatedQueriesTop` / `relatedQueriesRising` | `query`, `value` or `increase`, `isBreakout`, `containsKeyword`, `looksLikeSpam` |
+| `newRisingQueries` | with **Only new rising queries**: the rising queries not seen in earlier runs |
 | `oneScale` / `comparedWith` | true / ["coffee (US)", "tea (US)"] |
 | `topicTitle` / `category` / `searchType` | Coffee / 71 (Food & Drink) / youtube |
 | `trendsUrl` | the same view on the Google Trends website |
@@ -177,7 +180,8 @@ There is no start fee, and the extra requests of the one-scale comparison are fr
 
 - **Trend shape or popularity?** For the shape of each keyword's trend (season, growth), leave **Compare on one scale** off: each keyword gets the full 0–100 range. To rank keywords by popularity, turn it on.
 - **Weekly tracking**: save your input as a task and add a schedule; connect the dataset to Google Sheets to build a chart over time.
-- **Daily data for long periods**: Google gives days for ranges up to about 9 months. For daily data over years, run several custom ranges.
+- **New rising queries every week**: turn on **Only new rising queries**, save the input as a task and schedule it weekly. Each run returns only the keywords with rising searches you have not seen yet, in `newRisingQueries`, and you pay only for those.
+- **Daily data for long periods**: with **Daily data for long periods**, 5 years take about a minute per keyword, since Google answers 8 windows of 250 days for each. The current day is marked `isPartial`.
 - **Big Trending now lists**: 48 hours or 7 days can hold 1,000+ searches per country. Set **Trending now: maximum per location** (for example 50) or pick categories to keep only what you need.
 - **Rising queries**: filter `relatedQueriesRising` by `containsKeyword` to drop unrelated noise, and by `looksLikeSpam` to drop spam.
 - **News behind a trend**: run our [Google News Scraper](https://apify.com/robertosan16/google-news-scraper) with the trending term.

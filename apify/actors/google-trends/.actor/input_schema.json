@@ -72,6 +72,12 @@
       "description": "Last day of a custom range. Defaults to today.",
       "pattern": "^(\\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$"
     },
+    "dailyData": {
+      "title": "Daily data for long periods",
+      "type": "boolean",
+      "default": false,
+      "description": "Google gives days only for periods up to about 9 months, weeks up to 5 years and months beyond. Turn this on to get one value per day for any period, also 5 years or since 2004: the Actor reads the period in windows of 250 days and ties every window to Google's weekly or monthly series, so the days stay on one scale. Takes a few more seconds per keyword; no extra charge."
+    },
     "compareOnOneScale": {
       "title": "Compare all keywords and locations on one scale",
       "type": "boolean",
@@ -197,6 +203,12 @@
       "type": "boolean",
       "description": "Add the top and rising related queries to each record, with flags for queries that do not contain the keyword and for spam.",
       "default": true
+    },
+    "onlyNewRisingQueries": {
+      "title": "Only new rising queries since the last run",
+      "type": "boolean",
+      "default": false,
+      "description": "For scheduled runs: save a keyword only when it has rising related queries that earlier runs of the same saved task did not see; they are listed in <code>newRisingQueries</code>. The first run saves every keyword and remembers its rising queries. Keywords without anything new are not saved and not charged. Turns on related queries."
     },
     "exploreUrls": {
       "title": "Google Trends explore links",

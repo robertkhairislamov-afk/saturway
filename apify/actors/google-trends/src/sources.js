@@ -25,7 +25,7 @@ export const EMPTY_REPORT = {
   recentChangePercent: null, yearOverYearPercent: null, trendDirection: null, trendPercent: null,
   bestMonth: null, worstMonth: null, seasonalityPercent: null,
   topRegion: null, topRelatedQuery: null, topRisingQuery: null,
-  interestOverTime: null, interestByRegion: null, relatedQueriesTop: null, relatedQueriesRising: null,
+  interestOverTime: null, interestByRegion: null, relatedQueriesTop: null, relatedQueriesRising: null, newRisingQueries: null,
   trendsUrl: null, warnings: null, scrapedAt: null,
 };
 
@@ -128,6 +128,7 @@ export function readInput(raw, warn = () => {}) {
   if (!Number.isInteger(maxTrendingPerLocation) || maxTrendingPerLocation < 0) throw new Error('"maxTrendingPerLocation" must be a whole number, 0 or more.');
 
   const searchAsTopic = input.searchAsTopic === true;
+  const onlyNewRising = input.onlyNewRisingQueries === true;
   const oneScale = input.compareOnOneScale === true;
   return {
     keywords,
@@ -139,7 +140,10 @@ export function readInput(raw, warn = () => {}) {
     oneScale,
     includeRegions: input.includeInterestByRegion !== false,
     regionResolution: regionResolution === 'DEFAULT' ? null : regionResolution,
-    includeRelated: input.includeRelatedQueries !== false,
+    // New rising queries need the related queries.
+    includeRelated: input.includeRelatedQueries !== false || onlyNewRising,
+    dailyData: input.dailyData === true,
+    onlyNewRising,
     exploreLinks,
     trendingLocations,
     trendingHours,

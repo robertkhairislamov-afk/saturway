@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { EMPTY_REPORT, EXAMPLE_INPUT, comparisonGroups, parseLocation, parseTimeRange, readInput } from '../src/sources.js';
+import { memoryKeyOf, openRisingMemory } from '../src/memory.js';
 import { buildReport } from '../src/report.js';
 
 test('parseLocation accepts codes, names and worldwide', () => {
@@ -93,4 +94,29 @@ test('buildReport fills every field in a fixed order', () => {
   assert.equal(record.warnings, null);
   assert.equal(record.timeRangeName, 'Past 12 months');
   assert.match(record.trendsUrl, /q=%2Fm%2F0b%2Ca/);
+});
+
+test('the rising-queries memory is kept per saved task and key', async () => {
+  const stores = new Map();
+  const actorFor = (taskId) => ({
+    getEnv: () => ({ actorTaskId: taskId }),
+    async openKeyValueStore(name) {
+      if (!stores.has(name)) stores.set(name, new Map());
+      const store = stores.get(name);
+      return { getValue: async (key) => store.get(key) ?? null, setValue: async (key, value) => store.set(key, value) };
+    },
+  });
+  const key = memoryKeyOf({ keyword: 'matcha', geo: 'US' }, { time: 'today 12-m', category: 0, property: '' });
+  const first = await openRisingMemory(actorFor('task-a'));
+  assert.equal((await first.load(key)).size, 0);
+  await first.save(key, ['matcha latte', 'iced matcha', 'matcha latte']);
+  assert.deepEqual([...(await (await openRisingMemory(actorFor('task-a'))).load(key))], ['matcha latte', 'iced matcha']);
+  assert.equal((await (await openRisingMemory(actorFor('task-b'))).load(key)).size, 0);
+});
+
+test('readInput turns on related queries for only-new rising queries', () => {
+  const input = readInput({ keywords: ['a'], includeRelatedQueries: false, onlyNewRisingQueries: true, dailyData: true });
+  assert.equal(input.includeRelated, true);
+  assert.equal(input.onlyNewRising, true);
+  assert.equal(input.dailyData, true);
 });

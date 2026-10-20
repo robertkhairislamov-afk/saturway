@@ -393,8 +393,8 @@ export function insightsOf(series, resolution) {
     latestInterest: latest.value,
     latestDate: latest.date,
   };
-  // Last four periods against the four before them.
-  const k = Math.min(4, Math.floor(values.length / 2));
+  // Last four periods against the four before them; for daily data, the last week against the one before.
+  const k = Math.min(resolution === 'DAY' ? 7 : 4, Math.floor(values.length / 2));
   if (k > 0) {
     const recent = mean(values.slice(-k));
     const before = mean(values.slice(-2 * k, -k));
@@ -440,6 +440,88 @@ export function insightsOf(series, resolution) {
     }
   }
   return out;
+}
+
+// --- Daily data for long periods ----------------------------------------------------------------
+
+// Google gives daily data only for ranges up to about 270 days. Longer ranges are read in windows
+// of this many days, each on its own 0-100 scale, and brought to the scale of the range's weekly or
+// monthly series: in each window, the days of every whole week (or month) must add up to that
+// week's value. Every window is tied to the same long series, so errors do not pile up from one
+// window to the next.
+export const DAILY_WINDOW_DAYS = 250;
+const isoDay = (ms) => new Date(ms).toISOString().slice(0, 10);
+
+// Consecutive windows from the first to the last day, as Google's custom time ranges.
+export function dailyWindows(startDate, endDate, size = DAILY_WINDOW_DAYS) {
+  const first = timeOf(startDate);
+  const last = timeOf(endDate);
+  const windows = [];
+  for (let start = first; start <= last; start += size * DAY_MS) {
+    windows.push([start, Math.min(start + (size - 1) * DAY_MS, last)]);
+  }
+  // A short last window has too few whole weeks to tie it to the long series; it starts earlier.
+  const tail = windows[windows.length - 1];
+  if (windows.length > 1 && tail[1] - tail[0] < 60 * DAY_MS) tail[0] = Math.max(first, tail[1] - 89 * DAY_MS);
+  return windows.map(([start, end]) => `${isoDay(start)} ${isoDay(end)}`);
+}
+
+// The days each point of a weekly or monthly series covers: [first day, day after the last).
+function periodsOf(series, resolution) {
+  return series.map((point) => {
+    const start = timeOf(point.date);
+    let end;
+    if (resolution === 'MONTH') {
+      const d = new Date(start);
+      end = Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1);
+    } else {
+      end = start + 7 * DAY_MS;
+    }
+    return { start, end, value: point.value };
+  });
+}
+
+// Joins daily windows into one daily series on the scale of the long series.
+// Returns { series, approximate } where `approximate` counts windows whose weeks had no interest
+// on the long scale, so they could be placed only roughly.
+export function stitchDaily(longSeries, resolution, windows) {
+  const periods = periodsOf(longSeries, resolution).filter((p) => p.value !== null);
+  const out = new Map();
+  let approximate = 0;
+  for (const window of windows) {
+    const days = new Map(window.filter((p) => p.value !== null).map((p) => [timeOf(p.date), p]));
+    let longSum = 0;
+    let dailySum = 0;
+    let covered = 0;
+    for (const period of periods) {
+      const inside = [];
+      for (let t = period.start; t < period.end; t += DAY_MS) inside.push(days.get(t));
+      if (inside.some((p) => !p)) continue;
+      covered++;
+      longSum += period.value;
+      dailySum += inside.reduce((sum, p) => sum + p.value, 0) / inside.length;
+    }
+    let factor;
+    if (dailySum <= 0) factor = 0;
+    else if (longSum > 0) factor = longSum / dailySum;
+    else {
+      // Google rounded every week of this window to 0 on the long scale, so each was under 0.5.
+      factor = (0.25 * covered) / dailySum;
+      approximate++;
+    }
+    for (const point of window) {
+      out.set(point.date, { ...point, value: point.value === null ? null : point.value * factor });
+    }
+  }
+  const series = [...out.values()].sort((a, b) => timeOf(a.date) - timeOf(b.date));
+  return { series, approximate };
+}
+
+// Scales series so that their highest point is 100, with Google-like rounding.
+export function toHundred(seriesList) {
+  const top = Math.max(0, ...seriesList.map(peakOf));
+  const factor = top > 0 ? 100 / top : 1;
+  return seriesList.map((series) => series.map((point) => ({ ...point, value: point.value === null ? null : tidy(point.value * factor) })));
 }
 
 // --- Links ----------------------------------------------------------------------------------------------

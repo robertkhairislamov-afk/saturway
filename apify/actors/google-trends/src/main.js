@@ -1,6 +1,7 @@
 import { Actor, log } from 'apify';
 
 import { createTrendsClient } from './http.js';
+import { openRisingMemory } from './memory.js';
 import { loadGroup } from './report.js';
 import { EMPTY_TRENDING, comparisonGroups, needsTopicLookup, readInput } from './sources.js';
 import { autocompleteUrl, geoName, parseGoogleJson, parseTopics, parseTrending, trendingRequest } from './trends.js';
@@ -54,6 +55,8 @@ try {
   }
 
   const groups = comparisonGroups(input, terms);
+  const memory = input.onlyNewRising ? await openRisingMemory(Actor) : null;
+  let withoutNewRising = 0;
   log.info(`${groups.length} comparison(s), ${input.trendingLocations.length} trending list(s).`);
   for (const [index, group] of groups.entries()) {
     const room = roomFor(REPORT_EVENT);
@@ -69,6 +72,8 @@ try {
     try {
       await status(`Comparison ${index + 1} of ${groups.length}: ${group.label}.`);
       await loadGroup(request, group, input, {
+        memory,
+        onSkip: () => { withoutNewRising++; },
         onProgress: (n) => status(`Comparison ${index + 1} of ${groups.length}: ${group.label}, ${n} request(s) so far.`),
         emit: async (record) => {
           if (stopped) return;
@@ -114,14 +119,15 @@ try {
     }
   }
   if (stopped) log.info('Reached the maximum charge for this run; stopping.');
+  if (memory) log.info(`${withoutNewRising} keyword(s) had no rising queries that were not seen before; they were not saved.`);
 
-  await Actor.setValue('SUMMARY', { keywordReports: reports, trendingSearches: trending, sources: summary, requests: client.stats });
+  await Actor.setValue('SUMMARY', { keywordReports: reports, trendingSearches: trending, ...(memory ? { withoutNewRisingQueries: withoutNewRising } : {}), sources: summary, requests: client.stats });
   const failed = summary.filter((row) => row.error);
   if (summary.length > 0 && failed.length === summary.length) {
     throw new Error(failed.length === 1 ? failed[0].error : `All ${failed.length} comparisons failed. First error: ${failed[0].error}`);
   }
   const parts = [];
-  if (groups.length > 0) parts.push(`${reports} keyword report(s)`);
+  if (groups.length > 0) parts.push(`${reports} keyword report(s)${memory && withoutNewRising > 0 ? ` (${withoutNewRising} without new rising queries skipped)` : ''}`);
   if (input.trendingLocations.length > 0) parts.push(`${trending} trending search(es)`);
   const message = `Saved ${parts.join(' and ')}${failed.length > 0 ? `; ${failed.length} failed: ${failed.map((row) => row.source).join(', ').slice(0, 300)}` : ''}.`;
   log.info(message);

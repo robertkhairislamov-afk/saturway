@@ -45,6 +45,8 @@ Export Google Trends data for **any number of keywords and countries**: interest
 3. Optionally add **Trending now** locations, or paste **explore links** from the Google Trends website.
 4. Click **Start** and download the results as JSON, CSV, Excel or HTML, or use them through the API. The **Keyword insights** and **Trending now** tabs show the main fields as tables.
 
+A step-by-step guide with Python examples, 15 drinks on one scale and a check against Google's own numbers: [How to Compare More Than 5 Keywords in Google Trends on One Scale](https://medium.com/@robertkhairislamov/how-to-compare-more-than-5-keywords-in-google-trends-on-one-scale-88bb538fcc4c).
+
 ### Example input
 
 ```json

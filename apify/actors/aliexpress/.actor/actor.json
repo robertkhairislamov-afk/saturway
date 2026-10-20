@@ -1,0 +1,15 @@
+{
+  "actorSpecification": 1,
+  "name": "aliexpress-search-scraper",
+  "title": "AliExpress Search Scraper: Products, Prices & Sales",
+  "description": "Scrape AliExpress search and category results: price, discount, sold count, rating, delivery days, Choice and ad labels, badges and store names. Any keyword or category link, sorting, price range, ship-to country and currency.",
+  "version": "0.1",
+  "buildTag": "latest",
+  "input": "./input_schema.json",
+  "storages": {
+    "dataset": "./dataset_schema.json"
+  },
+  "output": "./output_schema.json",
+  "dockerfile": "../Dockerfile",
+  "readme": "../README.md"
+}

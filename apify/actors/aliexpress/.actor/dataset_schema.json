@@ -1,0 +1,88 @@
+{
+  "actorSpecification": 1,
+  "fields": {},
+  "views": {
+    "overview": {
+      "title": "Products",
+      "transformation": {
+        "fields": [
+          "position",
+          "image",
+          "title",
+          "price",
+          "currency",
+          "discountPercent",
+          "soldCount",
+          "rating",
+          "isChoice",
+          "isSponsored",
+          "deliveryDaysMax",
+          "storeName",
+          "searchQuery",
+          "url"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "position": {
+            "label": "#",
+            "format": "number"
+          },
+          "image": {
+            "label": "Picture",
+            "format": "image"
+          },
+          "title": {
+            "label": "Product",
+            "format": "text"
+          },
+          "price": {
+            "label": "Price",
+            "format": "number"
+          },
+          "currency": {
+            "label": "Currency",
+            "format": "text"
+          },
+          "discountPercent": {
+            "label": "Discount %",
+            "format": "number"
+          },
+          "soldCount": {
+            "label": "Sold",
+            "format": "number"
+          },
+          "rating": {
+            "label": "Rating",
+            "format": "number"
+          },
+          "isChoice": {
+            "label": "Choice",
+            "format": "boolean"
+          },
+          "isSponsored": {
+            "label": "Ad",
+            "format": "boolean"
+          },
+          "deliveryDaysMax": {
+            "label": "Delivery days (max)",
+            "format": "number"
+          },
+          "storeName": {
+            "label": "Store",
+            "format": "text"
+          },
+          "searchQuery": {
+            "label": "Search",
+            "format": "text"
+          },
+          "url": {
+            "label": "Link",
+            "format": "link"
+          }
+        }
+      }
+    }
+  }
+}

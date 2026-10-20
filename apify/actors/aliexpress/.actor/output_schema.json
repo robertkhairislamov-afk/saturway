@@ -1,0 +1,18 @@
+{
+  "actorOutputSchemaVersion": 1,
+  "title": "AliExpress Search Scraper output",
+  "properties": {
+    "products": {
+      "type": "string",
+      "title": "Products",
+      "description": "Products with price, discount, sold count, rating, delivery, badges and their position in the results.",
+      "template": "{{links.apiDefaultDatasetUrl}}/items?view=overview"
+    },
+    "summary": {
+      "type": "string",
+      "title": "Run summary",
+      "description": "Results on AliExpress, pages read and products saved for every search, with errors and request statistics.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/SUMMARY"
+    }
+  }
+}

@@ -36,6 +36,8 @@ Scrape **AliExpress search and category results**: product title, **price, origi
 2. Choose the **sorting**, the number of **products per search**, the **ship-to country** and, if you like, a price range or other filters.
 3. Click **Start** and download the results as JSON, CSV, Excel or HTML, or use them through the API.
 
+A step-by-step guide with Python examples, five product ideas compared in one table, what the "10,000+ sold" label hides and why search-page prices are promotions: [How to Find Best-Selling Products on AliExpress with Exact Sales Numbers](https://medium.com/@robertkhairislamov/how-to-find-best-selling-products-on-aliexpress-with-exact-sales-numbers-4e18446041bd).
+
 ### Example input
 
 ```json

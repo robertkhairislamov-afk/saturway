@@ -669,6 +669,13 @@ StepStone на платформе иногда отдаёт карточки м�
 - Открыто: **Best Sellers** (`/zgbs/<категория>`) — 4 из 4, 50 ASIN с местом на странице (30 с названием, ценой, рейтингом и числом отзывов сразу, остальные 20 догружаются), 2 страницы = топ-100; у Movers & Shakers есть текущее место, место сутки назад и рост в %. Конкуренты: junglee/amazon-bestsellers 497 ($5.90/1000, 93%), amazon-scraper/amazon-bestsellers-scraper 386 ($2/1000, 98%), khadinakbar 119 ($5/1000).
 - Вывод: полный Amazon-скрапер не делаем. Возможный вариант — трекер Best Sellers / Movers & Shakers / New Releases по странам, около дня работы; идея связки с AliExpress-актором (бестселлер Amazon → тот же товар на AliExpress → маржа).
 
+### Индия — разбор 20.10 (вопрос владельца)
+
+- Спрос в Store (пользователей за 30 дней по нише): **Naukri 5 569** (valig 2 244, muhammetakkurtt 1 424, blackfalcondata 788); дальше мелко — Internshala 572, Flipkart 245, IndiaMART 179, JustDial 151, 99acres 122, Shine 101, Magicbricks 87, Zomato 84, Zepto 84, Myntra 83, Blinkit 70, Swiggy 58, Meesho 46, Nykaa 27. «amazon.in» — это общие акторы Amazon (см. разбор Amazon).
+- Naukri закрыт дважды: API требует reCAPTCHA с любых адресов (29.09, 13.10), а robots.txt прямо запрещает ИИ-агентам, включая Claude-User и ClaudeBot, весь сайт, кроме блога. Не трогаем.
+- robots.txt: Internshala запрещает Anthropic-AI, Claude-Web, ClaudeBot, Claude-SearchBot весь сайт; IndiaMART — ClaudeBot; JustDial прямо разрешает Claude-User; у Shine и Flipkart запретов для Claude нет.
+- Вывод: нового индийского актора не делаем — большой спрос только у Naukri, и он закрыт; индийские вакансии уже покрывает наш Foundit. Возможная мелочь — Shine как ещё один источник в ядре вакансий (101 пользователь).
+
 ### Лиды — разбор 20.10 (вопрос владельца «что есть для лидов»)
 
 - Категория LEAD_GENERATION — самая большая в Store: 2548 акторов, ~350 тыс. пользователей за 30 дней. Но верх — Google Maps (59 тыс. на 114 акторов, compass 42,8 тыс., 97% успешных), профили людей в соцсетях и LinkedIn, поиск e-mail людей (Apollo/ZoomInfo-подобные 6,7 тыс.) — личные данные, не делаем.

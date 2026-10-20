@@ -3,43 +3,27 @@
   "nodes": [
     {
       "parameters": {
-        "content": "## Jobs abroad that can sponsor your visa, with the emails drafted for you\n\nFor people who look for work in another country and need an employer to sponsor their work visa. Most job ads never say it, and many quietly rule you out: \"citizens or permanent residents only\", \"full working rights required\". This workflow reads every new ad on 10+ job sites, drops the ones that rule you out, has AI check the rest against your profile, keeps everything in a Google Sheet and writes email drafts for the best matches. **Nothing is sent**: the drafts wait in Gmail for you to read, edit and send.\n\n### How it works\n1. **Search new jobs**: every morning the [All-in-One Jobs Scraper](https://apify.com/robertosan16/all-in-one-jobs-scraper) on Apify searches LinkedIn, Indeed, Glassdoor, SEEK and more in one call.\n2. **Screen work rights**: rules, not AI, skip ads that rule out foreign candidates, each with the exact quote.\n3. **AI check and ranking**: AI scores your fit and reads the ad for sponsorship; each job gets APPLY, ASK SPONSORSHIP FIRST, REVIEW, LOW PRIORITY or SKIP.\n4. **Job tracker**: every job, skipped ones included, goes to your Google Sheet.\n5. **Email drafts**: the best few jobs a day get an honest email, saved as a Gmail draft.",
-        "height": 760,
-        "width": 560
+        "content": "## Find jobs abroad that can sponsor your visa\n\nFor people who need an employer to sponsor their work visa. Many ads quietly rule you out (\"citizens or permanent residents only\"). This workflow finds new jobs on 10+ sites, drops those, ranks the rest with AI and drafts emails for the best. **Nothing is sent**: drafts wait in Gmail.\n\n### How it works\n1. Every morning the [All-in-One Jobs Scraper](https://apify.com/robertosan16/all-in-one-jobs-scraper) on Apify searches LinkedIn, Indeed, Glassdoor, SEEK and more in one call.\n2. Rules, not AI, skip ads that require citizenship, permanent residency or existing work rights, and keep the exact quote.\n3. AI scores your fit and the sponsorship status; each job is labelled APPLY, ASK SPONSORSHIP FIRST, REVIEW, LOW PRIORITY or SKIP.\n4. Every job, skipped ones too, is saved to a Google Sheet.\n5. The best few jobs a day get an honest email, saved as a Gmail draft.\n\n### Setup\n1. Add an Apify credential to **Search job sites** (API token from Apify Console → Settings → API & Integrations). If the node is missing, install `@apify/n8n-nodes-apify`.\n2. In **Your profile**, paste your CV summary and set `minBaseSalary` and `maxDraftsPerDay`.\n3. In **Search job sites**, set job titles, `countries` and `location`.\n4. Add an OpenAI credential to **OpenAI Chat Model**, or use any chat model.\n5. Create a Google Sheet with the columns listed in **Update job tracker** and select it there.\n6. Connect Gmail in **Save Gmail draft** and activate.\n\n### Customization\nAlready allowed to work there? Set `needsVisaSponsorship` to false. The scraper costs $1 per 1,000 jobs; the Apify free plan includes $5 a month.",
+        "height": 1060,
+        "width": 640
       },
       "id": "overview-0001",
       "name": "Overview",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -1200,
+        -760,
         -240
       ]
     },
     {
       "parameters": {
-        "content": "## Set up\n1. Create a free [Apify account](https://console.apify.com/sign-up) and add an Apify credential to the **Search job sites** node: the API token from Apify Console → Settings → API & Integrations, or OAuth on n8n Cloud. If the Apify node is missing, install the verified community node `@apify/n8n-nodes-apify`.\n2. In **Your profile**, replace the example with your own CV summary, and set `minBaseSalary` (the base pay your visa needs) and `maxDraftsPerDay`.\n3. In **Search job sites**, set the job titles, `countries` and `location`.\n4. Add an OpenAI credential to **OpenAI Chat Model**, or swap it for Anthropic, Gemini or any chat model.\n5. Create a Google Sheet whose first row is: Job link, Found, Recommendation, Priority, Fit, Visa, Sponsorship, Evidence, Missing, Why, Title, Company, Location, Base salary, Extra pay, Apply link, Status. Select it in **Update job tracker**.\n6. Connect Gmail in **Save Gmail draft** and activate the workflow.\n\n### Cost\nThe scraper charges $1 per 1,000 jobs, and the Apify free plan includes $5 of usage every month. AI runs only on jobs that pass the screen; with a small model such as gpt-4.1-mini a day of 50 jobs costs a few cents.",
-        "height": 760,
-        "width": 560,
-        "color": 7
-      },
-      "id": "setup-0002",
-      "name": "Setup",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        -620,
-        -240
-      ]
-    },
-    {
-      "parameters": {
-        "content": "## 1. Search new jobs\n\nStarts every morning at 7:00. **Your profile** holds your CV summary, whether you need a visa, the minimum base salary and the number of drafts a day.\n\n**Search job sites** runs the All-in-One Jobs Scraper with your job titles, `countries` (two-letter codes) and `location`. `postedWithinDays: 3` and `onlyNew: true` keep each run to new jobs; duplicates across sites are removed.",
+        "content": "## 1. Search new jobs\nEvery morning: your profile, then new jobs from 10+ sites in one Apify call.",
         "height": 620,
         "width": 700,
-        "color": 5
+        "color": 7
       },
-      "id": "group-search-0003",
+      "id": "group-search-0002",
       "name": "Group: search",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -50,12 +34,12 @@
     },
     {
       "parameters": {
-        "content": "## 2. Screen work rights (rules, no AI)\n\n**Screen work rights** skips ads that require citizenship, permanent residency, existing or unrestricted work rights or a security clearance, or say they do not sponsor, and keeps the exact quote. It also splits the salary into guaranteed base and extras (OTE, bonus, commission).\n\n**Skipped jobs** still go to the tracker, so you can check every decision. Already have the right to work there? Set `needsVisaSponsorship` to false in **Your profile** and nothing is skipped.",
+        "content": "## 2. Screen work rights\nRules, not AI: skip ads that rule out foreign candidates, with the quote. Skipped jobs still go to the sheet.",
         "height": 860,
         "width": 700,
-        "color": 3
+        "color": 7
       },
-      "id": "group-screen-0004",
+      "id": "group-screen-0003",
       "name": "Group: screen",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -66,12 +50,12 @@
     },
     {
       "parameters": {
-        "content": "## 3. AI check and ranking\n\n**Check fit and sponsorship** reads each remaining ad against your profile: a fit score, the sponsorship status (YES, YES_CONDITIONAL, ASK or NO) with the sentence that decided it, missing requirements and seniority. It counts only experience your profile states.\n\n**Rank jobs** keeps fit and visa as two scores and labels the job APPLY, ASK SPONSORSHIP FIRST, REVIEW, LOW PRIORITY or SKIP. Swap **OpenAI Chat Model** for any chat model.",
+        "content": "## 3. AI check and ranking\nFit score and sponsorship status for each job, then one recommendation.",
         "height": 860,
         "width": 760,
-        "color": 6
+        "color": 7
       },
-      "id": "group-ai-0005",
+      "id": "group-ai-0004",
       "name": "Group: AI",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -82,12 +66,12 @@
     },
     {
       "parameters": {
-        "content": "## 4. Job tracker\n\nOne row per job in Google Sheets, matched by Job link, so a job is never added twice. The Status column is yours for notes; the workflow never writes it.",
+        "content": "## 4. Job tracker\nOne row per job in Google Sheets, never duplicated.",
         "height": 440,
         "width": 440,
-        "color": 4
+        "color": 7
       },
-      "id": "group-tracker-0006",
+      "id": "group-tracker-0005",
       "name": "Group: tracker",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -98,12 +82,12 @@
     },
     {
       "parameters": {
-        "content": "## 5. Email drafts for the best jobs\n\n**Worth an email?**, **Best first** and **Daily limit** keep the APPLY and ASK SPONSORSHIP FIRST jobs, best first, up to `maxDraftsPerDay`.\n\n**Write the email** uses only facts from your profile and asks honestly about sponsorship. **Save Gmail draft** saves it as a draft: nothing is sent. Add the recipient from the ad, edit and send it yourself.",
+        "content": "## 5. Email drafts\nThe best jobs, up to your daily limit, get an honest email saved as a Gmail draft. Nothing is sent.",
         "height": 760,
         "width": 1320,
-        "color": 2
+        "color": 7
       },
-      "id": "group-emails-0007",
+      "id": "group-emails-0006",
       "name": "Group: emails",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -122,7 +106,7 @@
           ]
         }
       },
-      "id": "every-morning-0008",
+      "id": "every-morning-0007",
       "name": "Every morning",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
@@ -163,7 +147,7 @@
         },
         "options": {}
       },
-      "id": "your-profile-0009",
+      "id": "your-profile-0008",
       "name": "Your profile",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
@@ -181,7 +165,7 @@
         "timeout": null,
         "memory": 512
       },
-      "id": "search-job-sites-000a",
+      "id": "search-job-sites-0009",
       "name": "Search job sites",
       "type": "@apify/n8n-nodes-apify.apify",
       "typeVersion": 1,
@@ -194,7 +178,7 @@
       "parameters": {
         "jsCode": "// Screens every job for work-rights rules before any AI call, so jobs a foreign candidate cannot take\n// never reach the model. A ban needs an exact quote from the ad: citizens or permanent residents\n// only, existing or unrestricted work rights, a security clearance, or \"no sponsorship\".\n// Also splits the salary line into guaranteed base and extras (OTE, bonus, commission).\nconst profile = $('Your profile').first().json;\nconst needsSponsorship = profile.needsVisaSponsorship !== false;\n\nconst RIGHTS = String.raw`(?:right to (?:live and )?work|work(?:ing)? rights|eligib\\w* to work|entitled to work|authori[sz]ed to work|work authori[sz]ation|legally (?:able|entitled|allowed) to work|valid work(?:ing)? visa)`;\nconst BANS = [\n  ['Security clearance (citizens only)', /(?:security|defence|defense|baseline|agsva|government) clearance|\\b(?:nv1|nv2|negative vetting|ts\\/sci)\\b/i],\n  ['Citizens only', /citizens? only|only (?:open to |available to )?citizens(?! or)|must be (?:an? )?(?:[a-z.]+ )?citizens?\\b(?! or)|citizenship (?:is )?(?:required|essential|mandatory)/i],\n  ['Citizens or permanent residents only', /(?:only|must be|must hold|open to|available to|limited to|restricted to|required|essential)[^.;\\n]{0,50}(?:citizens?|citizenship)[^.;\\n]{0,25}(?:permanent resid\\w*|\\bpr\\b|green card)|(?:only|must be|open to|available to|limited to)[^.;\\n]{0,50}(?:permanent resid\\w*|\\bpr\\b)[^.;\\n]{0,25}citizens?|permanent residents? only|\\bpr only\\b|green card holders? only/i],\n  ['Unrestricted work rights required', new RegExp(String.raw`unrestricted[^.;\\n]{0,30}${RIGHTS}|\\bfull,? (?:and unrestricted )?(?:[a-z]+ )?work(?:ing)? rights(?! check)|work(?:ing)? rights without restrictions`, 'i')],\n  ['Existing work rights required', new RegExp(String.raw`(?:must|need to|needs to|required to|should|will need to)\\s+(?:already\\s+)?(?:have|hold|possess|be)\\b[^.;\\n]{0,40}${RIGHTS}|${RIGHTS}(?:(?!\\bnot\\b)[^.;\\n]){0,40}(?:required|essential|mandatory|a must)|(?:only )?apply (?:only )?if you (?:have|hold|already have)[^.;\\n]{0,25}${RIGHTS}`, 'i')],\n  ['No visa sponsorship', /\\bno (?:visa )?sponsorship|(?:unable|not able|not in (?:a|the) position) to (?:offer |provide |support )?(?:visa )?sponsor|(?:cannot|can't|do not|does not|don't|will not|won't) (?:offer |provide |support )?(?:visa )?sponsor|sponsorship (?:is |will )?(?:not|un)(?: be)? ?(?:available|offered|provided|supported)|without (?:the need for |requiring )?(?:visa )?sponsorship|(?:visa )?sponsorship(?: available| offered| approved| supported| provided)?\\s*[:\\-]\\s*no\\b/i],\n];\nconst OFFER = /visa sponsorship(?! (?:is |will )?(?:not|un))(?!(?: available| offered| approved| supported| provided)?\\s*[:\\-]\\s*no\\b)|sponsorship (?:is |may be |will be |can be )?(?:available|offered|provided|considered)|(?:will|can|happy to|able to|willing to|open to) (?:consider |provide |offer )?(?:visa )?sponsor|employer[- ]sponsored visa|skilled worker visa|\\bh-?1b\\b|\\blmia\\b|blue card|skills in demand|\\b(?:482|494)\\b[^.;\\n]{0,20}(?:visa|sponsor)|\\bdama\\b|relocation and visa|open to (?:overseas|international) (?:applicants|candidates)|(?:overseas|international) (?:applicants|candidates) (?:are )?(?:welcome|considered)/i;\nconst CONDITIONS = [\n  ['only after probation', /probation/i],\n  ['only for top performers', /top performers|high performers/i],\n  ['only for candidates already in the country', /onshore|already (?:living |based )?in|currently (?:in|living in|based in)|[a-z]+[- ]based (?:applicants|candidates)/i],\n  ['only later in the job', /after (?:the |your )?(?:\\d+|six|twelve) (?:months|years)|in the future|may become available/i],\n];\n\n// Short exact quote around a match.\nconst quote = (text, m) => {\n  if (!m) return '';\n  const start = Math.max(0, text.lastIndexOf(' ', Math.max(0, m.index - 70)));\n  const end = text.indexOf(' ', Math.min(text.length, m.index + m[0].length + 70));\n  return text.slice(start, end === -1 ? text.length : end).replace(/\\s+/g, ' ').trim();\n};\nconst sentences = (text) => text.split(/\\n|•|(?<=[.!?])\\s+(?=[A-Z])/).filter((s) => s.trim());\n\n// Salary line split into guaranteed base and extras. Only the base is guaranteed pay.\nconst PER_YEAR = { year: 1, month: 12, week: 52, day: 230, hour: 1976 };\nfunction splitSalary(salary) {\n  const out = { base: null, baseText: '', extras: [] };\n  const text = (salary && salary.text) || '';\n  if (!text) return out;\n  const interval = /hour|\\/hr/i.test(text) ? 'hour' : /day|daily/i.test(text) ? 'day' : /week/i.test(text) ? 'week' : /month/i.test(text) ? 'month' : 'year';\n  for (const part of text.replace(/[–—]/g, '-').split(/\\s*(?:\\+|\\||;|,\\s|\\bplus\\b|&|\\/\\s*(?=\\$))\\s*/i)) {\n    const amounts = [...part.matchAll(/\\$?\\s?(\\d{1,3}(?:,\\d{3})+|\\d+(?:\\.\\d+)?)\\s*(k\\b)?/gi)]\n      .map((m) => Number(m[1].replace(/,/g, '')) * (m[2] ? 1000 : 1)).filter((n) => n >= 10);\n    if (/\\bote\\b|on[- ]target|earn up to|bonus|incentive|commission|\\bcomms?\\b|super|allowance|\\bcar\\b|vehicle/i.test(part)) {\n      if (!/^\\s*\\+?\\s*super/i.test(part)) out.extras.push(part.trim());\n      continue;\n    }\n    if (amounts.length && out.base === null) {\n      if (amounts.length > 1 && amounts[0] < 1000 && amounts[1] >= 1000) amounts[0] *= 1000;\n      out.base = Math.round(amounts[0] * PER_YEAR[interval]);\n      out.baseText = part.trim();\n    }\n  }\n  return out;\n}\n\nconst seen = new Set();\nconst jobs = [];\nfor (const item of $input.all()) {\n  const job = item.json;\n  const key = `${job.title}|${job.companyName}`.toLowerCase();\n  if (seen.has(key)) continue;\n  seen.add(key);\n  const text = `${job.title || ''}\\n${job.descriptionText || ''}`;\n  let ban = null;\n  for (const [label, pattern] of BANS) {\n    for (const s of sentences(text)) {\n      const m = s.match(pattern);\n      if (m) { ban = { label, quote: quote(s, m) }; break; }\n    }\n    if (ban) break;\n  }\n  const offer = text.match(OFFER);\n  const around = offer ? text.slice(Math.max(0, offer.index - 60), offer.index + offer[0].length + 110) : '';\n  const conditions = offer ? CONDITIONS.filter(([, c]) => c.test(around)).map(([label]) => label) : [];\n  const salary = splitSalary(job.salary);\n  jobs.push({\n    json: {\n      title: job.title,\n      company: job.companyName,\n      location: job.location,\n      postedAt: (job.postedAt || '').slice(0, 10),\n      jobUrl: job.jobUrl,\n      applyUrl: job.applyUrl || job.jobUrl,\n      salaryText: (job.salary && job.salary.text) || '',\n      baseSalary: salary.base,\n      baseSalaryText: salary.baseText,\n      extraPay: salary.extras.join('; '),\n      partTime: /part[- ]time|casual/i.test(`${job.employmentType || ''} ${job.title || ''}`),\n      canApply: !(needsSponsorship && ban),\n      skipReason: ban ? ban.label : '',\n      workRightsQuote: ban ? ban.quote : '',\n      sponsorshipHint: offer ? (conditions.length ? 'YES_CONDITIONAL' : 'YES') : '',\n      sponsorshipQuote: quote(text, offer),\n      sponsorshipConditions: conditions.join(', '),\n      description: (job.descriptionText || '').slice(0, 6000),\n    },\n  });\n}\nreturn jobs;"
       },
-      "id": "screen-work-rights-000b",
+      "id": "screen-work-rights-000a",
       "name": "Screen work rights",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -214,7 +198,7 @@
           },
           "conditions": [
             {
-              "id": "condition-000c",
+              "id": "condition-000b",
               "leftValue": "={{ $json.canApply }}",
               "rightValue": "",
               "operator": {
@@ -228,7 +212,7 @@
         },
         "options": {}
       },
-      "id": "can-apply--000d",
+      "id": "can-apply--000c",
       "name": "Can apply?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
@@ -246,7 +230,7 @@
           "systemPromptTemplate": "You check one job ad for one candidate. Read only what is written; never guess.\n\nfitScore (0-100): how well the candidate, as described in the profile, meets this job: role, duties, required experience, industry and level. Count only experience the profile states. A required industry, licence, degree or number of years the profile does not show lowers the score.\nsponsorshipStatus:\n- NO: the ad requires citizenship, permanent residency, existing or unrestricted work rights, a security clearance, or says it does not sponsor visas.\n- YES: the ad explicitly offers visa sponsorship for this job.\n- YES_CONDITIONAL: sponsorship is offered only later or only to some people (after probation, top performers, applicants already in the country).\n- ASK: the ad says nothing either way. A large or international company is not evidence of sponsorship.\nsponsorshipEvidence: the exact sentence from the ad that decided the status; empty for ASK.\nmissingRequirements: requirements of the ad that the profile does not show, each a few words.\nseniorityFit: FIT, TOO_SENIOR or TOO_JUNIOR for the candidate.\nreason: one sentence on why the job fits or not."
         }
       },
-      "id": "check-fit-and-sponsorship-000e",
+      "id": "check-fit-and-sponsorship-000d",
       "name": "Check fit and sponsorship",
       "type": "@n8n/n8n-nodes-langchain.informationExtractor",
       "typeVersion": 1.2,
@@ -267,7 +251,7 @@
           "temperature": 0.2
         }
       },
-      "id": "openai-chat-model-000f",
+      "id": "openai-chat-model-000e",
       "name": "OpenAI Chat Model",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
@@ -280,7 +264,7 @@
       "parameters": {
         "jsCode": "// Jobs the work-rights screen ruled out go to the tracker too, with the quote that rules them out,\n// so you can check the decision.\nconst today = new Date().toISOString().slice(0, 10);\nreturn $input.all().map((item, index) => ({\n  json: {\n    'Job link': item.json.jobUrl,\n    Found: today,\n    Recommendation: 'SKIP: ' + item.json.skipReason,\n    Priority: 0,\n    Evidence: item.json.workRightsQuote,\n    Title: item.json.title,\n    Company: item.json.company,\n    Location: item.json.location,\n    'Apply link': item.json.applyUrl,\n  },\n  pairedItem: { item: index },\n}));"
       },
-      "id": "skipped-jobs-0010",
+      "id": "skipped-jobs-000f",
       "name": "Skipped jobs",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -293,7 +277,7 @@
       "parameters": {
         "jsCode": "// Joins the AI check with the work-rights screen and decides what to do with each job. Two scores\n// stay apart: fit (does the candidate meet the job) and visa (can the employer hire them from abroad).\n// Priority only orders the list; it is not a chance of getting the job.\nconst profile = $('Your profile').first().json;\nconst minBase = Number(profile.minBaseSalary) || 0;\nconst VISA = { YES: 85, YES_CONDITIONAL: 45, ASK: 35, NO: 0 };\nconst today = new Date().toISOString().slice(0, 10);\n\nreturn $input.all().map((item, index) => {\n  const job = $('Can apply?').itemMatching(index).json;\n  const ai = item.json.output || {};\n  const fit = Math.max(0, Math.min(100, Math.round(Number(ai.fitScore) || 0)));\n  // The rules found an explicit offer: keep it. The AI found a ban the rules missed: trust the ban.\n  let status = ai.sponsorshipStatus || 'ASK';\n  let evidence = ai.sponsorshipEvidence || '';\n  if (status !== 'NO' && job.sponsorshipHint) { status = job.sponsorshipHint; evidence = job.sponsorshipQuote; }\n  const onshoreOnly = /already in the country/.test(job.sponsorshipConditions);\n  let visa = status === 'YES_CONDITIONAL' && onshoreOnly ? 10 : VISA[status] ?? 35;\n  const baseKnown = job.baseSalary !== null && job.baseSalary !== undefined;\n  const baseTooLow = baseKnown && minBase && job.baseSalary < minBase;\n  visa += baseKnown ? (baseTooLow ? -15 : 10) : -5;\n  if (job.partTime) visa -= 30;\n  visa = status === 'NO' ? 0 : Math.max(0, Math.min(100, visa));\n\n  let recommendation;\n  if (status === 'NO') recommendation = 'SKIP: no sponsorship';\n  else if (job.partTime) recommendation = 'LOW PRIORITY: part-time';\n  else if (baseTooLow) recommendation = 'LOW PRIORITY: base below your minimum';\n  else if (fit < 50) recommendation = 'LOW PRIORITY';\n  else if (ai.seniorityFit && ai.seniorityFit !== 'FIT') recommendation = 'REVIEW: seniority';\n  else if (fit >= 60 && status === 'YES') recommendation = 'APPLY';\n  else if (fit >= 60) recommendation = 'ASK SPONSORSHIP FIRST';\n  else recommendation = 'REVIEW';\n\n  return {\n    json: {\n      'Job link': job.jobUrl,\n      Found: today,\n      Recommendation: recommendation,\n      Priority: Math.round(0.6 * fit + 0.4 * visa),\n      Fit: fit,\n      Visa: visa,\n      Sponsorship: status + (job.sponsorshipConditions ? ` (${job.sponsorshipConditions})` : ''),\n      Evidence: evidence,\n      Missing: (ai.missingRequirements || []).join('; '),\n      Why: ai.reason || '',\n      Title: job.title,\n      Company: job.company,\n      Location: job.location,\n      'Base salary': job.baseSalaryText || (job.salaryText ? '' : 'not stated'),\n      'Extra pay': job.extraPay,\n      'Apply link': job.applyUrl,\n      // For the email step; not written to the sheet.\n      sponsorshipStatus: status,\n      description: job.description,\n    },\n    pairedItem: { item: index },\n  };\n});"
       },
-      "id": "rank-jobs-0011",
+      "id": "rank-jobs-0010",
       "name": "Rank jobs",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -329,7 +313,7 @@
           "handlingExtraData": "ignoreIt"
         }
       },
-      "id": "update-job-tracker-0012",
+      "id": "update-job-tracker-0011",
       "name": "Update job tracker",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.6,
@@ -349,7 +333,7 @@
           },
           "conditions": [
             {
-              "id": "condition-0013",
+              "id": "condition-0012",
               "leftValue": "={{ $json.Recommendation }}",
               "rightValue": "APPLY",
               "operator": {
@@ -358,7 +342,7 @@
               }
             },
             {
-              "id": "condition-0014",
+              "id": "condition-0013",
               "leftValue": "={{ $json.Recommendation }}",
               "rightValue": "ASK SPONSORSHIP FIRST",
               "operator": {
@@ -371,7 +355,7 @@
         },
         "options": {}
       },
-      "id": "worth-an-email--0015",
+      "id": "worth-an-email--0014",
       "name": "Worth an email?",
       "type": "n8n-nodes-base.filter",
       "typeVersion": 2.2,
@@ -392,7 +376,7 @@
         },
         "options": {}
       },
-      "id": "best-first-0016",
+      "id": "best-first-0015",
       "name": "Best first",
       "type": "n8n-nodes-base.sort",
       "typeVersion": 1,
@@ -405,7 +389,7 @@
       "parameters": {
         "maxItems": "={{ $('Your profile').first().json.maxDraftsPerDay }}"
       },
-      "id": "daily-limit-0017",
+      "id": "daily-limit-0016",
       "name": "Daily limit",
       "type": "n8n-nodes-base.limit",
       "typeVersion": 1,
@@ -427,7 +411,7 @@
           ]
         }
       },
-      "id": "write-the-email-0018",
+      "id": "write-the-email-0017",
       "name": "Write the email",
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.6,
@@ -441,7 +425,7 @@
         "schemaType": "manual",
         "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"subject\": {\n      \"type\": \"string\"\n    },\n    \"body\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"subject\",\n    \"body\"\n  ]\n}"
       },
-      "id": "email-format-0019",
+      "id": "email-format-0018",
       "name": "Email format",
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.2,
@@ -458,7 +442,7 @@
         "message": "={{ $json.output.body }}\n\nJob ad: {{ $('Daily limit').item.json['Apply link'] }}",
         "options": {}
       },
-      "id": "save-gmail-draft-001a",
+      "id": "save-gmail-draft-0019",
       "name": "Save Gmail draft",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,

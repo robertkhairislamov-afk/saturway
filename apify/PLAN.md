@@ -677,6 +677,13 @@ StepStone на платформе иногда отдаёт карточки м�
 - Вывод: нового индийского актора не делаем — большой спрос только у Naukri, и он закрыт; индийские вакансии уже покрывает наш Foundit. Возможная мелочь — Shine как ещё один источник в ядре вакансий (101 пользователь).
 - Вторая проверка 20.10 (по просьбе владельца «в Индии точно что-то есть»): жилые адреса Индии открывают 99acres (27 квартир в JSON-LD + `window.__initialData__`) и Magicbricks (`SERVER_PRELOADED_STATE_`: название, цена, площадь, район — 30 на странице, страница 2 тоже), но **оба запрещают ИИ-агентам Anthropic весь сайт** в robots.txt (99acres: `User-agent: Anthropic`, Magicbricks: ClaudeBot, Claude-Web, Claude-SearchBot, anthropic-ai) — соблюдаем, не делаем. Housing.com и Zepto — блокировка (2 КБ), Blinkit — 403, 99acres режет даже robots.txt с дата-центра (Akamai). Flipkart запрещает всем `/search?` в robots.txt. JustDial разрешает Claude-User, но страница — пустая оболочка, данные идут через `/api/`, закрытый в robots.txt для всех. Открыт и без запретов только Shine (вакансии, 9 514 по «python developer», 101 пользователь).
 
+### Сборка из GitHub, 21.10
+
+- Новинка Apify (03.09): источник кода актора — Git-репозиторий (`URL#ветка:папка`), автосборка по пушу через GitHub-интеграцию. Цель — выкладывать новые версии без нашего токена и перевыпустить старый.
+- **AliExpress переключён 21.10**: `https://github.com/robertkhairislamov-afk/saturway#claude/gifted-dirac-sv0ed6:apify/actors/aliexpress`, сборка 0.1.6 из GitHub — Succeeded; проверочный прогон («yoga mat», по заказам, 60 товаров, продажи у всех 60) — успешно. Автосборка по пушу заработает, когда владелец подключит GitHub-интеграцию в Apify (авторизация GitHub — только владелец); до тех пор после пуша — кнопка Build.
+- Готовы к переключению так же (в папках есть Dockerfile, package-lock.json, .actor/actor.json): google-trends, google-play, app-store, redfin, google-news. 17 акторов вакансий собираются скриптом из общей папки `ats-jobs` — для них нужен свой способ (например, коммитить сгенерированные папки или GitHub Action с токеном в секретах репозитория).
+- Старый токен перевыпустить после переключения всех отдельных акторов.
+
 ### Тексты в Store под поиск, 20.10
 
 - Второй сеанс (без плагинов: Marketing и другие в облачных сеансах не загрузились) сравнил наши тексты с лидерами и места в поиске Store: «play store» — Google Play 227-й, «aliexpress product scraper» — AliExpress 117-й, «google trends api» и «job scraper» — Trends и All-in-One вне первых 500. Предложения и скрипт — `marketing/store-seo/` (`apply.mjs` без `--apply` только сравнивает; `previous.json` — тексты до правки для отката; `rank.py` — места в поиске).

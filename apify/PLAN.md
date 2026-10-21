@@ -686,6 +686,14 @@ StepStone на платформе иногда отдаёт карточки м�
 - **Отпали:** YouTube-расшифровки 15,7 тыс. — robots.txt закрывает `/api/` и `/youtubei/` для всех; Pinterest — `Disallow: /` для всех; Airbnb, Spotify, eBay, MercadoLibre — запрет для Claude/Anthropic; Naver — `Disallow: /` для всех; всё на Google Search (Jobs, Shopping, Images, AI Overviews) — `/search` закрыт для всех; Taobao, Shopee, Douyin, 1688, JD — подписанные API/защита; сайты отзывов и соцсети — личные данные.
 - Итог: открытых ниш, где можно стать №1–2, — около 5–6 новых и 5–6 своих для продвижения, а не 20. Следующий шаг — проверка Google Ads Transparency.
 
+### Google Ads Transparency Scraper, 21.10
+
+- Актор `robertosan16/google-ads-transparency-scraper` (id OT64Iwq4qfy9JxLC8, папка `actors/google-ads-transparency`), приватный, ждёт публикации владельцем. Цена $1.50/1000 результатов (Free; Starter $1.35, Scale $1.20, Business $1.05), без платы за старт; категории Marketing, Lead generation, Developer tools.
+- Источник — тот же RPC, что у сайта adstransparency.google.com (`/anji/_/rpc/SearchService/SearchCreatives`, `SearchSuggestions`, `LookupService/GetCreativeById`, `GetAdvertiserById`), без подписи и браузера; robots.txt у сайта и у превью нет. С датацентров Apify отвечает; иногда Google даёт страницу «unusual traffic» — не решаем, повторяем с нового адреса.
+- Коды платформ взяты из кода сайта (main.dart.js): PLAY 1, MAPS 2, SEARCH 3, SHOPPING 4, YOUTUBE 5; форматы TEXT 1, IMAGE 2, VIDEO 3; регион = 2000 + числовой код ISO (243 страны из страницы сайта).
+- **Отличие от лидера scrapesage ($2/1k, детали $3/1k):** текст объявления — заголовок, описание, видимый URL, товар Shopping, приложение (appId, ссылка в магазин), — из превью `displayads-formats.googleusercontent.com/ads/preview/content.js` (атрибут `data-p`). Многие текстовые объявления Google хранит картинкой; текст часто есть в вариации, поэтому для таких объявлений актор сам берёт детали. Покрытие: nike.com US — 229 из 300 с текстом; HelloFresh — меньше (все версии — картинки). Детали (вариации, страны с датами, показы в ЕС по странам и платформам), режим «только новые», режим «рекламодатели» — всё в той же цене.
+- Прогоны на Apify 21.10: nike.com 300 объявлений за 139 с, $0.005 затрат; 100 — 14 с; детали DE, ANYWHERE, YouTube, рекламодатели canva.com (Canva Pty Ltd 271 объявление, CANVA US 25…) — все успешно. 13 тестов на выдуманных данных.
+
 ### Google Play — второй платящий пользователь, 21.10
 
 - Владелец увидел в Insights нового платящего пользователя Google Play Scraper. API 21.10: пользователей за 7 дней — 3 (за 30 — 3, всего 4), запусков за 30 дней — 25, все успешные. Цена $0.50/1000 (у лидера automation-lab $5) — по решению владельца не трогаем.

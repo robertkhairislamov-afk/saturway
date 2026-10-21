@@ -1,0 +1,18 @@
+{
+  "actorOutputSchemaVersion": 1,
+  "title": "Google Ads Transparency Scraper output",
+  "properties": {
+    "ads": {
+      "type": "string",
+      "title": "Ads",
+      "description": "Ads with advertiser, format, dates, ad text and links.",
+      "template": "{{links.apiDefaultDatasetUrl}}/items?view=overview"
+    },
+    "summary": {
+      "type": "string",
+      "title": "Run summary",
+      "description": "Ads in the Transparency Center, ads saved and errors for every brand, website or advertiser.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/SUMMARY"
+    }
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "actorSpecification": 1,
+  "fields": {},
+  "views": {
+    "overview": {
+      "title": "Ads",
+      "transformation": {
+        "fields": [
+          "adUrl",
+          "imageUrl",
+          "advertiserName",
+          "format",
+          "headline",
+          "description",
+          "displayUrl",
+          "firstShown",
+          "lastShown",
+          "shownForDays",
+          "source"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "adUrl": {
+            "label": "Ad",
+            "format": "link"
+          },
+          "imageUrl": {
+            "label": "Picture",
+            "format": "image"
+          },
+          "advertiserName": {
+            "label": "Advertiser",
+            "format": "text"
+          },
+          "format": {
+            "label": "Format",
+            "format": "text"
+          },
+          "headline": {
+            "label": "Headline",
+            "format": "text"
+          },
+          "description": {
+            "label": "Description",
+            "format": "text"
+          },
+          "displayUrl": {
+            "label": "Display URL",
+            "format": "text"
+          },
+          "firstShown": {
+            "label": "First shown",
+            "format": "date"
+          },
+          "lastShown": {
+            "label": "Last shown",
+            "format": "date"
+          },
+          "shownForDays": {
+            "label": "Days shown",
+            "format": "number"
+          },
+          "source": {
+            "label": "Source",
+            "format": "text"
+          }
+        }
+      }
+    },
+    "advertisers": {
+      "title": "Advertisers",
+      "transformation": {
+        "fields": [
+          "advertiserUrl",
+          "name",
+          "country",
+          "verified",
+          "adCountLow",
+          "adCountHigh",
+          "adsFound",
+          "domain",
+          "source"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "advertiserUrl": {
+            "label": "Advertiser",
+            "format": "link"
+          },
+          "name": {
+            "label": "Name",
+            "format": "text"
+          },
+          "country": {
+            "label": "Country",
+            "format": "text"
+          },
+          "verified": {
+            "label": "Verified",
+            "format": "boolean"
+          },
+          "adCountLow": {
+            "label": "Ads from",
+            "format": "number"
+          },
+          "adCountHigh": {
+            "label": "Ads to",
+            "format": "number"
+          },
+          "adsFound": {
+            "label": "Ads for the website",
+            "format": "number"
+          },
+          "domain": {
+            "label": "Website",
+            "format": "text"
+          },
+          "source": {
+            "label": "Source",
+            "format": "text"
+          }
+        }
+      }
+    }
+  }
+}

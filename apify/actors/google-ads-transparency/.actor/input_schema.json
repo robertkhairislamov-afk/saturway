@@ -1,0 +1,171 @@
+{
+  "title": "Google Ads Transparency Scraper",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "queries": {
+      "title": "Brands, websites or links",
+      "type": "array",
+      "editor": "stringList",
+      "sectionCaption": "What to look up",
+      "description": "Brand names (Nike), websites (nike.com), advertiser IDs (AR…) or Ads Transparency Center links, one per line. A website returns every ad that points to it, from any advertiser account; a brand name is matched to the advertiser accounts with that name.",
+      "prefill": [
+        "nike.com"
+      ]
+    },
+    "domains": {
+      "title": "Websites",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Websites such as nike.com. Same as entering them above."
+    },
+    "advertiserIds": {
+      "title": "Advertiser IDs",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Advertiser IDs that start with AR, from the advertiser's Transparency Center link."
+    },
+    "startUrls": {
+      "title": "Transparency Center links",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Links to advertiser pages, ad pages or website searches on adstransparency.google.com."
+    },
+    "resultType": {
+      "title": "What to return",
+      "type": "string",
+      "editor": "select",
+      "enum": [
+        "ads",
+        "advertisers"
+      ],
+      "enumTitles": [
+        "Ads",
+        "Advertisers (one row per account)"
+      ],
+      "default": "ads",
+      "description": "Ads: one row per ad. Advertisers: one row per advertiser account, with its ad count; for a website, the accounts that run ads for it."
+    },
+    "region": {
+      "title": "Region",
+      "type": "string",
+      "editor": "textfield",
+      "default": "US",
+      "sectionCaption": "Filters",
+      "description": "Country where the ads were shown: a two-letter code (US, GB, DE, IN…) or ANYWHERE for all countries."
+    },
+    "platforms": {
+      "title": "Platforms",
+      "type": "array",
+      "editor": "select",
+      "items": {
+        "type": "string",
+        "enum": [
+          "SEARCH",
+          "YOUTUBE",
+          "SHOPPING",
+          "MAPS",
+          "PLAY"
+        ],
+        "enumTitles": [
+          "Google Search",
+          "YouTube",
+          "Google Shopping",
+          "Google Maps",
+          "Google Play"
+        ]
+      },
+      "description": "Only ads shown on these Google platforms. Empty for all. Google applies this filter to ads shown since September 2023."
+    },
+    "adFormat": {
+      "title": "Ad format",
+      "type": "string",
+      "editor": "select",
+      "enum": [
+        "ALL",
+        "TEXT",
+        "IMAGE",
+        "VIDEO"
+      ],
+      "enumTitles": [
+        "All",
+        "Text",
+        "Image",
+        "Video"
+      ],
+      "default": "ALL",
+      "description": "Only ads of this format."
+    },
+    "startDate": {
+      "title": "Shown since",
+      "type": "string",
+      "editor": "datepicker",
+      "description": "Only ads shown on or after this date."
+    },
+    "endDate": {
+      "title": "Shown until",
+      "type": "string",
+      "editor": "datepicker",
+      "description": "Only ads shown on or before this date."
+    },
+    "maxAdsPerSearch": {
+      "title": "Max ads per brand, website or advertiser",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10000,
+      "default": 100,
+      "sectionCaption": "Limits and extras",
+      "description": "Ads to save for each entry (for a brand name, for each matching advertiser)."
+    },
+    "maxAdvertisersPerQuery": {
+      "title": "Advertisers per brand name",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10,
+      "default": 1,
+      "description": "A brand name can match several advertiser accounts; the ones with the most ads come first."
+    },
+    "includeAdText": {
+      "title": "Ad text",
+      "type": "boolean",
+      "default": true,
+      "description": "Read the ad's headline, description, display URL, app and product from its preview. Google shows many text ads only as a picture; those keep the picture link and no text."
+    },
+    "includeDetails": {
+      "title": "Details: variations, countries and impressions",
+      "type": "boolean",
+      "default": false,
+      "description": "One more request per ad: every variation of the ad, each country it ran in with first and last dates, and for ads shown in the EU, impressions per country and platform. Also finds ad text in variations."
+    },
+    "onlyNewAds": {
+      "title": "Only new ads",
+      "type": "boolean",
+      "default": false,
+      "description": "Save only ads that earlier runs with the same memory name have not saved. Schedule the Actor daily or weekly to get just the new ads of your competitors."
+    },
+    "monitorStoreName": {
+      "title": "Memory name",
+      "type": "string",
+      "editor": "textfield",
+      "default": "ads-transparency-seen",
+      "description": "Name of the key-value store that remembers saved ads for Only new ads. Use one name per monitoring task."
+    },
+    "maxItems": {
+      "title": "Max results in total",
+      "type": "integer",
+      "minimum": 0,
+      "default": 0,
+      "description": "Stop after this many results in the whole run. 0 for no limit."
+    },
+    "proxyConfiguration": {
+      "title": "Proxy",
+      "type": "object",
+      "editor": "proxy",
+      "default": {
+        "useApifyProxy": true
+      },
+      "sectionCaption": "Proxy",
+      "description": "Apify Proxy datacenter addresses work well; the Actor moves to a new address when Google asks for a check."
+    }
+  }
+}

@@ -1,0 +1,663 @@
+{
+  "name": "Find companies building a team on LinkedIn, Indeed and Glassdoor and research them as sales leads with AI",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Find companies building a team and turn them into researched sales leads\n\nA company that starts hiring for a team is about to buy what that team needs. This workflow watches LinkedIn, Indeed and Glassdoor every week, scores each hiring company, and has AI research the best new or growing ones that match your ideal customer.\n\n### How it works\n1. The [All-in-One Jobs Scraper](https://apify.com/robertosan16/all-in-one-jobs-scraper) on Apify returns one row per company hiring for your roles in the last 7 days: open jobs, teams, job titles, places, pay, size, industry, website.\n2. **Score the companies** compares with your sheet (NEW, GROWING, SLOWING, STEADY), checks your ideal customer and scores the signal 0-100. Rows you marked Customer or Not a fit are skipped.\n3. For the top hot leads, the workflow reads the company's home page and AI writes what they do, the team being built, why now, an angle, who to contact (a job title) and an opener.\n4. Every company is saved to Google Sheets; one Slack message sums up the week. If the search fails, Slack gets an alert.\n\n### Setup\n1. Add an Apify credential to **Find hiring companies**. If the node is missing, install `@apify/n8n-nodes-apify`.\n2. Fill in **Your ideal customer**.\n3. Add an OpenAI credential to **OpenAI Chat Model**, or any chat model.\n4. Create a Google Sheet, paste the header row from the description into row 1, select it in **Read saved leads** and **Save leads**.\n5. Pick a Slack channel in both Slack nodes and activate.\n\n### Customization\nTrack other roles and countries, change the score in **Score the companies**, or send hot leads to your CRM instead of Slack.",
+        "height": 720,
+        "width": 660
+      },
+      "id": "overview-0001",
+      "name": "Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -760,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 1. Find companies hiring\nEvery Monday: one row per company hiring for your roles on LinkedIn, Indeed and Glassdoor. A failed search sends a Slack alert.",
+        "height": 720,
+        "width": 740,
+        "color": 7
+      },
+      "id": "group-find-0002",
+      "name": "Group: find",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 2. Score and compare\nNEW, GROWING, SLOWING or STEADY against your sheet, ideal-customer check, score 0-100, best hot leads first.",
+        "height": 720,
+        "width": 700,
+        "color": 7
+      },
+      "id": "group-score-0003",
+      "name": "Group: score",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        720,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 3. Research hot leads\nRead the home page, then AI notes for each hot lead. Facts come only from the data.",
+        "height": 720,
+        "width": 1100,
+        "color": 7
+      },
+      "id": "group-research-0004",
+      "name": "Group: research",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1460,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 4. Save and share\nAdd or update every company in the sheet and post the week's summary to Slack.",
+        "height": 720,
+        "width": 920,
+        "color": 7
+      },
+      "id": "group-share-0005",
+      "name": "Group: share",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2600,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "id": "every-monday-0006",
+      "name": "Every Monday",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "icp-1",
+              "name": "whatYouSell",
+              "type": "string",
+              "value": "Sales training and coaching for B2B sales teams of 5 to 50 people"
+            },
+            {
+              "id": "icp-2",
+              "name": "rolesTheyHire",
+              "type": "string",
+              "value": "sales development representative, account executive, head of sales"
+            },
+            {
+              "id": "icp-3",
+              "name": "countries",
+              "type": "string",
+              "value": "US"
+            },
+            {
+              "id": "icp-4",
+              "name": "location",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "id": "icp-5",
+              "name": "jobSites",
+              "type": "string",
+              "value": "linkedin, indeed, glassdoor"
+            },
+            {
+              "id": "icp-6",
+              "name": "minEmployees",
+              "type": "number",
+              "value": 50
+            },
+            {
+              "id": "icp-7",
+              "name": "maxEmployees",
+              "type": "number",
+              "value": 5000
+            },
+            {
+              "id": "icp-8",
+              "name": "industries",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "id": "icp-9",
+              "name": "minNewJobsPerWeek",
+              "type": "number",
+              "value": 2
+            },
+            {
+              "id": "icp-10",
+              "name": "minScore",
+              "type": "number",
+              "value": 40
+            },
+            {
+              "id": "icp-11",
+              "name": "maxAiLeadsPerWeek",
+              "type": "number",
+              "value": 15
+            },
+            {
+              "id": "icp-12",
+              "name": "maxCompanies",
+              "type": "number",
+              "value": 300
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "your-ideal-customer-0007",
+      "name": "Your ideal customer",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "Actors",
+        "operation": "Run actor and get dataset",
+        "actorId": "robertosan16~all-in-one-jobs-scraper",
+        "customBody": "={{ JSON.stringify({\n  searchQueries: $json.rolesTheyHire.split(',').map(r => r.trim()).filter(Boolean),\n  countries: $json.countries.split(',').map(c => c.trim().toUpperCase()).filter(Boolean),\n  location: $json.location,\n  sources: $json.jobSites.split(',').map(s => s.trim().toLowerCase()).filter(Boolean),\n  postedWithinDays: 7,\n  outputMode: 'companies',\n  excludeStaffingAgencies: true,\n  maxItemsPerCompany: 200,\n  maxItems: $json.maxCompanies\n}, null, 2) }}",
+        "timeout": 600,
+        "memory": 512
+      },
+      "id": "find-hiring-companies-0008",
+      "name": "Find hiring companies",
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        440,
+        200
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#sales-leads",
+          "mode": "name"
+        },
+        "text": "=The weekly hiring-signal search on Apify failed: {{ $json.error ? ($json.error.message || $json.error) : 'no details' }}. Open the run in Apify Console to see why.",
+        "otherOptions": {
+          "includeLinkToWorkflow": true,
+          "unfurl_links": false
+        }
+      },
+      "id": "alert-search-failed-0009",
+      "name": "Alert: search failed",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        500,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "",
+          "mode": "list"
+        },
+        "options": {}
+      },
+      "id": "read-saved-leads-000a",
+      "name": "Read saved leads",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        780,
+        200
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Scores every hiring company and compares it with your sheet from last week.\n// Signal: NEW (not in the sheet yet), GROWING (more open jobs than last time), SLOWING (fewer), STEADY.\n// Score 0-100: jobs posted in the last 7 days, new or growing, posted on several job sites, senior\n// roles (a team being built) and a matching industry. Only companies that fit your ideal customer,\n// are NEW or GROWING and reach your minimum score become hot leads, best first, up to your weekly\n// AI limit. Companies whose Status in the sheet says customer, not a fit, lost or do not contact are\n// never hot leads. Status, Priority and the AI notes already in the sheet are not overwritten.\nconst s = $('Your ideal customer').first().json;\nconst list = (text) => String(text || '').toLowerCase().split(',').map((x) => x.trim()).filter(Boolean);\nconst minEmployees = Number(s.minEmployees) || 0;\nconst maxEmployees = Number(s.maxEmployees) || 0;\nconst industries = list(s.industries);\nconst minNewJobs = Number(s.minNewJobsPerWeek) || 1;\nconst minScore = Number(s.minScore) || 0;\nconst maxAiLeads = Number(s.maxAiLeadsPerWeek) || 10;\nconst today = new Date().toISOString().slice(0, 10);\nconst CLOSED = /customer|not a fit|lost|do not contact|unsubscribed/i;\n// Leaders of a team: hiring them usually means the team is being built or grown.\nconst SENIOR = /\\b(head of|director|vp|vice president|chief|founding|team lead)\\b|\\b(sales|marketing|engineering|operations|customer success|product|people|finance) manager\\b/i;\n\nconst saved = new Map();\nfor (const { json: row } of $input.all()) {\n  if (row.Company) saved.set(String(row.Company).trim().toLowerCase(), row);\n}\n\n// \"201 to 500 Employees\", \"10,000+\": the lower bound.\nconst employeesFrom = (size) => {\n  const m = String(size || '').replace(/,/g, '').match(/\\d+/);\n  return m ? Number(m[0]) : null;\n};\nconst fullUrl = (site) => (!site ? '' : /^https?:\\/\\//i.test(site) ? site : 'https://' + site);\nconst money = (n) => Number(n).toLocaleString('en-US');\nconst payRange = (r) => (r && r.min ? r.currency + ' ' + money(r.min) + (r.max && r.max !== r.min ? '-' + money(r.max) : '') + ' per ' + r.interval : '');\n\nconst companies = $('Find hiring companies').all().map(({ json: c }) => {\n  const name = String(c.companyName || '').trim();\n  const previous = saved.get(name.toLowerCase());\n  const openJobs = Number(c.jobs) || 0;\n  const newJobs = Number(c.jobsLast7Days) || 0;\n  const before = previous && previous['Open jobs'] !== '' && previous['Open jobs'] !== undefined ? Number(previous['Open jobs']) : null;\n  const signal = !previous || before === null ? 'NEW' : openJobs > before ? 'GROWING' : before > openJobs ? 'SLOWING' : 'STEADY';\n  const titles = (c.topJobTitles || []).map((t) => t.title);\n  const senior = titles.filter((t) => SENIOR.test(t));\n  const teams = Object.entries(c.departments || {}).sort((a, b) => b[1] - a[1]);\n  const sites = c.sites || [];\n  const industry = String(c.companyIndustry || '');\n  const industryMatch = industries.length > 0 && industries.some((word) => industry.toLowerCase().includes(word));\n  const employees = employeesFrom(c.companySize);\n  const status = previous ? String(previous.Status || '') : '';\n\n  const misses = [];\n  if (minEmployees && employees !== null && minEmployees > employees) misses.push('too small');\n  if (maxEmployees && employees !== null && employees > maxEmployees) misses.push('too big');\n  if (industries.length && industry && !industryMatch) misses.push('other industry');\n  if (minNewJobs > newJobs) misses.push('few new jobs');\n  if (CLOSED.test(status)) misses.push('status: ' + status);\n  const unknown = [employees === null ? 'size' : '', industries.length && !industry ? 'industry' : ''].filter(Boolean);\n  const fits = misses.length === 0;\n\n  let score = Math.min(newJobs, 10) * 4;\n  if (signal === 'NEW') score += 15;\n  if (signal === 'GROWING') score += 15 + Math.min(openJobs - before, 10) * 2;\n  if (signal === 'SLOWING') score -= 15;\n  if (sites.length > 1) score += 10;\n  if (senior.length) score += 15;\n  if (industryMatch) score += 10;\n  score = Math.max(0, Math.min(100, Math.round(score)));\n\n  return {\n    Company: name,\n    Score: score,\n    Signal: signal,\n    'Open jobs': openJobs,\n    'New this week': newJobs,\n    'Previous open jobs': before === null ? '' : before,\n    'Fits ICP': fits ? 'yes' + (unknown.length ? ' (' + unknown.join(' and ') + ' unknown)' : '') : 'no: ' + misses.join(', '),\n    'Teams hiring': teams.map(([team, n]) => team + ' ' + n).join(', '),\n    'Senior roles': senior.join(', '),\n    'Job titles': titles.slice(0, 6).join(', '),\n    Locations: (c.locations || []).slice(0, 5).map((l) => l.location).join('; '),\n    'Pay range': payRange(c.salaryRange),\n    'Job sites': sites.join(', '),\n    Size: c.companySize || '',\n    Industry: industry,\n    Revenue: c.companyRevenue || '',\n    Rating: c.companyRating || '',\n    Website: fullUrl(c.companyWebsite || c.companyDomain),\n    'Company page': c.companyUrl || '',\n    'Example job': c.sampleJobs && c.sampleJobs[0] ? c.sampleJobs[0].jobUrl : '',\n    'Latest posting': String(c.newestJobAt || '').slice(0, 10),\n    'First seen': (previous && previous['First seen']) || today,\n    Updated: today,\n    candidate: fits && (signal === 'NEW' || signal === 'GROWING') && score >= minScore,\n  };\n});\n\n// The best candidates, up to the weekly AI limit, become hot leads.\nconst hot = new Set(companies.filter((c) => c.candidate).sort((a, b) => b.Score - a.Score).slice(0, maxAiLeads).map((c) => c.Company));\nreturn companies.map(({ candidate, ...row }) => ({ json: { ...row, 'Hot lead': hot.has(row.Company) ? 'yes' : '' } }));"
+      },
+      "id": "score-the-companies-000b",
+      "name": "Score the companies",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "condition-000c",
+              "leftValue": "={{ $json['Hot lead'] }}",
+              "rightValue": "yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "hot-lead--000d",
+      "name": "Hot lead?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1220,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.Website }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "text/html"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000,
+          "response": {
+            "response": {
+              "responseFormat": "text",
+              "outputPropertyName": "data",
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "read-the-website-000e",
+      "name": "Read the website",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1520,
+        100
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Turns each hot lead's home page into a short text for the AI: page title, description and the\n// first words of the page. A site that did not load gives \"not available\"; the AI then works from\n// the hiring data alone.\nconst clean = (text) => String(text || '')\n  .replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&quot;/g, '\"').replace(/&#39;|&rsquo;/g, \"'\")\n  .replace(/\\s+/g, ' ').trim();\nconst first = (html, patterns) => {\n  for (const pattern of patterns) {\n    const m = html.match(pattern);\n    if (m) return clean(m[1]);\n  }\n  return '';\n};\n\nreturn $input.all().map((item, index) => {\n  const company = $('Hot lead?').itemMatching(index).json;\n  const html = typeof item.json.data === 'string' ? item.json.data : '';\n  const title = first(html, [/<title[^>]*>([\\s\\S]*?)<\\/title>/i]);\n  const description = first(html, [\n    /<meta[^>]+name=[\"']description[\"'][^>]+content=[\"']([^\"']*)/i,\n    /<meta[^>]+content=[\"']([^\"']*)[\"'][^>]+name=[\"']description[\"']/i,\n    /<meta[^>]+property=[\"']og:description[\"'][^>]+content=[\"']([^\"']*)/i,\n  ]);\n  const body = clean(html\n    .replace(/<(script|style|noscript|svg|nav|footer)[\\s\\S]*?<\\/\\1>/gi, ' ')\n    .replace(/<[^>]+>/g, ' '));\n  const websiteText = [title, description, body.slice(0, 1200)].filter(Boolean).join('\\n');\n  return { json: { ...company, websiteText: websiteText || 'not available' }, pairedItem: { item: index } };\n});"
+      },
+      "id": "website-text-000f",
+      "name": "Website text",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1740,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "text": "=WHAT THE SELLER OFFERS: {{ $('Your ideal customer').first().json.whatYouSell }}\n\nCOMPANY: {{ $json.Company }}\nSIZE: {{ $json.Size || 'unknown' }} | INDUSTRY: {{ $json.Industry || 'unknown' }} | REVENUE: {{ $json.Revenue || 'unknown' }}\nSIGNAL: {{ $json.Signal }}, {{ $json['Open jobs'] }} open jobs, {{ $json['New this week'] }} posted in the last 7 days{{ $json['Previous open jobs'] !== '' ? ', ' + $json['Previous open jobs'] + ' last time' : '' }}\nTEAMS HIRING: {{ $json['Teams hiring'] }}\nJOB TITLES: {{ $json['Job titles'] }}\nSENIOR ROLES: {{ $json['Senior roles'] || 'none' }}\nLOCATIONS: {{ $json.Locations }}\n\nHOME PAGE TEXT:\n{{ $json.websiteText }}",
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"priority\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"HIGH\",\n        \"MEDIUM\",\n        \"LOW\"\n      ]\n    },\n    \"whatTheyDo\": {\n      \"type\": \"string\"\n    },\n    \"teamBeingBuilt\": {\n      \"type\": \"string\"\n    },\n    \"whyNow\": {\n      \"type\": \"string\"\n    },\n    \"angle\": {\n      \"type\": \"string\"\n    },\n    \"contactTitle\": {\n      \"type\": \"string\"\n    },\n    \"opener\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"priority\",\n    \"whatTheyDo\",\n    \"teamBeingBuilt\",\n    \"whyNow\",\n    \"angle\",\n    \"contactTitle\",\n    \"opener\"\n  ]\n}",
+        "options": {
+          "systemPromptTemplate": "You research one sales lead for a seller, from public hiring data and the text of the company's home page.\nUse only the data given. Never invent facts about the company, its people, customers, revenue or plans. If something is not in the data, leave it out.\npriority: HIGH if the company clearly fits what the seller offers and the hiring shows a team being built or grown now; MEDIUM if it fits but the signal is weaker; LOW if it does not fit.\nwhatTheyDo: one short sentence from the home page text; \"unknown\" if the page says nothing useful.\nteamBeingBuilt: which team is hiring and what the job titles suggest (for example \"first sales team: two SDRs and a Head of Sales\").\nwhyNow: one sentence on what the hiring says right now (how many new jobs, new or growing, senior roles).\nangle: one sentence on how the seller's offer helps with that, in plain words.\ncontactTitle: the job title of the person most likely to buy, such as \"VP of Sales\". A title only, never a person's name.\nopener: the first sentence of a cold email that mentions the hiring, friendly and specific, no flattery, no made-up facts."
+        }
+      },
+      "id": "research-the-lead-0010",
+      "name": "Research the lead",
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        1960,
+        100
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "id": "openai-chat-model-0011",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1980,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Adds the AI research to each hot lead. If the AI step failed for a lead, the lead keeps its\n// hiring data and gets \"AI step failed\" as its priority, so nothing is lost.\nreturn $input.all().map((item, index) => {\n  const { websiteText, ...company } = $('Website text').itemMatching(index).json;\n  const notes = item.json.output || {};\n  return {\n    json: {\n      ...company,\n      Priority: notes.priority || 'AI step failed',\n      'What they do': notes.whatTheyDo || '',\n      'Team being built': notes.teamBeingBuilt || '',\n      'Why now': notes.whyNow || '',\n      Angle: notes.angle || '',\n      'Contact title': notes.contactTitle || '',\n      Opener: notes.opener || '',\n    },\n    pairedItem: { item: index },\n  };\n});"
+      },
+      "id": "add-ai-notes-0012",
+      "name": "Add AI notes",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2340,
+        100
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "all-companies-0013",
+      "name": "All companies",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2680,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "",
+          "mode": "list"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "Company"
+          ],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "handlingExtraData": "ignoreIt"
+        }
+      },
+      "id": "save-leads-0014",
+      "name": "Save leads",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        2960,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// One Slack message a week: what changed, then the hot leads, high priority and best score first.\n// In a quiet week the message says so, so you know the workflow ran.\nconst all = $input.all().map((item) => item.json);\nconst count = (signal) => all.filter((c) => c.Signal === signal).length;\nconst rank = { HIGH: 0, MEDIUM: 1, LOW: 2 };\nconst hot = all.filter((c) => c.Priority)\n  .sort((a, b) => (rank[a.Priority] ?? 3) - (rank[b.Priority] ?? 3) || b.Score - a.Score);\n\nconst header = '*Hiring signals this week:* ' + all.length + ' companies hiring for your roles · ' +\n  count('NEW') + ' new · ' + count('GROWING') + ' growing · ' + count('SLOWING') + ' slowing';\nif (hot.length === 0) {\n  return [{ json: { text: header + '\\nNo new or growing company matched your ideal customer and minimum score this week. Every company is in the sheet.' } }];\n}\n\nconst shown = 10;\nconst lines = hot.slice(0, shown).map((lead) => {\n  const change = lead.Signal === 'GROWING'\n    ? 'growing, ' + lead['Previous open jobs'] + ' → ' + lead['Open jobs'] + ' open jobs'\n    : 'new, ' + lead['Open jobs'] + ' open jobs';\n  const facts = [lead.Size, lead.Industry].filter(Boolean).join(', ');\n  return [\n    '• *' + lead.Company + '* — score ' + lead.Score + ', ' + lead.Priority + ' · ' + change + (facts ? ' · ' + facts : ''),\n    lead['Team being built'] ? '   Team: ' + lead['Team being built'] : '',\n    lead['Why now'] ? '   Why now: ' + lead['Why now'] : '',\n    lead['Contact title'] ? '   Who to contact: ' + lead['Contact title'] : '',\n    lead.Opener ? '   Opener: ' + lead.Opener : '',\n    '   ' + [lead.Website, lead['Example job']].filter(Boolean).join(' · '),\n  ].filter((line) => line.trim()).join('\\n');\n});\nconst more = hot.length > shown ? '\\n…and ' + (hot.length - shown) + ' more hot leads in the sheet.' : '';\nreturn [{ json: { text: header + '\\n\\n*' + hot.length + ' hot leads*\\n' + lines.join('\\n') + more } }];"
+      },
+      "id": "write-the-digest-0015",
+      "name": "Write the digest",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2960,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#sales-leads",
+          "mode": "name"
+        },
+        "text": "={{ $json.text }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false,
+          "unfurl_links": false
+        }
+      },
+      "id": "post-to-slack-0016",
+      "name": "Post to Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        3200,
+        100
+      ]
+    }
+  ],
+  "connections": {
+    "Every Monday": {
+      "main": [
+        [
+          {
+            "node": "Your ideal customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Your ideal customer": {
+      "main": [
+        [
+          {
+            "node": "Find hiring companies",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find hiring companies": {
+      "main": [
+        [
+          {
+            "node": "Read saved leads",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alert: search failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read saved leads": {
+      "main": [
+        [
+          {
+            "node": "Score the companies",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score the companies": {
+      "main": [
+        [
+          {
+            "node": "Hot lead?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hot lead?": {
+      "main": [
+        [
+          {
+            "node": "Read the website",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "All companies",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Read the website": {
+      "main": [
+        [
+          {
+            "node": "Website text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Website text": {
+      "main": [
+        [
+          {
+            "node": "Research the lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research the lead": {
+      "main": [
+        [
+          {
+            "node": "Add AI notes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add AI notes": {
+      "main": [
+        [
+          {
+            "node": "All companies",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "All companies": {
+      "main": [
+        [
+          {
+            "node": "Save leads",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Write the digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write the digest": {
+      "main": [
+        [
+          {
+            "node": "Post to Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Research the lead",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

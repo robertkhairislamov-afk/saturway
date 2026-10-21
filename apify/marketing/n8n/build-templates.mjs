@@ -421,70 +421,108 @@ for (const n of jobsAbroad.nodes) if (JOBS_ABROAD_POSITIONS[n.name]) n.position 
 // The tracker keeps only the sheet's own columns; the job text for the email step is not written.
 jobsAbroad.nodes.find((n) => n.name === 'Update job tracker').parameters.options = { handlingExtraData: 'ignoreIt' };
 
-// --- 5. Hiring-signal leads: new and growing companies, AI notes, sheet and Slack -------------
+// --- 5. Hiring-signal leads: companies building a team on LinkedIn, Indeed and Glassdoor --------
 
 counter = 0;
-const LEADS_COLUMNS = 'Company, Signal, Open jobs, Previous open jobs, Fits ICP, Priority, Why now, Angle, Opener, Rating, Size, Revenue, Industry, Website, Headquarters, Glassdoor page, Latest posting, Job titles, Locations, First seen, Updated, Status';
+const LEADS_COLUMNS = 'Company, Score, Signal, Hot lead, Status, Priority, What they do, Team being built, Why now, Angle, Contact title, Opener, Open jobs, New this week, Previous open jobs, Fits ICP, Teams hiring, Senior roles, Job titles, Locations, Pay range, Job sites, Size, Industry, Revenue, Rating, Website, Company page, Example job, Latest posting, First seen, Updated';
 const LEAD_PROMPT = [
-  'You prepare one sales lead from public hiring data for a seller.',
-  'Use only the data given. Never invent facts about the company, its people, its revenue or its plans.',
-  'priority: HIGH if the company clearly fits what the seller offers and the hiring shows a team being built or grown now; MEDIUM if it fits but the signal is weaker; LOW otherwise.',
-  'whyNow: one sentence on what the hiring says (which team, how many open jobs, new or growing).',
+  'You research one sales lead for a seller, from public hiring data and the text of the company\'s home page.',
+  'Use only the data given. Never invent facts about the company, its people, customers, revenue or plans. If something is not in the data, leave it out.',
+  'priority: HIGH if the company clearly fits what the seller offers and the hiring shows a team being built or grown now; MEDIUM if it fits but the signal is weaker; LOW if it does not fit.',
+  'whatTheyDo: one short sentence from the home page text; "unknown" if the page says nothing useful.',
+  'teamBeingBuilt: which team is hiring and what the job titles suggest (for example "first sales team: two SDRs and a Head of Sales").',
+  'whyNow: one sentence on what the hiring says right now (how many new jobs, new or growing, senior roles).',
   'angle: one sentence on how the seller\'s offer helps with that, in plain words.',
-  'opener: the first sentence of a cold email that mentions the hiring, friendly and specific, no flattery.',
+  'contactTitle: the job title of the person most likely to buy, such as "VP of Sales". A title only, never a person\'s name.',
+  'opener: the first sentence of a cold email that mentions the hiring, friendly and specific, no flattery, no made-up facts.',
+].join('\n');
+const LEAD_SCHEMA = {
+  type: 'object',
+  properties: {
+    priority: { type: 'string', enum: ['HIGH', 'MEDIUM', 'LOW'] },
+    whatTheyDo: { type: 'string' },
+    teamBeingBuilt: { type: 'string' },
+    whyNow: { type: 'string' },
+    angle: { type: 'string' },
+    contactTitle: { type: 'string' },
+    opener: { type: 'string' },
+  },
+  required: ['priority', 'whatTheyDo', 'teamBeingBuilt', 'whyNow', 'angle', 'contactTitle', 'opener'],
+};
+const SEARCH_INPUT = [
+  '={{ JSON.stringify({',
+  "  searchQueries: $json.rolesTheyHire.split(',').map(r => r.trim()).filter(Boolean),",
+  "  countries: $json.countries.split(',').map(c => c.trim().toUpperCase()).filter(Boolean),",
+  '  location: $json.location,',
+  "  sources: $json.jobSites.split(',').map(s => s.trim().toLowerCase()).filter(Boolean),",
+  '  postedWithinDays: 7,',
+  "  outputMode: 'companies',",
+  '  excludeStaffingAgencies: true,',
+  '  maxItemsPerCompany: 200,',
+  '  maxItems: $json.maxCompanies',
+  '}, null, 2) }}',
 ].join('\n');
 
-const hiringSignals = workflow('Find companies building a team from Glassdoor jobs and research them as sales leads with AI', [
+const hiringSignals = workflow('Find companies building a team on LinkedIn, Indeed and Glassdoor and research them as sales leads with AI', [
   sticky('Overview', [
-    '## Find companies building a team and research them as sales leads',
+    '## Find companies building a team and turn them into researched sales leads',
     '',
-    'A company hiring for a role is often about to buy what that role needs. This workflow finds companies posting such jobs on Glassdoor, spots those that are **new** or **hiring more** than last week, keeps the ones that match your ideal customer and has AI prepare each hot lead.',
+    'A company that starts hiring for a team is about to buy what that team needs. This workflow watches LinkedIn, Indeed and Glassdoor every week, scores each hiring company, and has AI research the best new or growing ones that match your ideal customer.',
     '',
     '### How it works',
-    '1. Every Monday the [Glassdoor Jobs Scraper](https://apify.com/robertosan16/glassdoor-jobs-scraper) on Apify reads last week\'s jobs for your roles, one row per company with size, revenue, industry and website.',
-    '2. Your sheet from last week marks each company NEW, GROWING or STEADY and checks it against your ideal customer.',
-    '3. AI writes priority, why now, an angle and an email opener for hot leads only.',
-    '4. Every company is saved to Google Sheets, so the next run can compare.',
-    '5. One Slack message lists the hottest leads, high priority first.',
+    '1. The [All-in-One Jobs Scraper](https://apify.com/robertosan16/all-in-one-jobs-scraper) on Apify returns one row per company hiring for your roles in the last 7 days: open jobs, teams, job titles, places, pay, size, industry, website.',
+    '2. **Score the companies** compares with your sheet (NEW, GROWING, SLOWING, STEADY), checks your ideal customer and scores the signal 0-100. Rows you marked Customer or Not a fit are skipped.',
+    '3. For the top hot leads, the workflow reads the company\'s home page and AI writes what they do, the team being built, why now, an angle, who to contact (a job title) and an opener.',
+    '4. Every company is saved to Google Sheets; one Slack message sums up the week. If the search fails, Slack gets an alert.',
     '',
     '### Setup',
-    '1. Add an Apify credential to **Search Glassdoor** (API token from Apify Console → Settings → API & Integrations). If the node is missing, install `@apify/n8n-nodes-apify`.',
-    '2. In **Search Glassdoor**, set the roles your buyers hire for, `country` and optionally `location`.',
-    '3. In **Your ideal customer**, describe what you sell and set `minEmployees`, `industries` and `minOpenJobs`.',
-    '4. Add an OpenAI credential to **OpenAI Chat Model**, or use any chat model.',
-    '5. Create a Google Sheet with the columns listed in **Save leads** and select it in **Read saved leads** and **Save leads**.',
-    '6. Connect Slack in **Post to Slack**, pick a channel and activate.',
+    '1. Add an Apify credential to **Find hiring companies**. If the node is missing, install `@apify/n8n-nodes-apify`.',
+    '2. Fill in **Your ideal customer**.',
+    '3. Add an OpenAI credential to **OpenAI Chat Model**, or any chat model.',
+    '4. Create a Google Sheet, paste the header row from the description into row 1, select it in **Read saved leads** and **Save leads**.',
+    '5. Pick a Slack channel in both Slack nodes and activate.',
     '',
     '### Customization',
-    'Track several roles at once, or swap Slack for email. The scraper costs $1 per 1,000 jobs; the Apify free plan includes $5 a month.',
-  ].join('\n'), [-760, -240], [640, 1060]),
-  sticky('Group: find', '## 1. Find companies hiring\nEvery Monday: last week\'s Glassdoor jobs, grouped into one row per company.', [0, -240], [940, 620], 7),
-  sticky('Group: compare', '## 2. Compare with last week\nMark each company NEW, GROWING or STEADY and check it against your ideal customer.', [980, -240], [700, 620], 7),
-  sticky('Group: AI', '## 3. AI lead research\nPriority, why now, angle and opener for hot leads only. No invented facts.', [1720, -240], [720, 860], 7),
-  sticky('Group: save', '## 4. Save leads\nAdd or update each company in Google Sheets.', [2480, 420], [440, 480], 7),
-  sticky('Group: slack', '## 5. Slack digest\nOne message with up to 10 hot leads, high priority first.', [2480, -240], [700, 620], 7),
-  schedule('Every Monday', 7, [80, 200]),
-  node('Your ideal customer', 'n8n-nodes-base.set', 3.4, [300, 200], {
+    'Track other roles and countries, change the score in **Score the companies**, or send hot leads to your CRM instead of Slack.',
+  ].join('\n'), [-760, -60], [660, 720]),
+  sticky('Group: find', '## 1. Find companies hiring\nEvery Monday: one row per company hiring for your roles on LinkedIn, Indeed and Glassdoor. A failed search sends a Slack alert.', [-60, -60], [740, 720], 7),
+  sticky('Group: score', '## 2. Score and compare\nNEW, GROWING, SLOWING or STEADY against your sheet, ideal-customer check, score 0-100, best hot leads first.', [720, -60], [700, 720], 7),
+  sticky('Group: research', '## 3. Research hot leads\nRead the home page, then AI notes for each hot lead. Facts come only from the data.', [1460, -60], [1100, 720], 7),
+  sticky('Group: share', '## 4. Save and share\nAdd or update every company in the sheet and post the week\'s summary to Slack.', [2600, -60], [920, 720], 7),
+  { ...schedule('Every Monday', 7, [0, 200]) },
+  node('Your ideal customer', 'n8n-nodes-base.set', 3.4, [220, 200], {
     assignments: {
       assignments: [
         ['whatYouSell', 'string', 'Sales training and coaching for B2B sales teams of 5 to 50 people'],
+        ['rolesTheyHire', 'string', 'sales development representative, account executive, head of sales'],
+        ['countries', 'string', 'US'],
+        ['location', 'string', ''],
+        ['jobSites', 'string', 'linkedin, indeed, glassdoor'],
         ['minEmployees', 'number', 50],
+        ['maxEmployees', 'number', 5000],
         ['industries', 'string', ''],
-        ['minOpenJobs', 'number', 2],
+        ['minNewJobsPerWeek', 'number', 2],
+        ['minScore', 'number', 40],
+        ['maxAiLeadsPerWeek', 'number', 15],
+        ['maxCompanies', 'number', 300],
       ].map(([name, type, value], index) => ({ id: `icp-${index + 1}`, name, type, value })),
     },
     options: {},
   }),
-  apify('Search Glassdoor', 'glassdoor-jobs-scraper', {
-    searchQueries: ['sales development representative', 'account executive'],
-    country: 'US',
-    postedWithinDays: 7,
-    includeDescription: false,
-    maxItems: 500,
-  }, [520, 200]),
-  codeNode('One row per company', 'glassdoor-company-leads.js', [740, 200]),
   {
-    ...node('Read saved leads', 'n8n-nodes-base.googleSheets', 4.6, [1040, 200], {
+    ...apify('Find hiring companies', 'all-in-one-jobs-scraper', {}, [440, 200]),
+    onError: 'continueErrorOutput',
+  },
+  {
+    ...node('Alert: search failed', 'n8n-nodes-base.slack', 2.3, [500, 460], {
+      select: 'channel',
+      channelId: { __rl: true, value: '#sales-leads', mode: 'name' },
+      text: "=The weekly hiring-signal search on Apify failed: {{ $json.error ? ($json.error.message || $json.error) : 'no details' }}. Open the run in Apify Console to see why.",
+      otherOptions: { includeLinkToWorkflow: true, unfurl_links: false },
+    }),
+  },
+  {
+    ...node('Read saved leads', 'n8n-nodes-base.googleSheets', 4.6, [780, 200], {
       operation: 'read',
       documentId: { __rl: true, value: '', mode: 'list' },
       sheetName: { __rl: true, value: '', mode: 'list' },
@@ -493,55 +531,78 @@ const hiringSignals = workflow('Find companies building a team from Glassdoor jo
     executeOnce: true,
     alwaysOutputData: true,
   },
-  codeNode('Compare with last week', 'leads-compare.js', [1260, 200]),
-  node('Hot lead?', 'n8n-nodes-base.if', 2.2, [1480, 200], {
-    conditions: conditions([condition('={{ $json.hotLead }}', { type: 'boolean', operation: 'true', singleValue: true })]),
+  codeNode('Score the companies', 'signals-score.js', [1000, 200]),
+  node('Hot lead?', 'n8n-nodes-base.if', 2.2, [1220, 200], {
+    conditions: conditions([condition("={{ $json['Hot lead'] }}", { type: 'string', operation: 'equals' }, 'yes')]),
     options: {},
   }),
-  node('Research the lead', '@n8n/n8n-nodes-langchain.informationExtractor', 1.2, [1780, 200], {
-    text: "=WHAT THE SELLER OFFERS: {{ $('Your ideal customer').first().json.whatYouSell }}\n\nCOMPANY: {{ $json.Company }}\nINDUSTRY: {{ $json.Industry || 'unknown' }}\nSIZE: {{ $json.Size || 'unknown' }}\nREVENUE: {{ $json.Revenue || 'unknown' }}\nGLASSDOOR RATING: {{ $json.Rating || 'unknown' }}\nSIGNAL: {{ $json.Signal }}, {{ $json['Open jobs'] }} open jobs this week{{ $json['Previous open jobs'] !== '' ? ' (' + $json['Previous open jobs'] + ' last time)' : '' }}\nJOB TITLES: {{ $json['Job titles'] }}\nLOCATIONS: {{ $json.Locations }}",
-    schemaType: 'manual',
-    inputSchema: JSON.stringify({
-      type: 'object',
-      properties: {
-        priority: { type: 'string', enum: ['HIGH', 'MEDIUM', 'LOW'] },
-        whyNow: { type: 'string' },
-        angle: { type: 'string' },
-        opener: { type: 'string' },
+  {
+    ...node('Read the website', 'n8n-nodes-base.httpRequest', 4.2, [1520, 100], {
+      url: '={{ $json.Website }}',
+      sendHeaders: true,
+      headerParameters: { parameters: [{ name: 'Accept', value: 'text/html' }] },
+      options: {
+        timeout: 15000,
+        response: { response: { responseFormat: 'text', outputPropertyName: 'data', neverError: true } },
       },
-      required: ['priority', 'whyNow', 'angle', 'opener'],
-    }, null, 2),
-    options: { systemPromptTemplate: LEAD_PROMPT },
-  }),
-  node('OpenAI Chat Model', '@n8n/n8n-nodes-langchain.lmChatOpenAi', 1.2, [1800, 460], {
+    }),
+    onError: 'continueRegularOutput',
+  },
+  codeNode('Website text', 'signals-website.js', [1740, 100]),
+  {
+    ...node('Research the lead', '@n8n/n8n-nodes-langchain.informationExtractor', 1.2, [1960, 100], {
+      text: [
+        "=WHAT THE SELLER OFFERS: {{ $('Your ideal customer').first().json.whatYouSell }}",
+        '',
+        'COMPANY: {{ $json.Company }}',
+        "SIZE: {{ $json.Size || 'unknown' }} | INDUSTRY: {{ $json.Industry || 'unknown' }} | REVENUE: {{ $json.Revenue || 'unknown' }}",
+        "SIGNAL: {{ $json.Signal }}, {{ $json['Open jobs'] }} open jobs, {{ $json['New this week'] }} posted in the last 7 days{{ $json['Previous open jobs'] !== '' ? ', ' + $json['Previous open jobs'] + ' last time' : '' }}",
+        "TEAMS HIRING: {{ $json['Teams hiring'] }}",
+        "JOB TITLES: {{ $json['Job titles'] }}",
+        "SENIOR ROLES: {{ $json['Senior roles'] || 'none' }}",
+        'LOCATIONS: {{ $json.Locations }}',
+        '',
+        'HOME PAGE TEXT:',
+        '{{ $json.websiteText }}',
+      ].join('\n'),
+      schemaType: 'manual',
+      inputSchema: JSON.stringify(LEAD_SCHEMA, null, 2),
+      options: { systemPromptTemplate: LEAD_PROMPT },
+    }),
+    onError: 'continueRegularOutput',
+  },
+  node('OpenAI Chat Model', '@n8n/n8n-nodes-langchain.lmChatOpenAi', 1.2, [1980, 380], {
     model: { __rl: true, value: 'gpt-4.1-mini', mode: 'list', cachedResultName: 'gpt-4.1-mini' },
     options: { temperature: 0.3 },
   }),
-  codeNode('Add AI notes', 'leads-ai-notes.js', [2200, 200]),
-  sheet('Save leads', 'appendOrUpdate', [2640, 660], ['Company']),
-  codeNode('Write the digest', 'leads-slack-digest.js', [2560, 200]),
-  {
-    ...node('Post to Slack', 'n8n-nodes-base.slack', 2.3, [2840, 200], {
-      select: 'channel',
-      channelId: { __rl: true, value: '#sales-leads', mode: 'name' },
-      text: '={{ $json.text }}',
-      otherOptions: { includeLinkToWorkflow: false, unfurl_links: false },
-    }),
-  },
+  codeNode('Add AI notes', 'signals-ai-notes.js', [2340, 100]),
+  node('All companies', 'n8n-nodes-base.merge', 3.2, [2680, 200], {}),
+  sheet('Save leads', 'appendOrUpdate', [2960, 420], ['Company']),
+  codeNode('Write the digest', 'signals-digest.js', [2960, 100]),
+  node('Post to Slack', 'n8n-nodes-base.slack', 2.3, [3200, 100], {
+    select: 'channel',
+    channelId: { __rl: true, value: '#sales-leads', mode: 'name' },
+    text: '={{ $json.text }}',
+    otherOptions: { includeLinkToWorkflow: false, unfurl_links: false },
+  }),
 ], {
-  ...chain('Every Monday', 'Your ideal customer', 'Search Glassdoor', 'One row per company', 'Read saved leads', 'Compare with last week', 'Hot lead?'),
-  'Hot lead?': { main: [[{ node: 'Research the lead', type: 'main', index: 0 }], [{ node: 'Save leads', type: 'main', index: 0 }]] },
-  'Research the lead': { main: [[{ node: 'Add AI notes', type: 'main', index: 0 }]] },
-  'Add AI notes': { main: [[{ node: 'Save leads', type: 'main', index: 0 }, { node: 'Write the digest', type: 'main', index: 0 }]] },
-  'Write the digest': { main: [[{ node: 'Post to Slack', type: 'main', index: 0 }]] },
+  ...chain('Every Monday', 'Your ideal customer', 'Find hiring companies'),
+  'Find hiring companies': { main: [[{ node: 'Read saved leads', type: 'main', index: 0 }], [{ node: 'Alert: search failed', type: 'main', index: 0 }]] },
+  ...chain('Read saved leads', 'Score the companies', 'Hot lead?'),
+  'Hot lead?': { main: [[{ node: 'Read the website', type: 'main', index: 0 }], [{ node: 'All companies', type: 'main', index: 1 }]] },
+  ...chain('Read the website', 'Website text', 'Research the lead', 'Add AI notes', 'All companies'),
+  'All companies': { main: [[{ node: 'Save leads', type: 'main', index: 0 }, { node: 'Write the digest', type: 'main', index: 0 }]] },
+  ...chain('Write the digest', 'Post to Slack'),
   'OpenAI Chat Model': { ai_languageModel: [[{ node: 'Research the lead', type: 'ai_languageModel', index: 0 }]] },
 });
 hiringSignals.nodes.find((n) => n.name === 'Every Monday').parameters.rule.interval = [{ field: 'weeks', triggerAtDay: [1], triggerAtHour: 7 }];
-// The sheet keeps only its own columns (the hotLead flag is not written).
+hiringSignals.nodes.find((n) => n.name === 'Find hiring companies').parameters.customBody = SEARCH_INPUT;
+hiringSignals.nodes.find((n) => n.name === 'Find hiring companies').parameters.timeout = 600;
+// The sheet's own columns are filled; Status and your other columns are left as they are.
 hiringSignals.nodes.find((n) => n.name === 'Save leads').parameters.options = { handlingExtraData: 'ignoreIt' };
 
 const templates = {
-  'glassdoor-hiring-signal-leads.json': hiringSignals,
+  'hiring-signal-sales-leads.json': hiringSignals,
   'jobs-abroad-visa-sponsorship-gmail-drafts.json': jobsAbroad,
   'indeed-job-alerts-google-sheets.json': indeedSheets,
   'glassdoor-top-rated-jobs-slack.json': glassdoorSlack,

@@ -131,38 +131,43 @@ Every morning the workflow runs the [All-in-One Jobs Scraper](https://apify.com/
 
 ---
 
-## 5. Find companies building a team from Glassdoor jobs and research them as sales leads with AI
+## 5. Find companies building a team on LinkedIn, Indeed and Glassdoor and research them as sales leads with AI
 
-File: `glassdoor-hiring-signal-leads.json` (replaces template 3, which n8n rejected as too basic)
+File: `hiring-signal-sales-leads.json` (replaces template 3, which n8n rejected as too basic; rebuilt 21.10 on the All-in-One Jobs Scraper)
 
-Tested 20.10 in a local n8n 2.42.7 with the Apify community node 0.7.0 against the live Glassdoor Jobs Scraper (SDR and account executive jobs, US): 80 jobs → 73 companies → compared with six "saved" rows → 3 GROWING, 3 STEADY, 67 NEW → 2 hot leads (fit + new or growing) → AI notes → one Slack message. The sheet read and the AI step were stubs with the same output shape; the real AI node loads and stops only at the missing OpenAI key. Google Sheets and Slack were empty nodes.
+Tested 21.10 in a local n8n 2.42.7 with the Apify community node 0.7.0 against the live All-in-One Jobs Scraper (SDR, account executive and head of sales jobs, US, LinkedIn + Indeed + Glassdoor): 300 companies → compared with eight "saved" rows (4 GROWING, 3 STEADY, 1 SLOWING; one marked Customer and one Not a fit were skipped) → 130 fit the ideal customer → 15 hot leads, best score first → 15 home pages read (12 with text) → AI notes → 300 rows to the sheet → one Slack message. The sheet read and the AI step were stubs with the same output shape; with the real AI node and no OpenAI key, every lead is still saved and posted, marked "AI step failed". A failed Apify search posts a Slack alert. Google Sheets and Slack were empty nodes.
+
+n8n's creator team says the canvas preview may not render for templates with community nodes (the Apify node is one), and asks for a public link to a screenshot of the whole canvas at the top of the description. It is the first line below.
 
 ```markdown
+![Workflow canvas](https://raw.githubusercontent.com/robertkhairislamov-afk/saturway/claude/gifted-dirac-sv0ed6/apify/marketing/n8n/screenshots/hiring-signal-sales-leads.png)
+
 ## Who is this for
-Sales and business development teams who sell to companies that are growing a certain team. A company hiring SDRs is building a sales team; a company hiring nurses is expanding care. Hiring is a buying signal, and the best moment is when a company starts hiring or hires more.
+Sales and business development teams, agencies and founders who sell to companies that are growing a team. A company that starts hiring SDRs is building a sales team; one hiring a Head of Sales is about to buy tools and training for it. Hiring is a buying signal, and the best moment to reach out is when it starts.
 
 ## What it does
-Every Monday the workflow runs the [Glassdoor Jobs Scraper](https://apify.com/robertosan16/glassdoor-jobs-scraper) on Apify for last week's jobs in the roles you track, and then:
-1. Makes one row per company with the number of open jobs, job titles, places, Glassdoor rating, size, revenue, industry and website.
-2. Compares with your Google Sheet: NEW companies, GROWING ones (more open jobs than last time) and STEADY ones, and checks each against your ideal customer (size, industry, open jobs).
-3. For hot leads only (fit and NEW or GROWING), AI writes a priority, why now, an angle for what you sell and an email opener, from the hiring data alone.
-4. Saves every company to the sheet, matched by name, and posts the hottest leads to Slack.
+Every Monday:
+1. The [All-in-One Jobs Scraper](https://apify.com/robertosan16/all-in-one-jobs-scraper) on Apify searches LinkedIn, Indeed and Glassdoor for jobs posted in the last 7 days in the roles you track and returns **one row per hiring company**: open jobs, jobs this week, teams, job titles, places, pay range, size, industry, website and the job sites it posts on. Staffing agencies and "Confidential" employers are left out.
+2. **Score the companies** compares each company with your Google Sheet (NEW, GROWING, SLOWING or STEADY), checks your ideal customer (size, industry, jobs this week) and scores the hiring signal from 0 to 100: new jobs, growth since last week, posting on several job sites, senior roles such as "Head of Sales" (a team being built) and a matching industry. Companies you marked **Customer**, **Not a fit**, **Lost** or **Do not contact** in the sheet are never offered again.
+3. For the best hot leads, up to your weekly limit, the workflow reads the company's home page, and AI writes what the company does, the team being built, why now, an angle for your offer, **who to contact** (a job title, never a person's name) and an email opener. Facts come only from the data.
+4. Every company is added or updated in the sheet by name. Your **Status** column and older AI notes are never overwritten.
+5. One Slack message sums up the week: how many companies are new, growing or slowing, then the hot leads, high priority and best score first. In a quiet week it says so. If the search fails, Slack gets an alert instead.
 
 ## How to set up
-1. Create a free Apify account and add your Apify credential to **Search Glassdoor** (API token or OAuth). The Apify node is the verified community node `@apify/n8n-nodes-apify`.
-2. In **Search Glassdoor**, set the roles your buyers hire for, the `country` and optionally a `location`.
-3. In **Your ideal customer**, describe what you sell and set `minEmployees`, `industries` and `minOpenJobs`.
-4. Add an OpenAI credential to **OpenAI Chat Model**, or swap in another chat model.
-5. Create a Google Sheet whose first row is: Company, Signal, Open jobs, Previous open jobs, Fits ICP, Priority, Why now, Angle, Opener, Rating, Size, Revenue, Industry, Website, Headquarters, Glassdoor page, Latest posting, Job titles, Locations, First seen, Updated, Status. Select it in **Read saved leads** and **Save leads**.
-6. Connect Slack in **Post to Slack** and activate the workflow.
+1. Create a free Apify account and add your Apify credential to **Find hiring companies** (API token or OAuth). The Apify node is the verified community node `@apify/n8n-nodes-apify`.
+2. Fill in **Your ideal customer**: what you sell, the roles your buyers hire (comma-separated), countries, an optional location, job sites, company size, industries and the limits.
+3. Add an OpenAI credential to **OpenAI Chat Model**, or swap in Anthropic, Gemini or another chat model.
+4. Create a Google Sheet and paste this header row into row 1: `Company, Score, Signal, Hot lead, Status, Priority, What they do, Team being built, Why now, Angle, Contact title, Opener, Open jobs, New this week, Previous open jobs, Fits ICP, Teams hiring, Senior roles, Job titles, Locations, Pay range, Job sites, Size, Industry, Revenue, Rating, Website, Company page, Example job, Latest posting, First seen, Updated` (one column each). Select the sheet in **Read saved leads** and **Save leads**.
+5. Connect Slack and pick a channel in **Post to Slack** and **Alert: search failed**, then activate the workflow.
 
 ## Requirements
-- An Apify account. The free plan includes $5 of usage a month; the scraper costs $1 per 1,000 jobs, so 500 jobs a week cost $0.50.
-- An OpenAI API key or another chat model. AI runs only on hot leads, usually a handful a week.
+- An Apify account. The free plan includes $5 of usage a month; the scraper costs $1 per 1,000 companies in this mode, so 300 companies a week cost about $0.30.
+- An OpenAI API key or another chat model. AI runs only on hot leads, 15 a week by default.
 - A Google account for Google Sheets and a Slack workspace.
 
 ## How to customize
-- Track several roles at once: `searchQueries` takes a list.
-- Change what counts as a hot lead in **Compare with last week** or **Hot lead?**.
+- Track any team: "data engineer" for data tools, "registered nurse" for healthcare staffing, "warehouse associate" for logistics software.
+- Other countries and job sites: `countries` takes codes such as US, GB, DE, AU; leave `jobSites` empty to use every site that covers them (SEEK, StepStone, Reed and more).
+- Change the score or what counts as a hot lead in **Score the companies** and **Your ideal customer** (`minScore`, `maxAiLeadsPerWeek`).
 - Send hot leads to HubSpot, Pipedrive or a lemlist campaign instead of Slack.
 ```

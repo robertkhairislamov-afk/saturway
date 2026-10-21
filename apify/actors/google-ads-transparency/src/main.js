@@ -11,7 +11,7 @@ import {
 // Pay-per-event: the platform charges this event for every item pushed to the default dataset.
 const ITEM_EVENT = 'apify-default-dataset-item';
 // Previews and details loaded at once.
-const CONCURRENCY = 12;
+const CONCURRENCY = 8;
 // Creative IDs kept in the only-new memory.
 const MAX_REMEMBERED = 200000;
 
@@ -41,10 +41,22 @@ async function proxyFor(config) {
   }
 }
 
+// With Apify Proxy datacenter addresses (the default), residential addresses take over when Google
+// keeps limiting them. A proxy the user chose otherwise is used as it is.
+async function fallbackFor(config) {
+  const datacenter = !config || (config.useApifyProxy && !(config.apifyProxyGroups ?? []).some((g) => /RESIDENTIAL/i.test(g)) && !config.proxyUrls?.length);
+  if (!datacenter) return undefined;
+  try {
+    return await Actor.createProxyConfiguration({ useApifyProxy: true, apifyProxyGroups: ['RESIDENTIAL'] });
+  } catch {
+    return undefined;
+  }
+}
+
 try {
   const input = readInput((await Actor.getInput()) ?? {}, (message) => log.warning(message));
   const proxyConfiguration = await proxyFor(input.proxyConfiguration);
-  const client = createClient({ proxyConfiguration });
+  const client = createClient({ proxyConfiguration, fallbackProxyConfiguration: await fallbackFor(input.proxyConfiguration) });
   const budget = Actor.getChargingManager().calculateMaxEventChargeCountWithinLimit(ITEM_EVENT);
   let saved = 0;
   const roomLeft = () => Math.min(input.maxItems > 0 ? input.maxItems - saved : Infinity, budget - saved);
@@ -241,6 +253,7 @@ try {
     saved += batch.length;
   }
 
+  if (client.stats.fallback) log.info('Google limited the datacenter addresses, so the rest of the run used residential addresses.');
   if (roomLeft() <= 0) log.info('Reached the item limit or the maximum charge for this run; stopping.');
   if (memory && newlySeen.length > 0) {
     const all = [...seenBefore, ...newlySeen];

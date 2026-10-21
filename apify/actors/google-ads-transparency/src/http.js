@@ -1,6 +1,9 @@
 // HTTP client for the Transparency Center. Google sometimes answers an address with its
-// "unusual traffic" check page instead of data. The client does not solve it: it moves to a new
-// proxy session (a new address) and sends the request again.
+// "unusual traffic" check page or HTTP 429 instead of data. The client does not solve the check:
+// it moves to a new proxy session (a new address) and sends the request again. When Google keeps
+// limiting the first proxy (busy datacenter addresses), the Transparency Center requests move to
+// the fallback proxy (residential addresses) for the rest of the run; their answers are small.
+// The ad previews, which are large, stay on the first proxy.
 
 import { EnvHttpProxyAgent, ProxyAgent, fetch } from 'undici';
 
@@ -53,25 +56,31 @@ export function problemOf({ status, text }) {
 
 export function createClient({
   proxyConfiguration,
+  fallbackProxyConfiguration,
   previewProxyConfiguration = proxyConfiguration,
+  limitsBeforeFallback = 3,
   requestsPerSession = 20,
   maxRetries = 8,
   timeoutMs = 30000,
   backoffMs = 1000,
   fetchImpl = fetch,
 } = {}) {
-  const stats = { requests: 0, checkPages: 0, errors: 0, previews: 0, previewErrors: 0 };
+  const stats = { requests: 0, checkPages: 0, limited: 0, errors: 0, previews: 0, previewErrors: 0, fallback: false };
 
   // One rotating session per proxy configuration: a new address every few requests and after a failure.
-  function rotator(config, prefix) {
+  // `configOf` is called for every request, so a session can move to another proxy.
+  function rotator(configOf, prefix) {
     let agent = null;
+    let agentConfig = null;
     let used = 0;
     return {
       async get() {
+        const config = configOf();
         if (!config) return envAgent;
-        if (!agent || used >= requestsPerSession) {
+        if (!agent || used >= requestsPerSession || agentConfig !== config) {
           this.drop();
           agent = new ProxyAgent(await config.newUrl(`${prefix}${Math.random().toString(36).slice(2, 12)}`));
+          agentConfig = config;
           used = 0;
         }
         used++;
@@ -83,8 +92,8 @@ export function createClient({
       },
     };
   }
-  const rpcSession = rotator(proxyConfiguration, 'atc');
-  const previewSession = rotator(previewProxyConfiguration, 'atp');
+  const rpcSession = rotator(() => (stats.fallback ? fallbackProxyConfiguration : proxyConfiguration), 'atc');
+  const previewSession = rotator(() => previewProxyConfiguration, 'atp');
 
   async function withRetries(label, session, once) {
     let lastError;
@@ -120,6 +129,10 @@ export function createClient({
         const problem = problemOf({ status: res.status, text });
         if (problem) {
           if (/check page/.test(problem.message)) stats.checkPages++;
+          if (/check page|HTTP 429/.test(problem.message)) {
+            stats.limited++;
+            if (fallbackProxyConfiguration && !stats.fallback && stats.limited >= limitsBeforeFallback) stats.fallback = true;
+          }
           throw new RequestError(problem.message, { retryable: problem.retryable });
         }
         return JSON.parse(text);

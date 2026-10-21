@@ -174,3 +174,18 @@ test('client retries the check page on a new address and stops on 400', async ()
 test('mapLimit keeps the order', async () => {
   assert.deepEqual(await mapLimit([3, 1, 2], 2, async (n) => { await new Promise((r) => setTimeout(r, n)); return n * 10; }), [30, 10, 20]);
 });
+
+test('client moves to the fallback proxy when Google keeps limiting', async () => {
+  const used = [];
+  const proxy = (name) => ({ newUrl: async () => { used.push(name); return `http://${name}.invalid:8000`; } });
+  let calls = 0;
+  const fetchImpl = async () => {
+    calls++;
+    return calls <= 3 ? { status: 429, text: async () => 'Too Many Requests' } : { status: 200, text: async () => '{"1":[]}' };
+  };
+  const client = createClient({ proxyConfiguration: proxy('dc'), fallbackProxyConfiguration: proxy('res'), fetchImpl, backoffMs: 1 });
+  await client.rpc('SearchService/SearchCreatives', {});
+  assert.equal(client.stats.fallback, true);
+  assert.equal(client.stats.limited, 3);
+  assert.deepEqual(used, ['dc', 'dc', 'dc', 'res']);
+});

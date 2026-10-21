@@ -37,6 +37,8 @@ Scrape the Google Play Store: **top charts** (top free, top paid, top grossing) 
 3. Keep **Load full app details** on for complete data, or turn it off for fast lists.
 4. Click **Start** and download the results as JSON, CSV, Excel or HTML, or use them through the API.
 
+A step-by-step guide with Python examples, one app tracked across six keywords in three countries and who ranks above it: [How to Track Your App's Keyword Rankings on Google Play, in Any Country](https://medium.com/@robertkhairislamov/how-to-track-your-apps-keyword-rankings-on-google-play-in-any-country-b12ef638d821).
+
 ### Example input
 
 ```json

@@ -118,7 +118,7 @@ You pay only for results: **$1.50 per 1,000 ads** (or advertisers), with ad text
 ## Tips
 
 - **Website or brand name?** A website returns every ad pointing to it, from every account (the brand, its agencies, resellers). A brand name is matched to advertiser accounts with that name; the account with the most ads comes first, and **Advertisers per brand name** takes more of them.
-- **Ad text coverage**: Google shows many text ads only as a picture. The Actor looks for the text in the ad and in its variations; when every version is a picture, the ad keeps its `imageUrl` and no text. In our tests 229 of 300 nike.com ads in the US came with text; for some advertisers the share is much lower.
+- **Ad text coverage**: Google shows many text ads only as a picture. The Actor looks for the text in the ad and in its variations; when every version is a picture, the ad keeps its `imageUrl` (a picture of the ad) and no text. How many ads come with text depends on the advertiser: in our tests of Google Search text ads in the US, 83 of 100 for nike.com, 75 for on.com, 74 for newbalance.com and 66 for asics.com, but 2 for brooksrunning.com and about 1 in 100 for software companies such as monday.com.
 - **Keyword insertion**: headlines such as `{KeyWord:Nike Men's Clothing}` are as the advertiser wrote them: Google replaces the brackets with the searcher's keyword, and shows the text after the colon when the keyword does not fit.
 - **Platform filter**: Google applies it to ads shown since September 2023.
 - **Impressions**: Google publishes impressions only for ads shown in the European Union, as ranges.

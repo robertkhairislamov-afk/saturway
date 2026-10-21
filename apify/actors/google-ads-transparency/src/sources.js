@@ -32,7 +32,7 @@ export function readInput(raw, warn = () => {}) {
   const given = ['queries', 'domains', 'advertiserIds', 'startUrls'].some((key) => toList(raw[key]).length > 0);
   if (!given) {
     warn('No brands, websites, advertiser IDs or links in the input; scraping the ads of nike.com as an example.');
-    input = { ...EXAMPLE_INPUT, ...raw, queries: EXAMPLE_INPUT.queries };
+    input = { ...raw, ...EXAMPLE_INPUT };
   }
 
   const resultType = String(input.resultType || 'ads');

@@ -7,11 +7,15 @@ https://raw.githubusercontent.com/robertkhairislamov-afk/saturway/claude/gifted-
 
 ## Quick overview
 
-![Workflow canvas](https://raw.githubusercontent.com/robertkhairislamov-afk/saturway/claude/gifted-dirac-sv0ed6/apify/marketing/n8n/screenshots/hiring-signal-sales-leads.png)
+The field takes 10-50 words; this is 46 with the image counted as one.
 
-For sales and business development teams, agencies and founders who sell to companies that are growing a team. A company that starts hiring SDRs is building a sales team; one hiring a Head of Sales is about to buy tools and training for it. Every Monday this workflow finds such companies on LinkedIn, Indeed and Glassdoor, scores the hiring signal, and has AI research the best new or growing ones that match your ideal customer.
+![Canvas](https://raw.githubusercontent.com/robertkhairislamov-afk/saturway/claude/gifted-dirac-sv0ed6/apify/marketing/n8n/screenshots/hiring-signal-sales-leads.png)
+
+Every Monday, finds companies hiring your buyers' roles on LinkedIn, Indeed and Glassdoor via Apify, scores each 0–100 against your ideal customer and last week's sheet, has AI research the best new or growing ones, saves everything to Google Sheets and posts a Slack digest.
 
 ## How it works
+
+If the form keeps n8n's own list, keep it and add one step: "Companies you marked Customer, Not a fit, Lost or Do not contact in the sheet are never offered again, and your Status column is never overwritten."
 
 1. The [All-in-One Jobs Scraper](https://apify.com/robertosan16/all-in-one-jobs-scraper) on Apify searches LinkedIn, Indeed and Glassdoor for jobs posted in the last 7 days in the roles you track and returns one row per hiring company: open jobs, jobs this week, teams, job titles, places, pay range, size, industry, website and the job sites it posts on. Staffing agencies and "Confidential" employers are left out.
 2. **Score the companies** compares each company with your Google Sheet (NEW, GROWING, SLOWING or STEADY), checks your ideal customer (size, industry, jobs this week) and scores the hiring signal from 0 to 100: new jobs, growth since last week, posting on several job sites, senior roles such as "Head of Sales" and a matching industry. Companies you marked Customer, Not a fit, Lost or Do not contact are never offered again.

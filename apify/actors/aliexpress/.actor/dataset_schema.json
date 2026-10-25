@@ -1,6 +1,105 @@
 {
   "actorSpecification": 1,
-  "fields": {},
+  "fields": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "productId": {
+        "description": "ID of the product on AliExpress."
+      },
+      "title": {
+        "description": "Product title."
+      },
+      "url": {
+        "description": "Link to the product."
+      },
+      "image": {
+        "description": "Link to the main product picture."
+      },
+      "images": {
+        "description": "Links to all product pictures in the search results."
+      },
+      "price": {
+        "description": "Current price, as a number."
+      },
+      "originalPrice": {
+        "description": "Price before the discount; null without a discount."
+      },
+      "discountPercent": {
+        "description": "Discount in percent."
+      },
+      "currency": {
+        "description": "Currency of the prices."
+      },
+      "priceText": {
+        "description": "Price as AliExpress shows it, for example US $0.33."
+      },
+      "isNewShopperPrice": {
+        "description": "True when the price is a welcome deal for new customers only."
+      },
+      "soldCount": {
+        "description": "Number of units sold, as exact as AliExpress gives it."
+      },
+      "soldText": {
+        "description": "Units sold as AliExpress shows it, for example 100K+ sold."
+      },
+      "rating": {
+        "description": "Average rating, from 1 to 5."
+      },
+      "isChoice": {
+        "description": "True for AliExpress Choice products (faster delivery, free returns)."
+      },
+      "isSponsored": {
+        "description": "True for paid placements in the search results."
+      },
+      "deliveryDaysMin": {
+        "description": "Shortest delivery time in days to the ship-to country."
+      },
+      "deliveryDaysMax": {
+        "description": "Longest delivery time in days to the ship-to country."
+      },
+      "deliveryFrom": {
+        "description": "Earliest delivery date (YYYY-MM-DD)."
+      },
+      "deliveryTo": {
+        "description": "Latest delivery date (YYYY-MM-DD)."
+      },
+      "badges": {
+        "description": "Labels AliExpress shows on the product, for example Fastest delivery in 6 days."
+      },
+      "categoryIds": {
+        "description": "IDs of the product's categories."
+      },
+      "storeName": {
+        "description": "Name of the store that sells the product."
+      },
+      "sellerCompany": {
+        "description": "Legal name of the seller's company, as AliExpress shows it."
+      },
+      "listedAt": {
+        "description": "Date the product was listed (YYYY-MM-DD)."
+      },
+      "position": {
+        "description": "Position of the product in the search results, from 1."
+      },
+      "page": {
+        "description": "Search results page the product was on."
+      },
+      "searchQuery": {
+        "description": "Search query that found the product."
+      },
+      "searchUrl": {
+        "description": "Search page that listed the product."
+      },
+      "shipTo": {
+        "description": "Ship-to country (ISO code), which sets prices and delivery times."
+      },
+      "scrapedAt": {
+        "description": "When the record was saved."
+      }
+    },
+    "additionalProperties": true
+  },
   "views": {
     "overview": {
       "title": "Products",

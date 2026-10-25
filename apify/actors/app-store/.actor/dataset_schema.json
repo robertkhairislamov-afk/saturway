@@ -1,6 +1,141 @@
 {
   "actorSpecification": 1,
-  "fields": {},
+  "fields": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "appId": {
+        "description": "ID of the app on the App Store, for example 324684580."
+      },
+      "bundleId": {
+        "description": "Bundle ID of the app, for example com.spotify.client."
+      },
+      "url": {
+        "description": "Link to the app on the App Store."
+      },
+      "title": {
+        "description": "Name of the app."
+      },
+      "developer": {
+        "description": "Name of the developer."
+      },
+      "developerId": {
+        "description": "ID of the developer on the App Store."
+      },
+      "developerUrl": {
+        "description": "Developer page on the App Store."
+      },
+      "seller": {
+        "description": "Seller name, usually the developer's legal name."
+      },
+      "developerWebsite": {
+        "description": "Developer's website."
+      },
+      "genre": {
+        "description": "Main category of the app, for example Productivity."
+      },
+      "genreId": {
+        "description": "ID of the main category."
+      },
+      "categories": {
+        "description": "All categories of the app."
+      },
+      "score": {
+        "description": "Average rating of all versions, from 1 to 5."
+      },
+      "ratingsCount": {
+        "description": "Number of ratings of all versions."
+      },
+      "scoreCurrentVersion": {
+        "description": "Average rating of the current version."
+      },
+      "ratingsCountCurrentVersion": {
+        "description": "Number of ratings of the current version."
+      },
+      "free": {
+        "description": "True when the app is free to download."
+      },
+      "price": {
+        "description": "Price of the app; 0 for free apps."
+      },
+      "currency": {
+        "description": "Currency of the price."
+      },
+      "priceText": {
+        "description": "Price as the App Store shows it, for example Free or $4.99."
+      },
+      "contentRating": {
+        "description": "Age rating, for example 4+ or 17+."
+      },
+      "advisories": {
+        "description": "Reasons for the age rating."
+      },
+      "releasedAt": {
+        "description": "When the app was first released (ISO date and time)."
+      },
+      "updatedAt": {
+        "description": "When the current version was released (ISO date and time)."
+      },
+      "version": {
+        "description": "Current version."
+      },
+      "recentChanges": {
+        "description": "What's new in the current version."
+      },
+      "minIosVersion": {
+        "description": "Lowest iOS version the app runs on."
+      },
+      "sizeBytes": {
+        "description": "Download size in bytes."
+      },
+      "languages": {
+        "description": "Languages of the app, as two-letter codes."
+      },
+      "iPadSupport": {
+        "description": "True when the app runs on iPad."
+      },
+      "gameCenter": {
+        "description": "True when the app uses Game Center."
+      },
+      "description": {
+        "description": "Full description."
+      },
+      "icon": {
+        "description": "Link to the app icon."
+      },
+      "screenshots": {
+        "description": "Links to the iPhone screenshots."
+      },
+      "ipadScreenshots": {
+        "description": "Links to the iPad screenshots."
+      },
+      "source": {
+        "description": "How the app was found: search, chart, developer or app (an app ID from the input)."
+      },
+      "rank": {
+        "description": "Position of the app in the search results or chart, from 1; null for apps found by developer or ID."
+      },
+      "searchTerm": {
+        "description": "Search term that found the app; null for other sources."
+      },
+      "chart": {
+        "description": "Chart that listed the app, for example top_free or top_grossing; null for other sources."
+      },
+      "chartGenre": {
+        "description": "Category of the chart, for example All apps or Games; null for other sources."
+      },
+      "developerQuery": {
+        "description": "Developer from the input whose apps were listed; null for other sources."
+      },
+      "country": {
+        "description": "Country of the store (ISO code), which sets prices and charts."
+      },
+      "scrapedAt": {
+        "description": "When the record was saved."
+      }
+    },
+    "additionalProperties": true
+  },
   "views": {
     "overview": {
       "title": "Apps",

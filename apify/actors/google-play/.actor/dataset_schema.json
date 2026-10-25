@@ -1,27 +1,241 @@
 {
   "actorSpecification": 1,
-  "fields": {},
+  "fields": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "appId": {
+        "description": "Package name of the app, for example com.spotify.music."
+      },
+      "url": {
+        "description": "Link to the app on Google Play."
+      },
+      "title": {
+        "description": "Name of the app."
+      },
+      "developer": {
+        "description": "Name of the developer."
+      },
+      "developerId": {
+        "description": "ID of the developer on Google Play."
+      },
+      "developerUrl": {
+        "description": "Developer page on Google Play."
+      },
+      "developerEmail": {
+        "description": "Support email the developer publishes on Google Play."
+      },
+      "developerWebsite": {
+        "description": "Developer's website."
+      },
+      "privacyPolicyUrl": {
+        "description": "Link to the app's privacy policy."
+      },
+      "genre": {
+        "description": "Main category of the app, for example Health & Fitness."
+      },
+      "genreId": {
+        "description": "ID of the main category, for example HEALTH_AND_FITNESS."
+      },
+      "categories": {
+        "description": "All categories of the app, each with id and name."
+      },
+      "score": {
+        "description": "Average rating, from 1 to 5."
+      },
+      "ratingsCount": {
+        "description": "Number of ratings."
+      },
+      "reviewsCount": {
+        "description": "Number of written reviews."
+      },
+      "histogram": {
+        "description": "Number of ratings for each star, from 1 to 5."
+      },
+      "installs": {
+        "description": "Install range as Google Play shows it, for example 100,000,000+."
+      },
+      "minInstalls": {
+        "description": "Lower bound of the install range, as a number."
+      },
+      "maxInstalls": {
+        "description": "Google's own, more exact install count."
+      },
+      "free": {
+        "description": "True when the app is free to download."
+      },
+      "price": {
+        "description": "Price of the app; 0 for free apps."
+      },
+      "originalPrice": {
+        "description": "Price before a sale; null when the app is not on sale."
+      },
+      "currency": {
+        "description": "Currency of the price."
+      },
+      "priceText": {
+        "description": "Price as Google Play shows it, for example Free or $4.99."
+      },
+      "offersInAppPurchases": {
+        "description": "True when the app sells in-app purchases."
+      },
+      "inAppPurchaseRange": {
+        "description": "Price range of the in-app purchases, for example $0.99 - $99.99 per item."
+      },
+      "containsAds": {
+        "description": "True when the app shows ads."
+      },
+      "contentRating": {
+        "description": "Age rating, for example Everyone or Teen."
+      },
+      "contentRatingDescription": {
+        "description": "Reasons for the age rating, for example Mild Fantasy Violence."
+      },
+      "releasedAt": {
+        "description": "Release date (YYYY-MM-DD)."
+      },
+      "releasedText": {
+        "description": "Release date as Google Play shows it."
+      },
+      "updatedAt": {
+        "description": "When the app was last updated (ISO date and time)."
+      },
+      "version": {
+        "description": "Current version."
+      },
+      "minAndroidVersion": {
+        "description": "Lowest Android version the app runs on."
+      },
+      "summary": {
+        "description": "Short description of the app."
+      },
+      "description": {
+        "description": "Full description as plain text."
+      },
+      "descriptionHtml": {
+        "description": "Full description as HTML."
+      },
+      "recentChanges": {
+        "description": "What's new in the latest update."
+      },
+      "icon": {
+        "description": "Link to the app icon."
+      },
+      "headerImage": {
+        "description": "Link to the feature graphic."
+      },
+      "screenshots": {
+        "description": "Links to the screenshots."
+      },
+      "videoUrl": {
+        "description": "Link to the promo video."
+      },
+      "playPass": {
+        "description": "True when the app is in Google Play Pass."
+      },
+      "preregistration": {
+        "description": "True when the app is open for pre-registration and not released yet."
+      },
+      "source": {
+        "description": "How the app was found: search, chart, developer or app (an app ID from the input)."
+      },
+      "rank": {
+        "description": "Position of the app in the search results or chart, from 1; null for apps found by developer or ID."
+      },
+      "searchTerm": {
+        "description": "Search term that found the app; null for other sources."
+      },
+      "chart": {
+        "description": "Chart that listed the app, for example topselling_free or topgrossing; null for other sources."
+      },
+      "chartCategory": {
+        "description": "Category of the chart, for example GAME; null for other sources."
+      },
+      "developerQuery": {
+        "description": "Developer from the input whose apps were listed; null for other sources."
+      },
+      "country": {
+        "description": "Country of the store (ISO code), which sets prices and charts."
+      },
+      "language": {
+        "description": "Language of the texts."
+      },
+      "scrapedAt": {
+        "description": "When the record was saved."
+      }
+    },
+    "additionalProperties": true
+  },
   "views": {
     "overview": {
       "title": "Apps",
       "transformation": {
-        "fields": ["rank", "title", "developer", "score", "ratingsCount", "installs", "priceText", "genre", "updatedAt", "source", "country", "url"]
+        "fields": [
+          "rank",
+          "title",
+          "developer",
+          "score",
+          "ratingsCount",
+          "installs",
+          "priceText",
+          "genre",
+          "updatedAt",
+          "source",
+          "country",
+          "url"
+        ]
       },
       "display": {
         "component": "table",
         "properties": {
-          "rank": { "label": "Rank", "format": "number" },
-          "title": { "label": "App", "format": "text" },
-          "developer": { "label": "Developer", "format": "text" },
-          "score": { "label": "Rating", "format": "number" },
-          "ratingsCount": { "label": "Ratings", "format": "number" },
-          "installs": { "label": "Installs", "format": "text" },
-          "priceText": { "label": "Price", "format": "text" },
-          "genre": { "label": "Category", "format": "text" },
-          "updatedAt": { "label": "Updated", "format": "date" },
-          "source": { "label": "Source", "format": "text" },
-          "country": { "label": "Country", "format": "text" },
-          "url": { "label": "Google Play link", "format": "link" }
+          "rank": {
+            "label": "Rank",
+            "format": "number"
+          },
+          "title": {
+            "label": "App",
+            "format": "text"
+          },
+          "developer": {
+            "label": "Developer",
+            "format": "text"
+          },
+          "score": {
+            "label": "Rating",
+            "format": "number"
+          },
+          "ratingsCount": {
+            "label": "Ratings",
+            "format": "number"
+          },
+          "installs": {
+            "label": "Installs",
+            "format": "text"
+          },
+          "priceText": {
+            "label": "Price",
+            "format": "text"
+          },
+          "genre": {
+            "label": "Category",
+            "format": "text"
+          },
+          "updatedAt": {
+            "label": "Updated",
+            "format": "date"
+          },
+          "source": {
+            "label": "Source",
+            "format": "text"
+          },
+          "country": {
+            "label": "Country",
+            "format": "text"
+          },
+          "url": {
+            "label": "Google Play link",
+            "format": "link"
+          }
         }
       }
     }

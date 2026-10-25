@@ -1,6 +1,171 @@
 {
   "actorSpecification": 1,
-  "fields": {},
+  "fields": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "type": {
+        "description": "Kind of record: interest (a keyword report from Explore) or trending (a trending search)."
+      },
+      "keyword": {
+        "description": "Interest records: the keyword or topic from the input."
+      },
+      "searchedFor": {
+        "description": "Interest records: what Google Trends searched for: the keyword, or the topic ID."
+      },
+      "topicTitle": {
+        "description": "Interest records: name of the topic, when a topic was searched; null for plain keywords."
+      },
+      "topicType": {
+        "description": "Interest records: type of the topic, for example Beverage; null for plain keywords."
+      },
+      "location": {
+        "description": "Country or region code, for example US or US-CA; empty for worldwide."
+      },
+      "locationName": {
+        "description": "Name of the location, for example United States."
+      },
+      "timeRange": {
+        "description": "Interest records: time range as Google writes it, for example today 12-m."
+      },
+      "timeRangeName": {
+        "description": "Interest records: time range in words, for example Past 12 months."
+      },
+      "startDate": {
+        "description": "Interest records: first date of the data (YYYY-MM-DD)."
+      },
+      "endDate": {
+        "description": "Interest records: last date of the data (YYYY-MM-DD)."
+      },
+      "resolution": {
+        "description": "Interest records: step of the time series: MINUTE, HOUR, DAY, WEEK or MONTH."
+      },
+      "category": {
+        "description": "Interest records: ID of the Google Trends category; 0 for all categories."
+      },
+      "categoryName": {
+        "description": "Interest records: name of the category."
+      },
+      "searchType": {
+        "description": "Interest records: web, images, news, youtube or froogle (Google Shopping)."
+      },
+      "oneScale": {
+        "description": "Interest records: true when the keywords were compared on one scale, so their numbers can be compared directly."
+      },
+      "comparedWith": {
+        "description": "Interest records: the other keywords of the comparison."
+      },
+      "hasData": {
+        "description": "Interest records: false when Google Trends has too little data for the keyword."
+      },
+      "averageInterest": {
+        "description": "Interest records: average interest over the time range, from 0 to 100."
+      },
+      "peakInterest": {
+        "description": "Interest records: highest interest, from 0 to 100."
+      },
+      "peakDate": {
+        "description": "Interest records: date of the highest interest."
+      },
+      "latestInterest": {
+        "description": "Interest records: interest at the last complete point."
+      },
+      "latestDate": {
+        "description": "Interest records: date of the last complete point."
+      },
+      "recentChangePercent": {
+        "description": "Interest records: the last 4 points (7 for daily data) against the 4 (or 7) before them, in percent."
+      },
+      "yearOverYearPercent": {
+        "description": "Interest records: the latest 12 months against the 12 months before, in percent; needs a time range of 2 years or more."
+      },
+      "trendDirection": {
+        "description": "Interest records: rising (trend of +15% or more), falling (-15% or less) or stable, over the whole time range."
+      },
+      "trendPercent": {
+        "description": "Interest records: change from start to end along a straight line through all points, in percent of the average."
+      },
+      "bestMonth": {
+        "description": "Interest records: month of the year with the highest average interest; needs a time range of 2 years or more."
+      },
+      "worstMonth": {
+        "description": "Interest records: month of the year with the lowest average interest; needs a time range of 2 years or more."
+      },
+      "seasonalityPercent": {
+        "description": "Interest records: best month minus worst month, in percent of the average; high values mean a seasonal keyword."
+      },
+      "topRegion": {
+        "description": "Interest records: region with the highest interest."
+      },
+      "topRelatedQuery": {
+        "description": "Interest records: the most searched related query."
+      },
+      "topRisingQuery": {
+        "description": "Interest records: the fastest growing related query."
+      },
+      "interestOverTime": {
+        "description": "Interest records: the time series, each point with date, value (0 to 100) and isPartial."
+      },
+      "interestByRegion": {
+        "description": "Interest records: interest by region, each with geoCode, geoName and value (0 to 100)."
+      },
+      "relatedQueriesTop": {
+        "description": "Interest records: the most searched related queries, each with query, value and Explore link."
+      },
+      "relatedQueriesRising": {
+        "description": "Interest records: the fastest growing related queries, each with query, increase, increasePercent, isBreakout and Explore link."
+      },
+      "newRisingQueries": {
+        "description": "Interest records: with Only new rising queries, the rising queries that earlier runs did not see; null otherwise."
+      },
+      "trendsUrl": {
+        "description": "Interest records: link to the same report on Google Trends."
+      },
+      "warnings": {
+        "description": "Interest records: notes on data Google Trends did not return, for example no regional breakdown; null when there are none."
+      },
+      "hours": {
+        "description": "Trending records: time window of the trending searches, in hours (4, 24, 48 or 168)."
+      },
+      "rank": {
+        "description": "Trending records: position of the search, from 1."
+      },
+      "term": {
+        "description": "Trending records: the trending search."
+      },
+      "searchVolume": {
+        "description": "Trending records: search volume, as a number."
+      },
+      "searchVolumeText": {
+        "description": "Trending records: search volume as Google shows it, for example 500K+."
+      },
+      "increasePercent": {
+        "description": "Trending records: growth of the search, in percent."
+      },
+      "startedAt": {
+        "description": "Trending records: when the search started trending (ISO date and time)."
+      },
+      "endedAt": {
+        "description": "Trending records: when it stopped trending; null while it is still trending."
+      },
+      "isActive": {
+        "description": "Trending records: true while the search is still trending."
+      },
+      "categories": {
+        "description": "Trending records: categories of the search, for example Sports."
+      },
+      "relatedSearches": {
+        "description": "Trending records: related searches that trend together with it."
+      },
+      "exploreUrl": {
+        "description": "Trending records: link to the search on Google Trends Explore."
+      },
+      "scrapedAt": {
+        "description": "When the record was saved."
+      }
+    },
+    "additionalProperties": true
+  },
   "views": {
     "overview": {
       "title": "Keyword insights",

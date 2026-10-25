@@ -1,26 +1,272 @@
 {
   "actorSpecification": 1,
-  "fields": {},
+  "fields": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "propertyId": {
+        "description": "ID of the property on Redfin."
+      },
+      "listingId": {
+        "description": "ID of the listing on Redfin; null for rentals."
+      },
+      "rentalId": {
+        "description": "ID of the rental listing; null for homes for sale and sold homes."
+      },
+      "mlsId": {
+        "description": "Listing number in the MLS (multiple listing service)."
+      },
+      "listingType": {
+        "description": "for-sale, sold or for-rent."
+      },
+      "status": {
+        "description": "Status as Redfin shows it, for example Active, Pending, Sold or For rent."
+      },
+      "mlsStatus": {
+        "description": "Status in the MLS, for example Active, Coming Soon or Closed."
+      },
+      "url": {
+        "description": "Link to the home on Redfin."
+      },
+      "price": {
+        "description": "Asking price, sold price or monthly rent; for rentals with a range of rents, the lowest."
+      },
+      "priceMax": {
+        "description": "Highest monthly rent, for rentals with a range of rents; null otherwise."
+      },
+      "currency": {
+        "description": "Currency of the prices."
+      },
+      "pricePerSqft": {
+        "description": "Price per square foot."
+      },
+      "hoaPerMonth": {
+        "description": "Monthly HOA (homeowners association) fee."
+      },
+      "beds": {
+        "description": "Number of bedrooms; for rentals with several unit types, the fewest."
+      },
+      "bedsMax": {
+        "description": "Most bedrooms, for rentals with several unit types; null otherwise."
+      },
+      "baths": {
+        "description": "Number of bathrooms; for rentals with several unit types, the fewest."
+      },
+      "bathsMax": {
+        "description": "Most bathrooms, for rentals with several unit types; null otherwise."
+      },
+      "fullBaths": {
+        "description": "Number of full bathrooms."
+      },
+      "partialBaths": {
+        "description": "Number of partial bathrooms."
+      },
+      "sqft": {
+        "description": "Living area in square feet; for rentals with several unit types, the smallest."
+      },
+      "sqftMax": {
+        "description": "Largest living area, for rentals with several unit types; null otherwise."
+      },
+      "lotSizeSqft": {
+        "description": "Lot size in square feet."
+      },
+      "yearBuilt": {
+        "description": "Year the home was built."
+      },
+      "stories": {
+        "description": "Number of stories."
+      },
+      "propertyType": {
+        "description": "Type of home, for example Single Family Residential, Condo/Co-op, Townhouse or Apartment."
+      },
+      "address": {
+        "description": "Full address."
+      },
+      "streetAddress": {
+        "description": "Street and house number."
+      },
+      "unit": {
+        "description": "Unit or apartment number."
+      },
+      "city": {
+        "description": "City."
+      },
+      "state": {
+        "description": "State, as a two-letter code."
+      },
+      "zip": {
+        "description": "ZIP code."
+      },
+      "neighborhood": {
+        "description": "Neighborhood."
+      },
+      "latitude": {
+        "description": "Latitude."
+      },
+      "longitude": {
+        "description": "Longitude."
+      },
+      "daysOnMarket": {
+        "description": "Days since the home was listed."
+      },
+      "listedAt": {
+        "description": "When the home was listed (ISO date and time)."
+      },
+      "soldDate": {
+        "description": "Date of the sale for sold homes (YYYY-MM-DD)."
+      },
+      "lastSoldDate": {
+        "description": "Date of the previous sale, for homes for sale (YYYY-MM-DD)."
+      },
+      "openHouseStart": {
+        "description": "Start of the next open house (ISO date and time)."
+      },
+      "openHouseEnd": {
+        "description": "End of the next open house (ISO date and time)."
+      },
+      "description": {
+        "description": "Listing description."
+      },
+      "keyFacts": {
+        "description": "Key facts Redfin shows, for example Pets welcome or Very walkable."
+      },
+      "tags": {
+        "description": "Features the listing highlights, for example SPACIOUS KITCHEN."
+      },
+      "badges": {
+        "description": "Labels on the listing, for example Popular or a rent special."
+      },
+      "isNewConstruction": {
+        "description": "True for new construction."
+      },
+      "isHotHome": {
+        "description": "True when Redfin marks the home as a Hot Home, likely to sell fast."
+      },
+      "has3DTour": {
+        "description": "True when the listing has a 3D tour."
+      },
+      "hasVideoTour": {
+        "description": "True when the listing has a video tour."
+      },
+      "hasVirtualTour": {
+        "description": "True when the listing has a virtual tour."
+      },
+      "virtualTourUrl": {
+        "description": "Link to the virtual tour."
+      },
+      "garageSpaces": {
+        "description": "Number of garage spaces."
+      },
+      "parkingSpaces": {
+        "description": "Number of parking spaces."
+      },
+      "photoUrl": {
+        "description": "Link to the main photo."
+      },
+      "photoCount": {
+        "description": "Number of photos."
+      },
+      "photos": {
+        "description": "Links to all photos; only with the All photos option."
+      },
+      "brokerName": {
+        "description": "Listing brokerage."
+      },
+      "mlsName": {
+        "description": "Name of the MLS that publishes the listing."
+      },
+      "propertyName": {
+        "description": "Name of the rental building, for example Trowbridge Apartments."
+      },
+      "availableUnits": {
+        "description": "Number of available units in a rental building."
+      },
+      "units": {
+        "description": "Available units of a rental building, each with beds and rent."
+      },
+      "availableFrom": {
+        "description": "Date the rental is available from (YYYY-MM-DD)."
+      },
+      "rentUpdatedAt": {
+        "description": "When the rent was last updated."
+      },
+      "search": {
+        "description": "Search from the input that found the home, for example Seattle, WA."
+      },
+      "searchUrl": {
+        "description": "Redfin search page that found the home."
+      },
+      "scrapedAt": {
+        "description": "When the record was saved."
+      }
+    },
+    "additionalProperties": true
+  },
   "views": {
     "overview": {
       "title": "Listings",
       "transformation": {
-        "fields": ["photoUrl", "address", "price", "beds", "baths", "sqft", "propertyType", "status", "daysOnMarket", "soldDate", "url"]
+        "fields": [
+          "photoUrl",
+          "address",
+          "price",
+          "beds",
+          "baths",
+          "sqft",
+          "propertyType",
+          "status",
+          "daysOnMarket",
+          "soldDate",
+          "url"
+        ]
       },
       "display": {
         "component": "table",
         "properties": {
-          "photoUrl": { "label": "Photo", "format": "image" },
-          "address": { "label": "Address", "format": "text" },
-          "price": { "label": "Price ($)", "format": "number" },
-          "beds": { "label": "Beds", "format": "number" },
-          "baths": { "label": "Baths", "format": "number" },
-          "sqft": { "label": "Sq ft", "format": "number" },
-          "propertyType": { "label": "Type", "format": "text" },
-          "status": { "label": "Status", "format": "text" },
-          "daysOnMarket": { "label": "Days on market", "format": "number" },
-          "soldDate": { "label": "Sold", "format": "date" },
-          "url": { "label": "Redfin link", "format": "link" }
+          "photoUrl": {
+            "label": "Photo",
+            "format": "image"
+          },
+          "address": {
+            "label": "Address",
+            "format": "text"
+          },
+          "price": {
+            "label": "Price ($)",
+            "format": "number"
+          },
+          "beds": {
+            "label": "Beds",
+            "format": "number"
+          },
+          "baths": {
+            "label": "Baths",
+            "format": "number"
+          },
+          "sqft": {
+            "label": "Sq ft",
+            "format": "number"
+          },
+          "propertyType": {
+            "label": "Type",
+            "format": "text"
+          },
+          "status": {
+            "label": "Status",
+            "format": "text"
+          },
+          "daysOnMarket": {
+            "label": "Days on market",
+            "format": "number"
+          },
+          "soldDate": {
+            "label": "Sold",
+            "format": "date"
+          },
+          "url": {
+            "label": "Redfin link",
+            "format": "link"
+          }
         }
       }
     }

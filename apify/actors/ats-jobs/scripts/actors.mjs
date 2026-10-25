@@ -1611,13 +1611,189 @@ const COMPANY_COLUMNS = {
 };
 const COMPANY_VIEW_ATS = new Set(['glassdoor', 'indeed', 'linkedin', 'multi']);
 
+// What each result field means, shown in the Store's output tab and to API users and AI agents.
+// Descriptions only, no types: Apify checks every saved item against `fields`, and an item that
+// fails the check is not saved.
+const FIELD_DOCS = {
+  ats: 'Site the job comes from, for example greenhouse, linkedin or indeed.',
+  company: "The company's ID or short name on the site: the board name on career sites, the company page or employer ID on job boards.",
+  companyName: 'Name of the hiring company.',
+  jobId: 'ID of the job on the site.',
+  requisitionId: "The employer's own requisition or reference number, when given.",
+  title: 'Job title.',
+  department: 'Department or job category, as the site gives it.',
+  team: 'Team within the department, when given.',
+  location: 'Main location, as the site writes it.',
+  locations: 'All locations of the job.',
+  remote: 'True when the job is remote or one of its locations is remote.',
+  workplaceType: 'remote, hybrid or onsite; null when the site does not say.',
+  employmentType: 'full-time, part-time, contract, temporary, internship, apprenticeship or casual; other types as the site writes them.',
+  salary: 'Published pay: min, max, currency, interval (hour, day, week, month or year), text, and source (the job ad, or a pay range found in the description). Null when the job states no pay.',
+  postedAt: 'When the job was posted (ISO date and time).',
+  updatedAt: 'When the job was last updated on the site.',
+  jobUrl: 'Link to the job on the site.',
+  applyUrl: 'Link to apply; the job link when the site has no separate one.',
+  descriptionText: 'Job description as plain text.',
+  descriptionHtml: 'Job description as HTML.',
+  scrapedAt: 'When the record was saved.',
+  // Fields that only some sites give.
+  jobTypes: 'Job types as the site lists them, for example Full-time or Permanent Job.',
+  seniorityLevel: 'Seniority or career level, as the site writes it.',
+  experienceLevel: 'Required experience, as the site writes it, for example 5 to 7 years.',
+  experienceYearsMin: 'Fewest years of experience asked for.',
+  experienceYearsMax: 'Most years of experience asked for.',
+  educationLevel: 'Required education, when given.',
+  benefits: 'Benefits listed in the job.',
+  schedule: 'Work schedule tags, for example Monday to Friday.',
+  attributes: 'Skills, requirements and other tags Indeed attaches to the job.',
+  skills: 'Skills listed in the job.',
+  tools: 'Tools and technologies listed in the job.',
+  easyApply: 'True when you can apply on the site itself.',
+  quickApply: 'True when the site offers a quick application.',
+  noCoverLetter: 'True when no cover letter is needed.',
+  urgentlyHiring: 'True when the job is marked as urgently hiring.',
+  hiringMultipleCandidates: 'True when the employer hires for several openings.',
+  sponsored: 'True for promoted (paid) job ads.',
+  listedAt: 'When the job was first listed on the site.',
+  validThrough: 'Date until which the job ad runs.',
+  startDate: 'Start date of the job, when given.',
+  contractType: 'Contract type, for example Permanent or Temporary.',
+  contractDurationMonths: 'Length of a fixed-term contract in months.',
+  hours: 'Working hours: full-time or part-time.',
+  workday: 'Working day as InfoJobs writes it, for example Part-time, any time.',
+  salaryBasis: 'Whether the pay is gross or net.',
+  salaryEstimate: "The site's own pay estimate: min, max, median, currency and interval. Given also when the ad states no pay.",
+  equity: 'Equity offered, in percent: min, max and text.',
+  executive: 'True for management positions.',
+  graduate: 'True for jobs open to graduates.',
+  postedBy: 'Who posted the job: employer or agency.',
+  employerType: 'Direct employer or agency, as the site writes it.',
+  reference: 'Reference number of the job ad.',
+  normalizedTitle: 'Job title as the site normalizes it, for example nurse.',
+  language: 'Language of the job ad, for example en or de.',
+  sourceName: 'Name of the employer or source that posted the job on Indeed.',
+  jobFunction: 'Job function, as LinkedIn gives it.',
+  roles: 'Job roles, as Foundit gives them.',
+  functions: 'Job functions, as Foundit gives them.',
+  industry: 'Industry or job field, as the site gives it.',
+  industries: 'Industries of the job or company, as the site gives them.',
+  sector: 'Job sector on Reed.',
+  category: 'Job category path on Reed.',
+  subClassification: 'Job subcategory on Seek, JobStreet and Jobsdb.',
+  bulletPoints: 'Selling points the employer lists at the top of the ad.',
+  summary: 'Summary of the job the site writes: introduction, qualifications and more.',
+  applicants: 'Number of applicants, as the site shows it.',
+  applicantsCount: 'Number of applicants, as a number.',
+  insights: 'Hints LinkedIn shows about the job, for example Actively Hiring.',
+  reposted: 'True when the job was reposted.',
+  remotePolicy: 'Remote policy: remote, hybrid or onsite.',
+  remoteOptions: 'Workplace options the job offers.',
+  remoteLocations: 'Countries or regions a remote job is open to.',
+  workFromHomeFlexible: 'True when the job allows working from home at times.',
+  city: 'City of the job.',
+  suburb: 'Suburb of the job.',
+  state: 'State, province or region of the job.',
+  county: 'County of the job.',
+  region: 'Region of the job.',
+  postalCode: 'Postal code of the job.',
+  postcode: 'Postal code of the job.',
+  country: 'Country of the job, as an ISO code such as US or DE, or a name where the site gives one.',
+  companyUrl: 'Company page on the site.',
+  companyWebsite: "Company's own website.",
+  companyLogo: 'Link to the company logo.',
+  companyLogoUrl: 'Link to the company logo.',
+  companySize: 'Number of employees, as the site writes it.',
+  companyRevenue: 'Revenue range of the company.',
+  companyType: 'Ownership type, for example Company - Private.',
+  companyIndustry: 'Industry of the company.',
+  companyFounded: 'Year the company was founded.',
+  companyHeadquarters: 'Headquarters of the company.',
+  companyCity: 'City of the company.',
+  companyRating: 'Company rating from employee reviews, from 1 to 5.',
+  companyReviewCount: 'Number of employee reviews of the company.',
+  companySummary: 'Short description of the company.',
+  companyPitch: "The startup's one-line pitch.",
+  companyStage: 'Stage of the startup, for example Scale Stage.',
+  companyBadges: 'Labels Wellfound shows on the startup, for example Top Investors.',
+};
+
+// Hiring-company records ("What to save: Hiring companies"): one record per employer.
+const COMPANY_FIELD_DOCS = {
+  companyId: "Hiring companies: the company's ID on the site; null when jobs come from several sites.",
+  companyDomain: 'Hiring companies: domain of the company website, for matching with a CRM.',
+  isStaffingAgency: 'Hiring companies: true for staffing and recruitment agencies.',
+  jobs: "Hiring companies: number of the company's jobs found in the run.",
+  jobsLast7Days: 'Hiring companies: jobs posted in the last 7 days.',
+  jobsLast30Days: 'Hiring companies: jobs posted in the last 30 days.',
+  remoteJobs: 'Hiring companies: number of remote jobs.',
+  jobsWithSalary: 'Hiring companies: number of jobs that state pay.',
+  departments: 'Hiring companies: number of jobs per team (Sales, Engineering & IT and so on), from the job titles.',
+  topJobTitles: 'Hiring companies: the most common job titles, each with its number of jobs.',
+  countries: 'Hiring companies: countries of the jobs.',
+  salaryRange: 'Hiring companies: lowest and highest stated pay of the jobs, with currency, interval and the number of jobs it comes from.',
+  newestJobAt: 'Hiring companies: date of the newest job.',
+  oldestJobAt: 'Hiring companies: date of the oldest job.',
+  sampleJobs: 'Hiring companies: up to 5 newest jobs, each with title, location, date and link.',
+  searches: 'Hiring companies: searches of the run that found the company.',
+  sites: "Hiring companies: sites the company's jobs come from.",
+};
+
+// The fields of each site beyond the ones every job has, as seen in real runs.
+const CORE_FIELDS = ['ats', 'company', 'companyName', 'jobId', 'requisitionId', 'title', 'department', 'team', 'location', 'locations', 'remote', 'workplaceType', 'employmentType', 'salary', 'postedAt', 'updatedAt', 'jobUrl', 'applyUrl', 'descriptionText', 'descriptionHtml', 'scrapedAt'];
+const COMPANY_DETAILS = ['companyUrl', 'companyWebsite', 'companyLogo', 'companySize', 'companyRevenue', 'companyType', 'companyIndustry', 'companyFounded', 'companyHeadquarters', 'companyRating'];
+const SEEK_FIELDS = ['subClassification', 'bulletPoints', 'suburb', 'state', 'postcode', 'country', 'validThrough', 'companyIndustry', 'companySize', 'companyWebsite', 'companyRating', 'companyReviewCount', 'companyLogoUrl'];
+const SITE_FIELDS = {
+  greenhouse: [],
+  lever: [],
+  ashby: [],
+  workday: [],
+  dice: ['skills', 'easyApply', 'employerType', 'validThrough', 'companyLogoUrl'],
+  wttj: ['skills', 'tools', 'experienceLevel', 'educationLevel', 'contractDurationMonths', 'startDate', 'language', 'companyIndustry', 'companySize', 'companySummary', 'companyLogoUrl'],
+  seek: SEEK_FIELDS,
+  jobstreet: SEEK_FIELDS,
+  jobsdb: SEEK_FIELDS,
+  stepstone: ['benefits', 'skills', 'industry', 'quickApply', 'noCoverLetter', 'validThrough', 'companyUrl', 'companyLogoUrl'],
+  reed: ['contractType', 'hours', 'sector', 'category', 'county', 'region', 'postcode', 'country', 'postedBy', 'easyApply', 'graduate', 'reference', 'validThrough', 'companyUrl'],
+  infojobs: ['contractType', 'workday', 'salaryBasis', 'executive', 'companyUrl', 'companyLogoUrl'],
+  linkedin: ['seniorityLevel', 'jobFunction', 'industries', 'applicants', 'applicantsCount', 'easyApply', 'insights', 'reposted', 'companyLogoUrl', ...COMPANY_DETAILS],
+  indeed: ['jobTypes', 'seniorityLevel', 'benefits', 'schedule', 'attributes', 'easyApply', 'urgentlyHiring', 'hiringMultipleCandidates', 'listedAt', 'city', 'state', 'postalCode', 'country', 'normalizedTitle', 'language', 'sourceName', ...COMPANY_DETAILS],
+  glassdoor: ['jobTypes', 'seniorityLevel', 'easyApply', 'sponsored', 'salaryEstimate', 'normalizedTitle', 'city', 'state', 'country', ...COMPANY_DETAILS],
+  wellfound: ['remotePolicy', 'workFromHomeFlexible', 'remoteLocations', 'equity', 'experienceYearsMin', 'experienceYearsMax', 'companyPitch', 'companySize', 'companyStage', 'companyBadges', 'companyLogo', 'companyUrl'],
+  xing: ['salaryEstimate', 'remoteOptions', 'seniorityLevel', 'industry', 'city', 'state', 'postalCode', 'country', 'validThrough', 'language', 'skills', 'summary', 'companyUrl', 'companyLogo', 'companySize', 'companyIndustry', 'companyCity'],
+  foundit: ['experienceYearsMin', 'experienceYearsMax', 'jobTypes', 'roles', 'functions', 'industries', 'skills', 'applicants', 'validThrough', 'quickApply', 'urgentlyHiring', 'city', 'state', 'country', 'employerType', 'companyUrl'],
+};
+// All-in-One searches many of the sites, so its records can have any of their fields.
+SITE_FIELDS.multi = [...new Set(Object.values(SITE_FIELDS).flat())];
+
+// The `fields` part of the dataset schema: every field with its description, and any other field allowed.
+export const fieldsSchema = (ats) => {
+  const companies = COMPANY_VIEW_ATS.has(ats);
+  const names = [...new Set([...CORE_FIELDS, ...SITE_FIELDS[ats], ...(companies ? [...COMPANY_DETAILS, ...Object.keys(COMPANY_FIELD_DOCS)] : [])])];
+  const docs = {
+    ...FIELD_DOCS,
+    ...COMPANY_FIELD_DOCS,
+    ...(companies ? {
+      companyName: 'Name of the hiring company (in both job and hiring-company records).',
+      locations: 'Jobs: all locations of the job. Hiring companies: the most common locations, each with its number of jobs.',
+    } : {}),
+  };
+  const missing = names.filter((name) => !docs[name]);
+  if (missing.length) throw new Error(`No description for ${missing.join(', ')}`);
+  return {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    type: 'object',
+    properties: Object.fromEntries(names.map((name) => [name, { description: docs[name] }])),
+    additionalProperties: true,
+  };
+};
+
 export const datasetSchema = (ats) => {
   const [extraField, extraLabel] = EXTRA_COLUMN[ats] ?? [];
   const columns = OVERVIEW.map((field) => SWAPPED[ats]?.[field] ?? field);
   const fields = [...new Set([...columns, ...(extraField ? [extraField] : [])])];
   return {
     actorSpecification: 1,
-    fields: {},
+    fields: fieldsSchema(ats),
     views: {
       overview: {
         title: 'Jobs',

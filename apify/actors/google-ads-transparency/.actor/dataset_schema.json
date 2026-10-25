@@ -1,6 +1,132 @@
 {
   "actorSpecification": 1,
-  "fields": {},
+  "fields": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "advertiserId": {
+        "description": "ID of the advertiser account in the Transparency Center, for example AR16735076323512287233."
+      },
+      "advertiserName": {
+        "description": "Ads: name of the advertiser account."
+      },
+      "domain": {
+        "description": "Website of the ad or advertiser, when Google gives it."
+      },
+      "creativeId": {
+        "description": "Ads: ID of the ad, for example CR08632639554903343105."
+      },
+      "format": {
+        "description": "Ads: TEXT, IMAGE or VIDEO."
+      },
+      "adUrl": {
+        "description": "Ads: link to the ad in the Transparency Center."
+      },
+      "firstShown": {
+        "description": "Ads: when the ad was first shown (ISO date and time)."
+      },
+      "lastShown": {
+        "description": "Ads: when the ad was last shown (ISO date and time)."
+      },
+      "shownForDays": {
+        "description": "Ads: days between first and last shown."
+      },
+      "isDynamic": {
+        "description": "Ads: true for dynamic search ads, whose headline Google writes from the landing page; their headline is empty."
+      },
+      "headline": {
+        "description": "Ads: headline of a text ad, product title of a Shopping ad or name of an app ad; null when the ad is only a picture."
+      },
+      "description": {
+        "description": "Ads: description line of the ad."
+      },
+      "displayUrl": {
+        "description": "Ads: URL shown in the ad, for example nike.com."
+      },
+      "businessName": {
+        "description": "Ads: business name shown in the ad, or the store of a Shopping ad."
+      },
+      "adTexts": {
+        "description": "Ads: all texts of the ad, in order."
+      },
+      "previewImageUrl": {
+        "description": "Ads: picture inside the ad, for example the product photo of a Shopping ad."
+      },
+      "appName": {
+        "description": "Ads: name of the app, for app ads."
+      },
+      "appId": {
+        "description": "Ads: ID of the app, for app ads."
+      },
+      "destinationUrl": {
+        "description": "Ads: landing page or store link of the ad, when the preview has it."
+      },
+      "callToAction": {
+        "description": "Ads: button text, for example Install or Visit Site."
+      },
+      "imageUrl": {
+        "description": "Ads: picture of the whole ad as Google archived it."
+      },
+      "width": {
+        "description": "Ads: width of the ad picture in pixels."
+      },
+      "height": {
+        "description": "Ads: height of the ad picture in pixels."
+      },
+      "previewUrl": {
+        "description": "Ads: link to Google's preview script of the ad."
+      },
+      "variationCount": {
+        "description": "Ads, with Details: number of versions of the ad."
+      },
+      "variations": {
+        "description": "Ads, with Details: every version of the ad, with its picture, size and texts."
+      },
+      "regions": {
+        "description": "Ads, with Details: countries the ad ran in, each with first and last date and, in the EU, impressions per platform."
+      },
+      "impressions": {
+        "description": "Ads, with Details: EU impressions as a range {min, max}; null outside the EU."
+      },
+      "platformImpressions": {
+        "description": "Ads, with Details: EU impressions per platform (SEARCH, YOUTUBE, MAPS, PLAY, SHOPPING)."
+      },
+      "name": {
+        "description": "Advertisers: name of the advertiser account."
+      },
+      "legalName": {
+        "description": "Advertisers: legal name of the advertiser, when Google gives it."
+      },
+      "country": {
+        "description": "Advertisers: country of the advertiser."
+      },
+      "verified": {
+        "description": "Advertisers: true when Google verified the advertiser's identity."
+      },
+      "adCountLow": {
+        "description": "Advertisers: lower bound of the advertiser's number of ads in the region, with the input's filters."
+      },
+      "adCountHigh": {
+        "description": "Advertisers: upper bound of the advertiser's number of ads in the region, with the input's filters."
+      },
+      "adsFound": {
+        "description": "Advertisers: number of the website's ads that come from this account (website searches)."
+      },
+      "advertiserUrl": {
+        "description": "Advertisers: link to the advertiser in the Transparency Center."
+      },
+      "region": {
+        "description": "Region of the search: a country code such as US, or ANYWHERE."
+      },
+      "source": {
+        "description": "Brand, website or advertiser from the input that found the record."
+      },
+      "scrapedAt": {
+        "description": "When the record was saved."
+      }
+    },
+    "additionalProperties": true
+  },
   "views": {
     "overview": {
       "title": "Ads",

@@ -1,23 +1,104 @@
 {
   "actorSpecification": 1,
-  "fields": {},
+  "fields": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "title": {
+        "description": "Headline of the article."
+      },
+      "source": {
+        "description": "Name of the publisher, for example Reuters."
+      },
+      "sourceUrl": {
+        "description": "Home page of the publisher."
+      },
+      "publishedAt": {
+        "description": "When the article was published (ISO date and time, UTC)."
+      },
+      "url": {
+        "description": "Link to the article on the publisher's site; null when URL resolving is off or the link could not be resolved."
+      },
+      "googleNewsUrl": {
+        "description": "Link to the article on Google News."
+      },
+      "articleId": {
+        "description": "ID of the article on Google News; the same article keeps the same ID across runs."
+      },
+      "position": {
+        "description": "Position of the article in its feed, from 1."
+      },
+      "query": {
+        "description": "Search query that found the article; null for topic and top-stories feeds."
+      },
+      "topic": {
+        "description": "Google News topic of the feed, for example BUSINESS, or TOP_STORIES; null for searches."
+      },
+      "dateWindow": {
+        "description": "Dates of the search as {after, before} (YYYY-MM-DD), when the input sets dates; null otherwise."
+      },
+      "edition": {
+        "description": "Google News edition (country and language), for example US:en."
+      },
+      "relatedArticles": {
+        "description": "Other coverage of the same story that Google News groups with the article: title, source and link."
+      },
+      "scrapedAt": {
+        "description": "When the record was saved."
+      }
+    },
+    "additionalProperties": true
+  },
   "views": {
     "overview": {
       "title": "Articles",
       "transformation": {
-        "fields": ["publishedAt", "title", "source", "url", "googleNewsUrl", "query", "topic", "edition"]
+        "fields": [
+          "publishedAt",
+          "title",
+          "source",
+          "url",
+          "googleNewsUrl",
+          "query",
+          "topic",
+          "edition"
+        ]
       },
       "display": {
         "component": "table",
         "properties": {
-          "publishedAt": { "label": "Published", "format": "date" },
-          "title": { "label": "Title", "format": "text" },
-          "source": { "label": "Source", "format": "text" },
-          "url": { "label": "Publisher URL", "format": "link" },
-          "googleNewsUrl": { "label": "Google News link", "format": "link" },
-          "query": { "label": "Query", "format": "text" },
-          "topic": { "label": "Topic", "format": "text" },
-          "edition": { "label": "Edition", "format": "text" }
+          "publishedAt": {
+            "label": "Published",
+            "format": "date"
+          },
+          "title": {
+            "label": "Title",
+            "format": "text"
+          },
+          "source": {
+            "label": "Source",
+            "format": "text"
+          },
+          "url": {
+            "label": "Publisher URL",
+            "format": "link"
+          },
+          "googleNewsUrl": {
+            "label": "Google News link",
+            "format": "link"
+          },
+          "query": {
+            "label": "Query",
+            "format": "text"
+          },
+          "topic": {
+            "label": "Topic",
+            "format": "text"
+          },
+          "edition": {
+            "label": "Edition",
+            "format": "text"
+          }
         }
       }
     }

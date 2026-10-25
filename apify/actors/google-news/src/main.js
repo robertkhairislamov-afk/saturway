@@ -72,6 +72,7 @@ const feeds = [
 log.info(`Reading ${feeds.length} Google News feed(s) for edition ${locale.ceid}.`);
 
 const seen = new Set();
+const summary = [];
 let saved = 0;
 let resolved = 0;
 let resolveBudgetLeft = true;
@@ -108,13 +109,20 @@ for (const feed of feeds) {
     break;
   }
 
+  const label = feed.context.query ? `"${feed.context.query}"` : feed.context.topic;
+  const row = { feed: label, dateWindow: feed.context.dateWindow, url: feed.url, saved: 0, error: null };
+  summary.push(row);
+
   // A consent or captcha page instead of XML means this proxy session was blocked: retry.
   let articles;
   for (let attempt = 1; attempt <= 3 && !articles; attempt++) {
     try {
       articles = parseFeed(await fetchText(feed.url));
     } catch (error) {
-      if (attempt === 3) log.warning(`Skipping feed ${feed.url}: ${error.message}`);
+      if (attempt === 3) {
+        row.error = error.message;
+        log.warning(`Skipping feed ${feed.url}: ${error.message}`);
+      }
     }
   }
   if (!articles) continue;
@@ -150,10 +158,18 @@ for (const feed of feeds) {
 
   if (rows.length > 0) await Actor.pushData(rows);
   saved += rows.length;
-  const label = feed.context.query ? `"${feed.context.query}"` : feed.context.topic;
+  row.saved = rows.length;
   const windowLabel = feed.context.dateWindow ? ` ${feed.context.dateWindow.after ?? ''}..${feed.context.dateWindow.before}` : '';
   log.info(`${label}${windowLabel}: ${rows.length} new article(s), ${saved} in total.`);
 }
 
-log.info(`Done. Saved ${saved} article(s)${resolveUrls ? `, resolved ${resolved} publisher URL(s)` : ''}.`);
-await Actor.exit();
+await Actor.setValue('SUMMARY', { saved, resolved, edition: locale.ceid, feeds: summary });
+const failed = summary.filter((row) => row.error);
+const message = `Saved ${saved} article(s) from ${summary.length} feed(s)${resolveUrls ? `, resolved ${resolved} publisher URL(s)` : ''}${failed.length ? ` (${failed.length} feed(s) could not be read)` : ''}.`;
+log.info(message);
+// Every feed failed and nothing was saved: say so instead of finishing with an empty dataset.
+if (summary.length > 0 && saved === 0 && failed.length === summary.length) {
+  await Actor.fail(`No Google News feed could be read. First error: ${failed[0].error}`);
+} else {
+  await Actor.exit(message);
+}

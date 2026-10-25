@@ -116,7 +116,7 @@ try {
     const batch = records.slice(0, roomLeft());
     if (batch.length > 0) await Actor.pushData(batch);
     for (const r of batch) {
-      if (r.headline) row.withText++;
+      if (r.headline || r.description || r.appName) row.withText++;
       if (memory) newlySeen.push(r.creativeId);
     }
     row.saved += batch.length;

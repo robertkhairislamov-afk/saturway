@@ -4,6 +4,7 @@
 // key: 'value' pairs.
 
 export const EMPTY_TEXT = {
+  isDynamic: false,
   headline: null,
   description: null,
   displayUrl: null,
@@ -156,5 +157,21 @@ export function parsePreview(script) {
     };
   }
   if (!ad?.previewImageUrl && f.coverImage) app.previewImageUrl = absolute(f.coverImage);
-  return { ...EMPTY_TEXT, ...ad, ...app };
+  return withoutPlaceholders({ ...EMPTY_TEXT, ...ad, ...app });
+}
+
+// Dynamic search ads: Google writes the headline and display URL from the landing page when the
+// ad is shown, and the preview holds a placeholder such as "<dynamically generated based on
+// landing page content>" instead. Such fields are left empty and the ad is marked isDynamic.
+const PLACEHOLDER = /^<\s*dynamically generated[^>]*>$/i;
+export function withoutPlaceholders(ad) {
+  const out = { ...ad };
+  for (const key of ['headline', 'description', 'displayUrl', 'businessName']) {
+    if (typeof out[key] === 'string' && PLACEHOLDER.test(out[key].trim())) {
+      out[key] = null;
+      out.isDynamic = true;
+    }
+  }
+  out.adTexts = (out.adTexts || []).filter((text) => !PLACEHOLDER.test(String(text).trim()));
+  return out;
 }

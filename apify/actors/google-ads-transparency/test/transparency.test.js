@@ -189,3 +189,14 @@ test('client moves to the fallback proxy when Google keeps limiting', async () =
   assert.equal(client.stats.limited, 3);
   assert.deepEqual(used, ['dc', 'dc', 'dc', 'res']);
 });
+
+test('preview: dynamic search ads keep the description and drop the placeholders', () => {
+  const placeholder = '<dynamically generated based on landing page content>';
+  const ad = parsePreview(script([[1, [placeholder, 'Shop the latest Example shoes and gear.', placeholder, 'Example']]]));
+  assert.equal(ad.isDynamic, true);
+  assert.equal(ad.headline, null);
+  assert.equal(ad.displayUrl, null);
+  assert.equal(ad.description, 'Shop the latest Example shoes and gear.');
+  assert.deepEqual(ad.adTexts, ['Shop the latest Example shoes and gear.']);
+  assert.equal(parsePreview(script([[1, ['Example Official Site', 'Shop now.', 'example.com']]])).isDynamic, false);
+});

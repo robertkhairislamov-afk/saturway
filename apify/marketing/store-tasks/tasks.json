@@ -264,6 +264,7 @@
    ],
    "outputMode": "companies",
    "excludeStaffingAgencies": true,
+   "maxItemsPerCompany": 300,
    "maxItems": 200
   },
   "fields": [
@@ -337,6 +338,7 @@
    "postedWithinDays": 7,
    "outputMode": "companies",
    "excludeStaffingAgencies": true,
+   "maxItemsPerCompany": 300,
    "maxItems": 150
   },
   "fields": [
@@ -387,6 +389,7 @@
    "postedWithinDays": 7,
    "outputMode": "companies",
    "excludeStaffingAgencies": true,
+   "maxItemsPerCompany": 300,
    "maxItems": 150
   },
   "fields": [

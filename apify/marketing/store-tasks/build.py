@@ -67,7 +67,7 @@ t('all-in-one-jobs-scraper', 'companies-hiring-sales-reps-leads', 'Find Companie
   'Companies that posted SDR and account executive jobs in the last 7 days on LinkedIn, Indeed and Glassdoor, one row per company with job count, teams, titles, size, industry and website. Hiring is a buying signal.',
   'Companies Hiring Sales Reps – B2B Leads from Job Posts',
   'B2B lead list: companies hiring SDRs and account executives on LinkedIn, Indeed and Glassdoor this week, with job count, size, industry and website.',
-  {'searchQueries': ['sales development representative', 'account executive'], 'countries': ['US'], 'postedWithinDays': 7, 'sources': ['linkedin', 'indeed', 'glassdoor'], 'outputMode': 'companies', 'excludeStaffingAgencies': True, 'maxItems': 200},
+  {'searchQueries': ['sales development representative', 'account executive'], 'countries': ['US'], 'postedWithinDays': 7, 'sources': ['linkedin', 'indeed', 'glassdoor'], 'outputMode': 'companies', 'excludeStaffingAgencies': True, 'maxItemsPerCompany': 300, 'maxItems': 200},
   ['searchQueries', 'countries', 'postedWithinDays', 'outputMode'], view='companies')
 t('all-in-one-jobs-scraper', 'nurse-jobs-australia-all-sites', 'Registered Nurse Jobs in Australia from Every Job Site',
   'Registered nurse jobs in Australia from SEEK, Indeed, LinkedIn and Glassdoor in one list without duplicates, with salary, hospital, location and apply link.',
@@ -86,7 +86,7 @@ t('indeed-jobs-scraper', 'companies-hiring-on-indeed', 'Companies Hiring Softwar
   'One row per company that posted software engineer jobs on Indeed in the US this week: number of jobs, teams, titles, places, pay range, size and website. A lead list of growing tech teams.',
   'Companies Hiring Software Engineers – Indeed Lead List',
   'Lead list from Indeed: US companies hiring software engineers this week, with job count, pay range, size, industry and website. One row per company.',
-  {'searchQueries': ['software engineer'], 'country': 'US', 'postedWithinDays': 7, 'outputMode': 'companies', 'excludeStaffingAgencies': True, 'maxItems': 150},
+  {'searchQueries': ['software engineer'], 'country': 'US', 'postedWithinDays': 7, 'outputMode': 'companies', 'excludeStaffingAgencies': True, 'maxItemsPerCompany': 300, 'maxItems': 150},
   ['searchQueries', 'country', 'postedWithinDays', 'outputMode'], view='companies')
 # --- LinkedIn
 t('linkedin-jobs-scraper', 'linkedin-remote-product-manager-jobs', 'Remote Product Manager Jobs on LinkedIn, Last 24 Hours',
@@ -99,7 +99,7 @@ t('linkedin-jobs-scraper', 'companies-hiring-in-berlin-linkedin', 'Companies Hir
   'One row per company hiring software developers in Berlin on LinkedIn this week, with job count, titles and company page: a list of growing tech teams for recruiters and sales.',
   'Companies Hiring Developers in Berlin – LinkedIn Leads',
   'Companies hiring software developers in Berlin on LinkedIn this week: job count, titles and company page. Leads for recruiters and B2B sales.',
-  {'searchQueries': ['software developer'], 'location': 'Berlin, Germany', 'postedWithinDays': 7, 'outputMode': 'companies', 'excludeStaffingAgencies': True, 'maxItems': 150},
+  {'searchQueries': ['software developer'], 'location': 'Berlin, Germany', 'postedWithinDays': 7, 'outputMode': 'companies', 'excludeStaffingAgencies': True, 'maxItemsPerCompany': 300, 'maxItems': 150},
   ['searchQueries', 'location', 'postedWithinDays', 'outputMode'], view='companies')
 # --- Glassdoor
 t('glassdoor-jobs-scraper', 'jobs-at-top-rated-companies', 'Jobs at Top-Rated Companies on Glassdoor (4+ Stars)',

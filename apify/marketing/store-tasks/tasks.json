@@ -358,13 +358,10 @@
   "seoDescription": "Fresh remote product manager jobs from LinkedIn, last 24 hours: company, seniority, applicants, Easy Apply, link. No login. Daily job alert.",
   "input": {
    "searchQueries": [
-    "product manager"
+    "remote product manager"
    ],
    "location": "United States",
    "postedWithinDays": 1,
-   "keywords": [
-    "remote"
-   ],
    "maxItems": 100
   },
   "fields": [

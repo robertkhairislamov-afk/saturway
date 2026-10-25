@@ -93,7 +93,7 @@ t('linkedin-jobs-scraper', 'linkedin-remote-product-manager-jobs', 'Remote Produ
   'Remote product manager jobs posted on LinkedIn in the last 24 hours, with company, seniority, applicants, Easy Apply and the job link. Run daily for fresh jobs only.',
   'LinkedIn Remote Product Manager Jobs – Posted Last 24h',
   'Fresh remote product manager jobs from LinkedIn, last 24 hours: company, seniority, applicants, Easy Apply, link. No login. Daily job alert.',
-  {'searchQueries': ['product manager'], 'location': 'United States', 'postedWithinDays': 1, 'keywords': ['remote'], 'maxItems': 100},
+  {'searchQueries': ['remote product manager'], 'location': 'United States', 'postedWithinDays': 1, 'maxItems': 100},
   ['searchQueries', 'location', 'postedWithinDays'])
 t('linkedin-jobs-scraper', 'companies-hiring-in-berlin-linkedin', 'Companies Hiring Developers in Berlin (LinkedIn)',
   'One row per company hiring software developers in Berlin on LinkedIn this week, with job count, titles and company page: a list of growing tech teams for recruiters and sales.',

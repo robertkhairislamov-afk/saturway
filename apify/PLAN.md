@@ -686,6 +686,14 @@ StepStone на платформе иногда отдаёт карточки м�
 - **Отпали:** YouTube-расшифровки 15,7 тыс. — robots.txt закрывает `/api/` и `/youtubei/` для всех; Pinterest — `Disallow: /` для всех; Airbnb, Spotify, eBay, MercadoLibre — запрет для Claude/Anthropic; Naver — `Disallow: /` для всех; всё на Google Search (Jobs, Shopping, Images, AI Overviews) — `/search` закрыт для всех; Taobao, Shopee, Douyin, 1688, JD — подписанные API/защита; сайты отзывов и соцсети — личные данные.
 - Итог: открытых ниш, где можно стать №1–2, — около 5–6 новых и 5–6 своих для продвижения, а не 20. Следующий шаг — проверка Google Ads Transparency.
 
+### Проверка всех акторов, 25.10
+
+- Контейнер пересоздан: scratchpad и токен Apify пропали. Работаю через коннектор Apify (чтение API и запуск акторов), токен не нужен.
+- **Работа:** все 26 публичных акторов запущены с реалистичным вводом, не примером (другие компании, города, слова) — все 26 SUCCEEDED с данными, каждый дошёл до лимита. За 30 дней (Store): ~26 запусков у каждого — ежедневная автопроверка Apify, все успешны; сбои — Glassdoor 1, LinkedIn 1, Reed 1 (логи чужих запусков не видны); All-in-One — 8 запусков остановлены пользователями.
+- **Найдено и исправлено:** Ads Transparency — у динамических поисковых объявлений в headline и displayUrl попадала заглушка Google «<dynamically generated based on landing page content>»; теперь поля пустые и `isDynamic: true` (сборка 0.1.10, проверено на Nike). Google News — не писал итоговое сообщение и SUMMARY, а при недоступности всех лент завершался «успешно» с пустым результатом; теперь сообщение, SUMMARY и явная ошибка (сборка 0.1.25, проверено). Автосборки из GitHub работают и у Ads Transparency.
+- **Пользователи за 30 дней** (в «пользователях» считается и владелец; автопроверки Apify — только в запусках: у Jobstreet и WTTJ 0 пользователей при 27–40 запусках): All-in-One 7 (184 запуска), Google Play 2, Redfin 2, Indeed 1 (всего 3, за 7 дней 0), остальные 22 — 1 или 0, то есть только мы. Доход по API не виден — смотреть Insights.
+- Вывод: качество не проблема, проблема — находимость. Кроме All-in-One, Google Play и Redfin внешних пользователей нет даже в больших нишах (LinkedIn, Indeed, AliExpress, Trends). Новых сайтов вакансий не делать; продвигать All-in-One и большие ниши; места в поиске Store — проверка 27.10.
+
 ### Google Ads Transparency Scraper, 21.10
 
 - Актор `robertosan16/google-ads-transparency-scraper` (id OT64Iwq4qfy9JxLC8, папка `actors/google-ads-transparency`), приватный, ждёт публикации владельцем. Цена $1.50/1000 результатов (Free; Starter $1.35, Scale $1.20, Business $1.05), без платы за старт; категории Marketing, Lead generation, Developer tools.

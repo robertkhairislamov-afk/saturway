@@ -1,0 +1,17 @@
+{
+  "actorKeyValueStoreSchemaVersion": 1,
+  "title": "Run records",
+  "description": "Records each run keeps in its default key-value store, next to the dataset of results.",
+  "collections": {
+    "summary": {
+      "title": "Run summary",
+      "description": "Ads in the Transparency Center, ads saved and errors for every brand, website or advertiser.",
+      "key": "SUMMARY"
+    },
+    "input": {
+      "title": "Input",
+      "description": "The input the run was started with.",
+      "key": "INPUT"
+    }
+  }
+}

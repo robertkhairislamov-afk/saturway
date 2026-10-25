@@ -1665,6 +1665,25 @@ export const outputSchema = (ats) => ({
   },
 });
 
+// Key-value store schema: the records the Actor writes to its default store.
+export const keyValueStoreSchema = (ats) => ({
+  actorKeyValueStoreSchemaVersion: 1,
+  title: 'Run records',
+  description: 'Records each run keeps in its default key-value store, next to the dataset of results.',
+  collections: {
+    summary: {
+      title: 'Run summary',
+      description: 'What the run did for each search, company or career site: jobs found, matched and saved (companies saved in the hiring-companies mode), and errors.',
+      key: 'SUMMARY',
+    },
+    input: {
+      title: 'Input',
+      description: 'The input the run was started with.',
+      key: 'INPUT',
+    },
+  },
+});
+
 export const actorJson = (ats) => ({
   actorSpecification: 1,
   name: ACTORS[ats].name,
@@ -1673,7 +1692,7 @@ export const actorJson = (ats) => ({
   version: '0.1',
   buildTag: 'latest',
   input: './input_schema.json',
-  storages: { dataset: './dataset_schema.json' },
+  storages: { dataset: './dataset_schema.json', keyValueStore: './key_value_store_schema.json' },
   output: './output_schema.json',
   dockerfile: '../Dockerfile',
   readme: '../README.md',

@@ -6,7 +6,7 @@ import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { ACTORS, actorJson, datasetSchema, familySection, inputSchema, integrationsSection, outputSchema } from './actors.mjs';
+import { ACTORS, actorJson, datasetSchema, familySection, inputSchema, integrationsSection, keyValueStoreSchema, outputSchema } from './actors.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -37,6 +37,7 @@ for (const ats of names) {
   writeFileSync(join(out, '.actor', 'input_schema.json'), json(inputSchema(ats)));
   writeFileSync(join(out, '.actor', 'dataset_schema.json'), json(datasetSchema(ats)));
   writeFileSync(join(out, '.actor', 'output_schema.json'), json(outputSchema(ats)));
+  writeFileSync(join(out, '.actor', 'key_value_store_schema.json'), json(keyValueStoreSchema(ats)));
   writeFileSync(join(out, 'Dockerfile'), DOCKERFILE(ats));
   writeFileSync(join(out, '.dockerignore'), 'node_modules\nstorage\n.git\n');
   // Integrations and the list of the other job scrapers go before the closing line of the README.

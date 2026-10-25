@@ -7,6 +7,12 @@
       "title": "Articles",
       "description": "News articles with title, source, publication date, Google News link and, optionally, the publisher URL.",
       "template": "{{links.apiDefaultDatasetUrl}}/items?view=overview"
+    },
+    "summary": {
+      "type": "string",
+      "title": "Run summary",
+      "description": "Articles saved and errors for every feed (search, topic or top stories), with the number of publisher URLs resolved.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/SUMMARY"
     }
   }
 }

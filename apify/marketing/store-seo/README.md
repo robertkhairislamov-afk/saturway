@@ -39,6 +39,27 @@
 | google trends api | 1017 | Trends нет в первых 500 |
 | trending now | 461 | Trends 34 |
 
+## Места 25.10 (через 5 дней после новых текстов)
+
+| Запрос | Всего | Наш актор и место (20.10 → 25.10) |
+|---|---|---|
+| play store | 4971 | Google Play 227 → **10** |
+| google play | 6190 | Google Play 25 → 26 |
+| google trends api | 1101 | Trends нет в 500 → **120** |
+| google trends | 2013 | Trends 228 → 276 |
+| aliexpress | 310 | AliExpress 222 → **147** |
+| indeed / indeed scraper | 1522 | Indeed 151 → 159 / 106 → 110; All-in-One 82 по «indeed» |
+| glassdoor | 344 | All-in-One 62, Glassdoor 123 |
+| linkedin jobs | 2159 | LinkedIn 428 |
+| job scraper | 12 839 | нет в 500 |
+| app store | 3467 | App Store нет в 500 (было 456) |
+| redfin | 624 | Redfin 54 |
+| google ads transparency | 481 | Ads Transparency 150 |
+| google news | 3334 | Google News 284 |
+| seek / stepstone / infojobs | 12 961 / 125 / 71 | 120 / 77 / 57 |
+
+Вывод: тексты работают там, где запрос совпал со словами в заголовке («play store» 227 → 10, «google trends api» → 120). Но даже в маленьких нишах (InfoJobs — 57-е из 71, StepStone — 77-е из 125) мы ниже середины: порядок в Store больше всего зависит от числа пользователей и запусков, а у нас их почти нет. Первая страница (20 мест) — только Google Play по «play store».
+
 Через неделю (27.10) сравнить: `python3 rank.py "indeed scraper" "play store" "google trends api"` (листает `/v2/store?search=` по 100 и ищет `robertosan16`).
 
 ## Предложения

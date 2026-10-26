@@ -8,7 +8,8 @@ import jpeg from 'jpeg-js';
 const BUCKET = 'prd-lifullconnect-backend-b2b-images';
 
 export function thumbnailForKey(key, width = 64, height = 48) {
-  const cfg = { bucket: BUCKET, key, edits: { resize: { width, height, fit: 'cover' } } };
+  // toFormat: some originals are WebP or PNG, and the thumbnail keeps the original format otherwise.
+  const cfg = { bucket: BUCKET, key, edits: { resize: { width, height, fit: 'cover' }, toFormat: 'jpeg' } };
   return `https://img.fazwaz.com/${Buffer.from(JSON.stringify(cfg)).toString('base64')}`;
 }
 

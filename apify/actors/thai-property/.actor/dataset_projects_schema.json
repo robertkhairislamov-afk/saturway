@@ -96,6 +96,12 @@
       },
       "uniqueSaleUnits": {
         "description": "Sale listings minus the repeats: roughly how many different units are for sale."
+      },
+      "segment": {
+        "description": "Market segment: resale (completed more than about two years ago), new (completed in the last two years, mostly developer stock) or off plan (under construction). New and off-plan projects list every unit and have no rents yet."
+      },
+      "construction": {
+        "description": "Construction status as the site gives it, for example \"Completed (Oct 2021)\" or \"Off Plan (Dec 2028)\"."
       }
     },
     "additionalProperties": true
@@ -107,6 +113,7 @@
         "fields": [
           "project",
           "district",
+          "segment",
           "saleListings",
           "uniqueSaleUnits",
           "rentListings",
@@ -194,6 +201,10 @@
           "uniqueSaleUnits": {
             "label": "Unique for sale",
             "format": "number"
+          },
+          "segment": {
+            "label": "Segment",
+            "format": "text"
           }
         }
       }

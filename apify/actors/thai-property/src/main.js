@@ -10,7 +10,7 @@ import { applyHistory, keepAsSeen, loadHistory, saveHistory } from './history.js
 import { HttpError, createHttpClient, mapLimit } from './http.js';
 import { findLots } from './match.js';
 import { hashOfJpeg, loadPhotoHashes, savePhotoHashes, shortPhotoId, thumbnailForKey } from './photos.js';
-import { districtRecords, projectKey, projectRecords } from './stats.js';
+import { districtRecords, projectKey, projectRecords, projectSegment } from './stats.js';
 
 await Actor.init();
 
@@ -202,6 +202,7 @@ for (const l of allListings) {
   l.completedYear = info.completedYear ?? info.yearBuilt ?? null;
   l.nearestLandmark = info.nearestLandmark ?? null;
   l.nearestLandmarkKm = info.nearestLandmarkKm ?? null;
+  l.segment = projectSegment(info);
 }
 
 const removedByProject = {};

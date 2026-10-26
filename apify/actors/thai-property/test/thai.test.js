@@ -5,7 +5,7 @@ import { test } from 'node:test';
 import { districtOf, pattayaDistrict } from '../src/areas.js';
 import { descriptionFacts, homesData, imageKey, listingKey, parseListingPage, parseListPage, searchUrl, thumbnailUrl } from '../src/dotproperty.js';
 import { applyHistory, dayNumber, keepAsSeen, loadHistory, saveHistory } from '../src/history.js';
-import { districtRecords, median, projectKey, projectRecords } from '../src/stats.js';
+import { districtRecords, median, projectKey, projectRecords, projectSegment } from '../src/stats.js';
 
 const fixture = (name) => readFileSync(new URL(`./fixtures/${name}`, import.meta.url), 'utf8');
 
@@ -118,6 +118,7 @@ test('project figures: medians, yield and outliers', () => {
   assert.equal(p.developer, 'D');
   const [d] = districtRecords(items);
   assert.equal(d.district, 'Jomtien');
+  assert.equal(d.segment, 'all');
   assert.equal(d.projects, 1);
   assert.equal(median([3, 1, 2]), 2);
 });
@@ -250,4 +251,18 @@ test('lots: re-saved photos (new files, same picture) join two listings, with co
   assert.equal(one[0].confidence, 'medium');
   // Without hashes, different files are different photos.
   assert.equal(findLots([a, b]).lots.length, 0);
+});
+
+test('market segments: resale, new and off plan, and district figures per segment', () => {
+  const now = new Date('2026-10-26T00:00:00Z');
+  assert.equal(projectSegment({ construction: 'Off Plan (Dec 2028)', completedYear: 2028 }, now), 'off plan');
+  assert.equal(projectSegment({ construction: 'Completed (Aug 2026)', completedYear: 2026 }, now), 'new');
+  assert.equal(projectSegment({ construction: 'Completed (Sep 2007)', completedYear: 2007 }, now), 'resale');
+  assert.equal(projectSegment({}, now), null);
+  const rows = districtRecords([
+    listing({ segment: 'resale' }), listing({ segment: 'resale', projectKey: 'q' }), listing({ segment: 'off plan', projectKey: 'r', price: 6000000 }),
+  ]);
+  assert.deepEqual(rows.map((r) => [r.segment, r.saleListings, r.projects]), [['all', 3, 3], ['resale', 2, 2], ['new & off plan', 1, 1]]);
+  assert.equal(rows[1].medianSalePricePerSqm, 100000);
+  assert.equal(rows[2].medianSalePricePerSqm, 200000);
 });

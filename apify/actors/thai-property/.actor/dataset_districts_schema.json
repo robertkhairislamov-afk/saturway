@@ -60,6 +60,9 @@
       },
       "scrapedAt": {
         "description": "When the record was saved."
+      },
+      "segment": {
+        "description": "all: the whole district; resale: listings in completed projects older than about two years; new & off plan: projects under construction or completed in the last two years."
       }
     },
     "additionalProperties": true
@@ -70,6 +73,7 @@
       "transformation": {
         "fields": [
           "district",
+          "segment",
           "projects",
           "saleListings",
           "rentListings",
@@ -132,6 +136,10 @@
           },
           "medianDaysListed": {
             "label": "Days listed",
+            "format": "text"
+          },
+          "segment": {
+            "label": "Segment",
             "format": "text"
           }
         }

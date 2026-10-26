@@ -71,6 +71,20 @@ function summarize(listings) {
   };
 }
 
+// The market a project belongs to: off plan (under construction), new (completed in the last two
+// years, mostly developer stock) or resale. Off-plan and new projects list every unit and have no
+// rents yet, so they would distort the figures of the resale market.
+export function projectSegment(info = {}, now = new Date()) {
+  const construction = String(info.construction ?? '');
+  if (/off ?plan|under construction|pre-?sale/i.test(construction)) return 'off plan';
+  const year = info.completedYear ?? info.yearBuilt;
+  if (/completed/i.test(construction) || year) {
+    if (year && year >= now.getUTCFullYear() - 1) return 'new';
+    return 'resale';
+  }
+  return null;
+}
+
 const groupBy = (items, keyOf) => {
   const groups = new Map();
   for (const item of items) {
@@ -104,6 +118,8 @@ export function projectRecords(listings, { details = {}, removed = {} } = {}) {
       latitude: items.find((l) => l.latitude != null)?.latitude ?? null,
       longitude: items.find((l) => l.longitude != null)?.longitude ?? null,
       developer: info.developer ?? null,
+      segment: projectSegment(info),
+      construction: info.construction ?? null,
       completedYear: info.completedYear ?? null,
       floors: info.floors ?? null,
       units,
@@ -117,13 +133,27 @@ export function projectRecords(listings, { details = {}, removed = {} } = {}) {
   }).sort((a, b) => b.saleListings + b.rentListings - (a.saleListings + a.rentListings));
 }
 
+// One record per district for the whole market, and one for each segment: resale, and new and
+// off-plan projects together.
 export function districtRecords(listings, { removedByDistrict = {} } = {}) {
-  return [...groupBy(listings, (l) => l.district).entries()].map(([district, items]) => ({
-    recordType: 'district',
-    district,
-    city: mostCommon(items.map((l) => l.city)),
-    projects: new Set(items.map((l) => l.projectKey).filter(Boolean)).size,
-    ...summarize(items),
-    removedSinceLastRun: removedByDistrict[district] ?? 0,
-  })).sort((a, b) => b.saleListings - a.saleListings);
+  const SEGMENTS = [['all', () => true], ['resale', (l) => l.segment === 'resale'], ['new & off plan', (l) => l.segment === 'new' || l.segment === 'off plan']];
+  const rows = [];
+  for (const [district, items] of groupBy(listings, (l) => l.district).entries()) {
+    for (const [segment, keep] of SEGMENTS) {
+      const part = items.filter(keep);
+      if (!part.length) continue;
+      rows.push({
+        recordType: 'district',
+        district,
+        segment,
+        city: mostCommon(part.map((l) => l.city)),
+        projects: new Set(part.map((l) => l.projectKey).filter(Boolean)).size,
+        ...summarize(part),
+        removedSinceLastRun: segment === 'all' ? removedByDistrict[district] ?? 0 : null,
+      });
+    }
+  }
+  const order = { all: 0, resale: 1, 'new & off plan': 2 };
+  const size = new Map(rows.filter((r) => r.segment === 'all').map((r) => [r.district, r.saleListings]));
+  return rows.sort((a, b) => size.get(b.district) - size.get(a.district) || order[a.segment] - order[b.segment]);
 }

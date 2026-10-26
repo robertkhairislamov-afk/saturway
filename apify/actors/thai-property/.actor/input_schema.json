@@ -87,6 +87,33 @@
       "minimum": 0,
       "default": 1500
     },
+    "lotsFor": {
+      "title": "Find repeated units in",
+      "type": "array",
+      "editor": "select",
+      "description": "Deals in which to find the same unit listed by several advertisers.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "sale",
+          "rent"
+        ],
+        "enumTitles": [
+          "For sale",
+          "For rent"
+        ]
+      },
+      "default": [
+        "sale"
+      ]
+    },
+    "maxNewPhotoHashesPerRun": {
+      "title": "Max new photos compared per run",
+      "type": "integer",
+      "description": "Listings that may repeat a unit are compared by their first 4 photos (64×48 thumbnails, about 8 KB each). Comparisons are kept, so later runs read only new photos. The largest projects come first; the rest wait for the next runs.",
+      "minimum": 0,
+      "default": 30000
+    },
     "saveListings": {
       "title": "Save listings",
       "type": "boolean",

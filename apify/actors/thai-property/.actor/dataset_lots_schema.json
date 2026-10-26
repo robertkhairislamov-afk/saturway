@@ -53,13 +53,16 @@
         "description": "Link to the cheapest listing of the unit."
       },
       "sharedPhotos": {
-        "description": "Photo files the listings share (marketing renders and common-area photos not counted)."
+        "description": "Photos the listings share: the same file or nearly the same picture (marketing renders and common-area photos not counted)."
       },
       "offers": {
         "description": "Every listing of the unit: link, price, advertiser signature, posted date and days listed."
       },
       "scrapedAt": {
         "description": "When the record was saved."
+      },
+      "confidence": {
+        "description": "high: two or more shared photos; medium: one, which can also be a render used by two listings of different units."
       }
     },
     "additionalProperties": true
@@ -78,7 +81,8 @@
           "maxPrice",
           "priceSpreadPercent",
           "vsProjectMedianPercent",
-          "cheapestUrl"
+          "cheapestUrl",
+          "confidence"
         ]
       },
       "display": {
@@ -123,6 +127,10 @@
           "cheapestUrl": {
             "label": "Cheapest",
             "format": "link"
+          },
+          "confidence": {
+            "label": "Confidence",
+            "format": "text"
           }
         }
       }

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "apify": "^3.7.2",
+    "jpeg-js": "^0.4.4",
     "undici": "^7.29.1"
   },
   "engines": {

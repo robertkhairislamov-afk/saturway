@@ -212,3 +212,42 @@ test('history: kept in parts by the first character of the key, links included',
   assert.equal(Object.keys(again).length, 2);
   assert.equal(again['aa-1'][1], again.b1[1]);
 });
+
+import jpegjs from 'jpeg-js';
+import { differenceHash, hammingDistance, hashOfJpeg, shortPhotoId, thumbnailForKey } from '../src/photos.js';
+
+const picture = (fn, width = 64, height = 48) => {
+  const data = Buffer.alloc(width * height * 4);
+  for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) {
+    const v = Math.max(0, Math.min(255, Math.round(fn(x, y))));
+    data.set([v, v, v, 255], (y * width + x) * 4);
+  }
+  return { width, height, data };
+};
+
+test('visual hashes: a re-saved, brighter copy matches; another picture does not', () => {
+  const room = picture((x, y) => 128 + 100 * Math.sin(x / 6) * Math.cos(y / 9));
+  const copy = jpegjs.encode(picture((x, y) => 140 + 100 * Math.sin(x / 6) * Math.cos(y / 9)), 60).data;
+  const other = picture((x, y) => 128 + 100 * Math.cos(x / 4 + y / 3));
+  const a = differenceHash(room);
+  assert.match(a, /^[0-9a-f]{16}$/);
+  assert.ok(hammingDistance(a, hashOfJpeg(copy)) <= 6);
+  assert.ok(hammingDistance(a, differenceHash(other)) > 16);
+  assert.equal(hammingDistance('ff00000000000000', '0f00000000000001'), 5);
+  assert.equal(shortPhotoId('ingester/u/0123456789abcdef0123.jpeg'), '0123456789abcdef');
+  assert.match(Buffer.from(thumbnailForKey('ingester/u/x.jpeg').split('/').pop(), 'base64').toString(), /"width":64/);
+});
+
+test('lots: re-saved photos (new files, same picture) join two listings, with confidence', () => {
+  const hashes = new Map([['k1', 'aaaaaaaaaaaaaaaa'], ['k2', 'aaaaaaaaaaaaaaab'], ['k3', '5555555555555555'], ['k4', '5555555555555554']]);
+  const a = unit('a', { photoKeys: ph('k1', 'k3') });
+  const b = unit('b', { price: 3100000, photoKeys: ph('k2', 'k4') });
+  const { lots } = findLots([a, b], { photoHashes: hashes });
+  assert.equal(lots.length, 1);
+  assert.equal(lots[0].sharedPhotos, 2);
+  assert.equal(lots[0].confidence, 'high');
+  const one = findLots([unit('c', { photoKeys: ph('k1') }), unit('d', { photoKeys: ph('k2') })], { photoHashes: hashes }).lots;
+  assert.equal(one[0].confidence, 'medium');
+  // Without hashes, different files are different photos.
+  assert.equal(findLots([a, b]).lots.length, 0);
+});

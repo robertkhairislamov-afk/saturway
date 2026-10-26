@@ -1,12 +1,18 @@
 // One unit, many listings: agencies list the same apartment with the owner's photos, at different
 // prices. Listings are joined into a "lot" when they are in the same project, have the same
-// bedrooms, nearly the same size and share a photo file that is not a marketing render.
+// bedrooms, nearly the same size and share a photo that is not a marketing render. A photo is the
+// same when it is the same file or, with visual hashes, nearly the same picture.
+
+import { hammingDistance, shortPhotoId } from './photos.js';
 
 // A photo in this many listings of a project, or in listings of different layouts, is a render or
 // a photo of the common areas: it says nothing about which unit it is.
 const SHARED_PHOTO_LISTINGS = 5;
 const SIZE_TOLERANCE_SQM = 1;
 const SAME_BATCH_MINUTES = 15;
+// Bits two hashes of the same picture may differ in (re-saved, watermarked, resized).
+export const SAME_PICTURE_BITS = 6;
+const HASHED_PHOTOS = 4;
 
 // The file's fingerprint: the sha256 at the end of the image key.
 export const photoId = (key) => String(key ?? '').split('/').pop().replace(/\.\w+$/, '') || null;
@@ -49,9 +55,35 @@ const median = (values) => {
   return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
 };
 
+// The photos of each listing of a project as IDs: a visual cluster for hashed photos (pictures
+// within a few bits of each other are one), the file for the others.
+function photoIdentities(items, photoHashes) {
+  const reps = [];
+  const out = new Map();
+  for (const l of items) {
+    const ids = new Set();
+    l.photoKeys.forEach((key, i) => {
+      const hash = i < HASHED_PHOTOS ? photoHashes.get(shortPhotoId(key)) : undefined;
+      if (!hash) {
+        const id = photoId(key);
+        if (id) ids.add(`f:${id}`);
+        return;
+      }
+      let cluster = reps.find((r) => hammingDistance(r.hash, hash) <= SAME_PICTURE_BITS);
+      if (!cluster) {
+        cluster = { hash, id: `v:${reps.length}` };
+        reps.push(cluster);
+      }
+      ids.add(cluster.id);
+    });
+    out.set(l.key, ids);
+  }
+  return out;
+}
+
 // Groups listings of one deal type (sale or rent) into lots. Returns the lots with two or more
 // listings, and for every listing in them its lot ID.
-export function findLots(listings, { projectMedians = {} } = {}) {
+export function findLots(listings, { projectMedians = {}, photoHashes = new Map() } = {}) {
   const byProject = new Map();
   for (const l of listings) {
     if (!l.projectKey || !l.photoKeys?.length) continue;
@@ -62,9 +94,10 @@ export function findLots(listings, { projectMedians = {} } = {}) {
   const evidence = new Map();
   for (const items of byProject.values()) {
     if (items.length < 2) continue;
-    // Which listings use each photo file, and whether the file is shared too widely to count.
+    // Which listings use each photo, and whether it is shared too widely to count.
+    const ids = photoIdentities(items, photoHashes);
     const users = new Map();
-    for (const l of items) for (const id of new Set(l.photoKeys.map(photoId).filter(Boolean))) {
+    for (const l of items) for (const id of ids.get(l.key)) {
       if (!users.has(id)) users.set(id, []);
       users.get(id).push(l);
     }
@@ -129,6 +162,8 @@ export function findLots(listings, { projectMedians = {} } = {}) {
       vsProjectMedianPercent: size && projectPsm ? Math.round(((min / size - projectPsm) / projectPsm) * 1000) / 10 : null,
       cheapestUrl: items[0].url,
       sharedPhotos: shared,
+      // High: two or more shared photos; medium: one, which can also be a render used by two listings.
+      confidence: shared >= 2 ? 'high' : 'medium',
       offers: items.map((l) => ({ url: l.url, price: l.price, agency: agencyHint(l.descriptionStart), postedAt: l.postedAt, daysListed: l.daysListed ?? null })),
     });
   }

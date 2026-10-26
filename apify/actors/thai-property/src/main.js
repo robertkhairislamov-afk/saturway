@@ -9,6 +9,7 @@ import { MAX_RESULTS, PAGE_SIZE, parseListPage, parseListingPage, searchUrl } fr
 import { applyHistory, keepAsSeen, loadHistory, saveHistory } from './history.js';
 import { HttpError, createHttpClient, mapLimit } from './http.js';
 import { findLots } from './match.js';
+import { hashOfJpeg, loadPhotoHashes, savePhotoHashes, shortPhotoId, thumbnailForKey } from './photos.js';
 import { districtRecords, projectKey, projectRecords } from './stats.js';
 
 await Actor.init();
@@ -23,6 +24,8 @@ const input = {
   includeProjectDetails: true,
   maxProjectDetailsPerRun: 600,
   maxRemovalChecksPerRun: 1500,
+  lotsFor: ['sale'],
+  maxNewPhotoHashesPerRun: 30000,
   projectDetailsMaxAgeDays: 90,
   saveListings: true,
   memoryName: 'thai-property-history',
@@ -211,11 +214,57 @@ const projects = projectRecords(allListings, { details, removed: removedByProjec
 const districts = districtRecords(allListings, { removedByDistrict }).map((d) => ({ ...d, scrapedAt }));
 summary.projects = projects.length;
 
+// Visual hashes of the first photos of listings that may repeat a unit (another listing in the
+// project with the same bedrooms and size within 1 m²). Kept between runs; new ones are read up to
+// a cap per run, largest projects first.
+const photoHashes = await loadPhotoHashes(memory);
+const lotTransactions = input.transactions.filter((t) => input.lotsFor.includes(t));
+const candidates = [];
+for (const transaction of lotTransactions) {
+  const groups = new Map();
+  for (const l of allListings) {
+    if (l.transaction !== transaction || !l.projectKey || !l.sizeSqm || !l.photoKeys?.length) continue;
+    const k = `${l.projectKey}|${l.bedrooms}`;
+    if (!groups.has(k)) groups.set(k, []);
+    groups.get(k).push(l);
+  }
+  for (const items of groups.values()) {
+    items.sort((a, b) => a.sizeSqm - b.sizeSqm);
+    items.forEach((l, i) => {
+      if ((i > 0 && l.sizeSqm - items[i - 1].sizeSqm <= 1) || (i < items.length - 1 && items[i + 1].sizeSqm - l.sizeSqm <= 1)) candidates.push(l);
+    });
+  }
+}
+const perProject = new Map();
+for (const l of candidates) perProject.set(l.projectKey, (perProject.get(l.projectKey) ?? 0) + 1);
+candidates.sort((a, b) => perProject.get(b.projectKey) - perProject.get(a.projectKey));
+const wanted = [...new Set(candidates.flatMap((l) => l.photoKeys.slice(0, 4)))].filter((key) => !photoHashes.has(shortPhotoId(key)));
+const todoPhotos = wanted.slice(0, input.maxNewPhotoHashesPerRun);
+summary.photoHashes = { known: photoHashes.size, new: 0, failed: 0, leftForNextRuns: wanted.length - todoPhotos.length };
+if (todoPhotos.length) {
+  const images = createHttpClient({ proxyConfiguration, delayMs: 150, maxRetries: 3, timeoutMs: 30000 });
+  await Actor.setStatusMessage(`Comparing photos: ${todoPhotos.length} new photos of ${candidates.length} listings that may repeat a unit.`);
+  await mapLimit(todoPhotos, 4, async (key) => {
+    try {
+      photoHashes.set(shortPhotoId(key), hashOfJpeg(await images.get(thumbnailForKey(key), { binary: true })));
+      summary.photoHashes.new++;
+    } catch {
+      summary.photoHashes.failed++;
+    }
+    if (summary.photoHashes.new % 5000 === 0 && summary.photoHashes.new) {
+      await savePhotoHashes(memory, photoHashes);
+      await Actor.setStatusMessage(`Comparing photos: ${summary.photoHashes.new} of ${todoPhotos.length}.`);
+    }
+  });
+  await savePhotoHashes(memory, photoHashes);
+  summary.http.images = images.stats;
+}
+
 // Lots: the same unit listed by several advertisers, per deal type.
 const lots = [];
-for (const transaction of input.transactions) {
+for (const transaction of lotTransactions) {
   const projectMedians = Object.fromEntries(projects.map((p) => [p.projectKey, transaction === 'sale' ? p.medianSalePricePerSqm : p.medianRentPerSqm]));
-  const found = findLots(allListings.filter((l) => l.transaction === transaction), { projectMedians });
+  const found = findLots(allListings.filter((l) => l.transaction === transaction), { projectMedians, photoHashes });
   for (const l of allListings) if (l.transaction === transaction) l.lotId = found.lotOf.get(l.key) ?? null;
   lots.push(...found.lots.map((lot) => ({ ...lot, scrapedAt })));
 }

@@ -1,0 +1,36 @@
+{
+  "actorOutputSchemaVersion": 1,
+  "title": "Thai Property Market Analyzer output",
+  "properties": {
+    "projects": {
+      "type": "string",
+      "title": "Projects",
+      "description": "Market figures and facts per project (condominium).",
+      "template": "{{storages.datasets.default.apiUrl}}/items?view=overview"
+    },
+    "districts": {
+      "type": "string",
+      "title": "Districts",
+      "description": "Market figures per district.",
+      "template": "{{storages.datasets.districts.apiUrl}}/items?view=overview"
+    },
+    "listings": {
+      "type": "string",
+      "title": "Listings",
+      "description": "Every listing with its district, history and project facts.",
+      "template": "{{storages.datasets.listings.apiUrl}}/items?view=overview"
+    },
+    "removed": {
+      "type": "string",
+      "title": "Left the market",
+      "description": "Listings seen in the last run and gone in this one.",
+      "template": "{{storages.datasets.removed.apiUrl}}/items?view=overview"
+    },
+    "summary": {
+      "type": "string",
+      "title": "Run summary",
+      "description": "What the run read for each search, and errors.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/SUMMARY"
+    }
+  }
+}

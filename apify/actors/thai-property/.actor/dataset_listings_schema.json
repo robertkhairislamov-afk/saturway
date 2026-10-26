@@ -1,0 +1,202 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "recordType": {
+        "description": "Always \"listing\"."
+      },
+      "source": {
+        "description": "Site the listing comes from."
+      },
+      "key": {
+        "description": "ID of the listing on the site (from its link)."
+      },
+      "url": {
+        "description": "Link to the listing."
+      },
+      "title": {
+        "description": "Title of the listing."
+      },
+      "transaction": {
+        "description": "sale or rent."
+      },
+      "propertyType": {
+        "description": "condo, house, villa or townhouse."
+      },
+      "location": {
+        "description": "The location searched."
+      },
+      "project": {
+        "description": "Project name."
+      },
+      "projectKey": {
+        "description": "The name in a form that is the same however agencies write it; joins projects, listings and history."
+      },
+      "bedrooms": {
+        "description": "Bedrooms."
+      },
+      "bathrooms": {
+        "description": "Bathrooms."
+      },
+      "sizeSqm": {
+        "description": "Size in m²."
+      },
+      "price": {
+        "description": "Asking price in THB; for rent, per month."
+      },
+      "currency": {
+        "description": "Currency."
+      },
+      "pricePerSqm": {
+        "description": "Price per m², in THB."
+      },
+      "subdistrict": {
+        "description": "Subdistrict from the listing."
+      },
+      "city": {
+        "description": "City."
+      },
+      "province": {
+        "description": "Province."
+      },
+      "district": {
+        "description": "District: for Pattaya the tourist district from coordinates (Naklua & Wongamat, North, Central and South Pattaya, Pratumnak, Jomtien, Na Jomtien, Bang Saray, East Pattaya); elsewhere the subdistrict."
+      },
+      "districtSource": {
+        "description": "coordinates (Pattaya districts) or listing (subdistrict)."
+      },
+      "latitude": {
+        "description": "Latitude of the project."
+      },
+      "longitude": {
+        "description": "Longitude of the project."
+      },
+      "postedAt": {
+        "description": "When the listing was posted or last refreshed, as the site gives it."
+      },
+      "imageUrl": {
+        "description": "Main photo."
+      },
+      "imageKey": {
+        "description": "File name of the main photo on the image service; the same file means the same photo."
+      },
+      "descriptionStart": {
+        "description": "Start of the description; agencies often sign it."
+      },
+      "isNewListing": {
+        "description": "The site marks the listing as new."
+      },
+      "priceChangeBadge": {
+        "description": "The site marks a price change."
+      },
+      "firstSeenAt": {
+        "description": "First date the listing was seen (or posted, if earlier)."
+      },
+      "daysListed": {
+        "description": "Days since the first date."
+      },
+      "isNewSinceLastRun": {
+        "description": "Not there in the last run."
+      },
+      "previousPrice": {
+        "description": "Price in the last run, when it changed."
+      },
+      "priceChange": {
+        "description": "Change against the last run, in THB."
+      },
+      "priceChangePercent": {
+        "description": "Change against the last run, in percent."
+      },
+      "firstPrice": {
+        "description": "Price when the listing was first seen."
+      },
+      "developer": {
+        "description": "Developer, from the project details."
+      },
+      "completedYear": {
+        "description": "Year the project was completed."
+      },
+      "nearestLandmark": {
+        "description": "Nearest landmark the site names, often a beach."
+      },
+      "nearestLandmarkKm": {
+        "description": "Distance to the nearest landmark, in km."
+      },
+      "scrapedAt": {
+        "description": "When the record was saved."
+      }
+    },
+    "additionalProperties": true
+  },
+  "views": {
+    "overview": {
+      "title": "Listings",
+      "transformation": {
+        "fields": [
+          "project",
+          "district",
+          "transaction",
+          "bedrooms",
+          "sizeSqm",
+          "price",
+          "pricePerSqm",
+          "daysListed",
+          "priceChangePercent",
+          "postedAt",
+          "url"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "project": {
+            "label": "Project",
+            "format": "text"
+          },
+          "district": {
+            "label": "District",
+            "format": "text"
+          },
+          "transaction": {
+            "label": "Deal",
+            "format": "text"
+          },
+          "bedrooms": {
+            "label": "Beds",
+            "format": "number"
+          },
+          "sizeSqm": {
+            "label": "m²",
+            "format": "number"
+          },
+          "price": {
+            "label": "Price ฿",
+            "format": "number"
+          },
+          "pricePerSqm": {
+            "label": "฿ per m²",
+            "format": "number"
+          },
+          "daysListed": {
+            "label": "Days listed",
+            "format": "number"
+          },
+          "priceChangePercent": {
+            "label": "Price change %",
+            "format": "number"
+          },
+          "postedAt": {
+            "label": "Posted",
+            "format": "date"
+          },
+          "url": {
+            "label": "Link",
+            "format": "link"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "recordType": {
+        "description": "Always \"removed\"."
+      },
+      "key": {
+        "description": "ID of the listing on the site (from its link)."
+      },
+      "projectKey": {
+        "description": "The name in a form that is the same however agencies write it; joins projects, listings and history."
+      },
+      "district": {
+        "description": "District: for Pattaya the tourist district from coordinates (Naklua & Wongamat, North, Central and South Pattaya, Pratumnak, Jomtien, Na Jomtien, Bang Saray, East Pattaya); elsewhere the subdistrict."
+      },
+      "lastPrice": {
+        "description": "Last asking price seen, in THB."
+      },
+      "firstSeenAt": {
+        "description": "First date the listing was seen."
+      },
+      "lastSeenAt": {
+        "description": "Last date it was seen."
+      },
+      "transaction": {
+        "description": "sale or rent."
+      },
+      "propertyType": {
+        "description": "condo, house, villa or townhouse."
+      },
+      "location": {
+        "description": "The location searched."
+      },
+      "scrapedAt": {
+        "description": "When the record was saved."
+      }
+    },
+    "additionalProperties": true
+  },
+  "views": {
+    "overview": {
+      "title": "Left the market",
+      "transformation": {
+        "fields": [
+          "projectKey",
+          "district",
+          "transaction",
+          "lastPrice",
+          "firstSeenAt",
+          "lastSeenAt"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "projectKey": {
+            "label": "Project",
+            "format": "text"
+          },
+          "district": {
+            "label": "District",
+            "format": "text"
+          },
+          "transaction": {
+            "label": "Deal",
+            "format": "text"
+          },
+          "lastPrice": {
+            "label": "Last price ฿",
+            "format": "number"
+          },
+          "firstSeenAt": {
+            "label": "First seen",
+            "format": "text"
+          },
+          "lastSeenAt": {
+            "label": "Last seen",
+            "format": "text"
+          }
+        }
+      }
+    }
+  }
+}

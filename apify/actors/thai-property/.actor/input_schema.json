@@ -1,0 +1,87 @@
+{
+  "title": "Thai Property Market Analyzer",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "locations": {
+      "title": "Locations",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Dot Property location paths, one per line: <code>chonburi/pattaya</code>, <code>phuket</code>, <code>bangkok</code>, <code>prachuap-khiri-khan/hua-hin</code>, <code>chiang-mai</code>. The path is the part of a Dot Property search link after <code>condos-for-sale/</code>.",
+      "prefill": ["chonburi/pattaya"],
+      "default": ["chonburi/pattaya"]
+    },
+    "propertyTypes": {
+      "title": "Property types",
+      "type": "array",
+      "editor": "select",
+      "description": "Types of property to read in each location.",
+      "items": { "type": "string", "enum": ["condo", "house", "villa", "townhouse"], "enumTitles": ["Condos", "Houses", "Villas", "Townhouses"] },
+      "default": ["condo"]
+    },
+    "transactions": {
+      "title": "Sale and rent",
+      "type": "array",
+      "editor": "select",
+      "description": "Sale listings give prices; rent listings give rents and, together, the gross yield of each project.",
+      "items": { "type": "string", "enum": ["sale", "rent"], "enumTitles": ["For sale", "For rent"] },
+      "default": ["sale", "rent"]
+    },
+    "maxPagesPerSearch": {
+      "title": "Max pages per search",
+      "type": "integer",
+      "description": "30 listings per page. 0 reads every page. A partial read gives figures but cannot tell which listings left the market.",
+      "minimum": 0,
+      "default": 0
+    },
+    "includeProjectDetails": {
+      "title": "Project details",
+      "type": "boolean",
+      "description": "Read one listing page per project for its developer, completion year, floors, number of units and nearest landmark with its distance. Kept for 90 days, so later runs read only new projects.",
+      "default": true
+    },
+    "maxProjectDetailsPerRun": {
+      "title": "Max project details per run",
+      "type": "integer",
+      "description": "Projects with the most listings first; the rest are read in the next runs.",
+      "minimum": 0,
+      "default": 600
+    },
+    "saveListings": {
+      "title": "Save listings",
+      "type": "boolean",
+      "description": "Save every listing as well as the project and district figures.",
+      "default": true
+    },
+    "memoryName": {
+      "title": "Memory name",
+      "type": "string",
+      "editor": "textfield",
+      "description": "Key-value store that keeps what earlier runs saw: first date and price of each listing, project details. Use one name per market you track.",
+      "default": "thai-property-history"
+    },
+    "concurrency": {
+      "title": "Parallel requests",
+      "type": "integer",
+      "description": "Requests at the same time. Keep it low: the Actor reads the site at a visitor's pace.",
+      "minimum": 1,
+      "maximum": 4,
+      "default": 2
+    },
+    "delayMs": {
+      "title": "Pause between requests (ms)",
+      "type": "integer",
+      "description": "Average pause before each request of each parallel reader.",
+      "minimum": 300,
+      "default": 1000
+    },
+    "proxyConfiguration": {
+      "title": "Proxy",
+      "type": "object",
+      "editor": "proxy",
+      "description": "Apify Proxy datacenter addresses work.",
+      "prefill": { "useApifyProxy": true },
+      "default": { "useApifyProxy": true }
+    }
+  }
+}

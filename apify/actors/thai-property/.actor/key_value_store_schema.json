@@ -1,0 +1,17 @@
+{
+  "actorKeyValueStoreSchemaVersion": 1,
+  "title": "Run records",
+  "description": "Records each run keeps in its default key-value store, next to the dataset of results.",
+  "collections": {
+    "summary": {
+      "title": "Summary",
+      "description": "What the run read for each search: listings the site reports, pages and listings read, whether the read was complete, errors, projects read and request counts.",
+      "key": "SUMMARY"
+    },
+    "input": {
+      "title": "Input",
+      "description": "The input the run started with.",
+      "key": "INPUT"
+    }
+  }
+}

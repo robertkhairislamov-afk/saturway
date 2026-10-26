@@ -1,0 +1,141 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "recordType": {
+        "description": "Always \"district\"."
+      },
+      "district": {
+        "description": "District: for Pattaya the tourist district from coordinates (Naklua & Wongamat, North, Central and South Pattaya, Pratumnak, Jomtien, Na Jomtien, Bang Saray, East Pattaya); elsewhere the subdistrict."
+      },
+      "city": {
+        "description": "City."
+      },
+      "projects": {
+        "description": "Projects with listings in the district."
+      },
+      "saleListings": {
+        "description": "Listings for sale (duplicates across agencies included)."
+      },
+      "rentListings": {
+        "description": "Listings for rent."
+      },
+      "medianSalePricePerSqm": {
+        "description": "Typical asking price per m² (median of sale listings, obvious typos left out), in THB."
+      },
+      "salePricePerSqmLow": {
+        "description": "Lower quartile of asking prices per m²: a quarter of listings ask less."
+      },
+      "salePricePerSqmHigh": {
+        "description": "Upper quartile of asking prices per m²: a quarter of listings ask more."
+      },
+      "medianSalePrice": {
+        "description": "Typical asking price of a unit for sale, in THB."
+      },
+      "medianSaleSizeSqm": {
+        "description": "Typical size of a unit for sale, in m²."
+      },
+      "medianRentPerSqm": {
+        "description": "Typical monthly rent per m², in THB."
+      },
+      "medianRent": {
+        "description": "Typical monthly rent, in THB."
+      },
+      "grossYieldPercent": {
+        "description": "Gross yield: 12 months of the typical rent per m² against the typical asking price per m², in percent. Needs at least 3 sale and 3 rent listings. Before costs, vacancy and the discount from asking to sale price."
+      },
+      "newSinceLastRun": {
+        "description": "Listings that were not there in the last run with the same memory name."
+      },
+      "priceCutsSinceLastRun": {
+        "description": "Listings whose price went down since the last run."
+      },
+      "medianDaysListed": {
+        "description": "Typical days since the listing was first seen or posted."
+      },
+      "removedSinceLastRun": {
+        "description": "Listings seen in the last run and gone in this one: most were sold, rented or taken off the market."
+      },
+      "scrapedAt": {
+        "description": "When the record was saved."
+      }
+    },
+    "additionalProperties": true
+  },
+  "views": {
+    "overview": {
+      "title": "Districts",
+      "transformation": {
+        "fields": [
+          "district",
+          "projects",
+          "saleListings",
+          "rentListings",
+          "medianSalePricePerSqm",
+          "medianSalePrice",
+          "medianRent",
+          "grossYieldPercent",
+          "newSinceLastRun",
+          "removedSinceLastRun",
+          "priceCutsSinceLastRun",
+          "medianDaysListed"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "district": {
+            "label": "District",
+            "format": "text"
+          },
+          "projects": {
+            "label": "Projects",
+            "format": "number"
+          },
+          "saleListings": {
+            "label": "For sale",
+            "format": "number"
+          },
+          "rentListings": {
+            "label": "For rent",
+            "format": "number"
+          },
+          "medianSalePricePerSqm": {
+            "label": "฿ per m²",
+            "format": "number"
+          },
+          "medianSalePrice": {
+            "label": "Typical price",
+            "format": "number"
+          },
+          "medianRent": {
+            "label": "Typical rent",
+            "format": "number"
+          },
+          "grossYieldPercent": {
+            "label": "Gross yield %",
+            "format": "number"
+          },
+          "newSinceLastRun": {
+            "label": "New",
+            "format": "number"
+          },
+          "removedSinceLastRun": {
+            "label": "Left market",
+            "format": "number"
+          },
+          "priceCutsSinceLastRun": {
+            "label": "Price cuts",
+            "format": "number"
+          },
+          "medianDaysListed": {
+            "label": "Days listed",
+            "format": "text"
+          }
+        }
+      }
+    }
+  }
+}

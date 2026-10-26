@@ -153,3 +153,13 @@ curl -X POST "https://api.apify.com/v2/acts/robertosan16~google-ads-transparency
 ```
 
 Missing a field or a feature? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.
+
+## 中文简介
+
+**谷歌广告透明度中心（Google Ads Transparency Center）数据采集工具**：按品牌名、网站或广告主 ID 获取竞争对手的全部谷歌广告，**广告文案直接以文本输出**：标题、描述、显示网址、购物广告的商品和应用广告的应用信息，无需截图和 OCR 识别。可以按国家/地区（240 多个）、平台（搜索、YouTube、购物、地图、Google Play）、广告格式和日期筛选，并获取每条广告的首次和最后展示日期、全部版本、投放国家，以及欧盟地区的展示量区间。开启 **Only new ads** 并设置定时任务，就能只收到竞争对手新上线的广告。
+
+适合出海营销、竞品广告分析、广告文案参考、品牌保护（查找用你的网站投放广告的其他账户）和广告代理商获客。无需浏览器、无需登录。
+
+价格：每 1,000 条广告 1.50 美元，已含广告文案和详情，无启动费；Apify 免费套餐每月约可获取 3,300 条广告。
+
+结果可导出为 JSON、CSV、Excel 或 HTML，也可以通过 API、定时任务、Webhook 或 n8n、Make、Zapier 接入。有问题请在 Issues 页面提问，或发邮件至 support@mozartstandard.com。

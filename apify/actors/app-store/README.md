@@ -147,3 +147,13 @@ curl -X POST "https://api.apify.com/v2/acts/robertosan16~app-store-scraper/run-s
 ```
 
 Missing a field or a feature? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.
+
+## 中文简介
+
+**App Store 数据采集工具（苹果应用商店爬虫）**：抓取苹果 App Store 任意国家和分类的**免费榜、付费榜和畅销榜**（iPhone 和 iPad）以及新上架应用，每个榜单最多 100 名；按关键词抓取 App Store **搜索排名**（最多 200 个应用），用于 ASO 关键词排名追踪和竞品分析；获取应用详情：评分和评分数（全部版本及当前版本）、价格、版本、发布和更新日期、安装包大小、年龄分级、支持语言、描述和截图，以及一个开发者的全部应用。
+
+适合应用出海、手游发行、ASO 优化和海外市场调研。一次运行可以覆盖多个国家。无需浏览器、无需登录、无需 API 密钥。Android 应用请使用字段相同的 [Google Play Scraper](https://apify.com/robertosan16/google-play-scraper)。
+
+价格：每 1,000 条结果 1 美元，无启动费；Apify 免费套餐每月约可获取 5,000 条结果。
+
+结果可导出为 JSON、CSV、Excel 或 HTML，也可以通过 API、定时任务、Webhook 或 n8n、Make、Zapier 接入。有问题请在 Issues 页面提问，或发邮件至 support@mozartstandard.com。

@@ -213,3 +213,13 @@ curl -X POST "https://api.apify.com/v2/acts/robertosan16~google-trends-scraper/r
 ```
 
 Missing a field or a feature? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.
+
+## 中文简介
+
+**谷歌趋势（Google Trends）数据导出工具**：导出任意数量关键词和国家/地区的**搜索热度变化**、按地区（省/州、城市、美国 DMA 区域）的热度、热门和**飙升的相关搜索**，以及 “Trending now” **实时热搜榜**（含搜索量）。谷歌趋势一次最多对比 5 个关键词；开启 **Compare on one scale** 后，可以把 10 个、50 个甚至 200 个关键词放在同一个 0–100 标尺上对比，长周期也可以按天输出。每个关键词自带分析指标：平均值、峰值、最新值、近期变化、同比变化、趋势方向和旺季月份。
+
+适合出海市场调研、跨境电商选品、SEO 关键词研究和内容选题。无需浏览器、无需登录、无需 API 密钥。
+
+价格：每 1,000 份关键词报告 2 美元，每 1,000 条热搜 0.50 美元，无启动费；Apify 免费套餐每月约可获取 2,500 份关键词报告。
+
+结果可导出为 JSON、CSV、Excel 或 HTML，也可以通过 API、定时任务、Webhook 或 n8n、Make、Zapier 接入。有问题请在 Issues 页面提问，或发邮件至 support@mozartstandard.com。

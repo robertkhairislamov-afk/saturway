@@ -162,3 +162,13 @@ curl -X POST "https://api.apify.com/v2/acts/robertosan16~google-play-scraper/run
 ```
 
 Missing a field or a feature? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.
+
+## 中文简介
+
+**Google Play 数据采集工具（Google Play 爬虫）**：抓取 Google Play（谷歌应用商店）任意国家和分类的**免费榜、付费榜和畅销榜**，每个榜单最多 200 名；按关键词抓取 Google Play **搜索排名**，用于 ASO 关键词排名追踪和竞品分析；获取应用详情：评分、评分分布、安装量、价格、内购价格区间、是否含广告、版本、更新日期、开发者邮箱和网站，以及一个开发者的全部应用。
+
+适合应用出海、手游发行、ASO 优化、海外市场调研，以及通过开发者联系方式开发 B2B 客户。一次运行可以覆盖多个国家，支持 30 多种语言。无需浏览器、无需登录、无需谷歌 API 密钥。iOS 应用请使用字段相同的 [App Store Scraper](https://apify.com/robertosan16/app-store-scraper)。
+
+价格：2026 年 11 月 9 日起每 1,000 条结果 1.50 美元（此前为 0.50 美元），无启动费；Apify 免费套餐每月约可获取 3,300 条结果。
+
+结果可导出为 JSON、CSV、Excel 或 HTML，也可以通过 API、定时任务、Webhook 或 n8n、Make、Zapier 接入。有问题请在 Issues 页面提问，或发邮件至 support@mozartstandard.com。

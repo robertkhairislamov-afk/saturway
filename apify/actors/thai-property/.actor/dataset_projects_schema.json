@@ -90,6 +90,12 @@
       },
       "saleListingsPer100Units": {
         "description": "Sale listings per 100 units: how much of the building is on offer. High values mean many sellers or many duplicate listings."
+      },
+      "duplicateSaleListings": {
+        "description": "Sale listings that repeat a unit already listed by another advertiser (found by shared photos)."
+      },
+      "uniqueSaleUnits": {
+        "description": "Sale listings minus the repeats: roughly how many different units are for sale."
       }
     },
     "additionalProperties": true
@@ -102,6 +108,7 @@
           "project",
           "district",
           "saleListings",
+          "uniqueSaleUnits",
           "rentListings",
           "medianSalePricePerSqm",
           "medianSalePrice",
@@ -183,6 +190,10 @@
           "developer": {
             "label": "Developer",
             "format": "text"
+          },
+          "uniqueSaleUnits": {
+            "label": "Unique for sale",
+            "format": "number"
           }
         }
       }

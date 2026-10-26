@@ -8,6 +8,12 @@
       "description": "Market figures and facts per project (condominium).",
       "template": "{{storages.datasets.default.apiUrl}}/items?view=overview"
     },
+    "lots": {
+      "type": "string",
+      "title": "Units listed more than once",
+      "description": "The same unit listed by several advertisers, with every price.",
+      "template": "{{storages.datasets.lots.apiUrl}}/items?view=overview"
+    },
     "districts": {
       "type": "string",
       "title": "Districts",

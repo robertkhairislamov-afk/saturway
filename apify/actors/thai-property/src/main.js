@@ -8,6 +8,7 @@ import { districtOf } from './areas.js';
 import { MAX_RESULTS, PAGE_SIZE, parseListPage, parseListingPage, searchUrl } from './dotproperty.js';
 import { applyHistory, historyKey } from './history.js';
 import { createHttpClient, mapLimit } from './http.js';
+import { findLots } from './match.js';
 import { districtRecords, projectKey, projectRecords } from './stats.js';
 
 await Actor.init();
@@ -181,6 +182,26 @@ for (const r of removedAll) {
 const projects = projectRecords(allListings, { details, removed: removedByProject }).map((p) => ({ ...p, scrapedAt }));
 const districts = districtRecords(allListings, { removedByDistrict }).map((d) => ({ ...d, scrapedAt }));
 summary.projects = projects.length;
+
+// Lots: the same unit listed by several advertisers, per deal type.
+const lots = [];
+for (const transaction of input.transactions) {
+  const projectMedians = Object.fromEntries(projects.map((p) => [p.projectKey, transaction === 'sale' ? p.medianSalePricePerSqm : p.medianRentPerSqm]));
+  const found = findLots(allListings.filter((l) => l.transaction === transaction), { projectMedians });
+  for (const l of allListings) if (l.transaction === transaction) l.lotId = found.lotOf.get(l.key) ?? null;
+  lots.push(...found.lots.map((lot) => ({ ...lot, scrapedAt })));
+}
+const duplicates = new Map();
+for (const lot of lots) {
+  if (lot.transaction !== 'sale') continue;
+  duplicates.set(lot.projectKey, (duplicates.get(lot.projectKey) ?? 0) + lot.listings - 1);
+}
+for (const p of projects) {
+  p.duplicateSaleListings = duplicates.get(p.projectKey) ?? 0;
+  p.uniqueSaleUnits = p.saleListings - p.duplicateSaleListings;
+}
+summary.lots = lots.length;
+summary.listingsInLots = lots.reduce((sum, lot) => sum + lot.listings, 0);
 summary.districts = districts.length;
 summary.removed = removedAll.length;
 
@@ -191,6 +212,7 @@ const push = async (dataset, records) => {
 };
 await push(await Actor.openDataset(), projects);
 await push(await Actor.openDataset({ alias: 'districts' }), districts);
+await push(await Actor.openDataset({ alias: 'lots' }), lots);
 await push(await Actor.openDataset({ alias: 'removed' }), removedAll.map((r) => ({ recordType: 'removed', ...r, scrapedAt })));
 if (input.saveListings) await push(await Actor.openDataset({ alias: 'listings' }), allListings.map(({ photoUrls, photoKeys, ...l }) => l));
 
@@ -198,7 +220,7 @@ summary.finishedAt = new Date().toISOString();
 await Actor.setValue('SUMMARY', summary);
 const listingsTotal = allListings.length;
 const failed = summary.searches.filter((s) => s.error).length;
-const message = `Saved ${listingsTotal} listings, ${projects.length} projects and ${districts.length} districts`
+const message = `Saved ${listingsTotal} listings, ${projects.length} projects, ${districts.length} districts and ${lots.length} units listed more than once`
   + `${removedAll.length ? `; ${removedAll.length} listings left the market since the last run` : ''}`
   + `${failed ? `; ${failed} of ${searches.length} searches failed` : ''}.`;
 if (listingsTotal === 0 && failed) await Actor.fail(message);

@@ -126,6 +126,18 @@
       },
       "scrapedAt": {
         "description": "When the record was saved."
+      },
+      "lotId": {
+        "description": "Lot of the listing when the same unit is listed more than once; joins the Lots dataset."
+      },
+      "unitId": {
+        "description": "ID of the listing on the site."
+      },
+      "verifiedAt": {
+        "description": "When the site last verified the listing."
+      },
+      "photoCount": {
+        "description": "Photos in the listing."
       }
     },
     "additionalProperties": true

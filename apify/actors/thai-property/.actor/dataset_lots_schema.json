@@ -1,0 +1,131 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "recordType": {
+        "description": "Always \"lot\"."
+      },
+      "lotId": {
+        "description": "ID of the lot: the smallest listing key in it."
+      },
+      "transaction": {
+        "description": "sale or rent."
+      },
+      "project": {
+        "description": "Project name."
+      },
+      "projectKey": {
+        "description": "Project key; joins lots, projects and listings."
+      },
+      "district": {
+        "description": "District."
+      },
+      "bedrooms": {
+        "description": "Bedrooms."
+      },
+      "sizeSqm": {
+        "description": "Size in m² (median of the listings)."
+      },
+      "listings": {
+        "description": "Listings of this unit."
+      },
+      "advertisers": {
+        "description": "Different advertisers among them, by the signature in the description (an estimate)."
+      },
+      "minPrice": {
+        "description": "Lowest asking price of the unit, in THB."
+      },
+      "maxPrice": {
+        "description": "Highest asking price, in THB."
+      },
+      "priceSpreadPercent": {
+        "description": "How much the highest price is above the lowest, in percent."
+      },
+      "minPricePerSqm": {
+        "description": "Lowest price per m², in THB."
+      },
+      "vsProjectMedianPercent": {
+        "description": "The lowest price per m² against the project's typical asking price per m², in percent; below zero is cheaper."
+      },
+      "cheapestUrl": {
+        "description": "Link to the cheapest listing of the unit."
+      },
+      "sharedPhotos": {
+        "description": "Photo files the listings share (marketing renders and common-area photos not counted)."
+      },
+      "offers": {
+        "description": "Every listing of the unit: link, price, advertiser signature, posted date and days listed."
+      },
+      "scrapedAt": {
+        "description": "When the record was saved."
+      }
+    },
+    "additionalProperties": true
+  },
+  "views": {
+    "overview": {
+      "title": "Units listed more than once",
+      "transformation": {
+        "fields": [
+          "project",
+          "district",
+          "bedrooms",
+          "sizeSqm",
+          "listings",
+          "minPrice",
+          "maxPrice",
+          "priceSpreadPercent",
+          "vsProjectMedianPercent",
+          "cheapestUrl"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "project": {
+            "label": "Project",
+            "format": "text"
+          },
+          "district": {
+            "label": "District",
+            "format": "text"
+          },
+          "bedrooms": {
+            "label": "Beds",
+            "format": "number"
+          },
+          "sizeSqm": {
+            "label": "m²",
+            "format": "number"
+          },
+          "listings": {
+            "label": "Listings",
+            "format": "number"
+          },
+          "minPrice": {
+            "label": "Lowest ฿",
+            "format": "number"
+          },
+          "maxPrice": {
+            "label": "Highest ฿",
+            "format": "number"
+          },
+          "priceSpreadPercent": {
+            "label": "Spread %",
+            "format": "number"
+          },
+          "vsProjectMedianPercent": {
+            "label": "vs project %",
+            "format": "number"
+          },
+          "cheapestUrl": {
+            "label": "Cheapest",
+            "format": "link"
+          }
+        }
+      }
+    }
+  }
+}

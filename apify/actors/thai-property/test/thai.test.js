@@ -140,3 +140,56 @@ test('history: new listings, price changes and listings that left the market', (
   applyHistory(third, run2.seen, '2026-10-15T00:00:00Z');
   assert.equal(third[0].firstSeenAt, '2026-10-01');
 });
+
+import { agencyHint, findLots, photoId } from '../src/match.js';
+
+const unit = (key, over = {}) => ({
+  key, url: `https://x/${key}`, transaction: 'sale', project: 'P', projectKey: 'p', district: 'Jomtien',
+  bedrooms: 1, sizeSqm: 35, price: 3000000, photoKeys: [], descriptionStart: `Agency ${key} ID 1`, postedAt: `2026-10-${10 + key.length}T00:00:00Z`, ...over,
+});
+const ph = (...ids) => ids.map((id) => `ingester/u/${id}.jpeg`);
+
+test('lots: the same unit from two agencies, joined by a shared photo file', () => {
+  const { lots, lotOf } = findLots([
+    unit('a', { price: 3200000, photoKeys: ph('kitchen', 'bed', 'view') }),
+    unit('b', { price: 2900000, sizeSqm: 35.5, photoKeys: ph('bed', 'bath') }),
+    unit('c', { photoKeys: ph('other') }),
+  ], { projectMedians: { p: 100000 } });
+  assert.equal(lots.length, 1);
+  assert.equal(lots[0].listings, 2);
+  assert.equal(lots[0].minPrice, 2900000);
+  assert.equal(lots[0].maxPrice, 3200000);
+  assert.equal(lots[0].priceSpreadPercent, 10.3);
+  assert.equal(lots[0].cheapestUrl, 'https://x/b');
+  assert.equal(lots[0].vsProjectMedianPercent, -17.7);
+  assert.equal(lotOf.get('a'), lotOf.get('b'));
+  assert.equal(lotOf.has('c'), false);
+});
+
+test('lots: renders shared by many listings and common-area photos are no evidence', () => {
+  const stock = ['d1', 'd2', 'd3', 'd4', 'd5', 'd6'].map((k, i) => unit(k, { price: 4000000 + i * 50000, photoKeys: ph('render1', 'render2') }));
+  const pool = [unit('e', { bedrooms: 1, photoKeys: ph('pool') }), unit('f', { bedrooms: 2, sizeSqm: 60, photoKeys: ph('pool') })];
+  const lobby = [unit('g', { sizeSqm: 30, photoKeys: ph('lobby') }), unit('h', { sizeSqm: 45, photoKeys: ph('lobby') })];
+  assert.equal(findLots([...stock, ...pool, ...lobby]).lots.length, 0);
+});
+
+test('lots: one advertiser posting several units together is not one unit', () => {
+  const batch = (k, price) => unit(k, { price, descriptionStart: 'Developer X ID', postedAt: '2026-10-20T10:00:00Z', photoKeys: ph('r1', 'r2') });
+  assert.equal(findLots([batch('a', 3000000), batch('b', 3100000)]).lots.length, 0);
+  // The same advertiser posting the same unit twice at the same price is a duplicate.
+  assert.equal(findLots([batch('a', 3000000), batch('b', 3000000)]).lots.length, 1);
+});
+
+test('lots: different sizes stay apart; a chain of shared photos makes one lot', () => {
+  assert.equal(findLots([unit('a', { photoKeys: ph('x') }), unit('b', { sizeSqm: 38, photoKeys: ph('x') })]).lots.length, 0);
+  const { lots } = findLots([unit('a', { photoKeys: ph('x') }), unit('b', { photoKeys: ph('x', 'y') }), unit('c', { photoKeys: ph('y') })]);
+  assert.equal(lots.length, 1);
+  assert.equal(lots[0].listings, 3);
+});
+
+test('agency signatures and photo IDs', () => {
+  assert.equal(agencyHint('PropertyScout ID ----- Fully furnished'), 'PropertyScout');
+  assert.equal(agencyHint('--- Pattaya Realty --- 1 bed'), 'Pattaya Realty');
+  assert.equal(agencyHint('Beautiful 1 bed condo'), null);
+  assert.equal(photoId('ingester/01a/abc123.jpeg'), 'abc123');
+});

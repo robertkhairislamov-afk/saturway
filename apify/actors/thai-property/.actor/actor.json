@@ -9,6 +9,7 @@
   "storages": {
     "datasets": {
       "default": "./dataset_projects_schema.json",
+      "lots": "./dataset_lots_schema.json",
       "districts": "./dataset_districts_schema.json",
       "listings": "./dataset_listings_schema.json",
       "removed": "./dataset_removed_schema.json"

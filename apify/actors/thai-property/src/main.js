@@ -224,7 +224,8 @@ const candidates = [];
 for (const transaction of lotTransactions) {
   const groups = new Map();
   for (const l of allListings) {
-    if (l.transaction !== transaction || !l.projectKey || !l.sizeSqm || !l.photoKeys?.length) continue;
+    // New and off-plan projects get no lots (their units share show-unit photos), so no photo work.
+    if (l.transaction !== transaction || !l.projectKey || !l.sizeSqm || !l.photoKeys?.length || ['new', 'off plan'].includes(l.segment)) continue;
     const k = `${l.projectKey}|${l.bedrooms}`;
     if (!groups.has(k)) groups.set(k, []);
     groups.get(k).push(l);

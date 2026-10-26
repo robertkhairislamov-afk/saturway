@@ -266,3 +266,18 @@ test('market segments: resale, new and off plan, and district figures per segmen
   assert.equal(rows[1].medianSalePricePerSqm, 100000);
   assert.equal(rows[2].medianSalePricePerSqm, 200000);
 });
+
+test('lots: floors, references of one advertiser, segments and price gaps keep units apart', () => {
+  const shared = { photoKeys: ph('liv', 'bed') };
+  const pair = (a, b) => findLots([unit('a', { ...shared, ...a }), unit('b', { ...shared, ...b })]).lots.length;
+  assert.equal(pair({}, {}), 1);
+  assert.equal(pair({ descriptionStart: 'Centric Sea 1 bed on the 6th floor' }, { descriptionStart: 'Centric Sea 1 bed, 38th floor' }), 0);
+  assert.equal(pair({ descriptionStart: 'Listing code: #RT04897 Grand' }, { descriptionStart: 'Listing code: #RT04900 Grand' }), 0);
+  // Different agencies number differently: no conclusion from their codes.
+  assert.equal(pair({ descriptionStart: 'Ref: AB-1234 nice' }, { descriptionStart: '#RT04900 nice' }), 1);
+  assert.equal(pair({ segment: 'off plan' }, { segment: 'off plan' }), 0);
+  assert.equal(pair({ segment: 'resale' }, { segment: 'resale' }), 1);
+  assert.equal(pair({ price: 2400000 }, { price: 4590000 }), 0);
+  // Photos after the fourth (building, pool) are no evidence.
+  assert.equal(findLots([unit('a', { photoKeys: ph('a1', 'a2', 'a3', 'a4', 'pool') }), unit('b', { photoKeys: ph('b1', 'b2', 'b3', 'b4', 'pool') })]).lots.length, 0);
+});

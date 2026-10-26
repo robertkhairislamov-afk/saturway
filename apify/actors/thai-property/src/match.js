@@ -3,6 +3,7 @@
 // bedrooms, nearly the same size and share a photo that is not a marketing render. A photo is the
 // same when it is the same file or, with visual hashes, nearly the same picture.
 
+import { descriptionFacts } from './dotproperty.js';
 import { hammingDistance, shortPhotoId } from './photos.js';
 
 // A photo in this many listings of a project, or in listings of different layouts, is a render or
@@ -12,7 +13,14 @@ const SIZE_TOLERANCE_SQM = 1;
 const SAME_BATCH_MINUTES = 15;
 // Bits two hashes of the same picture may differ in (re-saved, watermarked, resized).
 export const SAME_PICTURE_BITS = 6;
+// Only the first photos count: they show the unit itself; building, pool and view photos come
+// later and are shared by many units.
 const HASHED_PHOTOS = 4;
+// Prices of one unit rarely differ this much between advertisers; beyond it, the listings are
+// different units that share show-unit or building photos (checked by eye on the widest gaps).
+const MAX_PRICE_RATIO = { strong: 1.6, single: 1.4 };
+// New and off-plan projects show the same show-unit photos for many different units.
+const SEGMENTS_WITHOUT_LOTS = new Set(['new', 'off plan']);
 
 // The file's fingerprint: the sha256 at the end of the image key.
 export const photoId = (key) => String(key ?? '').split('/').pop().replace(/\.\w+$/, '') || null;
@@ -33,6 +41,23 @@ function sameBatchDifferentUnits(a, b) {
   const sameStart = a.descriptionStart && a.descriptionStart === b.descriptionStart;
   const together = minutesApart(a.verifiedAt ?? a.postedAt, b.verifiedAt ?? b.postedAt) <= SAME_BATCH_MINUTES;
   return sameStart && together && a.price !== b.price;
+}
+
+// A listing reference with letters and digits: "#RT04897", "Listing code: RT04900", "Ref: AB-123".
+const refCode = (text) => {
+  const m = String(text ?? '').match(/(?:#|listing code:?\s*#?|ref(?:erence)?(?:\s*no\.?)?:?\s*#?)\s*([A-Z]{1,4})[- ]?(\d{3,7})\b/i);
+  return m ? { prefix: m[1].toUpperCase(), code: `${m[1].toUpperCase()}${m[2]}` } : null;
+};
+
+// Facts in the descriptions that rule out one unit: different floors, or two different references
+// of one advertiser's numbering (the same prefix).
+function differentUnits(a, b) {
+  const fa = descriptionFacts(a.descriptionStart).unitFloor;
+  const fb = descriptionFacts(b.descriptionStart).unitFloor;
+  if (fa != null && fb != null && fa !== fb) return true;
+  const ra = refCode(a.descriptionStart);
+  const rb = refCode(b.descriptionStart);
+  return Boolean(ra && rb && ra.prefix === rb.prefix && ra.code !== rb.code);
 }
 
 class UnionFind {
@@ -62,8 +87,8 @@ function photoIdentities(items, photoHashes) {
   const out = new Map();
   for (const l of items) {
     const ids = new Set();
-    l.photoKeys.forEach((key, i) => {
-      const hash = i < HASHED_PHOTOS ? photoHashes.get(shortPhotoId(key)) : undefined;
+    l.photoKeys.slice(0, HASHED_PHOTOS).forEach((key) => {
+      const hash = photoHashes.get(shortPhotoId(key));
       if (!hash) {
         const id = photoId(key);
         if (id) ids.add(`f:${id}`);
@@ -86,7 +111,7 @@ function photoIdentities(items, photoHashes) {
 export function findLots(listings, { projectMedians = {}, photoHashes = new Map() } = {}) {
   const byProject = new Map();
   for (const l of listings) {
-    if (!l.projectKey || !l.photoKeys?.length) continue;
+    if (!l.projectKey || !l.photoKeys?.length || SEGMENTS_WITHOUT_LOTS.has(l.segment)) continue;
     if (!byProject.has(l.projectKey)) byProject.set(l.projectKey, []);
     byProject.get(l.projectKey).push(l);
   }
@@ -118,7 +143,9 @@ export function findLots(listings, { projectMedians = {}, photoHashes = new Map(
     for (const { a, b, photos } of pairs.values()) {
       if (a.bedrooms !== b.bedrooms) continue;
       if (a.sizeSqm != null && b.sizeSqm != null && Math.abs(a.sizeSqm - b.sizeSqm) > SIZE_TOLERANCE_SQM) continue;
-      if (sameBatchDifferentUnits(a, b)) continue;
+      if (sameBatchDifferentUnits(a, b) || differentUnits(a, b)) continue;
+      const ratio = Math.max(a.price, b.price) / Math.min(a.price, b.price);
+      if (!(ratio <= (photos.size >= 2 ? MAX_PRICE_RATIO.strong : MAX_PRICE_RATIO.single))) continue;
       uf.union(a.key, b.key);
       evidence.set(`${a.key}|${b.key}`, photos.size);
     }

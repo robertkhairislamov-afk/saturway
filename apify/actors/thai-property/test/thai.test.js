@@ -4,15 +4,15 @@ import { test } from 'node:test';
 
 import { districtOf, pattayaDistrict } from '../src/areas.js';
 import { descriptionFacts, homesData, imageKey, listingKey, parseListingPage, parseListPage, searchUrl, thumbnailUrl } from '../src/dotproperty.js';
-import { applyHistory } from '../src/history.js';
+import { applyHistory, dayNumber, keepAsSeen, loadHistory, saveHistory } from '../src/history.js';
 import { districtRecords, median, projectKey, projectRecords } from '../src/stats.js';
 
 const fixture = (name) => readFileSync(new URL(`./fixtures/${name}`, import.meta.url), 'utf8');
 
 test('search URLs', () => {
-  assert.equal(searchUrl({ location: 'chonburi/pattaya' }), 'https://www.dotproperty.co.th/en/condos-for-sale/chonburi/pattaya?sortBy=price');
-  assert.equal(searchUrl({ location: '/Phuket/', propertyType: 'villa', transaction: 'rent', page: 4 }), 'https://www.dotproperty.co.th/en/villas-for-rent/phuket?sortBy=price&page=4');
-  assert.equal(searchUrl({ location: 'chonburi/pattaya', minPrice: 0, maxPrice: 1499999, page: 2 }), 'https://www.dotproperty.co.th/en/condos-for-sale/chonburi/pattaya?sortBy=price&minPrice=0&maxPrice=1499999&page=2');
+  assert.equal(searchUrl({ location: 'chonburi/pattaya' }), 'https://www.dotproperty.co.th/en/condos-for-sale/chonburi/pattaya?sortBy=verification_at');
+  assert.equal(searchUrl({ location: '/Phuket/', propertyType: 'villa', transaction: 'rent', page: 4 }), 'https://www.dotproperty.co.th/en/villas-for-rent/phuket?sortBy=verification_at&page=4');
+  assert.equal(searchUrl({ location: 'chonburi/pattaya', minPrice: 0, maxPrice: 1499999, page: 2 }), 'https://www.dotproperty.co.th/en/condos-for-sale/chonburi/pattaya?sortBy=verification_at&minPrice=0&maxPrice=1499999&page=2');
   assert.throws(() => searchUrl({ location: 'x', propertyType: 'castle' }), /Unknown property type/);
 });
 
@@ -39,6 +39,8 @@ test('list page: JSON-LD listings with size, baths and price per m² from the ca
 test('listing page: gallery, basics and project facts', () => {
   const page = parseListingPage(fixture('detail.html'));
   assert.equal(page.listingId, '2899757');
+  assert.equal(page.available, true);
+  assert.equal(page.availability, 'InStock');
   assert.equal(page.images.length, 5);
   assert.equal(page.imageKeys.length, 5);
   assert.equal(page.bathrooms, 5);
@@ -126,7 +128,7 @@ test('history: new listings, price changes and listings that left the market', (
   const run1 = applyHistory(first, {}, day1);
   assert.equal(first[0].daysListed, 10);
   assert.equal(first[0].isNewSinceLastRun, false);
-  assert.deepEqual(run1.removed, []);
+  assert.deepEqual(run1.missing, []);
   const second = [{ key: 'a', price: 90, projectKey: 'p' }, { key: 'c', price: 300, projectKey: 'p' }];
   const run2 = applyHistory(second, run1.seen, '2026-10-08T00:00:00Z');
   assert.equal(second[0].previousPrice, 100);
@@ -134,7 +136,7 @@ test('history: new listings, price changes and listings that left the market', (
   assert.equal(second[0].priceChangePercent, -10);
   assert.equal(second[0].daysListed, 17);
   assert.equal(second[1].isNewSinceLastRun, true);
-  assert.deepEqual(run2.removed.map((r) => r.key), ['b']);
+  assert.deepEqual(run2.missing.map((r) => r.key), ['b']);
   // The gone listing keeps its first date if it comes back.
   const third = [{ key: 'b', price: 200 }];
   applyHistory(third, run2.seen, '2026-10-15T00:00:00Z');
@@ -192,4 +194,21 @@ test('agency signatures and photo IDs', () => {
   assert.equal(agencyHint('--- Pattaya Realty --- 1 bed'), 'Pattaya Realty');
   assert.equal(agencyHint('Beautiful 1 bed condo'), null);
   assert.equal(photoId('ingester/01a/abc123.jpeg'), 'abc123');
+});
+
+test('history: kept in parts by the first character of the key, links included', async () => {
+  const store = new Map();
+  const kv = { getValue: async (k) => store.get(k) ?? null, setValue: async (k, v) => { if (v == null) store.delete(k); else store.set(k, v); } };
+  const search = { location: 'chonburi/pattaya', propertyType: 'condo', transaction: 'sale' };
+  const week = dayNumber('2026-10-19T00:00:00Z');
+  store.set('seen-chonburi-pattaya-condo-sale', { 'aa-1': [week - 30, week, 3, 4, 'p', 'd'] });
+  const { seen, missing } = applyHistory([{ key: 'b1', price: 5, url: 'https://x/b1' }], await loadHistory(kv, search), '2026-10-26T00:00:00Z');
+  assert.deepEqual(missing.map((m) => m.key), ['aa-1']);
+  keepAsSeen(seen, 'aa-1', '2026-10-26T00:00:00Z');
+  await saveHistory(kv, search, seen);
+  assert.equal(store.has('seen-chonburi-pattaya-condo-sale'), false);
+  assert.equal(store.get('seen-chonburi-pattaya-condo-sale-b').b1[6], 'https://x/b1');
+  const again = await loadHistory(kv, search);
+  assert.equal(Object.keys(again).length, 2);
+  assert.equal(again['aa-1'][1], again.b1[1]);
 });

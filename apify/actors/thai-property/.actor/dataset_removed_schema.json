@@ -36,6 +36,12 @@
       },
       "scrapedAt": {
         "description": "When the record was saved."
+      },
+      "status": {
+        "description": "How the departure was confirmed: page removed (the listing page is gone), sold (the site marks it sold) or off market (no longer on offer)."
+      },
+      "url": {
+        "description": "Link the listing had."
       }
     },
     "additionalProperties": true
@@ -48,6 +54,7 @@
           "projectKey",
           "district",
           "transaction",
+          "status",
           "lastPrice",
           "firstSeenAt",
           "lastSeenAt"
@@ -78,6 +85,10 @@
           },
           "lastSeenAt": {
             "label": "Last seen",
+            "format": "text"
+          },
+          "status": {
+            "label": "Status",
             "format": "text"
           }
         }

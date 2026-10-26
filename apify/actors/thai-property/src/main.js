@@ -6,8 +6,8 @@ import { Actor, log } from 'apify';
 
 import { districtOf } from './areas.js';
 import { MAX_RESULTS, PAGE_SIZE, parseListPage, parseListingPage, searchUrl } from './dotproperty.js';
-import { applyHistory, historyKey } from './history.js';
-import { createHttpClient, mapLimit } from './http.js';
+import { applyHistory, keepAsSeen, loadHistory, saveHistory } from './history.js';
+import { HttpError, createHttpClient, mapLimit } from './http.js';
 import { findLots } from './match.js';
 import { districtRecords, projectKey, projectRecords } from './stats.js';
 
@@ -22,6 +22,7 @@ const input = {
   maxPagesPerSearch: 0,
   includeProjectDetails: true,
   maxProjectDetailsPerRun: 600,
+  maxRemovalChecksPerRun: 1500,
   projectDetailsMaxAgeDays: 90,
   saveListings: true,
   memoryName: 'thai-property-history',
@@ -75,6 +76,30 @@ async function priceSlices(search, label) {
   return slices;
 }
 
+// Missing from the list pages is not gone yet: a listing can move between pages while they are
+// read. Its own page tells: not found, or no longer on offer, means it left the market; still on
+// offer means the list pages missed it.
+async function confirmGone(missing, seen, label) {
+  const gone = [];
+  const withLink = missing.filter((m) => m.url);
+  const todo = withLink.slice(0, input.maxRemovalChecksPerRun);
+  if (todo.length) await Actor.setStatusMessage(`${label}: checking ${todo.length} listings that are missing since the last run.`);
+  await mapLimit(todo, input.concurrency, async (m) => {
+    try {
+      const page = parseListingPage(await http.get(m.url));
+      if (page.available === false) gone.push({ ...m, status: page.availability === 'SoldOut' ? 'sold' : 'off market' });
+      else keepAsSeen(seen, m.key, scrapedAt);
+    } catch (error) {
+      if (error instanceof HttpError && (error.status === 404 || error.status === 410)) gone.push({ ...m, status: 'page removed' });
+      else keepAsSeen(seen, m.key, scrapedAt);
+    }
+  });
+  // Beyond the cap: checked in the next run.
+  for (const m of withLink.slice(todo.length)) keepAsSeen(seen, m.key, scrapedAt);
+  log.info(`${label}: ${missing.length} listings missing since the last run, ${gone.length} confirmed gone${withLink.length > todo.length ? `, ${withLink.length - todo.length} left for the next run` : ''}.`);
+  return gone;
+}
+
 for (const search of searches) {
   const label = `${search.propertyType} for ${search.transaction} in ${search.location}`;
   const row = { search: label, url: searchUrl(search), reported: null, priceRanges: 1, pages: 0, listings: 0, complete: false, error: null };
@@ -117,15 +142,18 @@ for (const search of searches) {
     });
     row.listings = listings.length;
 
-    const key = historyKey(search);
-    const { seen, removed } = applyHistory(listings, (await memory.getValue(key)) ?? {}, scrapedAt);
-    // A partial read cannot tell what left the market, and must not forget what it did not see.
+    const before = await loadHistory(memory, search);
+    const { seen, missing } = applyHistory(listings, before, scrapedAt);
     if (row.complete) {
-      await memory.setValue(key, seen);
-      for (const r of removed) removedAll.push({ ...r, transaction: search.transaction, propertyType: search.propertyType, location: search.location });
+      // Only a complete read can tell what is missing; each missing listing is confirmed on its page.
+      const gone = await confirmGone(missing, seen, label);
+      row.missing = missing.length;
+      row.leftMarket = gone.length;
+      for (const r of gone) removedAll.push({ ...r, transaction: search.transaction, propertyType: search.propertyType, location: search.location });
+      await saveHistory(memory, search, seen);
     } else {
-      const merged = { ...((await memory.getValue(key)) ?? {}), ...Object.fromEntries(Object.entries(seen).filter(([k]) => byKey.has(k))) };
-      await memory.setValue(key, merged);
+      // A partial read must not forget what it did not see.
+      await saveHistory(memory, search, { ...before, ...Object.fromEntries(Object.entries(seen).filter(([k]) => byKey.has(k))) });
     }
     allListings.push(...listings);
     log.info(`${label}: ${listings.length} listings from ${row.pages} pages (the site reports ${row.reported})${row.complete ? '' : ', partial'}.`);

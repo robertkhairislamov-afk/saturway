@@ -9,15 +9,23 @@ export const PAGE_SIZE = 30;
 export const PROPERTY_TYPES = { condo: 'condos', house: 'houses', villa: 'villas', townhouse: 'townhouses' };
 export const TRANSACTIONS = { sale: 'for-sale', rent: 'for-rent' };
 
-// "chonburi/pattaya" → https://www.dotproperty.co.th/en/condos-for-sale/chonburi/pattaya?page=2
-export function searchUrl({ location, propertyType = 'condo', transaction = 'sale', page = 1 }) {
+// The site returns at most about 10,000 results per search; deeper pages repeat earlier ones.
+// Larger searches are read in price ranges below this size.
+export const MAX_RESULTS = 9000;
+
+// "chonburi/pattaya" → https://www.dotproperty.co.th/en/condos-for-sale/chonburi/pattaya?sortBy=price&page=2
+// Sorting by price keeps the order stable while the pages are read; the price range is inclusive.
+export function searchUrl({ location, propertyType = 'condo', transaction = 'sale', page = 1, minPrice, maxPrice }) {
   const type = PROPERTY_TYPES[propertyType];
   const deal = TRANSACTIONS[transaction];
   if (!type) throw new Error(`Unknown property type "${propertyType}". Use one of: ${Object.keys(PROPERTY_TYPES).join(', ')}.`);
   if (!deal) throw new Error(`Unknown transaction "${transaction}". Use sale or rent.`);
   const path = String(location).trim().replace(/^\/+|\/+$/g, '').toLowerCase();
-  const url = `${BASE_URL}/en/${type}-${deal}/${path}`;
-  return page > 1 ? `${url}?page=${page}` : url;
+  const params = new URLSearchParams({ sortBy: 'price' });
+  if (minPrice != null) params.set('minPrice', String(minPrice));
+  if (maxPrice != null) params.set('maxPrice', String(maxPrice));
+  if (page > 1) params.set('page', String(page));
+  return `${BASE_URL}/en/${type}-${deal}/${path}?${params}`;
 }
 
 const decode = (s) => String(s)
@@ -87,17 +95,69 @@ function cardDetails(html) {
   return out;
 }
 
+// The page's own data for the listings (the "homes" array of the Next.js payload): the site's unit
+// ID, the full photo album and the date the listing was last verified.
+export function homesData(html) {
+  const out = new Map();
+  let payload = '';
+  for (const m of html.matchAll(/self\.__next_f\.push\(\[1,"((?:[^"\\]|\\.)*)"\]\)/g)) {
+    try {
+      payload += JSON.parse(`"${m[1]}"`);
+    } catch {
+      // A chunk we cannot read; the others still count.
+    }
+  }
+  let from = 0;
+  while ((from = payload.indexOf('"homes":[', from)) !== -1) {
+    const start = from + '"homes":'.length;
+    let depth = 0;
+    let end = -1;
+    let inString = false;
+    for (let i = start; i < payload.length; i++) {
+      const c = payload[i];
+      if (inString) {
+        if (c === '\\') i++;
+        else if (c === '"') inString = false;
+      } else if (c === '"') inString = true;
+      else if (c === '[' || c === '{') depth++;
+      else if (c === ']' || c === '}') {
+        depth--;
+        if (depth === 0) { end = i; break; }
+      }
+    }
+    from = start;
+    if (end < 0) break;
+    try {
+      for (const home of JSON.parse(payload.slice(start, end + 1))) {
+        if (!home?.uuid) continue;
+        out.set(home.uuid, {
+          unitId: home.unit_id ?? null,
+          album: (home.album ?? []).map((a) => a?.src).filter(Boolean),
+          verifiedAt: home.verification_at ? new Date(home.verification_at).toISOString() : null,
+          projectSlug: home.project?.clean_name ?? null,
+          areaSlug: home.location_clean_name ?? null,
+        });
+      }
+    } catch {
+      // Not the listing array.
+    }
+  }
+  return out;
+}
+
 // One record per listing of a list page, and the total the site reports for the search.
 export function parseListPage(html) {
   const list = jsonLd(html, 'ItemList');
   if (!list) return { total: null, listings: [] };
   const cards = cardDetails(html);
+  const homes = homesData(html);
   const listings = (list.itemListElement ?? []).map((element) => {
     const item = element.item ?? {};
     const about = item.about ?? {};
     const address = about.address ?? {};
     const key = listingKey(item.url);
     const card = cards.get(key) ?? {};
+    const home = homes.get(key) ?? {};
     const price = number(item.offers?.price);
     const sqm = card.sqm ?? null;
     return {
@@ -122,6 +182,11 @@ export function parseListPage(html) {
       descriptionStart: item.description ? item.description.replace(/\s+/g, ' ').trim() : null,
       isNewListing: card.isNew ?? false,
       priceChangeBadge: card.priceChanged ?? false,
+      unitId: home.unitId ?? null,
+      verifiedAt: home.verifiedAt ?? null,
+      photoCount: home.album?.length ?? null,
+      photoUrls: home.album ?? [],
+      photoKeys: (home.album ?? []).map(imageKey).filter(Boolean),
     };
   });
   return { total: list.numberOfItems ?? null, listings };

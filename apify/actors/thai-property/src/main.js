@@ -5,7 +5,7 @@
 import { Actor, log } from 'apify';
 
 import { districtOf } from './areas.js';
-import { PAGE_SIZE, parseListPage, parseListingPage, searchUrl } from './dotproperty.js';
+import { MAX_RESULTS, PAGE_SIZE, parseListPage, parseListingPage, searchUrl } from './dotproperty.js';
 import { applyHistory, historyKey } from './history.js';
 import { createHttpClient, mapLimit } from './http.js';
 import { districtRecords, projectKey, projectRecords } from './stats.js';
@@ -47,32 +47,69 @@ const summary = { searches: [], projects: 0, districts: 0, projectDetailsFetched
 const allListings = [];
 const removedAll = [];
 
+// Price ranges for searches above the result limit: start from typical cut points and halve any
+// range that is still too big. Each range comes with its first page, which tells its size.
+const CUTS = {
+  sale: [0, 1500000, 2000000, 2500000, 3000000, 3500000, 4000000, 5000000, 6000000, 8000000, 12000000, 20000000],
+  rent: [0, 8000, 10000, 12000, 15000, 18000, 22000, 28000, 35000, 50000, 80000],
+};
+const rangeLabel = ({ minPrice, maxPrice }) => `฿${(minPrice ?? 0).toLocaleString('en-US')}–${maxPrice != null ? `฿${maxPrice.toLocaleString('en-US')}` : 'up'}`;
+async function priceSlices(search, label) {
+  const cuts = CUTS[search.transaction];
+  const queue = cuts.map((lo, i) => ({ minPrice: lo, maxPrice: cuts[i + 1] != null ? cuts[i + 1] - 1 : undefined }));
+  const slices = [];
+  while (queue.length) {
+    const range = queue.shift();
+    const first = parseListPage(await http.get(searchUrl({ ...search, ...range })));
+    const { minPrice: lo, maxPrice: hi } = range;
+    if ((first.total ?? 0) > MAX_RESULTS && (hi == null || hi - lo > 1000)) {
+      const mid = hi == null ? Math.max(lo * 2, 1000000) : Math.round((lo + hi) / 2 / 1000) * 1000;
+      queue.unshift({ minPrice: lo, maxPrice: mid - 1 }, { minPrice: mid, maxPrice: hi });
+      continue;
+    }
+    if ((first.total ?? 0) > MAX_RESULTS) log.warning(`${label}, ${rangeLabel(range)}: ${first.total} listings at one price; only the first ${MAX_RESULTS} can be read.`);
+    slices.push({ range, total: first.total, first });
+  }
+  log.info(`${label}: ${slices.length} price ranges.`);
+  return slices;
+}
+
 for (const search of searches) {
   const label = `${search.propertyType} for ${search.transaction} in ${search.location}`;
-  const row = { search: label, url: searchUrl(search), reported: null, pages: 0, listings: 0, complete: false, error: null };
+  const row = { search: label, url: searchUrl(search), reported: null, priceRanges: 1, pages: 0, listings: 0, complete: false, error: null };
   summary.searches.push(row);
   try {
     const first = parseListPage(await http.get(searchUrl(search)));
     row.reported = first.total;
-    const pageCount = Math.ceil((first.total ?? 0) / PAGE_SIZE);
-    const pages = input.maxPagesPerSearch > 0 ? Math.min(pageCount, input.maxPagesPerSearch) : pageCount;
-    const byKey = new Map(first.listings.map((l) => [l.key, l]));
-    row.pages = 1;
+    const byKey = new Map();
+    const add = (listings) => { for (const l of listings) byKey.set(l.key, l); };
+    // Searches above the site's result limit are read in price ranges below it.
+    const slices = (first.total ?? 0) > MAX_RESULTS && !(input.maxPagesPerSearch > 0)
+      ? await priceSlices(search, label)
+      : [{ range: {}, total: first.total, first }];
+    row.priceRanges = slices.length;
     let failedPages = 0;
-    await mapLimit(Array.from({ length: Math.max(0, pages - 1) }, (_, i) => i + 2), input.concurrency, async (page) => {
-      try {
-        const { listings } = parseListPage(await http.get(searchUrl({ ...search, page })));
-        for (const l of listings) byKey.set(l.key, l);
-        row.pages++;
-      } catch (error) {
-        failedPages++;
-        log.warning(`${label}, page ${page}: ${error.message}`);
-      }
-      if (row.pages % 100 === 0) await Actor.setStatusMessage(`${label}: ${row.pages} of ${pages} pages, ${byKey.size} listings.`);
-    });
-    // The order shifts while we read, so a few listings can be missed; a search counts as complete
-    // when every page was read and we have at least 95% of what the site reports.
-    row.complete = pages === pageCount && failedPages === 0 && byKey.size >= 0.95 * Math.min(first.total ?? 0, pageCount * PAGE_SIZE);
+    const pagesWanted = slices.reduce((sum, slice) => sum + Math.ceil((slice.total ?? 0) / PAGE_SIZE), 0);
+    for (const slice of slices) {
+      add(slice.first.listings);
+      row.pages++;
+      const pageCount = Math.ceil((slice.total ?? 0) / PAGE_SIZE);
+      const pages = input.maxPagesPerSearch > 0 ? Math.min(pageCount, input.maxPagesPerSearch) : pageCount;
+      if (pages < pageCount) failedPages += pageCount - pages;
+      await mapLimit(Array.from({ length: Math.max(0, pages - 1) }, (_, i) => i + 2), input.concurrency, async (page) => {
+        try {
+          add(parseListPage(await http.get(searchUrl({ ...search, ...slice.range, page }))).listings);
+          row.pages++;
+        } catch (error) {
+          failedPages++;
+          log.warning(`${label}, ${rangeLabel(slice.range)}, page ${page}: ${error.message}`);
+        }
+        if (row.pages % 100 === 0) await Actor.setStatusMessage(`${label}: ${row.pages} of about ${pagesWanted} pages, ${byKey.size} listings.`);
+      });
+    }
+    // A search is complete when every page of every range was read and we have at least 95% of
+    // what the site reports (listings move between pages while we read).
+    row.complete = failedPages === 0 && byKey.size >= 0.95 * (first.total ?? 0);
     const listings = [...byKey.values()].map((l) => {
       const projectName = l.project && !/^(n\/a|untitled)$/i.test(l.project) ? l.project : null;
       return { recordType: 'listing', source: 'dotproperty', transaction: search.transaction, propertyType: search.propertyType, location: search.location, ...l, project: projectName, projectKey: projectName ? projectKey(projectName) : null, ...districtOf(l), scrapedAt };
@@ -155,7 +192,7 @@ const push = async (dataset, records) => {
 await push(await Actor.openDataset(), projects);
 await push(await Actor.openDataset({ alias: 'districts' }), districts);
 await push(await Actor.openDataset({ alias: 'removed' }), removedAll.map((r) => ({ recordType: 'removed', ...r, scrapedAt })));
-if (input.saveListings) await push(await Actor.openDataset({ alias: 'listings' }), allListings);
+if (input.saveListings) await push(await Actor.openDataset({ alias: 'listings' }), allListings.map(({ photoUrls, photoKeys, ...l }) => l));
 
 summary.finishedAt = new Date().toISOString();
 await Actor.setValue('SUMMARY', summary);

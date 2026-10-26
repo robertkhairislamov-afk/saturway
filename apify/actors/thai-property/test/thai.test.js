@@ -3,15 +3,16 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 import { districtOf, pattayaDistrict } from '../src/areas.js';
-import { descriptionFacts, imageKey, listingKey, parseListingPage, parseListPage, searchUrl, thumbnailUrl } from '../src/dotproperty.js';
+import { descriptionFacts, homesData, imageKey, listingKey, parseListingPage, parseListPage, searchUrl, thumbnailUrl } from '../src/dotproperty.js';
 import { applyHistory } from '../src/history.js';
 import { districtRecords, median, projectKey, projectRecords } from '../src/stats.js';
 
 const fixture = (name) => readFileSync(new URL(`./fixtures/${name}`, import.meta.url), 'utf8');
 
 test('search URLs', () => {
-  assert.equal(searchUrl({ location: 'chonburi/pattaya' }), 'https://www.dotproperty.co.th/en/condos-for-sale/chonburi/pattaya');
-  assert.equal(searchUrl({ location: '/Phuket/', propertyType: 'villa', transaction: 'rent', page: 4 }), 'https://www.dotproperty.co.th/en/villas-for-rent/phuket?page=4');
+  assert.equal(searchUrl({ location: 'chonburi/pattaya' }), 'https://www.dotproperty.co.th/en/condos-for-sale/chonburi/pattaya?sortBy=price');
+  assert.equal(searchUrl({ location: '/Phuket/', propertyType: 'villa', transaction: 'rent', page: 4 }), 'https://www.dotproperty.co.th/en/villas-for-rent/phuket?sortBy=price&page=4');
+  assert.equal(searchUrl({ location: 'chonburi/pattaya', minPrice: 0, maxPrice: 1499999, page: 2 }), 'https://www.dotproperty.co.th/en/condos-for-sale/chonburi/pattaya?sortBy=price&minPrice=0&maxPrice=1499999&page=2');
   assert.throws(() => searchUrl({ location: 'x', propertyType: 'castle' }), /Unknown property type/);
 });
 
@@ -49,6 +50,18 @@ test('listing page: gallery, basics and project facts', () => {
     name: 'Edge Central Pattaya', developer: 'Sansiri', construction: 'Completed (Oct 2021)', completedYear: 2021,
     floors: 31, buildings: 1, units: 603, areaSqm: 3200, nearestLandmark: 'South Pattaya Beach', nearestLandmarkKm: 0.3,
   });
+});
+
+test('page data: unit ID, album and verification date from the Next.js payload', () => {
+  const photo = (k) => 'https://img.fazwaz.com/' + Buffer.from(JSON.stringify({ bucket: 'b', key: `ingester/u/${k}.jpeg` })).toString('base64');
+  const homes = [{ uuid: 'abc-1', unit_id: 42, verification_at: '2026-10-26T04:59:15+07:00', project: { clean_name: 'edge' }, album: [{ src: photo('p1') }, { src: photo('p2') }], descriptions: 'a "quoted" [text] {x}' }];
+  const payload = `x:{"initUnitSearchPage":{"searchResult":{"homes":${JSON.stringify(homes)}}}}`;
+  const html = `<script>self.__next_f.push([1,${JSON.stringify(payload.slice(0, 40))}])</script><script>self.__next_f.push([1,${JSON.stringify(payload.slice(40))}])</script>`;
+  const data = homesData(html).get('abc-1');
+  assert.equal(data.unitId, 42);
+  assert.equal(data.album.length, 2);
+  assert.equal(data.verifiedAt, '2026-10-25T21:59:15.000Z');
+  assert.equal(data.projectSlug, 'edge');
 });
 
 test('image keys and thumbnails', () => {

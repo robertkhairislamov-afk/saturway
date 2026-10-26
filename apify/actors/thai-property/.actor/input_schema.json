@@ -112,7 +112,7 @@
       "type": "integer",
       "description": "Listings that may repeat a unit are compared by their first 4 photos (64×48 thumbnails, about 8 KB each). Comparisons are kept, so later runs read only new photos. The largest projects come first; the rest wait for the next runs.",
       "minimum": 0,
-      "default": 30000
+      "default": 20000
     },
     "saveListings": {
       "title": "Save listings",

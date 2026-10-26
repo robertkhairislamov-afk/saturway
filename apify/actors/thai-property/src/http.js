@@ -61,7 +61,9 @@ export function createHttpClient({ proxyConfiguration, delayMs = 1000, maxRetrie
         dropSession(agent);
         if (attempt < maxRetries) {
           stats.retried++;
-          await sleep(2000 * 2 ** (attempt - 1));
+          // A refusal (403, 429) means slow down: wait a minute or two, not seconds.
+          const refused = error instanceof HttpError && [403, 429].includes(error.status);
+          await sleep(refused ? 60000 * attempt : 2000 * 2 ** (attempt - 1));
         }
       }
     }

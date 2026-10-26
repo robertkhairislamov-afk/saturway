@@ -25,7 +25,7 @@ const input = {
   maxProjectDetailsPerRun: 600,
   maxRemovalChecksPerRun: 1500,
   lotsFor: ['sale'],
-  maxNewPhotoHashesPerRun: 30000,
+  maxNewPhotoHashesPerRun: 20000,
   projectDetailsMaxAgeDays: 90,
   saveListings: true,
   memoryName: 'thai-property-history',
@@ -243,9 +243,9 @@ const wanted = [...new Set(candidates.flatMap((l) => l.photoKeys.slice(0, 4)))].
 const todoPhotos = wanted.slice(0, input.maxNewPhotoHashesPerRun);
 summary.photoHashes = { known: photoHashes.size, new: 0, failed: 0, leftForNextRuns: wanted.length - todoPhotos.length };
 if (todoPhotos.length) {
-  const images = createHttpClient({ proxyConfiguration, delayMs: 150, maxRetries: 3, timeoutMs: 30000 });
+  const images = createHttpClient({ proxyConfiguration, delayMs: 400, maxRetries: 3, timeoutMs: 30000 });
   await Actor.setStatusMessage(`Comparing photos: ${todoPhotos.length} new photos of ${candidates.length} listings that may repeat a unit.`);
-  await mapLimit(todoPhotos, 4, async (key) => {
+  await mapLimit(todoPhotos, 2, async (key) => {
     try {
       photoHashes.set(shortPhotoId(key), hashOfJpeg(await images.get(thumbnailForKey(key), { binary: true })));
       summary.photoHashes.new++;

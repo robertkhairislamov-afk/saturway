@@ -62,6 +62,28 @@
 
 Через неделю (27.10) сравнить: `python3 rank.py "indeed scraper" "play store" "google trends api"` (листает `/v2/store?search=` по 100 и ищет `robertosan16`).
 
+## Места 27.10 (через неделю после новых текстов)
+
+| Запрос | Всего | Наш актор и место (20.10 → 25.10 → 27.10) |
+|---|---|---|
+| play store | 5079 | Google Play 227 → 10 → **10** |
+| google play / google play scraper | 6338 / 2472 | Google Play 25 → 26 → 26 / 17 → 17 |
+| aliexpress / aliexpress scraper / aliexpress product scraper | 317 / 317 / 311 | AliExpress 222 → 147 → **118** / 151 → **76** / 117 → **55** |
+| google trends api | 1126 | Trends нет в 500 → 120 → 127 |
+| google trends / google trends scraper | 2053 / 1986 | Trends 228 → 276 → **344** / 164 → **261** |
+| trending now | 497 | Trends 34 → 52 |
+| app store / app store scraper | 3561 / 2968 | App Store 456 → нет в 500 → нет / 235 → 261 |
+| indeed / indeed scraper / indeed jobs scraper | 1548 / 1548 / 678 | Indeed 151 → 159 → 158 / 106 → 110 → 111 / 84 → 90; All-in-One 83 по «indeed» |
+| job scraper / jobs scraper | 13 077 / 12 663 | нет в 500 |
+| glassdoor | 343 | All-in-One 63, Glassdoor 122 |
+| linkedin jobs | 2213 | LinkedIn 448 |
+| redfin | 640 | Redfin 54 → **132** |
+| google ads transparency | 492 | Ads Transparency 150 → 123 |
+| google news | 3422 | Google News 284 → 285 |
+| seek / stepstone / infojobs | 13 279 / 129 / 71 | 117 / 80 / 58 |
+
+Вывод 27.10: точные слова держат и поднимают места там, где мало конкурентов (play store, AliExpress); в общих запросах (google trends, app store, job scraper) и у Redfin места падают — их решают пользователи и отзывы.
+
 ## Предложения
 
 Полные тексты — в `proposals.json`. Имена и адреса акторов не меняются (на них ссылаются статьи на Medium). Цены не трогаем.

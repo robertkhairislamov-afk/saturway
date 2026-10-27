@@ -8,6 +8,7 @@ import { districtOf } from './areas.js';
 import { MAX_RESULTS, PAGE_SIZE, parseListPage, parseListingPage, searchUrl } from './dotproperty.js';
 import { applyHistory, keepAsSeen, loadHistory, saveHistory } from './history.js';
 import { HttpError, createHttpClient, mapLimit } from './http.js';
+import { belowMarket, ownershipOf } from './deals.js';
 import { findLots } from './match.js';
 import { hashOfJpeg, loadPhotoHashes, savePhotoHashes, shortPhotoId, thumbnailForKey } from './photos.js';
 import { districtRecords, projectKey, projectRecords, projectSegment } from './stats.js';
@@ -141,7 +142,7 @@ for (const search of searches) {
     row.complete = failedPages === 0 && byKey.size >= 0.95 * (first.total ?? 0);
     const listings = [...byKey.values()].map((l) => {
       const projectName = l.project && !/^(n\/a|untitled)$/i.test(l.project) ? l.project : null;
-      return { recordType: 'listing', source: 'dotproperty', transaction: search.transaction, propertyType: search.propertyType, location: search.location, ...l, project: projectName, projectKey: projectName ? projectKey(projectName) : null, ...districtOf(l), scrapedAt };
+      return { recordType: 'listing', source: 'dotproperty', transaction: search.transaction, propertyType: search.propertyType, location: search.location, ...l, project: projectName, projectKey: projectName ? projectKey(projectName) : null, ...districtOf(l), ownership: ownershipOf(l.title, l.descriptionStart), scrapedAt };
     });
     row.listings = listings.length;
 
@@ -280,6 +281,22 @@ for (const p of projects) {
   p.uniqueSaleUnits = p.saleListings - p.duplicateSaleListings;
 }
 summary.lots = lots.length;
+
+// Quota counts per project, and listings below similar units of their project.
+const quota = new Map();
+for (const l of allListings) {
+  if (l.transaction !== 'sale' || !l.projectKey || !l.ownership) continue;
+  if (!quota.has(l.projectKey)) quota.set(l.projectKey, { thai: 0, foreign: 0 });
+  if (l.ownership === 'thai quota') quota.get(l.projectKey).thai++;
+  if (l.ownership === 'foreign quota') quota.get(l.projectKey).foreign++;
+}
+for (const p of projects) {
+  p.thaiQuotaSaleListings = quota.get(p.projectKey)?.thai ?? 0;
+  p.foreignQuotaSaleListings = quota.get(p.projectKey)?.foreign ?? 0;
+}
+const deals = belowMarket(allListings, { projects: Object.fromEntries(projects.map((p) => [p.projectKey, p])) }).map((d) => ({ ...d, scrapedAt }));
+summary.belowMarket = deals.length;
+summary.belowMarketThaiQuota = deals.filter((d) => d.ownership === 'thai quota').length;
 summary.listingsInLots = lots.reduce((sum, lot) => sum + lot.listings, 0);
 summary.districts = districts.length;
 summary.removed = removedAll.length;
@@ -292,6 +309,7 @@ const push = async (dataset, records) => {
 await push(await Actor.openDataset(), projects);
 await push(await Actor.openDataset({ alias: 'districts' }), districts);
 await push(await Actor.openDataset({ alias: 'lots' }), lots);
+await push(await Actor.openDataset({ alias: 'belowMarket' }), deals);
 await push(await Actor.openDataset({ alias: 'removed' }), removedAll.map((r) => ({ recordType: 'removed', ...r, scrapedAt })));
 if (input.saveListings) await push(await Actor.openDataset({ alias: 'listings' }), allListings.map(({ photoUrls, photoKeys, ...l }) => l));
 

@@ -102,6 +102,12 @@
       },
       "construction": {
         "description": "Construction status as the site gives it, for example \"Completed (Oct 2021)\" or \"Off Plan (Dec 2028)\"."
+      },
+      "thaiQuotaSaleListings": {
+        "description": "Sale listings that say Thai quota."
+      },
+      "foreignQuotaSaleListings": {
+        "description": "Sale listings that say foreign quota."
       }
     },
     "additionalProperties": true

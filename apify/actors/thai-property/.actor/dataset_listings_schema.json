@@ -141,6 +141,9 @@
       },
       "segment": {
         "description": "Market segment: resale (completed more than about two years ago), new (completed in the last two years, mostly developer stock) or off plan (under construction). New and off-plan projects list every unit and have no rents yet."
+      },
+      "ownership": {
+        "description": "What the advertiser says about ownership in the title or the start of the description: thai quota, foreign quota or leasehold; empty when it says nothing."
       }
     },
     "additionalProperties": true

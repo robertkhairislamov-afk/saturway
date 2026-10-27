@@ -281,3 +281,37 @@ test('lots: floors, references of one advertiser, segments and price gaps keep u
   // Photos after the fourth (building, pool) are no evidence.
   assert.equal(findLots([unit('a', { photoKeys: ph('a1', 'a2', 'a3', 'a4', 'pool') }), unit('b', { photoKeys: ph('b1', 'b2', 'b3', 'b4', 'pool') })]).lots.length, 0);
 });
+
+import { belowMarket, ownershipOf } from '../src/deals.js';
+
+test('ownership from the title or description', () => {
+  assert.equal(ownershipOf('The Palm - Foreign Quota Sea View Studio'), 'foreign quota');
+  assert.equal(ownershipOf('Cheap 1 bed', 'Thai quota, 35 sqm'), 'thai quota');
+  assert.equal(ownershipOf('Sold in company name'), 'thai quota');
+  assert.equal(ownershipOf('30-year lease, sea view'), 'leasehold');
+  assert.equal(ownershipOf('Nice studio', null), null);
+});
+
+test('below market: compared with similar units, Thai quota and the same unit left out', () => {
+  const sale = (key, over) => ({ key, transaction: 'sale', segment: 'resale', projectKey: 'p', project: 'P', district: 'Jomtien', bedrooms: 1, sizeSqm: 35, price: 3500000, ...over });
+  const items = [
+    sale('t', { price: 2800000, ownership: 'thai quota' }),
+    sale('a'), sale('b', { sizeSqm: 36, price: 3600000 }), sale('c', { ownership: 'foreign quota' }), sale('d', { ownership: 'foreign quota', price: 3400000 }),
+    sale('big', { sizeSqm: 80, price: 4000000 }), // not similar in size
+    sale('t2', { price: 2900000, ownership: 'thai quota' }), // not a comparable for t
+    sale('x', { price: 1000000 }), // a typo-sized gap
+    sale('new', { segment: 'off plan', price: 1000000 }),
+  ];
+  const deals = belowMarket(items, { projects: { p: { grossYieldPercent: 7, rentListings: 5 } } });
+  assert.equal(belowMarket(items, { projects: { p: { rentListings: 0 } } }).length, 0);
+  const t = deals.find((d) => d.ownership === 'thai quota' && d.price === 2800000);
+  assert.equal(t.comparablePricePerSqm, 100000);
+  assert.equal(t.gapPercent, -20);
+  assert.equal(t.potentialThb, 700000);
+  assert.equal(t.comparables, 5);
+  assert.equal(t.foreignQuotaPricePerSqm, 98571);
+  assert.equal(t.projectGrossYieldPercent, 7);
+  assert.equal(deals.at(-1).checkData, true);
+  assert.equal(deals.some((d) => d.project === 'P' && d.price === 1000000 && d.sizeSqm === 35 && !d.checkData), false);
+  assert.equal(deals.filter((d) => d.price === 1000000).length, 1);
+});

@@ -1,0 +1,161 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "recordType": {
+        "description": "Always \"belowMarket\"."
+      },
+      "project": {
+        "description": "Project name."
+      },
+      "projectKey": {
+        "description": "Project key."
+      },
+      "district": {
+        "description": "District."
+      },
+      "ownership": {
+        "description": "What the advertiser says about ownership in the title or the start of the description: thai quota, foreign quota or leasehold; empty when it says nothing."
+      },
+      "bedrooms": {
+        "description": "Bedrooms."
+      },
+      "sizeSqm": {
+        "description": "Size in m²."
+      },
+      "price": {
+        "description": "Asking price, in THB."
+      },
+      "pricePerSqm": {
+        "description": "Asking price per m², in THB."
+      },
+      "comparablePricePerSqm": {
+        "description": "Typical price per m² of similar units in the project: same bedrooms, size within 25%, other units than this one, Thai-quota listings left out."
+      },
+      "gapPercent": {
+        "description": "How far the listing is below its comparables, in percent."
+      },
+      "priceAtComparables": {
+        "description": "What the unit would ask at its comparables’ price per m², in THB."
+      },
+      "potentialThb": {
+        "description": "The difference to that price, in THB, before costs, taxes and the time a sale takes."
+      },
+      "comparables": {
+        "description": "Similar listings it is compared with."
+      },
+      "foreignQuotaComparables": {
+        "description": "Of them, listings that say foreign quota."
+      },
+      "foreignQuotaPricePerSqm": {
+        "description": "Typical price per m² of the foreign-quota comparables, when there are at least 2."
+      },
+      "checkData": {
+        "description": "True when the gap is 50% or more: more often a typo in size or price than a bargain."
+      },
+      "projectGrossYieldPercent": {
+        "description": "Gross yield of the project."
+      },
+      "projectRentListings": {
+        "description": "Rent listings in the project."
+      },
+      "daysListed": {
+        "description": "Days since the listing was first seen."
+      },
+      "lotId": {
+        "description": "Lot of the unit when it is listed more than once."
+      },
+      "title": {
+        "description": "Title of the listing."
+      },
+      "url": {
+        "description": "Link to the listing."
+      },
+      "scrapedAt": {
+        "description": "When the record was saved."
+      }
+    },
+    "additionalProperties": true
+  },
+  "views": {
+    "overview": {
+      "title": "Below market",
+      "transformation": {
+        "fields": [
+          "project",
+          "district",
+          "ownership",
+          "bedrooms",
+          "sizeSqm",
+          "price",
+          "comparablePricePerSqm",
+          "gapPercent",
+          "potentialThb",
+          "comparables",
+          "projectGrossYieldPercent",
+          "checkData",
+          "url"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "project": {
+            "label": "Project",
+            "format": "text"
+          },
+          "district": {
+            "label": "District",
+            "format": "text"
+          },
+          "ownership": {
+            "label": "Ownership",
+            "format": "text"
+          },
+          "bedrooms": {
+            "label": "Beds",
+            "format": "number"
+          },
+          "sizeSqm": {
+            "label": "m²",
+            "format": "number"
+          },
+          "price": {
+            "label": "Price ฿",
+            "format": "number"
+          },
+          "comparablePricePerSqm": {
+            "label": "Comparables ฿/m²",
+            "format": "number"
+          },
+          "gapPercent": {
+            "label": "Gap %",
+            "format": "number"
+          },
+          "potentialThb": {
+            "label": "Potential ฿",
+            "format": "number"
+          },
+          "comparables": {
+            "label": "Comparables",
+            "format": "number"
+          },
+          "projectGrossYieldPercent": {
+            "label": "Yield %",
+            "format": "number"
+          },
+          "checkData": {
+            "label": "Check data",
+            "format": "boolean"
+          },
+          "url": {
+            "label": "Link",
+            "format": "link"
+          }
+        }
+      }
+    }
+  }
+}

@@ -9,6 +9,7 @@
   "storages": {
     "datasets": {
       "default": "./dataset_projects_schema.json",
+      "belowMarket": "./dataset_below_market_schema.json",
       "lots": "./dataset_lots_schema.json",
       "districts": "./dataset_districts_schema.json",
       "listings": "./dataset_listings_schema.json",

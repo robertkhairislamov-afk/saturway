@@ -8,6 +8,12 @@
       "description": "Market figures and facts per project (condominium).",
       "template": "{{storages.datasets.default.apiUrl}}/items?view=overview"
     },
+    "belowMarket": {
+      "type": "string",
+      "title": "Below market",
+      "description": "Resale listings at least 10% below similar units of their project, with ownership (Thai or foreign quota).",
+      "template": "{{storages.datasets.belowMarket.apiUrl}}/items?view=overview"
+    },
     "lots": {
       "type": "string",
       "title": "Units listed more than once",

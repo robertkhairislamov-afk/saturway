@@ -37,6 +37,8 @@ Get **every Google ad of a competitor** from the [Google Ads Transparency Center
 2. Choose the **region** (a country code such as `US`, or `ANYWHERE`) and, if you like, **platforms**, **ad format** and **dates**.
 3. Click **Start** and download the ads as JSON, CSV, Excel or HTML, or use them through the API.
 
+A step-by-step guide with Python examples, 1,800 search ads of six running-shoe brands and what their copy shows: [How to See Every Google Ad Your Competitors Run, with the Ad Copy as Text](https://medium.com/@robertkhairislamov/how-to-see-every-google-ad-your-competitors-run-with-the-ad-copy-as-text-5df92a633b22).
+
 ### Example input
 
 ```json

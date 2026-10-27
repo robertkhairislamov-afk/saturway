@@ -315,3 +315,18 @@ test('below market: compared with similar units, Thai quota and the same unit le
   assert.equal(deals.some((d) => d.project === 'P' && d.price === 1000000 && d.sizeSqm === 35 && !d.checkData), false);
   assert.equal(deals.filter((d) => d.price === 1000000).length, 1);
 });
+
+import { loadSearchState, saveSearchState } from '../src/state.js';
+
+test('a finished search is saved in parts and taken back after a migration', async () => {
+  const store = new Map();
+  const kv = { getValue: async (k) => store.get(k) ?? null, setValue: async (k, v) => store.set(k, v) };
+  const listings = Array.from({ length: 9001 }, (_, i) => ({ key: `k${i}`, price: i, photoKeys: ['a/b/c.jpeg'] }));
+  await saveSearchState(kv, 0, { row: { search: 's', listings: 9001 }, listings, removed: [{ key: 'gone' }] });
+  assert.equal(store.get('STATE-0').parts, 3);
+  const back = await loadSearchState(kv, 0);
+  assert.equal(back.listings.length, 9001);
+  assert.equal(back.listings[9000].key, 'k9000');
+  assert.deepEqual(back.removed, [{ key: 'gone' }]);
+  assert.equal(await loadSearchState(kv, 1), null);
+});

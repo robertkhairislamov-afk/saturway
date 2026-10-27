@@ -11,6 +11,7 @@ import { HttpError, createHttpClient, mapLimit } from './http.js';
 import { belowMarket, ownershipOf } from './deals.js';
 import { findLots } from './match.js';
 import { hashOfJpeg, loadPhotoHashes, savePhotoHashes, shortPhotoId, thumbnailForKey } from './photos.js';
+import { loadSearchState, saveSearchState } from './state.js';
 import { districtRecords, projectKey, projectRecords, projectSegment } from './stats.js';
 
 await Actor.init();
@@ -104,8 +105,18 @@ async function confirmGone(missing, seen, label) {
   return gone;
 }
 
-for (const search of searches) {
+const runStore = await Actor.openKeyValueStore();
+for (const [index, search] of searches.entries()) {
   const label = `${search.propertyType} for ${search.transaction} in ${search.location}`;
+  // After a migration: a search this run already finished is taken from the run's store.
+  const resumed = await loadSearchState(runStore, index).catch(() => null);
+  if (resumed) {
+    summary.searches.push({ ...resumed.row, resumed: true });
+    allListings.push(...resumed.listings);
+    removedAll.push(...resumed.removed);
+    log.info(`${label}: ${resumed.listings.length} listings taken from before the migration.`);
+    continue;
+  }
   const row = { search: label, url: searchUrl(search), reported: null, priceRanges: 1, pages: 0, listings: 0, complete: false, error: null };
   summary.searches.push(row);
   try {
@@ -160,6 +171,8 @@ for (const search of searches) {
       await saveHistory(memory, search, { ...before, ...Object.fromEntries(Object.entries(seen).filter(([k]) => byKey.has(k))) });
     }
     allListings.push(...listings);
+    const removedHere = removedAll.filter((r) => r.transaction === search.transaction && r.propertyType === search.propertyType && r.location === search.location);
+    await saveSearchState(runStore, index, { row, listings, removed: removedHere }).catch((error) => log.warning(`Could not save the progress of ${label}: ${error.message}`));
     log.info(`${label}: ${listings.length} listings from ${row.pages} pages (the site reports ${row.reported})${row.complete ? '' : ', partial'}.`);
   } catch (error) {
     row.error = error.message;
@@ -247,6 +260,9 @@ summary.photoHashes = { known: photoHashes.size, new: 0, failed: 0, leftForNextR
 if (todoPhotos.length) {
   const images = createHttpClient({ proxyConfiguration, delayMs: 400, maxRetries: 3, timeoutMs: 30000 });
   await Actor.setStatusMessage(`Comparing photos: ${todoPhotos.length} new photos of ${candidates.length} listings that may repeat a unit.`);
+  // Keep what is done if the run is moved to another server.
+  Actor.on('migrating', () => savePhotoHashes(memory, photoHashes));
+  Actor.on('aborting', () => savePhotoHashes(memory, photoHashes));
   await mapLimit(todoPhotos, 2, async (key) => {
     try {
       photoHashes.set(shortPhotoId(key), hashOfJpeg(await images.get(thumbnailForKey(key), { binary: true })));
@@ -254,7 +270,7 @@ if (todoPhotos.length) {
     } catch {
       summary.photoHashes.failed++;
     }
-    if (summary.photoHashes.new % 5000 === 0 && summary.photoHashes.new) {
+    if (summary.photoHashes.new % 2000 === 0 && summary.photoHashes.new) {
       await savePhotoHashes(memory, photoHashes);
       await Actor.setStatusMessage(`Comparing photos: ${summary.photoHashes.new} of ${todoPhotos.length}.`);
     }

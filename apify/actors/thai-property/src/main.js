@@ -37,6 +37,19 @@ const input = {
 };
 const scrapedAt = new Date().toISOString();
 
+// The run's time limit, set by Apify. Slow optional steps (checking missing listings, project
+// details, photos) stop 20 minutes before it, so the results are always saved; what is left is
+// done in the next run.
+const timeoutAt = Date.parse(process.env.ACTOR_TIMEOUT_AT ?? process.env.APIFY_TIMEOUT_AT ?? '');
+const RESERVE_MS = 20 * 60 * 1000;
+const outOfTime = () => Number.isFinite(timeoutAt) && timeoutAt - Date.now() < RESERVE_MS;
+let timeWarned = false;
+const warnOutOfTime = (step) => {
+  if (timeWarned) return;
+  timeWarned = true;
+  log.warning(`${step}: stopping early to save the results before the run's time limit; the rest is done in the next run.`);
+};
+
 let proxyConfiguration;
 if (input.proxyConfiguration?.useApifyProxy || input.proxyConfiguration?.proxyUrls?.length) {
   proxyConfiguration = await Actor.createProxyConfiguration(input.proxyConfiguration).catch((error) => {
@@ -90,6 +103,11 @@ async function confirmGone(missing, seen, label) {
   const todo = withLink.slice(0, input.maxRemovalChecksPerRun);
   if (todo.length) await Actor.setStatusMessage(`${label}: checking ${todo.length} listings that are missing since the last run.`);
   await mapLimit(todo, input.concurrency, async (m) => {
+    if (outOfTime()) {
+      warnOutOfTime(label);
+      keepAsSeen(seen, m.key, scrapedAt);
+      return;
+    }
     try {
       const page = parseListingPage(await http.get(m.url));
       if (page.available === false) gone.push({ ...m, status: page.availability === 'SoldOut' ? 'sold' : 'off market' });
@@ -197,6 +215,7 @@ if (input.includeProjectDetails) {
   const todo = [...sample.values()].sort((a, b) => counts.get(b.projectKey) - counts.get(a.projectKey)).slice(0, input.maxProjectDetailsPerRun);
   if (todo.length) await Actor.setStatusMessage(`Reading the details of ${todo.length} projects.`);
   await mapLimit(todo, input.concurrency, async (l) => {
+    if (outOfTime()) return warnOutOfTime('Project details');
     try {
       const page = parseListingPage(await http.get(l.url));
       details[l.projectKey] = { ...page.project, yearBuilt: page.yearBuilt ?? page.project.completedYear ?? null, fetchedAt: new Date().toISOString() };
@@ -264,6 +283,11 @@ if (todoPhotos.length) {
   Actor.on('migrating', () => savePhotoHashes(memory, photoHashes));
   Actor.on('aborting', () => savePhotoHashes(memory, photoHashes));
   await mapLimit(todoPhotos, 2, async (key) => {
+    if (outOfTime()) {
+      warnOutOfTime('Comparing photos');
+      summary.photoHashes.leftForNextRuns++;
+      return;
+    }
     try {
       photoHashes.set(shortPhotoId(key), hashOfJpeg(await images.get(thumbnailForKey(key), { binary: true })));
       summary.photoHashes.new++;
@@ -329,6 +353,7 @@ await push(await Actor.openDataset({ alias: 'belowMarket' }), deals);
 await push(await Actor.openDataset({ alias: 'removed' }), removedAll.map((r) => ({ recordType: 'removed', ...r, scrapedAt })));
 if (input.saveListings) await push(await Actor.openDataset({ alias: 'listings' }), allListings.map(({ photoUrls, photoKeys, ...l }) => l));
 
+summary.stoppedEarlyForTimeLimit = timeWarned;
 summary.finishedAt = new Date().toISOString();
 await Actor.setValue('SUMMARY', summary);
 const listingsTotal = allListings.length;

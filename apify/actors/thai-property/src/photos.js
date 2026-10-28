@@ -62,6 +62,7 @@ export async function loadPhotoHashes(store) {
 }
 export async function savePhotoHashes(store, hashes) {
   const parts = Object.fromEntries(SHARDS.map((s) => [s, {}]));
-  for (const [id, h] of hashes) if (SHARDS.includes(id[0])) parts[id[0]][id] = h;
+  // Most file names are hex; the others go to a part chosen by their first character.
+  for (const [id, h] of hashes) parts[SHARDS.includes(id[0]) ? id[0] : SHARDS[id.charCodeAt(0) % SHARDS.length]][id] = h;
   for (const shard of SHARDS) await store.setValue(`photo-hashes-${shard}`, parts[shard]);
 }

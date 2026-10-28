@@ -190,6 +190,38 @@ test('lots: different sizes stay apart; a chain of shared photos makes one lot',
   assert.equal(lots[0].listings, 3);
 });
 
+test('lots: a chain of look-alike photos does not join units on other floors or at other prices', () => {
+  // b has no floor; a is on the 2nd floor and c on the 8th: c stays out of the lot of a and b.
+  const floors = findLots([
+    unit('a', { descriptionStart: 'Room 205 on the 2nd floor', photoKeys: ph('x', 'z') }),
+    unit('b', { photoKeys: ph('x', 'y', 'z') }),
+    unit('c', { descriptionStart: 'Nice unit, 8th floor', photoKeys: ph('y', 'w') }),
+  ]).lots;
+  assert.equal(floors.length, 1);
+  assert.deepEqual(floors[0].offers.map((o) => o.url).sort(), ['https://x/a', 'https://x/b']);
+  // Each neighbour within 40% of the next, but the ends 74% apart: the dearest stays out.
+  const prices = findLots([
+    unit('a', { price: 2300000, photoKeys: ph('x') }),
+    unit('b', { price: 3000000, photoKeys: ph('x', 'y') }),
+    unit('c', { price: 4000000, photoKeys: ph('y') }),
+  ]).lots;
+  assert.equal(prices.length, 1);
+  assert.deepEqual([prices[0].minPrice, prices[0].maxPrice], [2300000, 3000000]);
+});
+
+test('lots: a hashed render reused as the same file by other layouts is no evidence', () => {
+  const hashes = new Map([['render1', 'aaaaaaaaaaaaaaaa'], ['render2', 'aaaaaaaaaaaaaaab']]);
+  const tower = [
+    unit('a', { photoKeys: ph('render1') }),
+    unit('b', { photoKeys: ph('render2') }),
+    // Not candidates, so not hashed: the same files in other layouts.
+    unit('c', { bedrooms: 2, sizeSqm: 60, photoKeys: ph('render1') }),
+    unit('d', { bedrooms: 0, sizeSqm: 26, photoKeys: ph('render2') }),
+  ];
+  assert.equal(findLots(tower.slice(0, 2), { photoHashes: hashes }).lots.length, 1);
+  assert.equal(findLots(tower, { photoHashes: hashes }).lots.length, 0);
+});
+
 test('agency signatures and photo IDs', () => {
   assert.equal(agencyHint('PropertyScout ID ----- Fully furnished'), 'PropertyScout');
   assert.equal(agencyHint('--- Pattaya Realty --- 1 bed'), 'Pattaya Realty');

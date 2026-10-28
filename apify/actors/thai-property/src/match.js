@@ -60,19 +60,6 @@ function differentUnits(a, b) {
   return Boolean(ra && rb && ra.prefix === rb.prefix && ra.code !== rb.code);
 }
 
-class UnionFind {
-  constructor() { this.parent = new Map(); }
-  find(x) {
-    if (!this.parent.has(x)) this.parent.set(x, x);
-    let root = x;
-    while (this.parent.get(root) !== root) root = this.parent.get(root);
-    let node = x;
-    while (this.parent.get(node) !== root) { const next = this.parent.get(node); this.parent.set(node, root); node = next; }
-    return root;
-  }
-  union(a, b) { this.parent.set(this.find(a), this.find(b)); }
-}
-
 const median = (values) => {
   const s = values.filter(Number.isFinite).sort((a, b) => a - b);
   if (!s.length) return null;
@@ -81,29 +68,42 @@ const median = (values) => {
 };
 
 // The photos of each listing of a project as IDs: a visual cluster for hashed photos (pictures
-// within a few bits of each other are one), the file for the others.
+// within a few bits of each other are one), the file for the others. A file that is hashed in one
+// listing is the same cluster in every listing, so a render reused as the same file in other
+// layouts (which are not hashed) still counts as shared by them.
 function photoIdentities(items, photoHashes) {
   const reps = [];
+  const clusterOfFile = new Map();
+  for (const l of items) for (const key of l.photoKeys.slice(0, HASHED_PHOTOS)) {
+    const hash = photoHashes.get(shortPhotoId(key));
+    if (!hash) continue;
+    let cluster = reps.find((r) => hammingDistance(r.hash, hash) <= SAME_PICTURE_BITS);
+    if (!cluster) {
+      cluster = { hash, id: `v:${reps.length}` };
+      reps.push(cluster);
+    }
+    const id = photoId(key);
+    if (id) clusterOfFile.set(id, cluster.id);
+  }
   const out = new Map();
   for (const l of items) {
     const ids = new Set();
-    l.photoKeys.slice(0, HASHED_PHOTOS).forEach((key) => {
-      const hash = photoHashes.get(shortPhotoId(key));
-      if (!hash) {
-        const id = photoId(key);
-        if (id) ids.add(`f:${id}`);
-        return;
-      }
-      let cluster = reps.find((r) => hammingDistance(r.hash, hash) <= SAME_PICTURE_BITS);
-      if (!cluster) {
-        cluster = { hash, id: `v:${reps.length}` };
-        reps.push(cluster);
-      }
-      ids.add(cluster.id);
-    });
+    for (const key of l.photoKeys.slice(0, HASHED_PHOTOS)) {
+      const id = photoId(key);
+      if (id && clusterOfFile.has(id)) ids.add(clusterOfFile.get(id));
+      else if (id) ids.add(`f:${id}`);
+    }
     out.set(l.key, ids);
   }
   return out;
+}
+
+// Two listings that may be the same unit: same bedrooms, size within 1 m², and nothing in their
+// descriptions or posting that says otherwise.
+function compatible(a, b) {
+  if (a.bedrooms !== b.bedrooms) return false;
+  if (a.sizeSqm != null && b.sizeSqm != null && Math.abs(a.sizeSqm - b.sizeSqm) > SIZE_TOLERANCE_SQM) return false;
+  return !sameBatchDifferentUnits(a, b) && !differentUnits(a, b);
 }
 
 // Groups listings of one deal type (sale or rent) into lots. Returns the lots with two or more
@@ -115,8 +115,7 @@ export function findLots(listings, { projectMedians = {}, photoHashes = new Map(
     if (!byProject.has(l.projectKey)) byProject.set(l.projectKey, []);
     byProject.get(l.projectKey).push(l);
   }
-  const uf = new UnionFind();
-  const evidence = new Map();
+  const edges = [];
   for (const items of byProject.values()) {
     if (items.length < 2) continue;
     // Which listings use each photo, and whether it is shared too widely to count.
@@ -141,22 +140,32 @@ export function findLots(listings, { projectMedians = {}, photoHashes = new Map(
       }
     }
     for (const { a, b, photos } of pairs.values()) {
-      if (a.bedrooms !== b.bedrooms) continue;
-      if (a.sizeSqm != null && b.sizeSqm != null && Math.abs(a.sizeSqm - b.sizeSqm) > SIZE_TOLERANCE_SQM) continue;
-      if (sameBatchDifferentUnits(a, b) || differentUnits(a, b)) continue;
+      if (!compatible(a, b)) continue;
       const ratio = Math.max(a.price, b.price) / Math.min(a.price, b.price);
       if (!(ratio <= (photos.size >= 2 ? MAX_PRICE_RATIO.strong : MAX_PRICE_RATIO.single))) continue;
-      uf.union(a.key, b.key);
-      evidence.set(`${a.key}|${b.key}`, photos.size);
+      edges.push({ a, b, photos: photos.size, ratio });
     }
   }
-  const groups = new Map();
-  for (const l of listings) {
-    if (!uf.parent.has(l.key)) continue;
-    const root = uf.find(l.key);
-    if (!groups.has(root)) groups.set(root, []);
-    groups.get(root).push(l);
+  // Strongest evidence first. Two groups join only when every pair across them may be the same
+  // unit and the joined prices stay within the limit: a chain of look-alike photos (A like B, B
+  // like C) does not make A and C one unit when C is on another floor or at another price.
+  edges.sort((x, y) => y.photos - x.photos || x.ratio - y.ratio);
+  const groupOf = new Map();
+  const evidence = new Map();
+  for (const { a, b, photos } of edges) {
+    const ga = groupOf.get(a.key) ?? [a];
+    const gb = groupOf.get(b.key) ?? [b];
+    if (ga !== gb) {
+      const merged = [...ga, ...gb];
+      const prices = merged.map((l) => l.price);
+      if (!(Math.max(...prices) / Math.min(...prices) <= (photos >= 2 ? MAX_PRICE_RATIO.strong : MAX_PRICE_RATIO.single))) continue;
+      if (ga.some((x) => gb.some((y) => !compatible(x, y)))) continue;
+      for (const l of merged) groupOf.set(l.key, merged);
+    }
+    evidence.set(`${a.key}|${b.key}`, photos);
   }
+  const groups = new Map();
+  for (const items of new Set(groupOf.values())) groups.set(items[0].key, items);
   const lotOf = new Map();
   const lots = [];
   for (const items of groups.values()) {
@@ -178,7 +187,7 @@ export function findLots(listings, { projectMedians = {}, photoHashes = new Map(
       projectKey: items[0].projectKey,
       district: items[0].district,
       bedrooms: items[0].bedrooms,
-      sizeSqm: size,
+      sizeSqm: size != null ? Math.round(size * 100) / 100 : null,
       listings: items.length,
       advertisers: new Set(items.map((l) => agencyHint(l.descriptionStart) ?? l.key)).size,
       minPrice: min,

@@ -144,6 +144,9 @@
       },
       "ownership": {
         "description": "What the advertiser says about ownership in the title or the start of the description: thai quota, foreign quota or leasehold; empty when it says nothing."
+      },
+      "unitFloor": {
+        "description": "The unit's floor from the full description on the listing's page; read only for listings in a lot whose list-page text names no floor."
       }
     },
     "additionalProperties": true

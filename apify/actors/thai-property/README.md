@@ -41,6 +41,10 @@ From north to south along the coast: Naklua & Wongamat, North Pattaya, Central P
 
 Schedule it weekly with the same memory name to get days on market, price cuts and departures.
 
-## Next
+## The same unit at several agencies
 
-Stage 2 groups listings of the same unit by different agencies (same project and size, matching photos, marketing renders ignored) and shows each unit with all its prices.
+The **Lots** table groups listings of one unit by different advertisers: same project, bedrooms and size within 1 m², and at least one shared photo among the first four (compared by a visual fingerprint, so re-saved and watermarked copies match). Marketing renders and common-area photos shared by many listings do not count, nor do new and off-plan projects, where many units share show-unit photos. Listings on different floors, with two references of one advertiser, or too far apart in price stay apart, for every pair in a lot. The floor comes from the description; for listings in a lot, the full description on the listing's page is read once and remembered.
+
+## Below market
+
+The **Below market** table lists resale units at least 10% below similar units of their building (same bedrooms, size within 25%, at least three, without the same unit and without Thai-quota listings), with the ownership (Thai or foreign quota) when the advertiser names it.

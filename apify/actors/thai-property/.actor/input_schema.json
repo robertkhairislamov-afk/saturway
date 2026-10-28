@@ -87,6 +87,13 @@
       "minimum": 0,
       "default": 1500
     },
+    "maxFloorChecksPerRun": {
+      "title": "Max floor checks per run",
+      "type": "integer",
+      "description": "Listings in units listed more than once whose floor is not in the start of the description: their own page is read once for the floor, so neighbouring units furnished alike are not taken for one unit. The rest are read in the next runs.",
+      "minimum": 0,
+      "default": 3000
+    },
     "lotsFor": {
       "title": "Find repeated units in",
       "type": "array",

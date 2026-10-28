@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 import { districtOf, pattayaDistrict } from '../src/areas.js';
-import { descriptionFacts, homesData, imageKey, listingKey, parseListingPage, parseListPage, searchUrl, thumbnailUrl } from '../src/dotproperty.js';
+import { descriptionFacts, homesData, unitFloorOf, imageKey, listingKey, parseListingPage, parseListPage, searchUrl, thumbnailUrl } from '../src/dotproperty.js';
 import { applyHistory, dayNumber, keepAsSeen, loadHistory, saveHistory } from '../src/history.js';
 import { districtRecords, median, projectKey, projectRecords, projectSegment } from '../src/stats.js';
 
@@ -80,6 +80,24 @@ test('description facts: quota, floor and view', () => {
   assert.deepEqual(descriptionFacts('Thai quota, floor 7, city view'), { ownership: 'thai quota', unitFloor: 7, view: 'city view' });
   assert.deepEqual(descriptionFacts('Leasehold, partial sea view'), { ownership: 'leasehold', unitFloor: null, view: 'partial sea view' });
   assert.deepEqual(descriptionFacts(null), { ownership: null, unitFloor: null, view: null });
+});
+
+test('the unit floor in a description, not the floor of the pool or the gym', () => {
+  const cases = [
+    ['Room 205, 2nd Floor, size 32.5 sq', 2],
+    ['Size: 32 Sq.m. Floor: 12th Thai Quota', 12],
+    ['Infinity pool on the 40th floor. Unit on the 12th floor', 12],
+    ['37th &amp; 42nd Floor Cantilevered Sky Pools, 7th Floor Gymnasium. Corner unit, 32nd floor', 32],
+    ['pool on the 24th and 25th floors. Situated on the 33th floor', 33],
+    ['33 sq.m. 2 floor 1 Bedroom | 1 Bathroom', null],
+    ['Floor: 30+ (High Floor)', null],
+    ['Unit on the 6th floor; also available: 9th floor unit', null],
+    ['Квартира на 16 этаже, дом 33 этажа', 16],
+    ['ห้องชั้น 12 วิวทะเล', 12],
+    ['位于16楼，海景', 16],
+    ['8 floors, high floor, pool view', null],
+  ];
+  for (const [text, floor] of cases) assert.equal(unitFloorOf(text), floor, text);
 });
 
 test('Pattaya districts from coordinates', () => {
@@ -207,6 +225,14 @@ test('lots: a chain of look-alike photos does not join units on other floors or 
   ]).lots;
   assert.equal(prices.length, 1);
   assert.deepEqual([prices[0].minPrice, prices[0].maxPrice], [2300000, 3000000]);
+});
+
+test('lots: floors read from the listing pages keep neighbours furnished alike apart', () => {
+  const same = { photoKeys: ph('sofa', 'bed') };
+  assert.equal(findLots([unit('a', { ...same, unitFloor: 16 }), unit('b', { ...same, unitFloor: 28 })]).lots.length, 0);
+  const lots = findLots([unit('a', { ...same, unitFloor: 16 }), unit('b', { ...same, descriptionStart: 'Corner unit, 16th floor' })]).lots;
+  assert.equal(lots.length, 1);
+  assert.equal(lots[0].floor, 16);
 });
 
 test('lots: a hashed render reused as the same file by other layouts is no evidence', () => {

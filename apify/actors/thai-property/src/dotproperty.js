@@ -207,6 +207,37 @@ const date = (s) => {
   return new Date(Date.UTC(Number(m[3]), MONTHS[m[1].toLowerCase()], Number(m[2]))).toISOString().slice(0, 10);
 };
 
+// The unit's floor in a description: "on the 16th floor", "Floor: 16", "ชั้น 16", "на 16 этаже",
+// "16楼". Floors of the building's facilities ("rooftop pool on the 40th floor") do not count; a
+// description that names two different floors for the unit leaves it unknown.
+const FLOOR_PATTERNS = [
+  /\b(\d{1,2})(?:st|nd|rd|th)[ -]?(?:floor(?!s)|fl\b)/g,
+  // "Floor: 16", but not "2 floor 1 Bedroom" or "Floor: 30+ (High Floor)".
+  /\bfloor(?:\s*(?:no\.?|number))?[:\s#]+(\d{1,2})(?![\d+])(?!\s*-?\s*(?:bed|bath|br\b|rooms?\b))/g,
+  /ชั้น(?:ที่)?\s*(\d{1,2})(?![\d+])/g,
+  /(?<![\d.,])(\d{1,2})(?:-?м|-?й|-ом)?\s*этаж(?:е)?(?![а-яё])/g,
+  /этаж[:\s]+(\d{1,2})(?![\d+])/g,
+  /(?<!\d)(\d{1,2})\s*楼|第\s*(\d{1,2})\s*层/g,
+];
+// "Infinity pool on the 25th floor", "gym is on the 8th floor" before the floor; "42nd Floor Sky
+// Lounge", "7th Floor Gymnasium" after it.
+const FACILITY_BEFORE = /(?:pool|gym|fitness|rooftop|roof|sky\s*(?:bar|lounge|deck|garden)|lobby|restaurant|bar|lounge|parking|car\s*park|garden|sauna|library|co-?working|reception|бассейн|фитнес|спортзал|ресторан|лобби|парковка)(?:\s+(?!view|unit|room|condo|apartment|studio|bedroom)[\w-]+){0,2}\s+(?:is\s+)?(?:on|at|in)\s+(?:the\s+)?$/;
+const FACILITY_AFTER = /^[\s:,-]*(?:[\w&;-]+\s+){0,2}?(?:pool|swimming|gym|gymnasium|fitness|lounge|bar\b|garden|lobby|restaurant|sauna|deck|terrace|podium|parking|library|co-?working)(?!\s*view)/;
+export function unitFloorOf(description) {
+  const text = String(description ?? '').toLowerCase();
+  const found = new Set();
+  for (const pattern of FLOOR_PATTERNS) {
+    for (const m of text.matchAll(pattern)) {
+      const floor = Number(m[1] ?? m[2]);
+      if (!floor) continue;
+      if (FACILITY_BEFORE.test(text.slice(Math.max(0, m.index - 60), m.index))) continue;
+      if (FACILITY_AFTER.test(text.slice(m.index + m[0].length, m.index + m[0].length + 40))) continue;
+      found.add(floor);
+    }
+  }
+  return found.size === 1 ? [...found][0] : null;
+}
+
 // Facts the advertiser writes only in the description: foreign or Thai quota, freehold or
 // leasehold, the unit's floor and its view.
 export function descriptionFacts(description) {
@@ -214,10 +245,10 @@ export function descriptionFacts(description) {
   const ownership = /foreign (freehold|quota|name|ownership)|freehold.{0,20}foreign|foreigner quota/.test(text) ? 'foreign quota'
     : /thai (quota|name|company)|company name/.test(text) ? 'thai quota'
       : /leasehold|30[- ]year lease/.test(text) ? 'leasehold' : null;
-  const floor = text.match(/\b(\d{1,2})(?:st|nd|rd|th)[ -]floor\b/) ?? text.match(/\bfloor[: ]+(\d{1,2})\b/);
+  const floor = unitFloorOf(text);
   const view = /\b(full|panoramic|direct|frontal)? ?sea ?view\b|ocean view/.test(text) ? (/(partial|side) sea ?view/.test(text) ? 'partial sea view' : 'sea view')
     : /city view/.test(text) ? 'city view' : /pool view/.test(text) ? 'pool view' : /garden view/.test(text) ? 'garden view' : null;
-  return { ownership, unitFloor: floor ? Number(floor[1]) : null, view };
+  return { ownership, unitFloor: floor, view };
 }
 
 // The listing page: gallery, description and the details tables.

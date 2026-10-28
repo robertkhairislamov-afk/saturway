@@ -25,6 +25,9 @@
       "bedrooms": {
         "description": "Bedrooms."
       },
+      "floor": {
+        "description": "The unit's floor, from a listing's description; null when no listing names it."
+      },
       "sizeSqm": {
         "description": "Size in m² (median of the listings)."
       },
@@ -75,6 +78,7 @@
           "project",
           "district",
           "bedrooms",
+          "floor",
           "sizeSqm",
           "listings",
           "minPrice",
@@ -131,6 +135,10 @@
           "confidence": {
             "label": "Confidence",
             "format": "text"
+          },
+          "floor": {
+            "label": "Floor",
+            "format": "number"
           }
         }
       }

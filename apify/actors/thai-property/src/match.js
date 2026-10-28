@@ -49,11 +49,20 @@ const refCode = (text) => {
   return m ? { prefix: m[1].toUpperCase(), code: `${m[1].toUpperCase()}${m[2]}` } : null;
 };
 
+// The unit's floor: from the full description when its page was read (unitFloor), else from the
+// start of the description on the list page.
+const startFloors = new WeakMap();
+export function floorOf(l) {
+  if (l.unitFloor != null) return l.unitFloor;
+  if (!startFloors.has(l)) startFloors.set(l, descriptionFacts(l.descriptionStart).unitFloor);
+  return startFloors.get(l);
+}
+
 // Facts in the descriptions that rule out one unit: different floors, or two different references
 // of one advertiser's numbering (the same prefix).
 function differentUnits(a, b) {
-  const fa = descriptionFacts(a.descriptionStart).unitFloor;
-  const fb = descriptionFacts(b.descriptionStart).unitFloor;
+  const fa = floorOf(a);
+  const fb = floorOf(b);
   if (fa != null && fb != null && fa !== fb) return true;
   const ra = refCode(a.descriptionStart);
   const rb = refCode(b.descriptionStart);
@@ -187,6 +196,7 @@ export function findLots(listings, { projectMedians = {}, photoHashes = new Map(
       projectKey: items[0].projectKey,
       district: items[0].district,
       bedrooms: items[0].bedrooms,
+      floor: items.map(floorOf).find((f) => f != null) ?? null,
       sizeSqm: size != null ? Math.round(size * 100) / 100 : null,
       listings: items.length,
       advertisers: new Set(items.map((l) => agencyHint(l.descriptionStart) ?? l.key)).size,

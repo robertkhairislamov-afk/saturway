@@ -9,7 +9,7 @@ import { MAX_RESULTS, PAGE_SIZE, parseListPage, parseListingPage, searchUrl } fr
 import { applyHistory, keepAsSeen, loadHistory, saveHistory } from './history.js';
 import { HttpError, createHttpClient, mapLimit } from './http.js';
 import { belowMarket, ownershipOf } from './deals.js';
-import { findLots } from './match.js';
+import { findLots, floorOf } from './match.js';
 import { hashOfJpeg, loadPhotoHashes, savePhotoHashes, shortPhotoId, thumbnailForKey } from './photos.js';
 import { loadSearchState, saveSearchState } from './state.js';
 import { districtRecords, projectKey, projectRecords, projectSegment } from './stats.js';
@@ -26,6 +26,7 @@ const input = {
   includeProjectDetails: true,
   maxProjectDetailsPerRun: 600,
   maxRemovalChecksPerRun: 1500,
+  maxFloorChecksPerRun: 3000,
   lotsFor: ['sale'],
   maxNewPhotoHashesPerRun: 20000,
   projectDetailsMaxAgeDays: 90,
@@ -304,13 +305,60 @@ if (todoPhotos.length) {
 }
 
 // Lots: the same unit listed by several advertisers, per deal type.
-const lots = [];
-for (const transaction of lotTransactions) {
-  const projectMedians = Object.fromEntries(projects.map((p) => [p.projectKey, transaction === 'sale' ? p.medianSalePricePerSqm : p.medianRentPerSqm]));
-  const found = findLots(allListings.filter((l) => l.transaction === transaction), { projectMedians, photoHashes });
-  for (const l of allListings) if (l.transaction === transaction) l.lotId = found.lotOf.get(l.key) ?? null;
-  lots.push(...found.lots.map((lot) => ({ ...lot, scrapedAt })));
+function findAllLots() {
+  const found = [];
+  for (const transaction of lotTransactions) {
+    const projectMedians = Object.fromEntries(projects.map((p) => [p.projectKey, transaction === 'sale' ? p.medianSalePricePerSqm : p.medianRentPerSqm]));
+    const result = findLots(allListings.filter((l) => l.transaction === transaction), { projectMedians, photoHashes });
+    for (const l of allListings) if (l.transaction === transaction) l.lotId = result.lotOf.get(l.key) ?? null;
+    found.push(...result.lots.map((lot) => ({ ...lot, scrapedAt })));
+  }
+  return found;
 }
+
+// Floors from the full description of listings in lots: the list pages show only its start, and
+// neighbouring units furnished alike share photos. Each listing's page is read once; the floor
+// (or null when the description names none) is kept in the memory.
+const unitFloors = (await memory.getValue('unit-floors')) ?? {};
+const applyFloors = () => { for (const l of allListings) if (unitFloors[l.key] != null) l.unitFloor = unitFloors[l.key]; };
+applyFloors();
+let lots = findAllLots();
+const floorTodo = [...new Map(allListings
+  .filter((l) => l.lotId && !(l.key in unitFloors) && floorOf(l) == null)
+  .map((l) => [l.key, l])).values()];
+// Listings of the biggest lots first: they gain the most from a floor.
+const lotSize = new Map(lots.map((lot) => [lot.lotId, lot.listings]));
+floorTodo.sort((a, b) => (lotSize.get(b.lotId) ?? 0) - (lotSize.get(a.lotId) ?? 0));
+const floorChecks = floorTodo.slice(0, input.maxFloorChecksPerRun);
+summary.floors = { checked: 0, found: 0, failed: 0, leftForNextRuns: floorTodo.length - floorChecks.length };
+if (floorChecks.length) {
+  await Actor.setStatusMessage(`Reading the floor of ${floorChecks.length} listings in units listed more than once.`);
+  await mapLimit(floorChecks, input.concurrency, async (l) => {
+    if (outOfTime()) {
+      warnOutOfTime('Floors');
+      summary.floors.leftForNextRuns++;
+      return;
+    }
+    try {
+      const page = parseListingPage(await http.get(l.url));
+      unitFloors[l.key] = page.unitFloor ?? null;
+      summary.floors.checked++;
+      if (page.unitFloor != null) summary.floors.found++;
+    } catch (error) {
+      summary.floors.failed++;
+      // A removed page will not tell: remember that, so it is not asked again.
+      if (error instanceof HttpError && (error.status === 404 || error.status === 410)) unitFloors[l.key] = null;
+    }
+    if (summary.floors.checked % 200 === 0 && summary.floors.checked) await memory.setValue('unit-floors', unitFloors);
+  });
+  if (summary.floors.found) {
+    applyFloors();
+    lots = findAllLots();
+  }
+}
+// Only listings still on the market are kept.
+const current = new Set(allListings.map((l) => l.key));
+await memory.setValue('unit-floors', Object.fromEntries(Object.entries(unitFloors).filter(([key]) => current.has(key))));
 const duplicates = new Map();
 for (const lot of lots) {
   if (lot.transaction !== 'sale') continue;

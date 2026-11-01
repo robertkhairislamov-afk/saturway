@@ -106,7 +106,7 @@ Countries are two-letter codes such as `US`, `GB`, `CA`, `IN` or `DE`. Job types
 
 ## Hiring companies: a lead list of growing employers
 
-A company that hires is growing, and growing companies buy: software, office space, training, recruiting, insurance. Set **What to save** to **Hiring companies** and the Actor reads every job of your searches and saves **one row per employer**, the companies with most jobs first. Search for the roles your customers hire (for example `account executive` if you sell sales tools, `registered nurse` for healthcare staffing) in the places you sell to.
+A company that hires is growing, and growing companies buy: software, office space, training, recruiting, insurance. Set **What to save** to **Hiring companies** and the Actor reads the jobs of your searches (up to 20 for each company you ask for, all of them without a limit) and saves **one row per employer**, the companies with most jobs first. Search for the roles your customers hire (for example `account executive` if you sell sales tools, `registered nurse` for healthcare staffing) in the places you sell to.
 
 - `jobs`, `jobsLast7Days`, `jobsLast30Days`: how many matching jobs the company posts, and how many are new.
 - `departments`: the teams it hires for, from the job titles, for example `{ "Sales": 6, "Engineering & IT": 2 }`.

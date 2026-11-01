@@ -13,6 +13,9 @@ const ITEM_EVENT = 'apify-default-dataset-item';
 const DETAIL_BATCH = 48;
 // The progress message is sent at most this often while jobs are saved.
 const STATUS_EVERY_MS = 3000;
+// Company mode reads up to this many jobs per company that may be saved, and at least MIN_JOBS_READ.
+const JOBS_READ_PER_COMPANY = 20;
+const MIN_JOBS_READ = 1000;
 
 export async function mapWithConcurrency(items, limit, fn) {
   const results = new Array(items.length);
@@ -101,9 +104,14 @@ export async function runScraper(Actor, adapter, rawInput, log) {
   let finished = 0;
   // Adapters that search several sites name each job; the same job from another source is skipped.
   const savedKeys = new Map();
-  // In company mode the limits count companies, saved at the end, so every job is read.
+  // In company mode the limits count companies, saved at the end (the ones with most jobs first).
+  // Jobs are read up to JOBS_READ_PER_COMPANY per company that may be saved: a few jobs make one
+  // company, so reading every job of a large search for a short list of companies costs more than
+  // the list earns.
+  const companiesWanted = Math.min(input.maxItems > 0 ? input.maxItems : Infinity, budget);
+  const jobsToRead = Number.isFinite(companiesWanted) ? Math.max(MIN_JOBS_READ, companiesWanted * JOBS_READ_PER_COMPANY) : Infinity;
   const roomLeft = () => (companyMode
-    ? (budget > 0 ? Infinity : 0)
+    ? (budget > 0 ? jobsToRead - saved : 0)
     : Math.min(input.maxItems > 0 ? input.maxItems - saved : Infinity, budget - saved));
 
   // Progress while the run works: jobs saved, sources finished and the ones in progress, so a long
@@ -290,7 +298,7 @@ export async function runScraper(Actor, adapter, rawInput, log) {
   let stopped = null;
   if (companyMode) {
     if (companiesSaved < companiesFound && companiesSaved >= budget) stopped = 'stopped at the maximum cost per run';
-    else if (companiesSaved < companiesFound) stopped = `kept the ${companiesSaved} companies with most jobs of ${companiesFound}`;
+    else if (companiesSaved < companiesFound) stopped = `kept the ${companiesSaved} companies with most jobs of ${companiesFound}${saved >= jobsToRead ? ` among the first ${saved} jobs` : ''}`;
   } else if (saved >= budget) stopped = 'stopped at the maximum cost per run';
   else if (input.maxItems > 0 && saved >= input.maxItems) stopped = `stopped at the limit of ${input.maxItems} jobs`;
   const notes = [];

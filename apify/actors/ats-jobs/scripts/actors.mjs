@@ -451,7 +451,7 @@ const COMPANY_MAX_ITEMS = {
   title: 'Maximum results in total',
   type: 'integer',
   minimum: 0,
-  description: 'Stop after saving this many jobs. With Hiring companies, this is the number of companies: every job is read and the companies with most jobs are kept. Leave empty or 0 for no limit. The example is kept small so the first run takes seconds.',
+  description: 'Stop after saving this many jobs. With Hiring companies, this is the number of companies: up to 20 jobs per company (at least 1,000) are read and the companies with most jobs among them are kept; leave it empty to read every job. Leave empty or 0 for no limit. The example is kept small so the first run takes seconds.',
   prefill: 50,
 };
 

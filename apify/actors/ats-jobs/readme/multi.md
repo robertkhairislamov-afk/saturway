@@ -135,7 +135,7 @@ Each job keeps its source in `ats`, and every salary keeps its currency and peri
 
 ## Hiring companies: a lead list across job sites
 
-Set **What to save** to **Hiring companies** and the Actor reads every job of your searches on every site and saves **one row per employer**, the companies with most jobs first. Each site has its own company ids, so companies are matched by name: "Acme Widgets, Inc." on Indeed and "ACME WIDGETS" on LinkedIn are one company, and `sites` lists where it posts.
+Set **What to save** to **Hiring companies** and the Actor reads the jobs of your searches (up to 20 for each company you ask for, all of them without a limit) on every site and saves **one row per employer**, the companies with most jobs first. Each site has its own company ids, so companies are matched by name: "Acme Widgets, Inc." on Indeed and "ACME WIDGETS" on LinkedIn are one company, and `sites` lists where it posts.
 
 - `jobs`, `jobsLast7Days`, `jobsLast30Days`: how many matching jobs the company posts, and how many are new.
 - `departments`: the teams it hires for, from the job titles, for example `{ "Sales": 6, "Engineering & IT": 2 }`.

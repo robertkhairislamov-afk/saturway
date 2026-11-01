@@ -9,8 +9,10 @@ const ITEM_EVENT = 'apify-default-dataset-item';
 // AliExpress answers residential addresses in the United Kingdom for every ship-to country;
 // addresses in the United States are sent to aliexpress.us.
 const DEFAULT_PROXY = { useApifyProxy: true, apifyProxyGroups: ['RESIDENTIAL'], apifyProxyCountry: 'GB' };
-// Pages in a row that add nothing new (repeats or filtered out) before a search stops.
+// Pages in a row that add fewer than MIN_PRODUCTS_PER_PAGE products (repeats or filtered out)
+// before a search stops: each page costs about as much proxy traffic as two or three products earn.
 const MAX_EMPTY_PAGES = 5;
+const MIN_PRODUCTS_PER_PAGE = 3;
 
 await Actor.init();
 
@@ -95,9 +97,10 @@ try {
         if (batch.length > 0) await Actor.pushData(batch);
         row.saved += batch.length;
         saved += batch.length;
-        emptyPages = batch.length > 0 ? 0 : emptyPages + 1;
+        emptyPages = batch.length >= MIN_PRODUCTS_PER_PAGE || batch.length >= room ? 0 : emptyPages + 1;
         if (emptyPages >= MAX_EMPTY_PAGES) {
-          log.info(`${search.label}: ${MAX_EMPTY_PAGES} pages in a row added no products that pass the filters; moving on.`);
+          const hint = input.minSold > 0 && input.sort !== 'orders' ? ' Sort by orders to reach the products with most sales first.' : '';
+          log.info(`${search.label}: ${MAX_EMPTY_PAGES} pages in a row added fewer than ${MIN_PRODUCTS_PER_PAGE} products that pass the filters; moving on.${hint}`);
           break;
         }
         // Sorted by orders, no later page can reach the minimum sold count once a whole page misses it.

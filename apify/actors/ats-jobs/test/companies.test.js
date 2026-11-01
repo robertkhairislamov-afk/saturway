@@ -151,6 +151,27 @@ test('company mode saves companies, most jobs first, within maxItems and the cha
   assert.match(result.message, /maximum cost/);
 });
 
+test('company mode reads up to 20 jobs per company asked for, at least 1,000', async () => {
+  // 3,000 jobs of 1,500 companies, in pages of 100.
+  const pages = { sales: Array.from({ length: 30 }, (_, p) => Array.from({ length: 100 }, (_, i) => {
+    const n = p * 100 + i;
+    return job({ id: `c${n % 1500}`, name: `Company ${n % 1500}` }, n);
+  })) };
+  let actor = fakeActor();
+  let result = await runScraper(actor, fakeAdapter(pages), { companies: ['sales'], outputMode: 'companies', maxItems: 10 }, silentLog);
+  assert.equal(actor.values.SUMMARY.jobsRead, 1000);
+  assert.equal(actor.dataset.length, 10);
+  assert.match(result.message, /among the first 1000 jobs/);
+  actor = fakeActor();
+  await runScraper(actor, fakeAdapter(pages), { companies: ['sales'], outputMode: 'companies', maxItems: 120 }, silentLog);
+  assert.equal(actor.values.SUMMARY.jobsRead, 2400);
+  // Without a limit every job is read.
+  actor = fakeActor();
+  await runScraper(actor, fakeAdapter(pages), { companies: ['sales'], outputMode: 'companies' }, silentLog);
+  assert.equal(actor.values.SUMMARY.jobsRead, 3000);
+  assert.equal(actor.dataset.length, 1500);
+});
+
 test('adapters without company mode keep saving jobs', async () => {
   const actor = fakeActor();
   const warnings = [];

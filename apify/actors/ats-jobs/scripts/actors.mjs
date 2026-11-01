@@ -1398,13 +1398,13 @@ function founditInputSchema() {
   };
 }
 
-const RESIDENTIAL_PROXY = { useApifyProxy: true, apifyProxyGroups: ['RESIDENTIAL'] };
+const APIFY_PROXY = { useApifyProxy: true };
 
 function linkedinInputSchema() {
   const settings = commonSettings({
     site: 'LinkedIn',
     details: 'the full description (text and HTML), seniority, employment type, job function, industries and number of applicants',
-    proxyDescription: 'LinkedIn limits how many pages one address can open, so the Actor sends its requests through Apify residential proxies with rotating addresses, also when no proxy is set here. Set other proxies here only if you prefer your own.',
+    proxyDescription: 'LinkedIn limits how many pages one address can open, so the Actor sends its requests through Apify Proxy with rotating addresses, also when no proxy is set here: datacenter addresses first, and residential ones if LinkedIn starts limiting them. Proxy costs are included in the price. Set your own proxy URLs here only if you prefer them.',
   });
   return {
     title: ACTORS.linkedin.title,
@@ -1466,7 +1466,7 @@ function linkedinInputSchema() {
       ...companyOutput('LinkedIn', 'company page and logo'),
       ...settings,
       maxItems: COMPANY_MAX_ITEMS,
-      proxyConfiguration: { ...settings.proxyConfiguration, prefill: RESIDENTIAL_PROXY, default: RESIDENTIAL_PROXY },
+      proxyConfiguration: { ...settings.proxyConfiguration, prefill: APIFY_PROXY, default: APIFY_PROXY },
     },
   };
 }
@@ -1534,7 +1534,7 @@ function multiInputSchema() {
         site: 'Each job site',
         perSource: 'search or career site',
         details: 'the full description (text and HTML) and every detail the site offers',
-        proxyDescription: 'The Actor connects directly, which is fastest; LinkedIn always goes through Apify residential proxies and Indeed through Apify Proxy. If a site starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it for every site from the start.',
+        proxyDescription: 'The Actor connects directly, which is fastest; LinkedIn always goes through Apify Proxy (datacenter addresses, residential ones if LinkedIn limits them) and Indeed through Apify Proxy. If a site starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it for every site from the start.',
       }),
       // The first run shows 10 jobs from each of the five sites that cover the United States; the fastest
       // ones would fill the 50 jobs of the form alone.

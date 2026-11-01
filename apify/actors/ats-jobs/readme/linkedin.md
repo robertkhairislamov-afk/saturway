@@ -12,7 +12,7 @@ Scrape jobs from **LinkedIn**, the largest job site in the world, the way you se
 - ♾️ **Beyond 1,000 results in the US**: a search of the whole United States that reaches LinkedIn's limit is searched again in each state, then merged without duplicates.
 - 📄 **Full job details**: description as text and HTML, seniority, employment type, job function, industries, number of applicants, and whether you apply with Easy Apply or on the company site.
 - 💰 **Salary as numbers**: pay ranges from the listing or the description, such as "$81,499.00 - $138,549.00", become `min`, `max`, `currency` and `interval`.
-- 🛡️ **Built not to break**: requests go through rotating residential proxy addresses, and a blocked or empty page is tried again from another one. If a job page still fails, the job is saved with the search result data instead of being lost.
+- 🛡️ **Built not to break**: requests go through rotating proxy addresses (datacenter first, residential if LinkedIn starts limiting them), and a blocked or empty page is tried again from another one. If a job page still fails, the job is saved with the search result data instead of being lost.
 - 📈 **Hiring companies (lead lists)**: switch **What to save** to *Hiring companies* and get one row per employer instead of one per job, with its number of matching jobs, jobs of the last 7 and 30 days, the teams it hires for, top job titles, places, pay range, LinkedIn company page and logo. Staffing agencies are left out.
 - 🆕 **Only new jobs since the last run**: for job alerts, recruiting pipelines and market monitoring.
 - 🧩 **Same output as our other job scrapers**, listed at the end of this page, so LinkedIn jobs and jobs from other boards and career sites fit into one table.

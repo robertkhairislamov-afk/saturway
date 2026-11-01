@@ -63,16 +63,26 @@ export async function runScraper(Actor, adapter, rawInput, log) {
   if (input.usedExample) log.warning(`No ${many} in the input, so the example is used: ${companies.map((company) => company.id).join(', ')}.`);
   if (companies.length === 0) throw new Error(`No ${adapter.title} ${one} could be read from the input. ${rejected[0]?.error ?? ''}`.trim());
 
-  const proxyConfiguration = input.proxyConfiguration?.useApifyProxy || input.proxyConfiguration?.proxyUrls?.length
+  // Sites read through rotating sessions (LinkedIn) use Apify datacenter proxies on the platform, and
+  // residential proxies only once the site limits most datacenter requests. An Apify Proxy set in
+  // the input (the residential one was the default) means the same; own proxy URLs are used as
+  // they are. Local runs connect directly.
+  const atHome = Boolean(Actor.isAtHome?.());
+  const ownProxy = Boolean(input.proxyConfiguration?.proxyUrls?.length);
+  const tiered = adapter.cheapProxyFirst === true && atHome && !ownProxy;
+  const inputGroups = input.proxyConfiguration?.apifyProxyGroups ?? [];
+  const firstTier = inputGroups.length && !inputGroups.includes('RESIDENTIAL') ? { useApifyProxy: true, apifyProxyGroups: inputGroups } : { useApifyProxy: true };
+  const proxyConfiguration = !tiered && (input.proxyConfiguration?.useApifyProxy || ownProxy)
     ? await Actor.createProxyConfiguration(input.proxyConfiguration)
     : undefined;
   const http = createHttpClient({
     proxyConfiguration,
     // Sites that limit direct requests (Dice) continue through Apify Proxy.
     fallbackProxy: adapter.proxyFallback ? () => Actor.createProxyConfiguration({ useApifyProxy: true }) : undefined,
-    // Sites that limit every address (LinkedIn) get residential proxies on the Apify platform when
-    // the input sets no proxy. Local runs connect directly.
-    rotatingProxy: Actor.isAtHome?.() ? () => Actor.createProxyConfiguration({ useApifyProxy: true, apifyProxyGroups: ['RESIDENTIAL'] }) : undefined,
+    // Without a proxy in the input (All-in-One reading LinkedIn), the same datacenter-first rotation.
+    rotatingProxy: atHome ? () => Actor.createProxyConfiguration(tiered ? firstTier : { useApifyProxy: true }) : undefined,
+    rotatingEscalation: atHome && !ownProxy ? () => Actor.createProxyConfiguration({ useApifyProxy: true, apifyProxyGroups: ['RESIDENTIAL'] }) : undefined,
+    onEscalate: (reason) => log.warning(`${adapter.title} is limiting the datacenter proxy (${reason}); continuing through Apify residential proxies.`),
     // Sites that refuse the platform's own addresses (Indeed) go through Apify Proxy there.
     datacenterProxy: Actor.isAtHome?.() ? () => Actor.createProxyConfiguration({ useApifyProxy: true }) : undefined,
     onFallback: () => log.info(`${adapter.limitNotice ?? `${adapter.title} is limiting direct requests`}; continuing through Apify Proxy.`),

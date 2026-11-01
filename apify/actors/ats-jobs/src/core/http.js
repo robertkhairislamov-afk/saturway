@@ -14,6 +14,9 @@ const envAgent = process.env.HTTPS_PROXY || process.env.https_proxy ? new EnvHtt
 
 // Requests one rotating session serves before a new address is taken.
 const ROTATION_USES = 5;
+// The cheaper rotating proxy is given up when half of the latest 40 requests, and at least 20, were limited.
+const ESCALATION_WINDOW = 40;
+const ESCALATION_MIN_LIMITED = 20;
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const sessionName = () => `ats${Math.random().toString(36).slice(2, 12)}`;
@@ -32,13 +35,20 @@ export class HttpError extends Error {
 }
 
 // `rotatingProxy` creates the proxy for rotating sessions when the input sets no proxy (Apify
-// residential proxies for LinkedIn), and `datacenterProxy` the proxy for requests marked
-// `datacenter` (Apify Proxy for Indeed); both are created on first use.
-export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback, rotatingProxy, datacenterProxy, maxRetries = 5, timeoutMs = 30000, backoffMs = 1000 } = {}) {
+// datacenter proxies for LinkedIn), and `rotatingEscalation` the proxy that replaces it for the
+// rest of the run once the site limits most of its sessions (Apify residential proxies, about 25
+// times dearer); `datacenterProxy` creates the proxy for requests marked `datacenter` (Apify
+// Proxy for Indeed). All are created on first use.
+export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback, rotatingProxy, rotatingEscalation, onEscalate, datacenterProxy, maxRetries = 5, timeoutMs = 30000, backoffMs = 1000 } = {}) {
   let proxy = proxyConfiguration;
   let session = null;
   let fallbackTried = false;
   let rotating = null;
+  let escalation = null;
+  let escalated = false;
+  // Outcomes of the latest rotating requests before the escalation: true for an answer, false for
+  // a limit or a block page.
+  const outcomes = [];
   let datacenter = null;
   let datacenterSession = null;
   // Rotating sessions that may serve another request.
@@ -83,25 +93,53 @@ export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback
     agent.close().catch(() => {});
   }
 
+  function escalate(reason) {
+    if (escalated || !rotatingEscalation) return;
+    escalated = true;
+    for (const session of idle.splice(0)) session.agent.close().catch(() => {});
+    onEscalate?.(reason);
+  }
+
+  // The site limits most rotating sessions: at least half of the latest 40 requests, and 20 of them.
+  function record(ok) {
+    if (escalated || !rotatingEscalation || proxyConfiguration) return;
+    outcomes.push(ok);
+    if (outcomes.length > ESCALATION_WINDOW) outcomes.shift();
+    const limited = outcomes.filter((o) => !o).length;
+    if (limited >= ESCALATION_MIN_LIMITED && limited / outcomes.length >= 0.5) escalate(`${limited} of the latest ${outcomes.length} requests limited`);
+  }
+
+  async function rotatingConfiguration() {
+    if (!escalated && rotatingProxy) {
+      rotating ??= rotatingProxy().catch(() => null);
+      const configuration = await rotating;
+      if (configuration) return configuration;
+      escalate('the datacenter proxy is not available');
+    }
+    if (escalated) {
+      escalation ??= rotatingEscalation().catch(() => null);
+      return escalation;
+    }
+    return null;
+  }
+
   // A rotating session: an idle one, or a new one from the proxy of the input, the rotating proxy
-  // or the fallback proxy, in this order. Without any proxy the request goes out directly.
+  // (or its escalation) or the fallback proxy, in this order. Without any proxy the request goes
+  // out directly.
   async function takeRotating() {
     const reused = idle.pop();
     if (reused) return reused;
-    let configuration = proxyConfiguration;
-    if (!configuration && rotatingProxy) {
-      rotating ??= rotatingProxy().catch(() => null);
-      configuration = await rotating;
-    }
+    let configuration = proxyConfiguration ?? await rotatingConfiguration();
     configuration ??= proxy;
-    return configuration ? { agent: new ProxyAgent(await configuration.newUrl(sessionName())), uses: 0 } : null;
+    return configuration ? { agent: new ProxyAgent(await configuration.newUrl(sessionName())), uses: 0, escalated } : null;
   }
 
   // A session that got a normal answer may serve again, up to ROTATION_USES requests.
   function release(rotated, ok) {
     if (!rotated) return;
     rotated.uses++;
-    if (ok && rotated.uses < ROTATION_USES) idle.push(rotated);
+    // Sessions of the cheaper proxy are not used again after the escalation.
+    if (ok && rotated.uses < ROTATION_USES && rotated.escalated === escalated) idle.push(rotated);
     else rotated.agent.close().catch(() => {});
   }
 
@@ -144,6 +182,7 @@ export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback
         // on a rotating session only needs the next session, not the fallback proxy.
         const limited = res.status === 429 || res.status === 403 || res.status === 999;
         if (limited) stats.limited++;
+        if (rotated && !rotated.escalated) record(!limited && !(res.ok && accept && !accept(text)));
         const switched = limited && !rotated && (await switchToFallback());
         if (res.status === 429 || res.status >= 500 || (res.status === 403 && (Boolean(proxy) || Boolean(rotated) || switched))) {
           throw new HttpError(`HTTP ${res.status} for ${url}`, { status: res.status });

@@ -22,6 +22,10 @@ before(async () => {
       return res.end(count === 1 ? '' : '{"ok":true}');
     }
     if (req.url === '/always-empty') return res.end(EMPTY);
+    if (req.url === '/always-limited') {
+      res.statusCode = 999;
+      return res.end('');
+    }
     if (req.url === '/ok') return res.end('{"ok":true}');
     // Answers after two seconds.
     if (req.url === '/slow') return setTimeout(() => res.end('{"ok":true}'), 2000);
@@ -114,4 +118,67 @@ test('http: stop ends the requests in progress at once and refuses new ones, wit
   assert.ok(Date.now() - started < 1000);
   assert.equal(hits.get('/slow'), 1);
   await assert.rejects(client.getJson(`${base}/ok`), (error) => error.stopped === true);
+});
+
+// A local proxy that tunnels (CONNECT) or forwards requests to the test server, and counts them.
+async function countingProxy() {
+  const proxy = createServer((req, res) => {
+    proxy.count++;
+    const target = new URL(req.url, base);
+    fetch(`${base}${target.pathname}`).then(async (r) => {
+      res.statusCode = r.status;
+      res.end(await r.text());
+    }, () => res.destroy());
+  });
+  proxy.count = 0;
+  proxy.on('connect', (req, client, head) => {
+    proxy.count++;
+    const [host, port] = req.url.split(':');
+    const target = connect(Number(port), host, () => {
+      client.write('HTTP/1.1 200 Connection Established\r\n\r\n');
+      target.write(head);
+      target.pipe(client);
+      client.pipe(target);
+    });
+  });
+  await new Promise((resolve) => proxy.listen(0, '127.0.0.1', resolve));
+  proxy.url = `http://127.0.0.1:${proxy.address().port}`;
+  return proxy;
+}
+
+test('http: rotating requests move to the dearer proxy once the site limits most of the cheaper one', async () => {
+  const cheap = await countingProxy();
+  const dear = await countingProxy();
+  const reasons = [];
+  const client = createHttpClient({
+    backoffMs: 1,
+    maxRetries: 4,
+    rotatingProxy: async () => ({ newUrl: async () => cheap.url }),
+    rotatingEscalation: async () => ({ newUrl: async () => dear.url }),
+    onEscalate: (reason) => reasons.push(reason),
+  });
+  try {
+    // A few limits are retried on the cheaper proxy.
+    await client.getJson(`${base}/limited-once`, { rotate: true }).catch(() => {});
+    await client.getJson(`${base}/ok`, { rotate: true });
+    assert.equal(reasons.length, 0);
+    assert.equal(dear.count, 0);
+    // Twenty limited requests out of the latest ones: the rest of the run uses the dearer proxy.
+    for (let i = 0; i < 5; i++) await assert.rejects(client.getJson(`${base}/always-limited`, { rotate: true }));
+    assert.equal(reasons.length, 1);
+    assert.match(reasons[0], /limited/);
+    const before = cheap.count;
+    assert.deepEqual(await client.getJson(`${base}/ok`, { rotate: true }), { ok: true });
+    assert.equal(cheap.count, before);
+    assert.ok(dear.count >= 1);
+    // Without the cheaper proxy (no access to it), the dearer one is used from the start.
+    const noCheap = createHttpClient({ backoffMs: 1, rotatingProxy: async () => { throw new Error('no access'); }, rotatingEscalation: async () => ({ newUrl: async () => dear.url }), onEscalate: (reason) => reasons.push(reason) });
+    assert.deepEqual(await noCheap.getJson(`${base}/ok`, { rotate: true }), { ok: true });
+    assert.match(reasons[1], /not available/);
+  } finally {
+    for (const proxy of [cheap, dear]) {
+      proxy.closeAllConnections();
+      proxy.close();
+    }
+  }
 });

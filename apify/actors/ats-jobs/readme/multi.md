@@ -7,7 +7,7 @@ One search, many job sites: the Actor sends your keywords to every job board tha
 ## What can this all-in-one jobs scraper do?
 
 - 🌍 **62 countries, 11 job boards searched by keyword**: pick countries, and every board that covers them is searched (see the table below).
-- 🔗 **LinkedIn included**: public LinkedIn job listings in every country, without login, with seniority, job function and number of applicants. The residential proxies LinkedIn needs are included in the price.
+- 🔗 **LinkedIn included**: public LinkedIn job listings in every country, without login, with seniority, job function and number of applicants. The proxies LinkedIn needs are included in the price.
 - 🌐 **Indeed included**: Indeed jobs in all 62 countries, with salaries, job types, benefits and company size, even past Indeed's limit of about 1,000 jobs per search.
 - ⭐ **Glassdoor included**: Glassdoor jobs in all 62 countries, with the company's Glassdoor rating, size, revenue and industry, and Glassdoor's salary estimate where the employer states no pay.
 - 🔎 **One simple input**: keywords, countries and, for one country, a city. No site-specific settings needed.

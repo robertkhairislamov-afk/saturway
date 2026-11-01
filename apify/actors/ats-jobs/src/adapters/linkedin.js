@@ -18,6 +18,8 @@ export const sourceNames = ['search', 'searches'];
 export const companyConcurrency = 2;
 export const detailConcurrency = 16;
 export const proxyFallback = true;
+// Datacenter proxies first, residential ones only when LinkedIn limits most datacenter requests.
+export const cheapProxyFirst = true;
 // A run can also save one record per hiring company: name, LinkedIn page, logo and its jobs.
 export const companyMode = true;
 

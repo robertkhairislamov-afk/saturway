@@ -6,11 +6,12 @@ import { Actor, log } from 'apify';
 
 import { districtOf } from './areas.js';
 import { MAX_RESULTS, PAGE_SIZE, parseListPage, parseListingPage, searchUrl } from './dotproperty.js';
-import { applyHistory, keepAsSeen, loadHistory, saveHistory } from './history.js';
+import { applyHistory, keepAsSeen, loadHistory, rememberLots, saveHistory } from './history.js';
 import { HttpError, createHttpClient, mapLimit } from './http.js';
 import { belowMarket, ownershipOf } from './deals.js';
 import { findLots, floorOf } from './match.js';
 import { hashOfJpeg, loadPhotoHashes, savePhotoHashes, shortPhotoId, thumbnailForKey } from './photos.js';
+import { joinProjects } from './projects.js';
 import { loadSearchState, saveSearchState } from './state.js';
 import { districtRecords, projectKey, projectRecords, projectSegment } from './stats.js';
 
@@ -230,6 +231,13 @@ if (input.includeProjectDetails) {
   if (sample.size > todo.length) log.info(`${sample.size - todo.length} projects are left for the next runs (at most ${input.maxProjectDetailsPerRun} per run).`);
 }
 
+// One building under several project records (and listings under none): joined before any figure.
+const joined = joinProjects(allListings, { details, relocate: (l) => Object.assign(l, districtOf(l)) });
+summary.projectRecordsJoined = Object.keys(joined.aliases).length;
+summary.listingsGivenProjectFromTitle = joined.assigned;
+for (const [alias, to] of Object.entries(joined.aliases)) log.info(`Project records joined: "${alias}" is the same building as "${to}".`);
+for (const r of removedAll) if (joined.aliases[r.projectKey]) r.projectKey = joined.aliases[r.projectKey];
+
 for (const l of allListings) {
   const info = details[l.projectKey] ?? {};
   l.developer = info.developer ?? null;
@@ -370,6 +378,26 @@ for (const p of projects) {
 }
 summary.lots = lots.length;
 
+// Units that lost a listing since the last run: an agency took its listing down (the unit may be
+// sold) while others still offer it. Listings are linked to last run's lots through the history.
+const membersOf = new Map();
+for (const l of allListings) if (l.lotId) membersOf.set(l.lotId, [...(membersOf.get(l.lotId) ?? []), l]);
+const removedByLot = new Map();
+for (const r of removedAll) if (r.lotId) removedByLot.set(r.lotId, [...(removedByLot.get(r.lotId) ?? []), r]);
+for (const lot of lots) {
+  const before = new Set((membersOf.get(lot.lotId) ?? []).map((l) => l.previousLotId).filter(Boolean));
+  const gone = [...before].flatMap((id) => removedByLot.get(id) ?? []);
+  lot.offersRemoved = gone.length;
+  lot.lastOfferRemovedAt = gone.map((r) => r.lastSeenAt).sort().at(-1) ?? null;
+  for (const r of gone) r.unitStillListedBy = lot.listings;
+}
+summary.lotsWithRemovedOffers = lots.filter((lot) => lot.offersRemoved > 0).length;
+for (const search of searches) {
+  const mine = allListings.filter((l) => l.transaction === search.transaction && l.propertyType === search.propertyType && l.location === search.location);
+  if (!mine.length) continue;
+  await saveHistory(memory, search, rememberLots(await loadHistory(memory, search), mine)).catch((error) => log.warning(`Could not remember the lots: ${error.message}`));
+}
+
 // Quota counts per project, and listings below similar units of their project.
 const quota = new Map();
 for (const l of allListings) {
@@ -399,7 +427,7 @@ await push(await Actor.openDataset({ alias: 'districts' }), districts);
 await push(await Actor.openDataset({ alias: 'lots' }), lots);
 await push(await Actor.openDataset({ alias: 'belowMarket' }), deals);
 await push(await Actor.openDataset({ alias: 'removed' }), removedAll.map((r) => ({ recordType: 'removed', ...r, scrapedAt })));
-if (input.saveListings) await push(await Actor.openDataset({ alias: 'listings' }), allListings.map(({ photoUrls, photoKeys, ...l }) => l));
+if (input.saveListings) await push(await Actor.openDataset({ alias: 'listings' }), allListings.map(({ photoUrls, photoKeys, previousLotId, ...l }) => l));
 
 summary.stoppedEarlyForTimeLimit = timeWarned;
 summary.finishedAt = new Date().toISOString();

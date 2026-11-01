@@ -66,6 +66,24 @@
       },
       "confidence": {
         "description": "high: two or more shared photos; medium: one, which can also be a render used by two listings of different units."
+      },
+      "onMarketSince": {
+        "description": "Earliest day any agency listed this unit."
+      },
+      "lastActivityAt": {
+        "description": "Latest day an agency posted this unit or changed its price."
+      },
+      "daysSinceActivity": {
+        "description": "Days since an agency last posted the unit or changed its price."
+      },
+      "freshness": {
+        "description": "How recently any agency did something with the unit: fresh (posted or repriced within 60 days), aging (within 180 days) or stale (older): agencies rarely take down sold units, so a stale listing may be gone."
+      },
+      "offersRemoved": {
+        "description": "Listings of this unit taken down since the last run while other agencies still offer it: the unit may be sold."
+      },
+      "lastOfferRemovedAt": {
+        "description": "Last day a removed listing of this unit was seen."
       }
     },
     "additionalProperties": true
@@ -86,6 +104,8 @@
           "priceSpreadPercent",
           "vsProjectMedianPercent",
           "cheapestUrl",
+          "freshness",
+          "offersRemoved",
           "confidence"
         ]
       },
@@ -138,6 +158,14 @@
           },
           "floor": {
             "label": "Floor",
+            "format": "number"
+          },
+          "freshness": {
+            "label": "Freshness",
+            "format": "text"
+          },
+          "offersRemoved": {
+            "label": "Taken down",
             "format": "number"
           }
         }

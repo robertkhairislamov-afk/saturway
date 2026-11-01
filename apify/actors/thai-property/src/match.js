@@ -4,6 +4,7 @@
 // same when it is the same file or, with visual hashes, nearly the same picture.
 
 import { descriptionFacts } from './dotproperty.js';
+import { freshnessOf } from './history.js';
 import { hammingDistance, shortPhotoId } from './photos.js';
 
 // A photo in this many listings of a project, or in listings of different layouts, is a render or
@@ -188,6 +189,11 @@ export function findLots(listings, { projectMedians = {}, photoHashes = new Map(
     const shared = Math.max(0, ...items.flatMap((a) => items.map((b) => evidence.get(`${a.key}|${b.key}`) ?? 0)));
     const projectPsm = projectMedians[items[0].projectKey];
     for (const l of items) lotOf.set(l.key, lotId);
+    // On the market since its first listing; fresh while some agency posted it or changed its
+    // price lately. Old listings only may mean the unit is sold and nobody took it down.
+    const firstSeen = items.map((l) => l.firstSeenAt ?? l.postedAt?.slice(0, 10)).filter(Boolean).sort()[0] ?? null;
+    const lastActivity = items.map((l) => l.lastActivityAt ?? l.postedAt?.slice(0, 10)).filter(Boolean).sort().at(-1) ?? null;
+    const sinceActivity = items.map((l) => l.daysSinceActivity).filter(Number.isFinite);
     lots.push({
       recordType: 'lot',
       lotId,
@@ -210,7 +216,11 @@ export function findLots(listings, { projectMedians = {}, photoHashes = new Map(
       sharedPhotos: shared,
       // High: two or more shared photos; medium: one, which can also be a render used by two listings.
       confidence: shared >= 2 ? 'high' : 'medium',
-      offers: items.map((l) => ({ url: l.url, price: l.price, agency: agencyHint(l.descriptionStart), postedAt: l.postedAt, daysListed: l.daysListed ?? null })),
+      onMarketSince: firstSeen,
+      lastActivityAt: lastActivity,
+      daysSinceActivity: sinceActivity.length ? Math.min(...sinceActivity) : null,
+      freshness: freshnessOf(sinceActivity.length ? Math.min(...sinceActivity) : null),
+      offers: items.map((l) => ({ url: l.url, price: l.price, agency: agencyHint(l.descriptionStart), postedAt: l.postedAt, daysListed: l.daysListed ?? null, lastActivityAt: l.lastActivityAt ?? null })),
     });
   }
   lots.sort((a, b) => b.listings - a.listings || (b.priceSpreadPercent ?? 0) - (a.priceSpreadPercent ?? 0));

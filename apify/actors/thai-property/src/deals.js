@@ -78,6 +78,8 @@ export function belowMarket(listings, { minGapPercent = 10, projects = {} } = {}
         projectGrossYieldPercent: project.grossYieldPercent ?? null,
         projectRentListings: project.rentListings ?? null,
         daysListed: l.daysListed ?? null,
+        lastActivityAt: l.lastActivityAt ?? null,
+        freshness: l.freshness ?? null,
         lotId: l.lotId ?? null,
         title: l.title,
         url: l.url,

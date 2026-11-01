@@ -388,3 +388,74 @@ test('a finished search is saved in parts and taken back after a migration', asy
   assert.deepEqual(back.removed, [{ key: 'gone' }]);
   assert.equal(await loadSearchState(kv, 1), null);
 });
+
+import { baseName, joinProjects } from '../src/projects.js';
+import { freshnessOf, rememberLots } from '../src/history.js';
+
+test('projects: one building under two records and listings without a project are joined', () => {
+  const at = (lat, lng) => ({ latitude: lat, longitude: lng });
+  const listings = [
+    ...Array.from({ length: 3 }, (_, i) => ({ key: `w${i}`, project: 'Ananya Beachfront Wongamat', projectKey: 'ananya beachfront wongamat', ...at(12.9657, 100.8850) })),
+    ...Array.from({ length: 2 }, (_, i) => ({ key: `n${i}`, project: 'Ananya Beachfront Naklua', projectKey: 'ananya beachfront naklua', ...at(12.9796, 100.9126) })),
+    { key: 'ps', project: null, projectKey: null, title: '2-BR Condo at Ananya Beachfront Condominium close to Sanctuary of Truth', ...at(12.9667, 100.8853) },
+    // Too far from the building its title names, or another building of the same name.
+    { key: 'far', project: null, projectKey: null, title: 'Ananya Beachfront style condo', ...at(12.90, 100.88) },
+    { key: 'vt', project: null, projectKey: null, title: 'View Talay 1A - Studio for sale', ...at(12.8800, 100.8800) },
+    { key: 'v0', project: 'View Talay 5', projectKey: 'view talay 5', ...at(12.8801, 100.8801) },
+    // Same name without place words, but another building (other size, far away).
+    { key: 'rj', project: 'The Riviera Jomtien', projectKey: 'riviera jomtien', ...at(12.8823, 100.8862) },
+    { key: 'rw', project: 'The Riviera Wongamat', projectKey: 'riviera wongamat', ...at(12.9659, 100.8859) },
+  ];
+  const details = {
+    'ananya beachfront wongamat': { units: 95, floors: 5 }, 'ananya beachfront naklua': { units: 95, floors: 5 },
+    'riviera jomtien': { units: 1072, floors: 46 }, 'riviera wongamat': { units: 979, floors: 43 },
+  };
+  assert.equal(baseName('ananya beachfront naklua'), 'ananya beachfront');
+  const relocated = [];
+  const result = joinProjects(listings, { details, relocate: (l) => relocated.push(l.key) });
+  assert.deepEqual(result.aliases, { 'ananya beachfront naklua': 'ananya beachfront wongamat' });
+  assert.deepEqual(listings.filter((l) => l.projectKey === 'ananya beachfront wongamat').map((l) => l.key), ['w0', 'w1', 'w2', 'n0', 'n1', 'ps']);
+  // The joined record stood 3 km away: its listings move to the building.
+  assert.deepEqual(relocated, ['n0', 'n1']);
+  assert.equal(listings.find((l) => l.key === 'n0').latitude, 12.9657);
+  assert.equal(listings.find((l) => l.key === 'n0').projectRecord, 'Ananya Beachfront Naklua');
+  assert.equal(listings.find((l) => l.key === 'ps').projectFromTitle, true);
+  assert.equal(listings.find((l) => l.key === 'far').projectKey, null);
+  assert.equal(listings.find((l) => l.key === 'vt').projectKey, null);
+  assert.equal(listings.find((l) => l.key === 'rj').projectKey, 'riviera jomtien');
+  assert.equal(result.assigned, 1);
+});
+
+test('history: price changes and postings make a listing fresh, aging or stale', () => {
+  assert.equal(freshnessOf(10), 'fresh');
+  assert.equal(freshnessOf(120), 'aging');
+  assert.equal(freshnessOf(400), 'stale');
+  const day = dayNumber('2026-10-28T00:00:00Z');
+  const seen = { a: [day - 500, day - 7, 5000000, 5000000, 'p', 'd', 'https://x/a', null, 'lot1'] };
+  const old = { key: 'a', price: 4800000, postedAt: '2025-06-01T00:00:00Z' };
+  const fresh = { key: 'b', price: 3000000, postedAt: '2026-10-20T00:00:00Z' };
+  const stale = { key: 'c', price: 3000000, postedAt: '2025-01-01T00:00:00Z' };
+  const { seen: next, missing } = applyHistory([old, fresh, stale], { ...seen, gone: [day - 30, day - 7, 1, 1, 'p', 'd', 'https://x/g', null, 'lot1'] }, '2026-11-04T00:00:00Z');
+  // A price cut today is activity, though the listing was posted long ago.
+  assert.equal(old.priceChangedAt, '2026-11-04');
+  assert.equal(old.freshness, 'fresh');
+  assert.equal(old.previousLotId, 'lot1');
+  assert.equal(fresh.freshness, 'fresh');
+  assert.equal(stale.freshness, 'stale');
+  assert.equal(missing[0].lotId, 'lot1');
+  rememberLots(next, [{ key: 'a', lotId: 'lot9' }, { key: 'b', lotId: null }]);
+  assert.equal(next.a[8], 'lot9');
+  assert.equal(next.a[7], dayNumber('2026-11-04T00:00:00Z'));
+  assert.equal(next.b[8], null);
+});
+
+test('lots: on the market since the first listing, fresh while an agency is active', () => {
+  const shared = { photoKeys: ph('liv', 'bed') };
+  const lots = findLots([
+    unit('a', { ...shared, firstSeenAt: '2025-05-26', lastActivityAt: '2025-05-26', daysSinceActivity: 520 }),
+    unit('b', { ...shared, firstSeenAt: '2026-09-10', lastActivityAt: '2026-09-10', daysSinceActivity: 48 }),
+  ]).lots;
+  assert.equal(lots[0].onMarketSince, '2025-05-26');
+  assert.equal(lots[0].lastActivityAt, '2026-09-10');
+  assert.equal(lots[0].freshness, 'fresh');
+});

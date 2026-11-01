@@ -75,6 +75,12 @@
       },
       "scrapedAt": {
         "description": "When the record was saved."
+      },
+      "lastActivityAt": {
+        "description": "Latest of the posting day and the day the price last changed."
+      },
+      "freshness": {
+        "description": "How recently someone did something with the listing: fresh (posted or repriced within 60 days), aging (within 180 days) or stale (older): agencies rarely take down sold units, so a stale listing may be gone."
       }
     },
     "additionalProperties": true

@@ -147,6 +147,24 @@
       },
       "unitFloor": {
         "description": "The unit's floor from the full description on the listing's page; read only for listings in a lot whose list-page text names no floor."
+      },
+      "priceChangedAt": {
+        "description": "Day the price last changed, as seen by this Actor's runs; null when it has not changed."
+      },
+      "lastActivityAt": {
+        "description": "Latest of the posting day and the day the price last changed."
+      },
+      "daysSinceActivity": {
+        "description": "Days since an agency last posted the unit or changed its price."
+      },
+      "freshness": {
+        "description": "How recently someone did something with the listing: fresh (posted or repriced within 60 days), aging (within 180 days) or stale (older): agencies rarely take down sold units, so a stale listing may be gone."
+      },
+      "projectRecord": {
+        "description": "The site's own project record when it was joined into another record of the same building (same name without place words and the same units and floors)."
+      },
+      "projectFromTitle": {
+        "description": "True when the listing had no project on the site and got the building its title names, within 150 m of it."
       }
     },
     "additionalProperties": true

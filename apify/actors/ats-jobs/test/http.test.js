@@ -61,7 +61,7 @@ test('http: the rotating proxy is set up once, on the first rotating request', a
   await client.getJson(`${base}/ok`, { rotate: true });
   await client.getJson(`${base}/ok`, { rotate: true });
   assert.equal(created, 1);
-  assert.deepEqual(client.stats, { requests: 3, retried: 0, limited: 0, blocked: 0 });
+  assert.deepEqual(client.stats, { requests: 3, retried: 0, limited: 0, blocked: 0, escalatedBytes: 0 });
 });
 
 test('http: requests marked datacenter go through the datacenter proxy', async () => {
@@ -175,6 +175,36 @@ test('http: rotating requests move to the dearer proxy once the site limits most
     const noCheap = createHttpClient({ backoffMs: 1, rotatingProxy: async () => { throw new Error('no access'); }, rotatingEscalation: async () => ({ newUrl: async () => dear.url }), onEscalate: (reason) => reasons.push(reason) });
     assert.deepEqual(await noCheap.getJson(`${base}/ok`, { rotate: true }), { ok: true });
     assert.match(reasons[1], /not available/);
+  } finally {
+    for (const proxy of [cheap, dear]) {
+      proxy.closeAllConnections();
+      proxy.close();
+    }
+  }
+});
+
+test('http: the dearer proxy stops at its budget and requests go back to the cheaper one', async () => {
+  const cheap = await countingProxy();
+  const dear = await countingProxy();
+  const spent = [];
+  const client = createHttpClient({
+    backoffMs: 1,
+    rotatingProxy: async () => { throw new Error('no access'); },
+    rotatingEscalation: async () => ({ newUrl: async () => dear.url }),
+    escalationBudget: () => 20,
+    onBudgetSpent: (bytes) => spent.push(bytes),
+  });
+  try {
+    // No cheaper proxy: the dearer one serves until its budget (20 bytes) is used.
+    await client.getJson(`${base}/ok`, { rotate: true });
+    await client.getJson(`${base}/ok`, { rotate: true });
+    assert.equal(spent.length, 0);
+    assert.ok(client.stats.escalatedBytes >= 22);
+    const before = dear.count;
+    // Budget spent, and no cheaper proxy: the request goes out directly.
+    assert.deepEqual(await client.getJson(`${base}/ok`, { rotate: true }), { ok: true });
+    assert.equal(spent.length, 1);
+    assert.equal(dear.count, before);
   } finally {
     for (const proxy of [cheap, dear]) {
       proxy.closeAllConnections();

@@ -39,13 +39,16 @@ export class HttpError extends Error {
 // rest of the run once the site limits most of its sessions (Apify residential proxies, about 25
 // times dearer); `datacenterProxy` creates the proxy for requests marked `datacenter` (Apify
 // Proxy for Indeed). All are created on first use.
-export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback, rotatingProxy, rotatingEscalation, onEscalate, datacenterProxy, maxRetries = 5, timeoutMs = 30000, backoffMs = 1000 } = {}) {
+export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback, rotatingProxy, rotatingEscalation, onEscalate, escalationBudget, onBudgetSpent, datacenterProxy, maxRetries = 5, timeoutMs = 30000, backoffMs = 1000 } = {}) {
   let proxy = proxyConfiguration;
   let session = null;
   let fallbackTried = false;
   let rotating = null;
   let escalation = null;
   let escalated = false;
+  // Set once the escalated proxy has used its budget: rotating requests go back to the cheaper one.
+  let budgetSpent = false;
+  const tier = () => (escalated && !budgetSpent ? 'dear' : 'cheap');
   // Outcomes of the latest rotating requests before the escalation: true for an answer, false for
   // a limit or a block page.
   const outcomes = [];
@@ -54,7 +57,7 @@ export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback
   // Rotating sessions that may serve another request.
   const idle = [];
   // What happened to the requests, for the run log.
-  const stats = { requests: 0, retried: 0, limited: 0, blocked: 0 };
+  const stats = { requests: 0, retried: 0, limited: 0, blocked: 0, escalatedBytes: 0 };
   // `stop()` ends the requests in progress and refuses new ones, once the run is full.
   const stopper = new AbortController();
   const stoppedError = (url) => new HttpError(`Stopped before ${url}: the run has all the jobs it may save`, { retryable: false, stopped: true });
@@ -109,14 +112,25 @@ export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback
     if (limited >= ESCALATION_MIN_LIMITED && limited / outcomes.length >= 0.5) escalate(`${limited} of the latest ${outcomes.length} requests limited`);
   }
 
+  // The dearer proxy may use `escalationBudget()` bytes (it grows with the results the run earns);
+  // after that the run goes on with the cheaper proxy only, slower but without losing money.
+  function checkBudget() {
+    if (!escalated || budgetSpent || !escalationBudget || stats.escalatedBytes < escalationBudget()) return;
+    budgetSpent = true;
+    for (const session of idle.splice(0)) session.agent.close().catch(() => {});
+    onBudgetSpent?.(stats.escalatedBytes);
+  }
+
   async function rotatingConfiguration() {
-    if (!escalated && rotatingProxy) {
+    checkBudget();
+    if ((!escalated || budgetSpent) && rotatingProxy) {
       rotating ??= rotatingProxy().catch(() => null);
       const configuration = await rotating;
       if (configuration) return configuration;
+      if (budgetSpent) return null;
       escalate('the datacenter proxy is not available');
     }
-    if (escalated) {
+    if (escalated && !budgetSpent) {
       escalation ??= rotatingEscalation().catch(() => null);
       return escalation;
     }
@@ -127,11 +141,12 @@ export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback
   // (or its escalation) or the fallback proxy, in this order. Without any proxy the request goes
   // out directly.
   async function takeRotating() {
+    checkBudget();
     const reused = idle.pop();
     if (reused) return reused;
     let configuration = proxyConfiguration ?? await rotatingConfiguration();
     configuration ??= proxy;
-    return configuration ? { agent: new ProxyAgent(await configuration.newUrl(sessionName())), uses: 0, escalated } : null;
+    return configuration ? { agent: new ProxyAgent(await configuration.newUrl(sessionName())), uses: 0, tier: tier() } : null;
   }
 
   // A session that got a normal answer may serve again, up to ROTATION_USES requests.
@@ -139,7 +154,7 @@ export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback
     if (!rotated) return;
     rotated.uses++;
     // Sessions of the cheaper proxy are not used again after the escalation.
-    if (ok && rotated.uses < ROTATION_USES && rotated.escalated === escalated) idle.push(rotated);
+    if (ok && rotated.uses < ROTATION_USES && rotated.tier === tier()) idle.push(rotated);
     else rotated.agent.close().catch(() => {});
   }
 
@@ -182,7 +197,8 @@ export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback
         // on a rotating session only needs the next session, not the fallback proxy.
         const limited = res.status === 429 || res.status === 403 || res.status === 999;
         if (limited) stats.limited++;
-        if (rotated && !rotated.escalated) record(!limited && !(res.ok && accept && !accept(text)));
+        if (rotated?.tier === 'dear') stats.escalatedBytes += Buffer.byteLength(text);
+        if (rotated?.tier === 'cheap') record(!limited && !(res.ok && accept && !accept(text)));
         const switched = limited && !rotated && (await switchToFallback());
         if (res.status === 429 || res.status >= 500 || (res.status === 403 && (Boolean(proxy) || Boolean(rotated) || switched))) {
           throw new HttpError(`HTTP ${res.status} for ${url}`, { status: res.status });

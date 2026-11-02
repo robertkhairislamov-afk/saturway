@@ -16,6 +16,10 @@ const STATUS_EVERY_MS = 3000;
 // Company mode reads up to this many jobs per company that may be saved, and at least MIN_JOBS_READ.
 const JOBS_READ_PER_COMPANY = 20;
 const MIN_JOBS_READ = 1000;
+// Residential proxy traffic allowed (page text, a few times the bytes on the wire): 4 MB to start,
+// and 40 KB more for every result saved, about a third of what a result earns.
+const RESIDENTIAL_FREE_BYTES = 4e6;
+const RESIDENTIAL_BYTES_PER_RESULT = 4e4;
 
 export async function mapWithConcurrency(items, limit, fn) {
   const results = new Array(items.length);
@@ -86,6 +90,9 @@ export async function runScraper(Actor, adapter, rawInput, log) {
     rotatingProxy: atHome ? () => Actor.createProxyConfiguration(tiered ? firstTier : { useApifyProxy: true }) : undefined,
     rotatingEscalation: atHome && !ownProxy ? () => Actor.createProxyConfiguration({ useApifyProxy: true, apifyProxyGroups: ['RESIDENTIAL'] }) : undefined,
     onEscalate: (reason) => log.warning(`${adapter.title} is limiting the datacenter proxy (${reason}); continuing through Apify residential proxies.`),
+    // Residential traffic is paid by the Actor, so it may cost only a part of what the results earn.
+    escalationBudget: () => RESIDENTIAL_FREE_BYTES + RESIDENTIAL_BYTES_PER_RESULT * (companyMode ? saved / JOBS_READ_PER_COMPANY : saved),
+    onBudgetSpent: (bytes) => log.warning(`Residential proxies used ${(bytes / 1e6).toFixed(1)} MB for ${saved} results; continuing through datacenter proxies only, which may be slower or find fewer jobs.`),
     // Sites that refuse the platform's own addresses (Indeed) go through Apify Proxy there.
     datacenterProxy: Actor.isAtHome?.() ? () => Actor.createProxyConfiguration({ useApifyProxy: true }) : undefined,
     onFallback: () => log.info(`${adapter.limitNotice ?? `${adapter.title} is limiting direct requests`}; continuing through Apify Proxy.`),

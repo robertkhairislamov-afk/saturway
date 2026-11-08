@@ -1406,6 +1406,18 @@ function founditInputSchema() {
         default: false,
         description: 'Only jobs Foundit marks as work from home.',
       },
+      minSalary: {
+        title: 'Minimum salary per year',
+        type: 'integer',
+        minimum: 0,
+        description: 'Yearly pay in the currency of the country\'s Foundit site: INR in India (<code>1000000</code> is 10 lakh), AED on the Gulf site, SGD, MYR, PHP or HKD. Foundit then returns only jobs that state their pay and whose range reaches this amount.',
+      },
+      maxSalary: {
+        title: 'Maximum salary per year',
+        type: 'integer',
+        minimum: 0,
+        description: 'Yearly pay in the same currency. Jobs whose range starts above it are left out. Leave empty for no upper limit.',
+      },
       sortBy: {
         title: 'Sort by',
         type: 'string',
@@ -1759,6 +1771,9 @@ const FIELD_DOCS = {
   summary: 'Summary of the job the site writes: introduction, qualifications and more.',
   applicants: 'Number of applicants, as the site shows it.',
   applicantsCount: 'Number of applicants, as a number.',
+  applicationVolume: 'How many people apply compared with similar jobs, as the site shows it: low, medium or high.',
+  applicantsWithResumePercent: 'Share of applicants who sent a resume, in percent.',
+  applicantsWithCoverLetterPercent: 'Share of applicants who sent a cover letter, in percent.',
   insights: 'Hints LinkedIn shows about the job, for example Actively Hiring.',
   reposted: 'True when the job was reposted.',
   remotePolicy: 'Remote policy: remote, hybrid or onsite.',
@@ -1817,7 +1832,7 @@ const COMPANY_FIELD_DOCS = {
 // The fields of each site beyond the ones every job has, as seen in real runs.
 const CORE_FIELDS = ['ats', 'company', 'companyName', 'jobId', 'requisitionId', 'title', 'department', 'team', 'location', 'locations', 'remote', 'workplaceType', 'employmentType', 'salary', 'postedAt', 'updatedAt', 'jobUrl', 'applyUrl', 'descriptionText', 'descriptionHtml', 'scrapedAt'];
 const COMPANY_DETAILS = ['companyUrl', 'companyWebsite', 'companyLogo', 'companySize', 'companyRevenue', 'companyType', 'companyIndustry', 'companyFounded', 'companyHeadquarters', 'companyRating'];
-const SEEK_FIELDS = ['subClassification', 'bulletPoints', 'suburb', 'state', 'postcode', 'country', 'validThrough', 'companyIndustry', 'companySize', 'companyWebsite', 'companyRating', 'companyReviewCount', 'companyLogoUrl'];
+const SEEK_FIELDS = ['subClassification', 'bulletPoints', 'suburb', 'state', 'postcode', 'country', 'validThrough', 'applicants', 'applicantsCount', 'applicationVolume', 'applicantsWithResumePercent', 'applicantsWithCoverLetterPercent', 'companyIndustry', 'companySize', 'companyWebsite', 'companyRating', 'companyReviewCount', 'companyLogoUrl'];
 const SITE_FIELDS = {
   greenhouse: [],
   lever: [],

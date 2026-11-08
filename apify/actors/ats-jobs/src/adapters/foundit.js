@@ -37,7 +37,17 @@ const toList = (value) => (Array.isArray(value) ? value : value ? [value] : []).
 
 // The search form of the Actor, as a Foundit search link. Outside India, a search without a city
 // is limited to the chosen country.
-export function searchUrl({ country = 'IN', query = '', location = '', experience, postedWithinDays, remoteOnly = false, sortByDate = false } = {}) {
+// Pay ranges are filtered by Foundit as yearly amounts in the site's currency, "min~max"; a job
+// matches when its range overlaps. Jobs that do not state pay are left out by Foundit.
+const NO_UPPER_LIMIT = 1e9;
+export function salaryRange(minSalary, maxSalary) {
+  const min = Math.max(0, Math.round(Number(minSalary) || 0));
+  const max = Math.max(0, Math.round(Number(maxSalary) || 0));
+  if (!min && !max) return null;
+  return `${min}~${max >= min && max > 0 ? max : NO_UPPER_LIMIT}`;
+}
+
+export function searchUrl({ country = 'IN', query = '', location = '', experience, postedWithinDays, remoteOnly = false, sortByDate = false, minSalary, maxSalary } = {}) {
   const code = COUNTRIES[String(country).toUpperCase()] ? String(country).toUpperCase() : 'IN';
   const [countryName, host] = COUNTRIES[code];
   const params = new URLSearchParams();
@@ -49,6 +59,8 @@ export function searchUrl({ country = 'IN', query = '', location = '', experienc
   if (experience !== undefined && experience !== null && experience !== '' && Number(experience) >= 0) params.set('experience', String(Math.round(Number(experience))));
   if (Number(postedWithinDays) > 0) params.set('jobFreshness', String(Math.round(Number(postedWithinDays))));
   if (remoteOnly) params.set('jobTypes', REMOTE_TYPE);
+  const pay = salaryRange(minSalary, maxSalary);
+  if (pay) params.set('salaryRanges', pay);
   if (sortByDate) params.set('sort', '2');
   return `https://${host}/srp/results?${params}`;
 }
@@ -62,6 +74,8 @@ export function prepareInput(raw) {
     postedWithinDays: raw.postedWithinDays,
     remoteOnly: raw.remoteOnly === true,
     sortByDate: raw.sortBy === 'date',
+    minSalary: raw.minSalary,
+    maxSalary: raw.maxSalary,
   };
   const queries = toList(raw.searchQueries ?? raw.companies);
   const companies = queries.map((query) => (/^https?:\/\//i.test(query) ? query : searchUrl({ ...form, query })));

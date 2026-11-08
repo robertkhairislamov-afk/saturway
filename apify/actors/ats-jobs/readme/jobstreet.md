@@ -11,6 +11,7 @@ Scrape jobs from **Jobstreet**, the leading job site in Southeast Asia (`my.jobs
 - 🎛️ **All Jobstreet filters**: classification, work type (full time, part time, contract/temp, casual), work arrangement (on-site, hybrid, remote), date listed and minimum salary per month, year or hour. Sort by newest or by relevance.
 - ♾️ **Beyond 550 results**: big searches are split by classification, work type and salary band, then merged without duplicates.
 - 💰 **Salary as numbers**: "RM 3,800 – RM 5,000 per month" becomes `{ "min": 3800, "max": 5000, "currency": "MYR", "interval": "month" }`. Labels such as "Rp 5.250.000", "₱40,000" or "30k-35k/month" are understood too.
+- 👥 **Number of applicants** wherever Jobstreet shows it to every visitor (with **Load full job details** on; about half of the jobs): `applicantsCount` 21, "Medium application volume", and the share of applicants who sent a resume or cover letter. Find roles with few applicants, or measure competition for a role.
 - 🏢 **Company profile**: industry, number of employees, website and the company's rating on the site.
 - 🆕 **Only new jobs since the last run**: for job alerts, recruiting pipelines and market monitoring.
 - 🧩 **Same output as our other job scrapers**, listed at the end of this page, so jobs from company career sites and job boards fit into one table.
@@ -26,6 +27,7 @@ Scrape jobs from **Jobstreet**, the leading job site in Southeast Asia (`my.jobs
 | `workplaceType` / `employmentType` | onsite / full-time |
 | `salary` | `{ "min": 10000, "max": 15000, "currency": "MYR", "interval": "month" }` |
 | `postedAt` / `validThrough` | 2026-09-03 / 2026-10-03 |
+| `applicantsCount` / `applicationVolume` | 21 / Medium application volume |
 | `companyIndustry` / `companySize` / `companyWebsite` | Banking & Credit / 1,001-5,000 employees / http://www.uob.com.my |
 | `jobUrl` / `applyUrl` | https://my.jobstreet.com/job/94398283 |
 | `descriptionText` / `descriptionHtml` | full job description |
@@ -80,6 +82,11 @@ Work types are `242` full time, `243` part time, `244` contract/temp and `245` c
   "state": "Kuala Lumpur",
   "country": "Malaysia",
   "validThrough": "2026-10-03T13:59:59.999Z",
+  "applicants": "21 applicants",
+  "applicantsCount": 21,
+  "applicationVolume": "Medium application volume",
+  "applicantsWithResumePercent": 100,
+  "applicantsWithCoverLetterPercent": 48,
   "companyIndustry": "Banking & Credit",
   "companySize": "1,001-5,000 employees",
   "companyWebsite": "http://www.uob.com.my",

@@ -11,6 +11,7 @@ Scrape jobs from **JobsDB** (`hk.jobsdb.com`, `th.jobsdb.com`), the way you sear
 - 🎛️ **All JobsDB filters**: classification, work type (full time, part time, contract/temp, casual), work arrangement (on-site, hybrid, remote), date listed and minimum salary per month, year or hour. Sort by newest or by relevance.
 - ♾️ **Beyond 550 results**: big searches are split by classification, work type and salary band, then merged without duplicates.
 - 💰 **Salary as numbers**: "$20,000 – $30,000 per month" becomes `{ "min": 20000, "max": 30000, "currency": "HKD", "interval": "month" }`. Labels such as "30k-35k/month", "$400k - $500k p.a." or "฿24,000 per month" are understood too.
+- 👥 **Number of applicants** wherever JobsDB shows it to every visitor (with **Load full job details** on; about half of the jobs): `applicantsCount` 21, "Medium application volume", and the share of applicants who sent a resume or cover letter. Find roles with few applicants, or measure competition for a role.
 - 🏢 **Company profile**: industry, number of employees, website and the company's rating on the site.
 - 🆕 **Only new jobs since the last run**: for job alerts, recruiting pipelines and market monitoring.
 - 🧩 **Same output as our other job scrapers**, listed at the end of this page, so jobs from company career sites and job boards fit into one table.
@@ -26,6 +27,7 @@ Scrape jobs from **JobsDB** (`hk.jobsdb.com`, `th.jobsdb.com`), the way you sear
 | `workplaceType` / `employmentType` | onsite / full-time |
 | `salary` | `{ "min": 25000, "max": 25000, "currency": "HKD", "interval": "month" }` |
 | `postedAt` / `validThrough` | 2026-09-16 / 2026-10-16 |
+| `applicantsCount` / `applicationVolume` | 21 / Medium application volume |
 | `companyIndustry` / `companySize` | Drinks Retail / 11-50 employees |
 | `jobUrl` / `applyUrl` | https://hk.jobsdb.com/job/94677274 |
 | `descriptionText` / `descriptionHtml` | full job description |
@@ -80,6 +82,11 @@ Work types are `242` full time, `243` part time, `244` contract/temp and `245` c
   "state": "Yau Tsim Mong District",
   "country": "Hong Kong SAR",
   "validThrough": "2026-10-16T12:59:59.999Z",
+  "applicants": "21 applicants",
+  "applicantsCount": 21,
+  "applicationVolume": "Medium application volume",
+  "applicantsWithResumePercent": 100,
+  "applicantsWithCoverLetterPercent": 48,
   "companyIndustry": "Drinks Retail",
   "companySize": "11-50 employees",
   "companyLogoUrl": "https://bx-branding-gateway.cloud.seek.com.au/….1/jdpLogo",

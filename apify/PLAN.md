@@ -1070,3 +1070,11 @@ Google Play, Lever, Ashby, Greenhouse и Google News пока дальше пе�
 - Totaljobs и CWJobs отсюда рвут соединение (HTTP/2 INTERNAL_ERROR). stepstone.at отвечает 403, stepstone.be работает как stepstone.de. Открытый API Arbeitsagentur с ключом `jobboerse-jobsuche` отвечает 403.
 - Rightmove (212), Home Depot (181), Zoopla (127) — не вакансии.
 - Naukri — 5389 пользователей за 30 дней, но API отвечает «recaptcha required», а страница поиска — пустая оболочка Next.js без вакансий (проверено 29.09). Нужен браузер, проходящий reCAPTCHA, — не берём.
+
+### 8.11 — доработки по разбору акторов («давай все пункты»)
+
+- Career Page Jobs Scraper (`career-page-jobs-scraper`, ID `6nnmpURZw0dlyKASn`): Greenhouse, Lever, Ashby, Workday; поиск по каталогу из 2 630 карьерных сайтов. Приватный, `unlisted: true`, цена $1.50 за 1 000. Публикует владелец; после публикации поставить `unlisted: false` и пересобрать остальные акторы вакансий, чтобы они ссылались на него.
+- Google Play 0.1.89: похожие приложения (`similarToAppIds`) и данные продавца-компании (юр. название, адрес, телефон, почта; у частных лиц поля пустые).
+- StepStone 0.1.27: данные компании (сотрудники, отрасль, год основания, адрес, число вакансий, «About us»; ввод `includeCompanyDetails`, по умолчанию выкл.), ссылки на страницы компаний как источник, «без кадровых агентств» и «исключить компании». Рекламных вакансий StepStone в данных страницы не отмечает (проверено на 4 поисках) — такого фильтра нет. Немецкие слова и крупные агентства добавлены в общее правило агентств (касается и режима компаний).
+- SEEK / Jobstreet / JobsDB: число откликов (`applicants`, `applicantsCount`, `applicationVolume`, доля с резюме и сопроводительным) из `jobDetails.insights`, без входа; есть примерно у половины вакансий. Тест JobsDB HK: 6 из 15.
+- Foundit 0.1.9: `minSalary` / `maxSalary` в год в валюте сайта → фильтр Foundit `salaryRanges=min~max`. Тест: 15 вакансий, все в диапазоне (2 со скрытой зарплатой).

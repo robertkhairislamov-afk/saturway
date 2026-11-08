@@ -38,6 +38,16 @@ test('foundit: the form and keywords become Foundit search links', () => {
   const link = foundit.parseCompany('https://www.foundit.sg/srp/results?query=nurse&locations=Singapore&jobFreshness=14&searchId=abc');
   assert.deepEqual([link.host, link.params], ['www.foundit.sg', { query: 'nurse', locations: 'Singapore', jobFreshness: '14' }]);
   assert.throws(() => foundit.parseCompany('https://www.foundit.in/job/java-developer-70000001'), /not a Foundit search link/);
+
+  // Salary ranges, as Foundit's own filter writes them.
+  const paid = foundit.parseCompany(foundit.prepareInput({ searchQueries: ['data analyst'], minSalary: 1000000, maxSalary: 1500000 }).companies[0]);
+  assert.equal(paid.params.salaryRanges, '1000000~1500000');
+  assert.equal(foundit.salaryRange(1200000), '1200000~1000000000');
+  assert.equal(foundit.salaryRange(0, 800000), '0~800000');
+  assert.equal(foundit.salaryRange(900000, 500000), '900000~1000000000');
+  assert.equal(foundit.salaryRange(), null);
+  // Links with Foundit's salary filter keep it.
+  assert.equal(foundit.parseCompany('https://www.foundit.in/srp/results?query=nurse&salaryRanges=500000~1000000').params.salaryRanges, '500000~1000000');
   assert.throws(() => foundit.parseCompany('https://www.naukri.com/java-jobs'), /not a Foundit search link/);
   assert.throws(() => foundit.parseCompany('https://www.foundit.in/srp/results?experience=3'), /needs keywords or a location/);
 });

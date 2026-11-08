@@ -12,7 +12,7 @@ Scrape jobs from **Foundit**, one of India's largest job sites and Monster's suc
 - 💰 **Salaries as numbers**: pay the employer states becomes `{ "min": 2000000, "max": 2500000, "currency": "INR", "interval": "year" }`.
 - 🧠 **Skills, roles and industries**: Foundit's skill tags, roles, functions and industries for matching and analytics.
 - 👥 **Applicants**: how many people have applied, with quick-apply and urgently-hiring flags.
-- 🎛️ **Foundit filters**: experience, work from home and date posted, sorted by relevance or newest first.
+- 🎛️ **Foundit filters**: experience, work from home, date posted and **salary range per year**, sorted by relevance or newest first.
 - 🆕 **Only new jobs since the last run**: for job alerts, recruiting pipelines and market monitoring.
 - 🧩 **Same output as our other job scrapers**, listed at the end of this page, so Foundit jobs, other job boards and company career sites fit into one table.
 
@@ -115,6 +115,7 @@ You pay only for the jobs you get: **$2 per 1,000 jobs**. That is the price on t
 
 - **Daily job alerts**: save your input as a task, turn on **Only new jobs since the last run**, sort by newest and add a schedule. Send new jobs to Slack, email or Google Sheets with Apify integrations.
 - **Faster runs**: turn off **Include job descriptions**. The description, every location and the listed skills need one request per job; without them you still get title, company, salary, experience, skills tags, applicants and dates, at about 100 jobs per request.
+- **Salary filter**: set **Minimum salary per year** in the site's currency, for example `1000000` for 10 lakh INR. Foundit then returns only jobs that state their pay, which is a small share of all jobs.
 - **Big searches**: Foundit shows about 10,000 jobs per search. For more, search city by city or add filters.
 - **Stricter results**: Foundit also matches skills and descriptions. Use **Title must contain** to keep only jobs with your keyword in the title.
 - **Errors per search**: see the `SUMMARY` record in the run's key-value store.

@@ -66,6 +66,13 @@ test('seek: search results and job details in the shared format', () => {
   assert.ok(full.descriptionText.length > 500 && !full.descriptionText.includes('<'));
   assert.match(full.validThrough, /^\d{4}-\d{2}-\d{2}T/);
   assert.equal(full.country, 'Australia');
+  // Applicant numbers that the job page shows every visitor.
+  assert.equal(full.applicants, '21 applicants');
+  assert.equal(full.applicantsCount, 21);
+  assert.equal(full.applicationVolume, 'Medium application volume');
+  assert.equal(full.applicantsWithResumePercent, 100);
+  assert.equal(full.applicantsWithCoverLetterPercent, 48);
+  assert.equal(partial.applicantsCount, null);
   const paid = data.map((raw) => seek.toJob(raw)).filter((job) => job.salary);
   assert.ok(paid.length >= 2 && paid.every((job) => job.salary.currency === 'AUD' && job.salary.interval === 'year'));
   assert.equal(seek.toJob(data[1], null, 'NZ').salary.currency, 'NZD');

@@ -242,6 +242,9 @@ export function toJob(raw, details = null, siteCode = 'AU') {
   const place = details?.gfjInfo?.location ?? null;
   const profile = details?.companyProfile ?? null;
   const rating = profile?.reviewsSummary?.overallRating;
+  // Applicant numbers as the job page shows them to every visitor: counts only, nobody's details.
+  const insight = (type) => (details?.insights ?? []).find((item) => item?.__typename === type);
+  const applicants = insight('ApplicantCount');
   return {
     ...makeJob({
       ats: site.brand,
@@ -269,6 +272,11 @@ export function toJob(raw, details = null, siteCode = 'AU') {
     postcode: place?.postcode ?? null,
     country: place?.country ?? null,
     validThrough: job.expiresAt?.dateTimeUtc ?? null,
+    applicants: cleanText(applicants?.countLabel) ?? null,
+    applicantsCount: Number.isFinite(applicants?.count) ? applicants.count : null,
+    applicationVolume: cleanText(applicants?.volumeLabel) ?? null,
+    applicantsWithResumePercent: insight('ApplicantsWithResumePercentage')?.percentage ?? null,
+    applicantsWithCoverLetterPercent: insight('ApplicantsWithCoverLetterPercentage')?.percentage ?? null,
     companyIndustry: profile?.overview?.industry ?? null,
     companySize: profile?.overview?.size?.description ?? null,
     companyWebsite: profile?.overview?.website?.url ?? null,
@@ -295,6 +303,12 @@ const JOB_DETAILS_QUERY = `query jobDetails($jobId: ID!, $zone: Zone!, $locale: 
     }
     companyProfile(zone: $zone) { overview { industry size { description } website { url } } reviewsSummary { overallRating { value numberOfReviews { value } } } }
     gfjInfo { location { countryCode country suburb region state postcode } }
+    insights {
+      __typename
+      ... on ApplicantCount { count countLabel(locale: $locale) volumeLabel(locale: $locale) }
+      ... on ApplicantsWithResumePercentage { percentage }
+      ... on ApplicantsWithCoverLetterPercentage { percentage }
+    }
   }
 }`;
 

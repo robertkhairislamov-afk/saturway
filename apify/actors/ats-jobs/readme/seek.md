@@ -11,6 +11,7 @@ Scrape jobs from **SEEK**, the biggest job site in Australia and New Zealand (`s
 - 🎛️ **All SEEK filters**: classification, work type (full time, part time, contract/temp, casual), work arrangement (on-site, hybrid, remote), date listed and minimum salary per year, month or hour. Sort by newest or by relevance.
 - ♾️ **Beyond 550 results**: big searches are split by classification, work type and salary band, then merged without duplicates.
 - 💰 **Salary as numbers**: "$120k - $140k p.a. + Super" becomes `{ "min": 120000, "max": 140000, "currency": "AUD", "interval": "year" }`. Hourly, daily and fortnightly pay are recognized too.
+- 👥 **Number of applicants** wherever SEEK shows it to every visitor (with **Load full job details** on; about half of the jobs): `applicantsCount` 21, "Medium application volume", and the share of applicants who sent a resume or cover letter. Find roles with few applicants, or measure competition for a role.
 - 🏢 **Company profile**: industry, number of employees, website and the company's SEEK rating.
 - 📍 **Suburb, state and postcode** of every job, ready for maps and regional reports.
 - 🆕 **Only new jobs since the last run**: for job alerts, recruiting pipelines and market monitoring.
@@ -28,6 +29,7 @@ Scrape jobs from **SEEK**, the biggest job site in Australia and New Zealand (`s
 | `salary` | `{ "min": 44.06, "max": 56.52, "currency": "AUD", "interval": "hour" }` |
 | `bulletPoints` | the three selling points shown on SEEK |
 | `postedAt` / `validThrough` | 2026-09-25 / 2026-10-09 |
+| `applicantsCount` / `applicationVolume` | 21 / Medium application volume |
 | `companyIndustry` / `companySize` / `companyWebsite` | Healthcare Services / More than 10,000 employees / http://mater.org.au/ |
 | `jobUrl` / `applyUrl` | https://www.seek.com.au/job/94881142 |
 | `descriptionText` / `descriptionHtml` | full job description |
@@ -88,6 +90,11 @@ Work types are `242` full time, `243` part time, `244` contract/temp and `245` c
   "postcode": "4300",
   "country": "Australia",
   "validThrough": "2026-10-09T13:55:00.000Z",
+  "applicants": "21 applicants",
+  "applicantsCount": 21,
+  "applicationVolume": "Medium application volume",
+  "applicantsWithResumePercent": 100,
+  "applicantsWithCoverLetterPercent": 48,
   "companyIndustry": "Healthcare Services",
   "companySize": "More than 10,000 employees",
   "companyWebsite": "http://mater.org.au/",

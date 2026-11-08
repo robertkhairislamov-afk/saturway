@@ -149,7 +149,7 @@ function categories(node, found = []) {
 
 // Everything the app page shows, except reviews and the developer's postal address and phone.
 // A legal name with a company form ("Spotify AB", "Duolingo, Inc.", "RobTop Games AB").
-const COMPANY_FORM = /\b(inc|llc|l\.l\.c|ltd|limited|corp|corporation|co|company|gmbh|mbh|ag|ab|as|a\/s|aps|oy|oyj|sa|s\.a|sas|sarl|srl|s\.r\.l|spa|s\.p\.a|bv|b\.v|nv|plc|pty|pte|kk|k\.k|kft|sro|s\.r\.o|ou|ug|lp|llp|ltda|gk)\b\.?/i;
+const COMPANY_FORM = /\b(inc|llc|l\.l\.c|ltd|limited|corp|corporation|co|company|gmbh|mbh|ag|ab|as|a\/s|aps|oy|oyj|sa|s\.a|sas|sarl|srl|s\.r\.l|spa|s\.p\.a|bv|b\.v|nv|plc|pty|pte|kk|k\.k|kft|sro|s\.r\.o|ou|ug|lp|llp|ltda|gk|a\.s|sl|s\.l|jsc|pvt|ooo|tic|sp\. z o\.o)\b\.?/i;
 export function traderDetails(app) {
   const legalName = textOrNull(at(app, [69, 4, 0]));
   const empty = { developerLegalName: null, developerLegalEmail: null, developerAddress: null, developerPhone: null };

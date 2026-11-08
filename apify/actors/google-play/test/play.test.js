@@ -67,6 +67,7 @@ test('trader details only for companies, not for individual developers', () => {
   const app = (legal) => { const a = []; a[69] = [null, ['x@example.com'], null, '+1', legal]; return a; };
   assert.equal(traderDetails(app(['Duolingo, Inc.', ['a@duolingo.com'], ['5900 Penn Ave\nPittsburgh'], '+1 412'])).developerAddress, '5900 Penn Ave, Pittsburgh');
   assert.equal(traderDetails(app(['RobTop Games AB', [], [], null])).developerLegalName, 'RobTop Games AB');
+  assert.equal(traderDetails(app(['Codeway Dijital Hizmetler A.Ş.', [], [], null])).developerLegalName, 'Codeway Dijital Hizmetler A.Ş.');
   assert.deepEqual(traderDetails(app(['GARCIA RAMPINI, AGUSTIN EZEQUIEL', ['me@gmail.com'], ['Chiclana 38'], '+54'])),
     { developerLegalName: null, developerLegalEmail: null, developerAddress: null, developerPhone: null });
 });

@@ -201,6 +201,8 @@ export function findLots(listings, { projectMedians = {}, photoHashes = new Map(
       project: items[0].project,
       projectKey: items[0].projectKey,
       district: items[0].district,
+      nearestStation: items[0].nearestStation ?? null,
+      nearestStationKm: items[0].nearestStationKm ?? null,
       bedrooms: items[0].bedrooms,
       floor: items.map(floorOf).find((f) => f != null) ?? null,
       sizeSqm: size != null ? Math.round(size * 100) / 100 : null,

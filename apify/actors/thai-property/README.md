@@ -25,7 +25,13 @@ The `SUMMARY` record in the key-value store says what each search read and wheth
 
 ## Districts of Pattaya
 
-From north to south along the coast: Naklua & Wongamat, North Pattaya, Central Pattaya, South Pattaya, Pratumnak, Jomtien, Na Jomtien, Bang Saray; east of Sukhumvit Road: East Pattaya. The borders are approximate (about 200 m). Other locations use the subdistrict from the listing.
+From north to south along the coast: Naklua & Wongamat, North Pattaya, Central Pattaya, South Pattaya, Pratumnak, Jomtien, Na Jomtien, Bang Saray; east of Sukhumvit Road: East Pattaya. The borders are approximate (about 200 m). Bangkok uses its district (khet), other locations the subdistrict from the listing.
+
+## Bangkok
+
+Location `bangkok`. Districts are the 50 khet (Watthana, Khlong Toei, Sathon, Chatuchak…), as subdistricts are too small to compare. Every project, listing, lot and below-market record also gets its **nearest BTS, MRT or Airport Rail Link station** and the distance (`nearestStation`, `nearestStationKm`). The station comes from the listing page (`nearestStationSource: page`); for projects whose page names none, it is estimated from the positions of projects the site places next to each station (`estimated`, a few hundred metres accurate, up to 2 km).
+
+Bangkok is about four times Pattaya: some 64,000 condos for sale and 127,000 for rent. Run it with its own memory (`memoryName`: `bangkok-condos`), 4 GB of memory and a time limit of 8 hours; the first runs read project details, photos and floors over several runs (they stop before the time limit and continue next time). A run costs about $6–9.
 
 ## Input
 

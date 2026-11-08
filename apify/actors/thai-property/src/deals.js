@@ -60,6 +60,8 @@ export function belowMarket(listings, { minGapPercent = 10, projects = {} } = {}
         project: l.project,
         projectKey: l.projectKey,
         district: l.district,
+        nearestStation: l.nearestStation ?? null,
+        nearestStationKm: l.nearestStationKm ?? null,
         ownership: l.ownership ?? null,
         bedrooms: l.bedrooms,
         sizeSqm: l.sizeSqm,

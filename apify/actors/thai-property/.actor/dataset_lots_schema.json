@@ -84,6 +84,12 @@
       },
       "lastOfferRemovedAt": {
         "description": "Last day a removed listing of this unit was seen."
+      },
+      "nearestStation": {
+        "description": "Nearest BTS, MRT or Airport Rail Link station (Bangkok), from the listing page or estimated."
+      },
+      "nearestStationKm": {
+        "description": "Distance to the nearest station, in km."
       }
     },
     "additionalProperties": true

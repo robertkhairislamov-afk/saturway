@@ -13,6 +13,7 @@ import { findLots, floorOf } from './match.js';
 import { hashOfJpeg, loadPhotoHashes, savePhotoHashes, shortPhotoId, thumbnailForKey } from './photos.js';
 import { joinProjects } from './projects.js';
 import { loadSearchState, saveSearchState } from './state.js';
+import { withEstimatedStations } from './stations.js';
 import { districtRecords, projectKey, projectRecords, projectSegment } from './stats.js';
 
 await Actor.init();
@@ -72,8 +73,8 @@ const removedAll = [];
 // Price ranges for searches above the result limit: start from typical cut points and halve any
 // range that is still too big. Each range comes with its first page, which tells its size.
 const CUTS = {
-  sale: [0, 1500000, 2000000, 2500000, 3000000, 3500000, 4000000, 5000000, 6000000, 8000000, 12000000, 20000000],
-  rent: [0, 8000, 10000, 12000, 15000, 18000, 22000, 28000, 35000, 50000, 80000],
+  sale: [0, 1500000, 2000000, 2500000, 3000000, 3500000, 4000000, 5000000, 6000000, 8000000, 10000000, 12000000, 15000000, 20000000, 30000000, 50000000],
+  rent: [0, 8000, 10000, 12000, 15000, 18000, 22000, 28000, 35000, 50000, 80000, 120000],
 };
 const rangeLabel = ({ minPrice, maxPrice }) => `฿${(minPrice ?? 0).toLocaleString('en-US')}–${maxPrice != null ? `฿${maxPrice.toLocaleString('en-US')}` : 'up'}`;
 async function priceSlices(search, label) {
@@ -238,12 +239,21 @@ summary.listingsGivenProjectFromTitle = joined.assigned;
 for (const [alias, to] of Object.entries(joined.aliases)) log.info(`Project records joined: "${alias}" is the same building as "${to}".`);
 for (const r of removedAll) if (joined.aliases[r.projectKey]) r.projectKey = joined.aliases[r.projectKey];
 
+// Bangkok: the nearest BTS/MRT station, from the listing page or estimated from nearby projects.
+const stationInfo = withEstimatedStations(details, allListings);
+const shownDetails = stationInfo.details;
+if (stationInfo.stations > 0) summary.stations = { known: stationInfo.stations, projectsEstimated: stationInfo.estimated };
+
 for (const l of allListings) {
-  const info = details[l.projectKey] ?? {};
+  const info = shownDetails[l.projectKey] ?? {};
   l.developer = info.developer ?? null;
   l.completedYear = info.completedYear ?? info.yearBuilt ?? null;
   l.nearestLandmark = info.nearestLandmark ?? null;
   l.nearestLandmarkKm = info.nearestLandmarkKm ?? null;
+  l.nearestStation = info.nearestStation ?? null;
+  l.nearestStationLine = info.nearestStationLine ?? null;
+  l.nearestStationKm = info.nearestStationKm ?? null;
+  l.nearestStationSource = info.nearestStationSource ?? null;
   l.segment = projectSegment(info);
 }
 
@@ -253,7 +263,7 @@ for (const r of removedAll) {
   if (r.projectKey) removedByProject[r.projectKey] = (removedByProject[r.projectKey] ?? 0) + 1;
   if (r.district) removedByDistrict[r.district] = (removedByDistrict[r.district] ?? 0) + 1;
 }
-const projects = projectRecords(allListings, { details, removed: removedByProject }).map((p) => ({ ...p, scrapedAt }));
+const projects = projectRecords(allListings, { details: shownDetails, removed: removedByProject }).map((p) => ({ ...p, scrapedAt }));
 const districts = districtRecords(allListings, { removedByDistrict }).map((d) => ({ ...d, scrapedAt }));
 summary.projects = projects.length;
 

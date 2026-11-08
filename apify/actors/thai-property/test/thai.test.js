@@ -50,7 +50,7 @@ test('listing page: gallery, basics and project facts', () => {
   assert.equal(page.camFeePerMonth, 25200);
   assert.deepEqual(page.project, {
     name: 'Edge Central Pattaya', developer: 'Sansiri', construction: 'Completed (Oct 2021)', completedYear: 2021,
-    floors: 31, buildings: 1, units: 603, areaSqm: 3200, nearestLandmark: 'South Pattaya Beach', nearestLandmarkKm: 0.3,
+    floors: 31, buildings: 1, units: 603, areaSqm: 3200, nearestLandmark: 'South Pattaya Beach', nearestLandmarkKm: 0.3, nearestStation: null, nearestStationLine: null, nearestStationKm: null,
   });
 });
 
@@ -458,4 +458,39 @@ test('lots: on the market since the first listing, fresh while an agency is acti
   assert.equal(lots[0].onMarketSince, '2025-05-26');
   assert.equal(lots[0].lastActivityAt, '2026-09-10');
   assert.equal(lots[0].freshness, 'fresh');
+});
+
+test('Bangkok: the district, the nearest station from the page, and estimated stations', async () => {
+  const { districtOf } = await import('../src/areas.js');
+  const { nearestStationOf } = await import('../src/dotproperty.js');
+  const { withEstimatedStations } = await import('../src/stations.js');
+  assert.deepEqual(districtOf({ province: 'Bangkok', city: 'Khlong-toei', subdistrict: 'Phra khanong', latitude: 13.715, longitude: 100.59 }), { district: 'Khlong Toei', districtSource: 'listing' });
+  assert.equal(districtOf({ province: 'Phuket', city: 'Mueang-phuket', subdistrict: 'Karon' }).district, 'Karon');
+
+  const text = ' | What and how far away is the nearest BTS Station from Rhythm Sukhumvit 44/1? | Phra Khanong BTS is the nearest BTS Station from Rhythm Sukhumvit 44/1 and it is 0.6 km away. | Phetchaburi MRT is the nearest MRT Station from Rhythm Sukhumvit 44/1 and it is 0.3 km away. | ';
+  assert.deepEqual(nearestStationOf(text), { nearestStation: 'Phetchaburi MRT', nearestStationLine: 'MRT', nearestStationKm: 0.3 });
+  assert.deepEqual(nearestStationOf(' | nothing here | ', 'Chong Nonsi BTS', 0.8), { nearestStation: 'Chong Nonsi BTS', nearestStationLine: 'BTS', nearestStationKm: 0.8 });
+  assert.equal(nearestStationOf(' | ', 'Jomtien Beach', 0.2).nearestStation, null);
+
+  // Two projects next to Phra Ram 9 MRT place the station; a third without an answer gets it.
+  const details = {
+    a: { nearestStation: 'Phra Ram 9 MRT', nearestStationLine: 'MRT', nearestStationKm: 0.1 },
+    b: { nearestStation: 'Phra Ram 9 MRT', nearestStationLine: 'MRT', nearestStationKm: 0.2 },
+    c: { name: 'Belle Grand Rama 9' },
+    far: { name: 'Far away' },
+  };
+  const listings = [
+    { projectKey: 'a', latitude: 13.7570, longitude: 100.5650 },
+    { projectKey: 'b', latitude: 13.7590, longitude: 100.5660 },
+    { projectKey: 'c', latitude: 13.7600, longitude: 100.5700 },
+    { projectKey: 'far', latitude: 13.9, longitude: 100.7 },
+  ];
+  const out = withEstimatedStations(details, listings);
+  assert.equal(out.estimated, 1);
+  assert.equal(out.details.a.nearestStationSource, 'page');
+  assert.equal(out.details.c.nearestStation, 'Phra Ram 9 MRT');
+  assert.equal(out.details.c.nearestStationSource, 'estimated');
+  assert.ok(out.details.c.nearestStationKm > 0.2 && out.details.c.nearestStationKm < 0.8);
+  assert.equal(out.details.far.nearestStation, undefined);
+  assert.equal(details.c.nearestStation, undefined);
 });

@@ -81,6 +81,12 @@
       },
       "freshness": {
         "description": "How recently someone did something with the listing: fresh (posted or repriced within 60 days), aging (within 180 days) or stale (older): agencies rarely take down sold units, so a stale listing may be gone."
+      },
+      "nearestStation": {
+        "description": "Nearest BTS, MRT or Airport Rail Link station (Bangkok), from the listing page or estimated."
+      },
+      "nearestStationKm": {
+        "description": "Distance to the nearest station, in km."
       }
     },
     "additionalProperties": true

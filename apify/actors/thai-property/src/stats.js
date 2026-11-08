@@ -125,6 +125,10 @@ export function projectRecords(listings, { details = {}, removed = {} } = {}) {
       units,
       nearestLandmark: info.nearestLandmark ?? null,
       nearestLandmarkKm: info.nearestLandmarkKm ?? null,
+      nearestStation: info.nearestStation ?? null,
+      nearestStationLine: info.nearestStationLine ?? null,
+      nearestStationKm: info.nearestStationKm ?? null,
+      nearestStationSource: info.nearestStationSource ?? null,
       ...figures,
       removedSinceLastRun: removed[key] ?? 0,
       // Sale listings per 100 units: how much of the building is on offer (duplicates included).

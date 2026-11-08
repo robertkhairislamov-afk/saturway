@@ -252,6 +252,26 @@ export function descriptionFacts(description) {
 }
 
 // The listing page: gallery, description and the details tables.
+// "Phra Khanong BTS is the nearest BTS Station from Rhythm Sukhumvit 44/1 and it is 0.1 km away."
+// Bangkok listing pages answer this for BTS and MRT; the closest station is kept.
+const STATION_ANSWER = /([^|.?"]{2,60}?) is the nearest (BTS|MRT|ARL|Airport Rail Link|SRT[\w ]*?) Station from [^|]{1,120}? and it is ([\d.]+) ?km away/gi;
+const RAIL = /\b(BTS|MRT|ARL|Airport Rail Link|SRT)\b/i;
+const lineOf = (text) => (/airport/i.test(text) ? 'ARL' : /^srt/i.test(text) ? 'SRT' : text.toUpperCase());
+export function nearestStationOf(text, landmark = null, landmarkKm = null) {
+  let best = null;
+  for (const [, name, line, km] of String(text).matchAll(STATION_ANSWER)) {
+    const distance = Number(km);
+    if (!Number.isFinite(distance)) continue;
+    if (!best || distance < best.nearestStationKm) best = { nearestStation: name.trim(), nearestStationLine: lineOf(line), nearestStationKm: distance };
+  }
+  // Pages without the answer often name a station as the nearest landmark.
+  if (!best && landmark && RAIL.test(landmark) && Number.isFinite(landmarkKm)) {
+    const line = landmark.match(RAIL)[1];
+    best = { nearestStation: landmark.trim(), nearestStationLine: lineOf(line), nearestStationKm: landmarkKm };
+  }
+  return best ?? { nearestStation: null, nearestStationLine: null, nearestStationKm: null };
+}
+
 export function parseListingPage(html) {
   const listing = jsonLd(html, 'RealEstateListing');
   const entity = listing?.mainEntity ?? {};
@@ -292,6 +312,7 @@ export function parseListingPage(html) {
       areaSqm: number(field(text, 'Project Area')),
       nearestLandmark: landmark ? landmark[1].trim() : null,
       nearestLandmarkKm: landmark ? Number(landmark[2]) : null,
+      ...nearestStationOf(text, landmark ? landmark[1] : null, landmark ? Number(landmark[2]) : null),
     },
   };
 }

@@ -47,11 +47,13 @@ export function pattayaDistrict(lat, lng) {
 
 const titleCase = (s) => String(s).toLowerCase().replace(/\b\p{L}/gu, (c) => c.toUpperCase());
 
-// The district a buyer would name: Pattaya's tourist districts by coordinates, elsewhere the
-// subdistrict from the listing.
+// The district a buyer would name: Pattaya's tourist districts by coordinates; in Bangkok the
+// district (khet: Khlong Toei, Watthana, Sathon), as the subdistricts are too small to compare;
+// elsewhere the subdistrict from the listing.
 export function districtOf(listing) {
   const pattaya = pattayaDistrict(listing.latitude, listing.longitude);
   if (pattaya) return { district: pattaya, districtSource: 'coordinates' };
+  if (/bangkok/i.test(listing.province ?? '') && listing.city) return { district: titleCase(String(listing.city).replace(/-/g, ' ')), districtSource: 'listing' };
   if (listing.subdistrict) return { district: titleCase(listing.subdistrict), districtSource: 'listing' };
   return { district: null, districtSource: null };
 }

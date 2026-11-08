@@ -14,7 +14,7 @@
         "description": "The name in a form that is the same however agencies write it; joins projects, listings and history."
       },
       "district": {
-        "description": "District: for Pattaya the tourist district from coordinates (Naklua & Wongamat, North, Central and South Pattaya, Pratumnak, Jomtien, Na Jomtien, Bang Saray, East Pattaya); elsewhere the subdistrict."
+        "description": "District: for Pattaya the tourist district from coordinates (Naklua & Wongamat, North, Central and South Pattaya, Pratumnak, Jomtien, Na Jomtien, Bang Saray, East Pattaya); in Bangkok the district (khet: Khlong Toei, Watthana, Sathon); elsewhere the subdistrict."
       },
       "city": {
         "description": "City."
@@ -108,6 +108,18 @@
       },
       "foreignQuotaSaleListings": {
         "description": "Sale listings that say foreign quota."
+      },
+      "nearestStation": {
+        "description": "Nearest BTS, MRT or Airport Rail Link station (Bangkok), from the listing page or estimated."
+      },
+      "nearestStationLine": {
+        "description": "BTS, MRT, ARL or SRT."
+      },
+      "nearestStationKm": {
+        "description": "Distance to the nearest station, in km."
+      },
+      "nearestStationSource": {
+        "description": "page: the site names the station; estimated: from the positions of nearby projects that the site places next to a station (a few hundred metres accurate)."
       }
     },
     "additionalProperties": true

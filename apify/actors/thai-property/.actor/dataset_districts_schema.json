@@ -8,7 +8,7 @@
         "description": "Always \"district\"."
       },
       "district": {
-        "description": "District: for Pattaya the tourist district from coordinates (Naklua & Wongamat, North, Central and South Pattaya, Pratumnak, Jomtien, Na Jomtien, Bang Saray, East Pattaya); elsewhere the subdistrict."
+        "description": "District: for Pattaya the tourist district from coordinates (Naklua & Wongamat, North, Central and South Pattaya, Pratumnak, Jomtien, Na Jomtien, Bang Saray, East Pattaya); in Bangkok the district (khet: Khlong Toei, Watthana, Sathon); elsewhere the subdistrict."
       },
       "city": {
         "description": "City."

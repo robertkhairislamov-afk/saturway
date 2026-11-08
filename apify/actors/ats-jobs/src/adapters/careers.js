@@ -18,6 +18,9 @@ export const sourceNames = ['company', 'companies'];
 export const companyConcurrency = 12;
 export const detailConcurrency = 8;
 
+// Jobs read per Workday board when searching the whole directory.
+const DIRECTORY_WORKDAY_LIMIT = 300;
+
 export const PLATFORMS = { greenhouse: 'Greenhouse', lever: 'Lever', ashby: 'Ashby', workday: 'Workday' };
 
 // The directory: companies whose boards were found and checked, as [name, platform, board].
@@ -138,7 +141,14 @@ export async function* listJobs(source, context) {
   // A directory board that closed or moved since it was checked is skipped quietly: the search is
   // across all companies, not about this one.
   try {
-    yield* found.adapter.listJobs(found.inner, context);
+    // Workday searches by keyword with the best matches first and pages of 20; a big employer can
+    // list thousands of loose matches, so a directory search reads only the first ones.
+    let listed = 0;
+    for await (const page of found.adapter.listJobs(found.inner, context)) {
+      yield page;
+      listed += page.length;
+      if (found.platform === 'workday' && listed >= DIRECTORY_WORKDAY_LIMIT) break;
+    }
   } catch (error) {
     if (error.stopped) throw error;
     context.log.debug?.(`${found.id}: skipped (${error.message}).`);

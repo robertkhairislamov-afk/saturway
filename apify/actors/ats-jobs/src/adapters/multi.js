@@ -122,7 +122,7 @@ export function provinceOf(place) {
 }
 
 // Company career sites, recognized by the address of their job board.
-const CAREER_SITES = {
+export const CAREER_SITES = {
   greenhouse: { adapter: greenhouse, host: /(^|\.)greenhouse\.io$/i },
   lever: { adapter: lever, host: /(^|\.)lever\.co$/i },
   ashby: { adapter: ashby, host: /(^|\.)ashbyhq\.com$/i },

@@ -1,4 +1,5 @@
 import * as ashby from './ashby.js';
+import * as careers from './careers.js';
 import * as dice from './dice.js';
 import * as foundit from './foundit.js';
 import * as glassdoor from './glassdoor.js';
@@ -36,4 +37,5 @@ export const ADAPTERS = {
   xing,
   foundit,
   multi,
+  careers,
 };

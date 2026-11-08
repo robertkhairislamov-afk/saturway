@@ -8,6 +8,7 @@ import * as glassdoor from '../src/adapters/glassdoor.js';
 import * as indeed from '../src/adapters/indeed.js';
 import * as infojobs from '../src/adapters/infojobs.js';
 import * as linkedin from '../src/adapters/linkedin.js';
+import * as careers from '../src/adapters/careers.js';
 import * as multi from '../src/adapters/multi.js';
 import * as reed from '../src/adapters/reed.js';
 import * as stepstone from '../src/adapters/stepstone.js';
@@ -213,6 +214,23 @@ export const ACTORS = {
     seoTitle: 'Job Scraper API – LinkedIn, Indeed, Glassdoor + 8 Sites',
     seoDescription: 'Job scraper for LinkedIn, Indeed, Glassdoor, Dice, StepStone, SEEK, Reed, InfoJobs, Jobstreet, JobsDB and career sites in one run. One format. $1/1,000 jobs.',
   },
+  careers: {
+    name: 'career-page-jobs-scraper',
+    // Not in the other READMEs until the owner publishes it in the Store.
+    unlisted: true,
+    title: 'Career Page Jobs Scraper: Greenhouse, Lever, Ashby, Workday',
+    tagline: 'company career sites on Greenhouse, Lever, Ashby and Workday by name, domain or link, or a search across 2,600+ companies',
+    apiExample: { companies: ['stripe', 'notion.so', 'https://jobs.lever.co/zoox'], keywords: ['engineer'], maxItems: 50 },
+    description: 'Get every open job from company career sites on Greenhouse, Lever, Ashby and Workday. Enter company names, domains or job board links, or search 2,600+ companies at once by job title. Salary ranges, departments, locations, full descriptions, one format.',
+    seoTitle: 'Career Page Jobs Scraper – Greenhouse, Lever, Ashby, Workday',
+    seoDescription: 'Scrape jobs from company career pages on Greenhouse, Lever, Ashby and Workday by company name, domain or link, or search 2,600+ companies. $1.50 per 1,000 jobs.',
+    companies: {
+      title: 'Companies',
+      description: 'Company names, website domains or job board links, one per line, for example <code>Stripe</code>, <code>notion.so</code> or <code>https://jobs.lever.co/zoox</code>. The Actor finds each company\'s board on Greenhouse, Lever or Ashby; Workday boards need their link (or the company must be in the directory). Leave empty to search every company with <b>Search all companies</b>.',
+      prefill: ['airbnb', 'https://jobs.lever.co/zoox', 'ramp'],
+      placeholder: 'stripe.com',
+    },
+  },
 };
 
 export const CATEGORIES = ['JOBS', 'LEAD_GENERATION', 'AUTOMATION'];
@@ -243,7 +261,7 @@ export function integrationsSection(ats) {
 
 // The other job scrapers, listed at the end of every README: they all share one output format.
 export function familySection(ats) {
-  const others = Object.entries(ACTORS).filter(([key]) => key !== ats);
+  const others = Object.entries(ACTORS).filter(([key, actor]) => key !== ats && !actor.unlisted);
   return [
     '## More job scrapers with the same output',
     '',
@@ -266,6 +284,7 @@ export function inputSchema(ats) {
   if (ats === 'xing') return xingInputSchema();
   if (ats === 'foundit') return founditInputSchema();
   if (ats === 'multi') return multiInputSchema();
+  if (ats === 'careers') return careersInputSchema();
   const actor = ACTORS[ats];
   const properties = {
     companies: {
@@ -1471,6 +1490,41 @@ function linkedinInputSchema() {
   };
 }
 
+// The default form of a career-site Actor, plus searching every company of the directory.
+function careersInputSchema() {
+  const schema = inputSchema('greenhouse');
+  const base = schema.properties;
+  const { companies, ...rest } = base;
+  return {
+    ...schema,
+    title: ACTORS.careers.title,
+    description: 'Get every open job from company career sites on Greenhouse, Lever, Ashby and Workday, by company or across the whole directory.',
+    properties: {
+      companies: {
+        ...companies,
+        title: ACTORS.careers.companies.title,
+        description: ACTORS.careers.companies.description,
+        prefill: ACTORS.careers.companies.prefill,
+        placeholderValue: ACTORS.careers.companies.placeholder,
+      },
+      searchAllCompanies: {
+        title: 'Search all companies',
+        type: 'boolean',
+        default: false,
+        description: `Search every company in the built-in directory (${careers.directorySize().toLocaleString('en-US')} career sites found and checked on Greenhouse, Lever, Ashby and Workday), keeping the jobs whose title matches your <b>Title keywords</b>. Title keywords are required here.`,
+      },
+      platforms: {
+        title: 'Career site systems',
+        type: 'array',
+        editor: 'select',
+        description: 'With <b>Search all companies</b>, search only companies on these systems. Leave empty for all four.',
+        items: { type: 'string', enum: Object.keys(careers.PLATFORMS), enumTitles: Object.values(careers.PLATFORMS) },
+      },
+      ...rest,
+    },
+  };
+}
+
 function multiInputSchema() {
   const boards = Object.entries(multi.BOARDS);
   return {
@@ -1561,6 +1615,7 @@ const EXTRA_COLUMN = {
   infojobs: ['employmentType', 'Employment'],
   linkedin: ['employmentType', 'Employment'],
   multi: ['ats', 'Source'],
+  careers: ['ats', 'Source'],
   stepstone: ['employmentType', 'Employment'],
   indeed: ['employmentType', 'Job type'],
   glassdoor: ['companyRating', 'Rating'],
@@ -1590,6 +1645,7 @@ const SWAPPED = {
   workday: { workplaceType: 'employmentType' },
   stepstone: { 'salary.text': 'industry' },
   multi: { workplaceType: 'employmentType' },
+  careers: { workplaceType: 'employmentType' },
   glassdoor: { workplaceType: 'employmentType' },
   wellfound: { workplaceType: 'employmentType' },
   xing: { 'salary.text': 'employmentType' },
@@ -1764,6 +1820,7 @@ const SITE_FIELDS = {
 };
 // All-in-One searches many of the sites, so its records can have any of their fields.
 SITE_FIELDS.multi = [...new Set(Object.values(SITE_FIELDS).flat())];
+SITE_FIELDS.careers = [...new Set(['greenhouse', 'lever', 'ashby', 'workday'].flatMap((site) => SITE_FIELDS[site]))];
 
 // The `fields` part of the dataset schema: every field with its description, and any other field allowed.
 export const fieldsSchema = (ats) => {

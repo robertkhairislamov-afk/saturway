@@ -22,7 +22,8 @@ export function parseCompany(value) {
     const parts = url.pathname.split('/').filter(Boolean);
     slug = parts[0] === 'v0' && parts[1] === 'postings' ? parts[2] : parts[0];
   } else {
-    slug = raw.toLowerCase().replace(/\s+/g, '');
+    // Lever names are case-sensitive ("BestEgg"): kept as written, and tried in lower case if not found.
+    slug = raw.replace(/\s+/g, '');
   }
   if (!slug) throw new Error('no Lever company name found. Use a name such as "zoox" or a jobs.lever.co/<name> URL.');
   const region = eu ? '.eu' : '';
@@ -89,8 +90,16 @@ export async function* listJobs(company, { http }) {
   try {
     postings = await http.getJson(company.apiUrl);
   } catch (error) {
-    if (error.status === 404) throw new Error(`Lever company "${company.id}" was not found. Check the name in jobs.lever.co/<name>.`);
-    throw error;
+    if (error.status !== 404) throw error;
+    const lower = company.id.toLowerCase();
+    if (lower !== company.id) {
+      try {
+        postings = await http.getJson(company.apiUrl.replace(`/${encodeURIComponent(company.id)}?`, `/${encodeURIComponent(lower)}?`));
+      } catch (again) {
+        if (again.status !== 404) throw again;
+      }
+    }
+    if (!postings) throw new Error(`Lever company "${company.id}" was not found. Check the name in jobs.lever.co/<name>.`);
   }
   if (!Array.isArray(postings)) throw new Error(`Unexpected Lever response for "${company.id}".`);
   const companyName = postings.length > 0 ? await boardTitle(company, http) : null;

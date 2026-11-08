@@ -19,6 +19,7 @@ import {
   parseNextPageResponse,
   parseSearchPage,
   searchPageUrl,
+  similarAppsPath,
 } from './play.js';
 
 // Pay-per-event: the platform charges this event for every item pushed to the default dataset.
@@ -30,14 +31,15 @@ const EXAMPLE_INPUT = { charts: ['topselling_free'], chartCategories: ['APPLICAT
 // Every record has the same keys in the same order; missing values are null.
 const EMPTY_RECORD = {
   appId: null, url: null, title: null, developer: null, developerId: null, developerUrl: null,
-  developerEmail: null, developerWebsite: null, privacyPolicyUrl: null, genre: null, genreId: null, categories: null,
+  developerEmail: null, developerWebsite: null, privacyPolicyUrl: null, developerLegalName: null,
+  developerLegalEmail: null, developerAddress: null, developerPhone: null, genre: null, genreId: null, categories: null,
   score: null, ratingsCount: null, reviewsCount: null, histogram: null, installs: null, minInstalls: null,
   maxInstalls: null, free: null, price: null, originalPrice: null, currency: null, priceText: null,
   offersInAppPurchases: null, inAppPurchaseRange: null, containsAds: null, contentRating: null,
   contentRatingDescription: null, releasedAt: null, releasedText: null, updatedAt: null, version: null,
   minAndroidVersion: null, summary: null, description: null, descriptionHtml: null, recentChanges: null,
   icon: null, headerImage: null, screenshots: null, videoUrl: null, playPass: null, preregistration: null,
-  source: null, rank: null, searchTerm: null, chart: null, chartCategory: null, developerQuery: null,
+  source: null, rank: null, searchTerm: null, chart: null, chartCategory: null, developerQuery: null, similarTo: null,
   country: null, language: null,
 };
 
@@ -47,7 +49,7 @@ const toList = (value) => (Array.isArray(value) ? value : value ? [value] : [])
 
 function readInput(raw) {
   let input = raw;
-  const empty = ['appIds', 'searchTerms', 'charts', 'developers'].every((field) => toList(raw[field]).length === 0);
+  const empty = ['appIds', 'searchTerms', 'charts', 'developers', 'similarToAppIds'].every((field) => toList(raw[field]).length === 0);
   if (empty) {
     log.warning('No apps, searches, charts or developers in the input; scraping the US top free apps chart as an example.');
     input = { ...raw, ...EXAMPLE_INPUT };
@@ -59,6 +61,14 @@ function readInput(raw) {
       appIds.push(parseAppId(value));
     } catch (error) {
       log.warning(`Skipping app: ${error.message}`);
+    }
+  }
+  const similarTo = [];
+  for (const value of toList(input.similarToAppIds)) {
+    try {
+      similarTo.push(parseAppId(value));
+    } catch (error) {
+      log.warning(`Skipping similar apps of "${value}": ${error.message}`);
     }
   }
   const developers = [];
@@ -98,6 +108,7 @@ function readInput(raw) {
     chartCategories: [...new Set(chartCategories)],
     chartDepth,
     developers,
+    similarTo: [...new Set(similarTo)],
     countries: countries.length > 0 ? [...new Set(countries)] : ['US'],
     language,
     includeDetails: input.includeDetails !== false,
@@ -191,6 +202,31 @@ try {
     return found.length;
   }
 
+  // A paged app list (developer catalog, similar apps): the first page, then the next ones.
+  async function readList(firstHtml, locale) {
+    const first = parseDeveloperPage(firstHtml);
+    const apps = [...first.apps];
+    let { token } = first;
+    while (token && apps.length < roomLeft()) {
+      const next = parseNextPageResponse(await fetchText(batchUrl('qnKhOb', locale), { method: 'POST', body: nextPageRequestBody(token) }));
+      if (next.apps.length === 0) break;
+      apps.push(...next.apps);
+      token = next.token;
+    }
+    return [...new Map(apps.map((app) => [app.appId, app])).values()];
+  }
+
+  // The apps Google shows as similar to an app: its competitors.
+  async function readSimilar(appId, locale) {
+    const path = similarAppsPath(await fetchText(appPageUrl(appId, locale)));
+    if (!path) throw new Error(`Google Play shows no similar apps for ${appId}`);
+    const url = new URL(path, 'https://play.google.com');
+    url.searchParams.set('hl', locale.language);
+    url.searchParams.set('gl', locale.country);
+    const apps = await readList(await fetchText(url.href), locale);
+    return apps.filter((app) => app.appId !== appId);
+  }
+
   async function readDeveloper(developer, locale) {
     let name = developer.name;
     if (!name) {
@@ -238,6 +274,14 @@ try {
           })),
         });
       }
+    }
+    for (const appId of input.similarTo) {
+      tasks.push({
+        label: `apps similar to ${appId}`,
+        locale,
+        context: { source: 'similar', similarTo: appId },
+        load: () => readSimilar(appId, locale),
+      });
     }
     for (const developer of input.developers) {
       tasks.push({

@@ -14,6 +14,8 @@ import {
   parseDeveloperPage,
   parseNextPageResponse,
   parseSearchPage,
+  similarAppsPath,
+  traderDetails,
 } from '../src/play.js';
 
 const fixture = (name) => readFileSync(new URL(`./fixtures/${name}`, import.meta.url), 'utf8');
@@ -56,7 +58,25 @@ test('parseAppPage reads a free app with in-app purchases and ads', () => {
   assert.equal(app.version, 'Varies with device');
   assert.ok(app.description.startsWith('With the Spotify music and podcast app'));
   assert.equal(app.screenshots.length, 2);
-  assert.ok(!('developerAddress' in app));
+  // The trader details Google shows under "App support".
+  assert.deepEqual([app.developerLegalName, app.developerLegalEmail, app.developerAddress, app.developerPhone],
+    ['Spotify AB', 'support@spotify.com', 'Regeringsgatan 19, 111 53 Stockholm, Sweden', '+46 10 334 03 65']);
+});
+
+test('trader details only for companies, not for individual developers', () => {
+  const app = (legal) => { const a = []; a[69] = [null, ['x@example.com'], null, '+1', legal]; return a; };
+  assert.equal(traderDetails(app(['Duolingo, Inc.', ['a@duolingo.com'], ['5900 Penn Ave\nPittsburgh'], '+1 412'])).developerAddress, '5900 Penn Ave, Pittsburgh');
+  assert.equal(traderDetails(app(['RobTop Games AB', [], [], null])).developerLegalName, 'RobTop Games AB');
+  assert.deepEqual(traderDetails(app(['GARCIA RAMPINI, AGUSTIN EZEQUIEL', ['me@gmail.com'], ['Chiclana 38'], '+54'])),
+    { developerLegalName: null, developerLegalEmail: null, developerAddress: null, developerPhone: null });
+});
+
+test('similarAppsPath finds the "Similar apps" collection, not the "More by" developer link', () => {
+  const section = (title, link) => { const s = []; s[21] = [[], [title, null, [null, null, null, null, [null, null, link]]]]; return s; };
+  const block = [null, [null, [section('More by Duolingo', '/store/apps/dev?id=1'), section('Similar apps', '/store/apps/collection/cluster?gsr=abc')]]];
+  const html = `<script>AF_initDataCallback({key: 'ds:8', hash: '1', data:${JSON.stringify(block)}, sideChannel: {}});</script>`;
+  assert.equal(similarAppsPath(html), '/store/apps/collection/cluster?gsr=abc');
+  assert.equal(similarAppsPath('<html></html>'), null);
 });
 
 test('parseAppPage reads a paid game with version, video and categories', () => {

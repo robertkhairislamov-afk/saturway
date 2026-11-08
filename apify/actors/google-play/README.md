@@ -8,7 +8,8 @@ Scrape the Google Play Store: **top charts** (top free, top paid, top grossing) 
 - 🔎 **Keyword search rankings**: the apps Google Play shows for a keyword, in order, for ASO keyword tracking and competitor research.
 - 📱 **Full app details**: rating, ratings count, 1–5 star histogram, installs (with Google's install estimate), price and discounts, in-app purchase range, ads, content rating, version, minimum Android version, release and update dates, what's new, description, icon, screenshots and video.
 - 🏢 **Developer catalogs**: every app of a developer, by name, ID or link.
-- 📇 **Developer contacts for B2B research**: the support email, website and privacy policy each app publishes on Google Play.
+- 🧭 **Similar apps**: the apps Google Play shows as similar to an app, up to about 50: a quick list of its competitors.
+- 📇 **Developer contacts for B2B research**: the support email, website and privacy policy each app publishes on Google Play, and for developer companies the legal name, postal address and phone of the trader details Google shows under "App support".
 - 🌍 **Many countries in one run**: prices, charts and rankings differ by country, so every source is scraped for each country you add, in 30+ languages.
 - ⚡ **Lists without details** when you need speed: thousands of chart positions in seconds.
 - 🤝 **Same output as our [App Store Scraper](https://apify.com/robertosan16/app-store-scraper)**: the same field names for title, developer, rating, price, version and dates, so Android and iOS apps fit into one table.
@@ -20,6 +21,7 @@ Scrape the Google Play Store: **top charts** (top free, top paid, top grossing) 
 | `rank` / `source` | 1 / chart |
 | `title` / `appId` | Royal Match / com.dreamgames.royalmatch |
 | `developer` / `developerEmail` / `developerWebsite` | Dream Games, Ltd. / contact@dreamgames.com / https://dreamgames.com |
+| `developerLegalName` / `developerAddress` / `developerPhone` | Spotify AB / Regeringsgatan 19, 111 53 Stockholm, Sweden / +46 10 334 03 65 |
 | `score` / `ratingsCount` / `histogram` | 4.58 / 10,793,185 / `{ "1": 388654, …, "5": 8222659 }` |
 | `installs` / `minInstalls` / `maxInstalls` | 100,000,000+ / 100000000 / 370378754 |
 | `priceText` / `price` / `currency` | Free / 0 / GBP |
@@ -32,7 +34,7 @@ Scrape the Google Play Store: **top charts** (top free, top paid, top grossing) 
 
 ## How to scrape Google Play
 
-1. Choose what to scrape: **top charts** and categories, **search keywords**, **apps** (package names or links) and **developers**. You can combine them.
+1. Choose what to scrape: **top charts** and categories, **search keywords**, **apps** (package names or links), **developers** and **similar apps** of an app (its competitors). You can combine them.
 2. Add the **countries**, for example `US`, `GB`, `DE`, `JP`, and pick the language.
 3. Keep **Load full app details** on for complete data, or turn it off for fast lists.
 4. Click **Start** and download the results as JSON, CSV, Excel or HTML, or use them through the API.
@@ -145,7 +147,7 @@ You pay only for results: **$1.50 per 1,000 results** from November 9, 2026 ($0.
 
 **What is `maxInstalls`?** Google Play shows installs in ranges such as "100,000,000+"; `maxInstalls` is Google's own, more precise install figure included in the page data.
 
-**Is it legal to scrape Google Play?** The Actor collects publicly available app listings. It does not collect reviews, and it leaves out developers' postal addresses and phone numbers. Check the terms that apply to your use case.
+**Is it legal to scrape Google Play?** The Actor collects publicly available app listings. It does not collect reviews. For developer companies it returns the trader details Google itself shows under "App support" (legal name, address, phone, email); for individual developers these fields stay empty. Check the terms that apply to your use case.
 
 ## Integrations and API
 

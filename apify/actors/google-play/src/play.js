@@ -148,6 +148,20 @@ function categories(node, found = []) {
 }
 
 // Everything the app page shows, except reviews and the developer's postal address and phone.
+// A legal name with a company form ("Spotify AB", "Duolingo, Inc.", "RobTop Games AB").
+const COMPANY_FORM = /\b(inc|llc|l\.l\.c|ltd|limited|corp|corporation|co|company|gmbh|mbh|ag|ab|as|a\/s|aps|oy|oyj|sa|s\.a|sas|sarl|srl|s\.r\.l|spa|s\.p\.a|bv|b\.v|nv|plc|pty|pte|kk|k\.k|kft|sro|s\.r\.o|ou|ug|lp|llp|ltda|gk)\b\.?/i;
+export function traderDetails(app) {
+  const legalName = textOrNull(at(app, [69, 4, 0]));
+  const empty = { developerLegalName: null, developerLegalEmail: null, developerAddress: null, developerPhone: null };
+  if (!legalName || !COMPANY_FORM.test(legalName.normalize('NFKD').replace(/\p{M}+/gu, ''))) return empty;
+  return {
+    developerLegalName: legalName,
+    developerLegalEmail: textOrNull(at(app, [69, 4, 1, 0])),
+    developerAddress: textOrNull(at(app, [69, 4, 2, 0]))?.replace(/\s*\n\s*/g, ', ') ?? null,
+    developerPhone: textOrNull(at(app, [69, 4, 3])),
+  };
+}
+
 export function parseAppPage(html) {
   const app = at(extractDataBlocks(html)['ds:5'], [1, 2]);
   if (!app || !at(app, [0, 0])) throw new NotFoundError('The page has no app data.');
@@ -171,6 +185,9 @@ export function parseAppPage(html) {
     developerEmail: textOrNull(at(app, [69, 1, 0])),
     developerWebsite: textOrNull(at(app, [69, 0, 5, 2])),
     privacyPolicyUrl: textOrNull(at(app, [99, 0, 5, 2])),
+    // The trader details Google shows under "App support" for developers who sell in the EU, for
+    // companies only: an individual developer's details are a person's name, home and phone.
+    ...traderDetails(app),
     genre: textOrNull(at(app, [79, 0, 0, 0])),
     genreId,
     categories: found.length > 0 ? found : genreId ? [{ id: genreId, name: at(app, [79, 0, 0, 0]) ?? null }] : [],
@@ -206,6 +223,18 @@ export function parseAppPage(html) {
     playPass: Boolean(at(app, [62])),
     preregistration: at(app, [18, 0]) === 1,
   };
+}
+
+// The link of the "Similar apps" collection on an app page: the section whose link goes to a
+// cluster (the "More by" section links to the developer page). Null when Google shows none.
+export function similarAppsPath(html) {
+  const sections = at(extractDataBlocks(html)['ds:8'], [1, 1]);
+  if (!Array.isArray(sections)) return null;
+  for (const section of sections) {
+    const link = at(section, [21, 1, 2, 4, 2]);
+    if (typeof link === 'string' && link.startsWith('/store/apps/collection/cluster')) return link;
+  }
+  return null;
 }
 
 // --- App lists (search, charts, developer pages) --------------------------------------------

@@ -186,6 +186,13 @@
       "description": "Developer names such as <code>Spotify AB</code>, numeric developer IDs or developer page links. All apps of each developer are scraped.",
       "placeholderValue": "Spotify AB"
     },
+    "similarToAppIds": {
+      "title": "Similar apps of",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Package names or app links, for example <code>com.duolingo</code>. The apps Google Play shows as similar to each of them are scraped (up to about 50 per app): a quick list of competitors.",
+      "placeholderValue": "com.duolingo"
+    },
     "countries": {
       "title": "Countries",
       "type": "array",

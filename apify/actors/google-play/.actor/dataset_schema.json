@@ -137,7 +137,7 @@
         "description": "True when the app is open for pre-registration and not released yet."
       },
       "source": {
-        "description": "How the app was found: search, chart, developer or app (an app ID from the input)."
+        "description": "How the app was found: search, chart, developer, similar (apps similar to an app from the input) or app (an app ID from the input)."
       },
       "rank": {
         "description": "Position of the app in the search results or chart, from 1; null for apps found by developer or ID."
@@ -162,6 +162,21 @@
       },
       "scrapedAt": {
         "description": "When the record was saved."
+      },
+      "developerLegalName": {
+        "description": "Legal name of the developer company, from the trader details Google shows under \"App support\" for developers selling in the EU; null for individual developers."
+      },
+      "developerLegalEmail": {
+        "description": "Email in the trader details of a developer company; null for individual developers."
+      },
+      "developerAddress": {
+        "description": "Postal address in the trader details of a developer company, on one line; null for individual developers."
+      },
+      "developerPhone": {
+        "description": "Phone number in the trader details of a developer company; null for individual developers."
+      },
+      "similarTo": {
+        "description": "App from the input whose similar apps were listed; null for other sources."
       }
     },
     "additionalProperties": true

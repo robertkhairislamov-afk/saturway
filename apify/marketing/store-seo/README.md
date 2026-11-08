@@ -84,6 +84,29 @@
 
 Вывод 27.10: точные слова держат и поднимают места там, где мало конкурентов (play store, AliExpress); в общих запросах (google trends, app store, job scraper) и у Redfin места падают — их решают пользователи и отзывы.
 
+## Места 8.11
+
+Замер через API Store с полным перебором выдачи (первая страница приходит неполной, 93–95 из 100: прошлые замеры могли занижать места за 100-м). В скобках — 27.10.
+
+| Запрос | Всего | Наш актор и место |
+|---|---|---|
+| play store / google play / google play scraper | 5843 / 7384 / 2932 | Google Play 11 (10) / 31 (26) / 20 (17) |
+| app store / app store scraper | 4092 / 3431 | App Store 438 (нет) / 222 (261) |
+| aliexpress / aliexpress scraper / aliexpress product scraper | 376 / 376 / 369 | AliExpress 220 (118) / 154 (76) / 89 (55) |
+| google trends / scraper / api / trending now | 2376 / 2303 / 1309 / 647 | Trends 363 (344) / 284 (261) / 159 (127) / 50 (52) |
+| google ads transparency / google ads | 595 / 1324 | Ads Transparency 391 (123) / 489 |
+| google news / google news scraper | 4060 / 3261 | News 278 (285) / 236 |
+| redfin / redfin scraper | 728 / 179 | Redfin 145 (132) / 92 |
+| indeed / indeed scraper / indeed jobs scraper | 1690 / 1690 / 739 | Indeed 124 (158) / 75 (111) / 70 (90) |
+| glassdoor / glassdoor jobs | 362 / 334 | Glassdoor 180 (122) / 84 |
+| linkedin jobs / linkedin jobs scraper | 2488 / 2094 | LinkedIn 483 (448) / 423 |
+| all in one jobs scraper | 776 | All-in-One 1 |
+| stepstone / seek / infojobs / reed / jobstreet / jobsdb / dice / wttj | 151 / 15754 / 80 / 71571 / 116 / 119 / 36231 / 110 | 47 (80) / 131 (117) / 63 (58) / 72 / 63 / 41 / 77 / 80 |
+| wellfound / xing / foundit / workday jobs scraper | 166 / 33775 / 1765 / 1039 | 54 / 45 / 29 / 147 |
+| greenhouse / lever / ashby | 2241 / 52706 / 1895 | нет в 500 |
+
+Вывод 8.11: выросли акторы, у которых появились платящие (StepStone 80 → 47, Indeed 158 → 124) и App Store; упали те, у кого за месяц не осталось живых пользователей (Ads Transparency 123 → 391, AliExpress 118 → 220, Glassdoor). Категории Ads и AliExpress поменяли 4.11 — совпадение по времени есть, но падение больше похоже на потерю пользователей; не откатываем, смотрим следующий замер.
+
 ## Предложения
 
 Полные тексты — в `proposals.json`. Имена и адреса акторов не меняются (на них ссылаются статьи на Medium). Цены не трогаем.

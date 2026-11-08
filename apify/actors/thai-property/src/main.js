@@ -67,6 +67,9 @@ const searches = input.locations.flatMap((location) => input.propertyTypes.flatM
   input.transactions.map((transaction) => ({ location: location.trim().replace(/^\/+|\/+$/g, '').toLowerCase(), propertyType, transaction }))));
 
 const summary = { searches: [], projects: 0, districts: 0, projectDetailsFetched: 0, removed: 0, http: http.stats, startedAt: scrapedAt };
+// push(...items) passes every item as an argument and overflows the stack above ~100,000 items
+// (Bangkok rent: 125,000 listings), so large lists are appended one by one.
+const pushAll = (target, items) => { for (const item of items) target.push(item); };
 const allListings = [];
 const removedAll = [];
 
@@ -133,8 +136,8 @@ for (const [index, search] of searches.entries()) {
   const resumed = await loadSearchState(runStore, index).catch(() => null);
   if (resumed) {
     summary.searches.push({ ...resumed.row, resumed: true });
-    allListings.push(...resumed.listings);
-    removedAll.push(...resumed.removed);
+    pushAll(allListings, resumed.listings);
+    pushAll(removedAll, resumed.removed);
     log.info(`${label}: ${resumed.listings.length} listings taken from before the migration.`);
     continue;
   }
@@ -191,7 +194,7 @@ for (const [index, search] of searches.entries()) {
       // A partial read must not forget what it did not see.
       await saveHistory(memory, search, { ...before, ...Object.fromEntries(Object.entries(seen).filter(([k]) => byKey.has(k))) });
     }
-    allListings.push(...listings);
+    pushAll(allListings, listings);
     const removedHere = removedAll.filter((r) => r.transaction === search.transaction && r.propertyType === search.propertyType && r.location === search.location);
     await saveSearchState(runStore, index, { row, listings, removed: removedHere }).catch((error) => log.warning(`Could not save the progress of ${label}: ${error.message}`));
     log.info(`${label}: ${listings.length} listings from ${row.pages} pages (the site reports ${row.reported})${row.complete ? '' : ', partial'}.`);

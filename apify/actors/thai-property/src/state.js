@@ -22,7 +22,7 @@ export async function loadSearchState(store, index) {
   for (let p = 0; p < meta.parts; p++) {
     const body = await store.getValue(`STATE-${index}-${p}`);
     if (!body) return null;
-    listings.push(...JSON.parse(gunzipSync(Buffer.from(body)).toString('utf8')));
+    for (const listing of JSON.parse(gunzipSync(Buffer.from(body)).toString('utf8'))) listings.push(listing);
   }
   return { row: meta.row, removed: meta.removed ?? [], listings };
 }

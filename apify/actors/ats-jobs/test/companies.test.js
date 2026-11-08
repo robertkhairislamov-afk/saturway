@@ -179,3 +179,31 @@ test('adapters without company mode keep saving jobs', async () => {
   assert.equal(actor.dataset[0].jobId, '1');
   assert.match(warnings[0], /no hiring-companies output/);
 });
+
+test('a run stops before its time limit and keeps what it found', async () => {
+  const previous = process.env.ACTOR_TIMEOUT_AT;
+  process.env.ACTOR_TIMEOUT_AT = new Date(Date.now() + 1500).toISOString();
+  try {
+    const actor = fakeActor();
+    let n = 0;
+    const adapter = fakeAdapter({}, {
+      companyMode: false,
+      completeJob: undefined,
+      async *listJobs(search, context) {
+        for (;;) {
+          // A request that fails fast until the run stops the client, then throws "stopped".
+          await context.http.getJson('http://127.0.0.1:9/never', { retries: 1 }).catch((error) => { if (error.stopped) throw error; });
+          n++;
+          yield [job({ id: `c${n}`, name: `Company ${n}` }, n)];
+          await new Promise((resolve) => setTimeout(resolve, 20));
+        }
+      },
+    });
+    const result = await runScraper(actor, adapter, { companies: ['sales'] }, silentLog);
+    assert.ok(actor.dataset.length > 0);
+    assert.match(result.message, /stopped before the run's time limit/);
+  } finally {
+    if (previous === undefined) delete process.env.ACTOR_TIMEOUT_AT;
+    else process.env.ACTOR_TIMEOUT_AT = previous;
+  }
+});

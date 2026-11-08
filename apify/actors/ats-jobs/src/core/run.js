@@ -16,6 +16,8 @@ const STATUS_EVERY_MS = 3000;
 // Company mode reads up to this many jobs per company that may be saved, and at least MIN_JOBS_READ.
 const JOBS_READ_PER_COMPANY = 20;
 const MIN_JOBS_READ = 1000;
+// Time kept before the run's time limit to save the results and finish.
+const TIME_RESERVE_MS = 3 * 60 * 1000;
 // Residential proxy traffic allowed (page text, a few times the bytes on the wire): 4 MB to start,
 // and 40 KB more for every result saved, about a third of what a result earns.
 const RESIDENTIAL_FREE_BYTES = 4e6;
@@ -97,6 +99,19 @@ export async function runScraper(Actor, adapter, rawInput, log) {
     datacenterProxy: Actor.isAtHome?.() ? () => Actor.createProxyConfiguration({ useApifyProxy: true }) : undefined,
     onFallback: () => log.info(`${adapter.limitNotice ?? `${adapter.title} is limiting direct requests`}; continuing through Apify Proxy.`),
   });
+  // The run's time limit, set by Apify: requests stop a few minutes before it (a tenth of the run
+  // for short limits), so the jobs found so far are saved and the run ends normally instead of
+  // timing out, which also bills the rest of the hour.
+  const timeoutAt = Date.parse(process.env.ACTOR_TIMEOUT_AT ?? process.env.APIFY_TIMEOUT_AT ?? '');
+  let outOfTime = false;
+  const timeGuard = Number.isFinite(timeoutAt)
+    ? setTimeout(() => {
+      outOfTime = true;
+      log.warning('Stopping a few minutes before the run\'s time limit to save the results; raise the timeout in the run options to get more.');
+      http.stop?.();
+    }, Math.max(0, timeoutAt - Date.now() - Math.min(TIME_RESERVE_MS, (timeoutAt - Date.now()) / 10)))
+    : null;
+  timeGuard?.unref?.();
   // "Hiring companies": jobs are grouped by employer and only the companies are saved, at the end.
   const companyMode = input.outputMode === 'companies' && adapter.companyMode === true;
   if (input.outputMode === 'companies' && !companyMode) log.warning(`${adapter.title} has no hiring-companies output; saving jobs.`);
@@ -276,6 +291,7 @@ export async function runScraper(Actor, adapter, rawInput, log) {
     await showProgress(true);
     return stats;
   });
+  if (timeGuard) clearTimeout(timeGuard);
   // The final message of the run comes after every progress message.
   await statusChain;
 
@@ -303,7 +319,8 @@ export async function runScraper(Actor, adapter, rawInput, log) {
     throw new Error(failed.length === 1 ? failed[0].error : `All ${failed.length} ${many} failed. First error: ${failed[0].error}`);
   }
   let stopped = null;
-  if (companyMode) {
+  if (outOfTime) stopped = 'stopped before the run\'s time limit';
+  else if (companyMode) {
     if (companiesSaved < companiesFound && companiesSaved >= budget) stopped = 'stopped at the maximum cost per run';
     else if (companiesSaved < companiesFound) stopped = `kept the ${companiesSaved} companies with most jobs of ${companiesFound}${saved >= jobsToRead ? ` among the first ${saved} jobs` : ''}`;
   } else if (saved >= budget) stopped = 'stopped at the maximum cost per run';

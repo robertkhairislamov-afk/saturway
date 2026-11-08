@@ -216,8 +216,6 @@ export const ACTORS = {
   },
   careers: {
     name: 'career-page-jobs-scraper',
-    // Not in the other READMEs until the owner publishes it in the Store.
-    unlisted: true,
     title: 'Career Page Jobs Scraper: Greenhouse, Lever, Ashby, Workday',
     tagline: 'company career sites on Greenhouse, Lever, Ashby and Workday by name, domain or link, or a search across 2,600+ companies',
     apiExample: { companies: ['stripe', 'notion.so', 'https://jobs.lever.co/zoox'], keywords: ['engineer'], maxItems: 50 },

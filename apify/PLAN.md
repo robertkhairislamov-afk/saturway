@@ -1073,7 +1073,7 @@ Google Play, Lever, Ashby, Greenhouse и Google News пока дальше пе�
 
 ### 8.11 — доработки по разбору акторов («давай все пункты»)
 
-- Career Page Jobs Scraper (`career-page-jobs-scraper`, ID `6nnmpURZw0dlyKASn`): Greenhouse, Lever, Ashby, Workday; поиск по каталогу из 2 630 карьерных сайтов. Приватный, `unlisted: true`, цена $1.50 за 1 000. Публикует владелец; после публикации поставить `unlisted: false` и пересобрать остальные акторы вакансий, чтобы они ссылались на него.
+- Career Page Jobs Scraper (`career-page-jobs-scraper`, ID `6nnmpURZw0dlyKASn`): Greenhouse, Lever, Ashby, Workday; поиск по каталогу из 2 630 карьерных сайтов. Цена $1.50 за 1 000. Опубликован владельцем 8.11 с иконкой (промпт 26); категории Jobs, Lead Generation, Automation. Флаг `unlisted` снят, все 20 акторов вакансий пересобраны и ссылаются на него; в README Greenhouse, Lever, Ashby и Workday — совет со ссылкой.
 - Google Play 0.1.89: похожие приложения (`similarToAppIds`) и данные продавца-компании (юр. название, адрес, телефон, почта; у частных лиц поля пустые).
 - StepStone 0.1.27: данные компании (сотрудники, отрасль, год основания, адрес, число вакансий, «About us»; ввод `includeCompanyDetails`, по умолчанию выкл.), ссылки на страницы компаний как источник, «без кадровых агентств» и «исключить компании». Рекламных вакансий StepStone в данных страницы не отмечает (проверено на 4 поисках) — такого фильтра нет. Немецкие слова и крупные агентства добавлены в общее правило агентств (касается и режима компаний).
 - SEEK / Jobstreet / JobsDB: число откликов (`applicants`, `applicantsCount`, `applicationVolume`, доля с резюме и сопроводительным) из `jobDetails.insights`, без входа; есть примерно у половины вакансий. Тест JobsDB HK: 6 из 15.

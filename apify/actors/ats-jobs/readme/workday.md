@@ -91,6 +91,7 @@ You pay only for the jobs you get: **$1 per 1,000 jobs**. That is the price on t
 
 ## Tips
 
+- **Don't know which companies to scrape?** The [Career Page Jobs Scraper](https://apify.com/robertosan16/career-page-jobs-scraper) searches 2,630 company career sites on Greenhouse, Lever, Ashby and Workday at once by job title, and finds a company's board from its name or domain.
 - **Big sites**: add title keywords when you can. They are searched on the career site itself, so only matching jobs are loaded.
 - **Job alerts**: save your input as a task, turn on **Only new jobs since the last run** and add a schedule. Only new jobs are loaded and returned.
 - **Pre-filtered links**: pick a category or country on the career site, then copy the link. Those filters are kept.

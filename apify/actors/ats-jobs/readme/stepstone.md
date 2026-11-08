@@ -1,12 +1,15 @@
 # StepStone Jobs Scraper
 
-**Scrape StepStone.de jobs in Germany by keyword and city.** Get title, company, location, home office, contract type, full description, benefits, industry and apply link. Export to JSON, CSV or Excel, or use the API. **$0.50 per 1,000 jobs, no start fee.**
+**Scrape StepStone.de jobs in Germany by keyword, city or company.** Get title, company, location, home office, contract type, full description, benefits, industry and apply link, plus the employer's size, industry and year founded. Export to JSON, CSV or Excel, or use the API. **$0.50 per 1,000 jobs, no start fee.**
 
 Scrape jobs from **StepStone** (`stepstone.de`), one of Germany's biggest job sites, the way you search on the website: keywords, city and distance, and the StepStone filters for contract type, working hours, home office, experience and the language of the job ad. Each job comes with the company, all locations, home office status, employment type, **benefits as a list**, industry, the full description, the posting and expiry dates and the job link. Every page of a search is read, so you **get all matching jobs**. Run it on a schedule to get **only new jobs**. No browser, no login.
 
 ## What can this StepStone scraper do?
 
 - 🔎 **Search like on the website**: keywords such as `Softwareentwickler`, `data analyst` or `Pflege`, a city and a distance, or paste any stepstone.de search link.
+- 🏢 **All jobs of a company**: paste a StepStone company page such as `https://www.stepstone.de/cmp/de/inovex-gmbh-24494/jobs`.
+- 📇 **Company details**: number of employees, industry, year founded, address, number of open jobs and the "About us" text of each employer, from its StepStone company page.
+- 🚫 **Direct employers only**: leave out recruitment and temporary work agencies (Personaldienstleister, Zeitarbeit, Hays, Randstad, Adecco and others), or any companies you name.
 - 🎛️ **StepStone filters**: contract type (permanent, fixed-term, freelance, working student, internship, apprenticeship and more), full-time or part-time, home office (partly or fully remote), experience, and jobs posted in the last 7 days.
 - 🇬🇧 **English-language jobs**: pick English as the job ad language to find jobs in Germany where English is enough.
 - ♾️ **All results**: every page of a search, thousands of jobs per run, without duplicates.
@@ -27,6 +30,9 @@ Scrape jobs from **StepStone** (`stepstone.de`), one of Germany's biggest job si
 | `benefits` | Unbefristetes Arbeitsverhältnis, mobiles Arbeiten, Jobrad, … |
 | `industry` | IT, IT-Softwareentwicklung |
 | `quickApply` / `noCoverLetter` | true / false |
+| `companySize` / `companyFounded` | 251-1000 / 1999 |
+| `companyIndustry` / `companyHeadquarters` | IT & Tech / Ludwig-Erhard-Allee 6, Karlsruhe |
+| `companyJobsCount` / `companySummary` | 6 / inovex ist ein innovatives IT-Projekthaus… |
 | `postedAt` / `validThrough` | 2026-09-25 / 2026-10-25 |
 | `jobUrl` | https://www.stepstone.de/stellenangebote--…-14430443-inline.html |
 | `descriptionText` / `descriptionHtml` | full job description |
@@ -34,9 +40,9 @@ Scrape jobs from **StepStone** (`stepstone.de`), one of Germany's biggest job si
 
 ## How to scrape StepStone jobs
 
-1. Enter **job titles or keywords**, one search per line, for example `data analyst`. Or paste links of searches you made on stepstone.de.
+1. Enter **job titles or keywords**, one search per line, for example `data analyst`. Or paste links of searches you made on stepstone.de, or of company pages for all jobs of a company.
 2. Optionally set a **location** such as `Berlin` or `München` and a **distance**.
-3. Optionally pick **contract types**, **working hours**, **home office**, **experience**, the **job ad language** or a **date range**.
+3. Optionally pick **contract types**, **working hours**, **home office**, **experience**, the **job ad language** or a **date range**. Under **Companies**, turn on **Add company details** or **Leave out recruitment agencies**.
 4. Click **Start**. Download the jobs as JSON, CSV, Excel or HTML, or get them through the API.
 
 A step-by-step guide with Python examples for this and the other job scrapers, which all share one output format: [How to Scrape Job Postings from LinkedIn and 12 More Job Sites in One Format](https://medium.com/@robertkhairislamov/how-to-scrape-job-postings-from-linkedin-and-12-more-job-sites-in-one-format-935bb79ba2d2).
@@ -89,7 +95,27 @@ Contract type `222` is a permanent contract; home office `2` is partly and `1` f
   "validThrough": "2026-10-25T09:12:31.12Z",
   "companyUrl": "https://www.stepstone.de/cmp/de/vonovia-76597/jobs",
   "companyLogoUrl": "https://www.stepstone.de/upload_DE/logo/V/logoVonovia-76597DE.gif",
+  "companySize": null,
+  "companyIndustry": null,
+  "companyFounded": null,
+  "companyHeadquarters": null,
+  "companyJobsCount": null,
+  "companySummary": null,
   "scrapedAt": "2026-09-25T17:25:46.737Z"
+}
+```
+
+With **Add company details** on, or for jobs from a company link, the company fields are filled:
+
+```json
+{
+  "companyName": "inovex GmbH",
+  "companySize": "251-1000",
+  "companyIndustry": "IT & Tech",
+  "companyFounded": 1999,
+  "companyHeadquarters": "Ludwig-Erhard-Allee 6, Karlsruhe",
+  "companyJobsCount": 6,
+  "companySummary": "inovex ist ein innovatives IT-Projekthaus mit den Leistungsbereichen Software- und Infrastrukturentwicklung, Data & AI sowie Digitale Strategieberatung und Produktentwicklung. …"
 }
 ```
 
@@ -97,7 +123,7 @@ Contract type `222` is a permanent contract; home office `2` is partly and `1` f
 
 - **Recruitment agencies and staffing firms**: see every new job for your specialty and region each morning.
 - **Job boards and aggregators**: fill a German or English-language job board with fresh StepStone listings.
-- **Sales and lead generation**: companies hiring for a function are buying tools and services for it. Turn job ads into leads.
+- **Sales and lead generation**: companies hiring for a function are buying tools and services for it. Turn job ads into leads, with company size and industry to pick the right ones, and agencies left out.
 - **Labor market research**: track demand by city, industry, contract type and home office share.
 - **Relocation and expat services**: collect English-language jobs in Germany.
 
@@ -109,6 +135,7 @@ You pay only for the jobs you get: **$0.50 per 1,000 jobs**. That is the price o
 
 - **Daily job alerts**: save your input as a task, turn on **Only new jobs since the last run** and add a schedule. Send new jobs to Slack, email or Google Sheets with Apify integrations.
 - **Fast lists**: turn off **Load full job details** to skip the job pages. You still get title, company, locations, home office, date, benefits and a short summary.
+- **Company details for less time**: each company page is read once per run, so a search with many jobs from few employers adds little. For a list of companies, paste their company links: their details come with the jobs at no extra time.
 - **Stricter results**: StepStone also matches related words. Use **Title must contain** to keep only jobs with your keyword in the title.
 - **German city names** work with or without umlauts: `München` or `Muenchen`.
 - **Errors per search**: see the `SUMMARY` record in the run's key-value store.

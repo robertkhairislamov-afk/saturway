@@ -32,9 +32,12 @@ export const departmentOf = (title) => DEPARTMENTS.find(([, pattern]) => pattern
 // Employers hidden behind "Confidential" are no lead.
 const HIDDEN = /^(company )?confidential\b|^confidential company\b|^(private|undisclosed|anonymous)( company| employer)?$/i;
 const JOB_SITES = /^(indeed|glassdoor|linkedin|seek|jobstreet|jobsdb|stepstone|reed|dice|xing|infojobs|foundit|wellfound)(\.com)?$/i;
-const STAFFING_INDUSTRY = /staffing|recruit|hr consulting|employment (agenc|services)|temporary help|outsourc/i;
-const STAFFING_NAME = /\b(staffing|recruit(ment|ing|ers)?|personnel|employment (agency|services)|talent solutions|workforce solutions|headhunt\w*)\b/i;
-export const isStaffingAgency = (job) => STAFFING_INDUSTRY.test(industryOf(job) ?? '') || STAFFING_NAME.test(job.companyName ?? '');
+// German words too: StepStone and XING list many Personaldienstleister (temporary work agencies).
+const STAFFING_INDUSTRY = /staffing|recruit|hr consulting|employment (agenc|services)|temporary help|outsourc|personal(dienst|vermittl|berat)|zeitarbeit|arbeitnehmerüberlassung/i;
+const STAFFING_NAME = /\b(staffing|recruit(ment|ing|ers)?|personnel|employment (agency|services)|talent solutions|workforce solutions|headhunt\w*|personaldienstleist\w*|personalvermittlung|personalberatung|personalservice|zeitarbeit|arbeitnehmerüberlassung)\b/i;
+// The largest agencies by name, at the start of the company name.
+const STAFFING_BRANDS = /^(hays|randstad|adecco|manpower(group)?|orizon|tempton|brunel|amadeus fire|robert half|michael page|page personnel|dis ag|gulp|persona service|zag personal|kelly services|allegis|aerotek|teksystems|kforce|insight global|modis|akkodis)\b/i;
+export const isStaffingAgency = (job) => STAFFING_INDUSTRY.test(industryOf(job) ?? '') || STAFFING_NAME.test(job.companyName ?? '') || STAFFING_BRANDS.test(String(job.companyName ?? '').trim());
 
 // Sites name some details differently: LinkedIn gives the job's industries and a logo URL.
 function industryOf(job) {

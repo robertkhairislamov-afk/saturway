@@ -117,7 +117,8 @@ export async function runScraper(Actor, adapter, rawInput, log) {
   if (input.outputMode === 'companies' && !companyMode) log.warning(`${adapter.title} has no hiring-companies output; saving jobs.`);
   const collector = companyMode ? createCompanyCollector({ excludeStaffingAgencies: input.excludeStaffingAgencies, byName: adapter.companyKeyByName === true }) : null;
   // Company records need no job descriptions.
-  const context = { http, log, keywords: input.keywords, includeDescription: companyMode ? false : input.includeDescription };
+  // Adapters read their own input options (StepStone company details) from `options`.
+  const context = { http, log, keywords: input.keywords, includeDescription: companyMode ? false : input.includeDescription, options: rawInput ?? {} };
   const filter = createJobFilter(input);
   const seenJobs = input.onlyNew ? await openSeenJobs(Actor, adapter.name) : null;
   const budget = Actor.getChargingManager().calculateMaxEventChargeCountWithinLimit(ITEM_EVENT);

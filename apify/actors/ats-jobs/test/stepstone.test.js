@@ -32,7 +32,13 @@ test('stepstone: the form, keywords and stepstone.de links become searches', () 
   assert.equal(new URL(link.url).searchParams.get('action'), null);
   assert.equal(stepstone.parseCompany('c++').url, stepstone.parseCompany(stepstone.searchUrl({ query: 'c++' })).url);
   assert.match(new URL(stepstone.searchUrl({ query: 'c++' })).pathname, /^\/jobs\/c%2B%2B$/);
-  assert.throws(() => stepstone.parseCompany('https://www.indeed.de/jobs?q=python'), /not a StepStone search link/);
+  assert.throws(() => stepstone.parseCompany('https://www.indeed.de/jobs?q=python'), /not a StepStone search or company link/);
+  assert.throws(() => stepstone.parseCompany('https://www.stepstone.de/cmp/de/inovex-gmbh-24494'), /not a StepStone search or company link/);
+  // Company pages list all jobs of one employer.
+  const company = stepstone.parseCompany('https://www.stepstone.de/cmp/de/inovex-GmbH-24494/jobs.html?page=2');
+  assert.equal(company.url, 'https://www.stepstone.de/cmp/de/inovex-gmbh-24494/jobs');
+  assert.equal(company.companyId, '24494');
+  assert.equal(company.id, 'inovex gmbh (company)');
   assert.equal(stepstone.parseCompany(stepstone.prepareInput({ location: 'Köln' }).companies[0]).id, 'all jobs in köln');
 });
 
@@ -66,4 +72,53 @@ test('stepstone: jobs in the shared format, with the job page details', () => {
   assert.match(full.validThrough, /^\d{4}-\d{2}-\d{2}T/);
   assert.ok(full.industry);
   assert.equal(stepstone.parseJobPage('<html></html>'), null);
+});
+
+test('stepstone: company pages give the company details, read once per company', async () => {
+  const html = fixture('stepstone-company.html');
+  const details = stepstone.parseCompanyPage(html);
+  assert.equal(details.id, '24494');
+  assert.equal(details.companySize, '251-1000');
+  assert.equal(details.companyIndustry, 'IT & Tech');
+  assert.equal(details.companyFounded, 1999);
+  assert.equal(details.companyHeadquarters, 'Ludwig-Erhard-Allee 6, Karlsruhe');
+  assert.equal(details.companyJobsCount, 6);
+  assert.ok(details.companySummary.startsWith('inovex ist') && !details.companySummary.includes('<'));
+  assert.equal(stepstone.parseCompanyPage('<html></html>'), null);
+  // A company page is also a job list.
+  assert.equal(stepstone.parseSearchPage(html).jobs.length, 2);
+
+  const [raw] = stepstone.parseSearchPage(fixture('stepstone-search.html')).jobs;
+  let reads = 0;
+  const context = { includeDescription: false, log: {}, options: { includeCompanyDetails: true }, http: { getText: async () => { reads++; return html; } } };
+  const search = stepstone.parseCompany('python');
+  const one = await stepstone.completeJob({ raw }, search, context);
+  const two = await stepstone.completeJob({ raw: { ...raw, id: 'other' } }, search, context);
+  assert.equal(reads, 1);
+  assert.equal(one.companySize, '251-1000');
+  assert.equal(two.companyFounded, 1999);
+  // Without the option no company page is read and the fields stay empty.
+  const plain = await stepstone.completeJob({ raw }, search, { ...context, options: {}, stepstoneCompanies: undefined });
+  assert.equal(plain.companySize, null);
+  assert.equal(reads, 1);
+});
+
+test('stepstone: excluded companies and recruitment agencies are left out', async () => {
+  const items = stepstone.parseSearchPage(fixture('stepstone-search.html')).jobs;
+  const agency = { ...items[2], id: 'agency', companyName: 'Hays AG' };
+  const zeitarbeit = { ...items[2], id: 'zeit', companyName: 'Muster Personaldienstleistungen GmbH' };
+  const page = fixture('stepstone-search.html');
+  const run = async (options, extra = []) => {
+    const jobs = [];
+    // The fixture's jobs plus two agencies, on one page.
+    const context = { http: { getText: async () => page.replace('"items":[', `"items":[${extra.map((item) => JSON.stringify(item)).join(',')}${extra.length ? ',' : ''}`) }, log: { info() {}, warning() {} }, options };
+    for await (const batch of stepstone.listJobs({ ...stepstone.parseCompany('python'), id: 'python' }, context)) { jobs.push(...batch); break; }
+    return jobs.map((job) => job.companyName);
+  };
+  const all = await run({}, [agency, zeitarbeit]);
+  assert.ok(all.includes('Hays AG') && all.includes('inovex GmbH'));
+  const noAgencies = await run({ excludeRecruitmentAgencies: true }, [agency, zeitarbeit]);
+  assert.ok(!noAgencies.includes('Hays AG') && !noAgencies.includes('Muster Personaldienstleistungen GmbH') && noAgencies.includes('inovex GmbH'));
+  const noInovex = await run({ excludeCompanies: ['inovex'] });
+  assert.ok(!noInovex.includes('inovex GmbH') && noInovex.length === 2);
 });

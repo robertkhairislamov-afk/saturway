@@ -1,9 +1,13 @@
 // StepStone (stepstone.de): job search pages. The result list is read from the page's preloaded
 // state, 25 jobs per page; StepStone serves every page of a search, so nothing needs splitting.
 // Job pages add the full description, expiry date, employment type and industry (schema.org
-// JobPosting). Contact details of recruiters are never read.
+// JobPosting). Company pages (stepstone.de/cmp/...) list all jobs of one employer and describe it:
+// size, industry, year founded and address, read once per company when asked for. Contact details
+// of recruiters are never read.
 
+import { isStaffingAgency } from '../core/companies.js';
 import { makeJob } from '../core/job.js';
+import { compileTerms, matchesAny } from '../core/match.js';
 import { makeSalary, normalizeInterval, salaryFromText } from '../core/salary.js';
 import { cleanText, htmlToText } from '../core/text.js';
 
@@ -80,14 +84,22 @@ export function prepareInput(raw) {
 
 export const exampleInput = { companies: [searchUrl({ query: 'python developer' })], maxItems: 50 };
 
+// The job list of one employer: stepstone.de/cmp/de/inovex-gmbh-24494/jobs.
+const COMPANY_PAGE = /^\/cmp\/[a-z]{2}\/([^/]+)-(\d+)\/jobs(\.html)?\/?$/i;
+
 export function parseCompany(value) {
   const raw = String(value ?? '').trim();
   const url = new URL(/^https?:\/\//i.test(raw) ? raw : searchUrl({ query: raw }));
-  if (!/(^|\.)stepstone\.de$/i.test(url.hostname) || !/^\/jobs(\/|$)/i.test(url.pathname)) {
-    throw new Error('this is not a StepStone search link. Search on stepstone.de and copy the address, or enter keywords.');
+  const companyPage = url.pathname.match(COMPANY_PAGE);
+  if (!/(^|\.)stepstone\.de$/i.test(url.hostname) || (!companyPage && !/^\/jobs(\/|$)/i.test(url.pathname))) {
+    throw new Error('this is not a StepStone search or company link. Search on stepstone.de and copy the address, or enter keywords.');
   }
   for (const param of ['page', 'action', 'of', 'rltr']) url.searchParams.delete(param);
   url.searchParams.sort();
+  if (companyPage) {
+    url.pathname = url.pathname.toLowerCase().replace(/\.html$/, '').replace(/\/$/, '');
+    return { id: `${unslug(companyPage[1]).toLowerCase()} (company)`, key: url.toString(), url: url.toString(), companyId: companyPage[2] };
+  }
   const segments = url.pathname.split('/').filter(Boolean).slice(1).filter((segment) => !WORK_TYPES[segment]);
   const place = segments.find((segment) => /^in-/i.test(segment));
   const keywords = segments.filter((segment) => segment !== place).map(unslug).join(' ');
@@ -146,6 +158,24 @@ export function parseJobPage(html) {
   return null;
 }
 
+// The employer described on its company page. "About us" texts are kept as plain text.
+export function parseCompanyPage(html) {
+  const data = objectAfter(html, '"companyPassportData":');
+  if (!data?.id || data.isAnonymous) return null;
+  const about = (data.customSections ?? []).map((section) => cleanText(htmlToText(section?.content ?? ''))).filter(Boolean).join('\n\n');
+  const jobs = Number(data.jobsCount);
+  return {
+    id: String(data.id),
+    companySize: cleanText(data.employees) ?? null,
+    companyIndustry: (data.industries ?? []).map(cleanText).filter(Boolean).join(', ') || null,
+    companyFounded: Number(data.founded) > 1000 ? Number(data.founded) : null,
+    companyHeadquarters: cleanText(data.address) ?? null,
+    companyJobsCount: Number.isFinite(jobs) && data.jobsCount != null ? jobs : null,
+    companySummary: about || null,
+    companyLogoUrl: data.logoUrl ?? null,
+  };
+}
+
 // --- Jobs ------------------------------------------------------------------------------------
 
 const WORKPLACE = { 1: 'remote', 2: 'hybrid' };
@@ -170,7 +200,9 @@ function salaryOf(raw, posting) {
   return posting?.description ? salaryFromText(htmlToText(posting.description)) : null;
 }
 
-export function toJob(raw, posting = null) {
+const NO_COMPANY = { companySize: null, companyIndustry: null, companyFounded: null, companyHeadquarters: null, companyJobsCount: null, companySummary: null };
+
+export function toJob(raw, posting = null, company = null) {
   // Job links come as a path or, since October 2026, as a full address.
   const jobUrl = new URL(String(raw.url).split('?')[0], SITE).href;
   const types = [].concat(posting?.employmentType ?? []);
@@ -207,7 +239,13 @@ export function toJob(raw, posting = null) {
     noCoverLetter: labels.includes('NO_COVER_LETTER'),
     validThrough: posting?.validThrough ?? null,
     companyUrl: raw.companyUrl ?? null,
-    companyLogoUrl: raw.companyLogoUrl ?? null,
+    companyLogoUrl: raw.companyLogoUrl ?? company?.companyLogoUrl ?? null,
+    companySize: company?.companySize ?? NO_COMPANY.companySize,
+    companyIndustry: company?.companyIndustry ?? NO_COMPANY.companyIndustry,
+    companyFounded: company?.companyFounded ?? NO_COMPANY.companyFounded,
+    companyHeadquarters: company?.companyHeadquarters ?? NO_COMPANY.companyHeadquarters,
+    companyJobsCount: company?.companyJobsCount ?? NO_COMPANY.companyJobsCount,
+    companySummary: company?.companySummary ?? NO_COMPANY.companySummary,
   };
 }
 
@@ -216,15 +254,50 @@ function toPartialJob(raw) {
   return { ...toJob(raw), partial: true, raw };
 }
 
-export async function completeJob(partial, search, { http, includeDescription }) {
-  if (!includeDescription) return toJob(partial.raw);
+// The options of the StepStone input that the shared input does not know.
+const optionsOf = (context) => context.options ?? {};
+
+// Company pages are read once per run and company; a page that fails leaves the details empty.
+function companyDetails(raw, context) {
+  if (raw.isAnonymous || raw.companyId == null || !raw.companyUrl) return null;
+  const cache = (context.stepstoneCompanies ??= new Map());
+  const id = String(raw.companyId);
+  if (!cache.has(id)) {
+    cache.set(id, context.http.getText(new URL(raw.companyUrl, SITE).href, { retries: 3 })
+      .then(parseCompanyPage)
+      .catch((error) => {
+        if (error.stopped) throw error;
+        context.log.debug?.(`StepStone company ${id}: ${error.message}`);
+        return null;
+      }));
+  }
+  return cache.get(id);
+}
+
+async function jobPosting(partial, { http }) {
   try {
-    return toJob(partial.raw, parseJobPage(await http.getText(partial.jobUrl, { retries: 4 })));
+    return parseJobPage(await http.getText(partial.jobUrl, { retries: 4 }));
   } catch (error) {
     // The job was taken down after the search listed it.
-    if (error.status === 404 || error.status === 410) return null;
+    if (error.status === 404 || error.status === 410) return GONE;
     throw error;
   }
+}
+const GONE = Symbol('gone');
+
+export async function completeJob(partial, search, context) {
+  const options = optionsOf(context);
+  // A company page as the source gives its details for free (read with its first page).
+  const wantCompany = options.includeCompanyDetails === true || search.companyId != null;
+  const [posting, company] = await Promise.all([
+    context.includeDescription ? jobPosting(partial, context) : null,
+    wantCompany ? companyDetails(partial.raw, context) : null,
+  ]);
+  if (posting === GONE) return null;
+  const job = toJob(partial.raw, posting, company);
+  // With company details, agencies are also recognised by their industry.
+  if (options.excludeRecruitmentAgencies === true && isStaffingAgency(job)) return null;
+  return job;
 }
 
 // --- Searching ----------------------------------------------------------------------------------
@@ -237,9 +310,18 @@ const pageUrl = (url, page) => {
 
 export async function* listJobs(search, context) {
   const { http, log } = context;
+  const options = optionsOf(context);
+  const excluded = compileTerms(options.excludeCompanies ?? []);
+  const keep = (raw) => !(excluded.length > 0 && matchesAny(excluded, [raw.companyName]))
+    && !(options.excludeRecruitmentAgencies === true && isStaffingAgency({ companyName: raw.companyName }));
   const seen = new Set();
   for (let page = 1; ; page++) {
-    const result = parseSearchPage(await http.getText(pageUrl(search.url, page), { retries: 4 }));
+    const html = await http.getText(pageUrl(search.url, page), { retries: 4 });
+    const result = parseSearchPage(html);
+    if (page === 1 && search.companyId != null) {
+      const company = parseCompanyPage(html);
+      if (company) (context.stepstoneCompanies ??= new Map()).set(company.id, Promise.resolve(company));
+    }
     // Past the last page StepStone shows the last one again, or nothing.
     if ((result.page && result.page !== page) || result.jobs.length === 0) {
       if (page <= result.pageCount) log.warning(`${search.id}: StepStone sent page ${result.page ?? '?'} with ${result.jobs.length} jobs instead of page ${page} of ${result.pageCount}.`);
@@ -247,7 +329,7 @@ export async function* listJobs(search, context) {
     }
     if (page === 1) log.info(`${search.id}: ${result.total} jobs on ${result.pageCount} pages.`);
     const fresh = result.jobs.filter((job) => !seen.has(job.id) && seen.add(job.id));
-    yield fresh.map(toPartialJob);
+    yield fresh.filter(keep).map(toPartialJob);
     if (result.pageCount > 0 && page >= result.pageCount) break;
   }
 }

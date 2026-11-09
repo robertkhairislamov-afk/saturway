@@ -128,7 +128,7 @@ A step-by-step guide with Python examples, one app tracked across six keywords i
 
 ## How much does it cost?
 
-You pay only for results: **$1.50 per 1,000 results** from November 9, 2026 ($0.50 until then). That is the price on the Apify Free plan. Paid Apify plans pay less: $1.35 per 1,000 results on Starter, $1.20 on Scale and $1.05 on Business, which is the "from" price shown in Apify Store. There is no start fee. The Apify free plan covers about 3,300 results every month.
+You pay only for results: **$1.50 per 1,000 results**. That is the price on the Apify Free plan. Paid Apify plans pay less: $1.35 per 1,000 results on Starter, $1.20 on Scale and $1.05 on Business, which is the "from" price shown in Apify Store. There is no start fee. The Apify free plan covers about 3,300 results every month.
 
 ## Tips
 
@@ -171,6 +171,6 @@ Missing a field or a feature? Open an issue in the Issues tab or email [support@
 
 适合应用出海、手游发行、ASO 优化、海外市场调研，以及通过开发者联系方式开发 B2B 客户。一次运行可以覆盖多个国家，支持 30 多种语言。无需浏览器、无需登录、无需谷歌 API 密钥。iOS 应用请使用字段相同的 [App Store Scraper](https://apify.com/robertosan16/app-store-scraper)。
 
-价格：2026 年 11 月 9 日起每 1,000 条结果 1.50 美元（此前为 0.50 美元），无启动费；Apify 免费套餐每月约可获取 3,300 条结果。
+价格：每 1,000 条结果 1.50 美元，无启动费；Apify 免费套餐每月约可获取 3,300 条结果。
 
 结果可导出为 JSON、CSV、Excel 或 HTML，也可以通过 API、定时任务、Webhook 或 n8n、Make、Zapier 接入。有问题请在 Issues 页面提问，或发邮件至 support@mozartstandard.com。

@@ -177,6 +177,12 @@
       },
       "nearestStationSource": {
         "description": "page: the site names the station; estimated: from the positions of nearby projects that the site places next to a station (a few hundred metres accurate)."
+      },
+      "siteUpdatedAt": {
+        "description": "When the agency last updated the listing on the site (from the listing's page; read for below-market listings and units at several agencies)."
+      },
+      "siteStatus": {
+        "description": "From the listing's page: for sale, not for sale, or page removed. Listings no longer for sale are left out of below market and lots."
       }
     },
     "additionalProperties": true

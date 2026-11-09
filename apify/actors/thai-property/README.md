@@ -54,3 +54,7 @@ The **Lots** table groups listings of one unit by different advertisers: same pr
 ## Below market
 
 The **Below market** table lists resale units at least 10% below similar units of their building (same bedrooms, size within 25%, at least three, without the same unit and without Thai-quota listings), with the ownership (Thai or foreign quota) when the advertiser names it.
+
+## Is the listing still on offer
+
+The search list only gives the date a listing was first verified, so a unit listed in 2019 and updated by its agency last week looked stale. For below-market listings (deepest first) and units at several agencies, the listing's own page is read: when the agency last updated it (`siteUpdatedAt`) and whether the site still offers it (`siteStatus`: for sale, not for sale, page removed). The update date counts as activity for `lastActivityAt` and `freshness`. Listings no longer for sale are left out of Below market and Lots. Up to `maxPageChecksPerRun` pages per run (3,000), each at most once a week; floor reads give the same answer for free. An update date shows that the agency keeps the listing in its feed, not that the unit is unsold: some agencies refresh all their listings at once.

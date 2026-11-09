@@ -87,6 +87,9 @@
       },
       "nearestStationKm": {
         "description": "Distance to the nearest station, in km."
+      },
+      "siteUpdatedAt": {
+        "description": "When the agency last updated the listing on the site (from the listing's page; read for below-market listings and units at several agencies)."
       }
     },
     "additionalProperties": true

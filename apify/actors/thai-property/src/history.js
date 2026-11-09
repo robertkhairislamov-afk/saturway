@@ -32,7 +32,7 @@ export async function saveHistory(store, search, seen) {
 // Days are counted from 2020-01-01 to keep the records small.
 const EPOCH = Date.UTC(2020, 0, 1);
 export const dayNumber = (iso) => Math.floor((Date.parse(iso) - EPOCH) / DAY_MS);
-const dayDate = (n) => new Date(EPOCH + n * DAY_MS).toISOString().slice(0, 10);
+export const dayDate = (n) => new Date(EPOCH + n * DAY_MS).toISOString().slice(0, 10);
 
 // How recently someone did something with a listing (posted it or changed its price): fresh within
 // 60 days, aging within 180, stale beyond. Agencies rarely take down a sold unit, so a stale listing

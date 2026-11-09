@@ -94,6 +94,14 @@
       "minimum": 0,
       "default": 3000
     },
+    "maxPageChecksPerRun": {
+      "title": "Listing pages to check per run",
+      "type": "integer",
+      "minimum": 0,
+      "default": 3000,
+      "unit": "pages",
+      "description": "Pages of below-market listings and of units listed by several agencies to read: the date the agency last updated the listing and whether it is still for sale. Each page is read at most once a week. 0 turns the check off."
+    },
     "lotsFor": {
       "title": "Find repeated units in",
       "type": "array",

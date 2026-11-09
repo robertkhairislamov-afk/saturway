@@ -504,3 +504,31 @@ test('history: a search with 130,000 listings (Bangkok rent) does not overflow t
   assert.equal(Object.keys(seen).length, 130001);
   assert.deepEqual(missing.map((m) => m.key), ['gone']);
 });
+
+test('listing pages: the site update date makes a listing fresh, and units no longer for sale are marked', async () => {
+  const { applyPageChecks, pageCandidates, pageCheck, removedCheck, RECHECK_DAYS } = await import('../src/pages.js');
+  const { dayNumber } = await import('../src/history.js');
+  const today = dayNumber('2026-11-09T00:00:00Z');
+  const url = (key) => `https://www.dotproperty.co.th/en/ads/condo_${key}`;
+  const listings = [
+    { key: 'a', url: url('a'), transaction: 'sale', lastActivityAt: '2019-10-03', daysSinceActivity: 2594, freshness: 'stale' },
+    { key: 'b', url: url('b'), transaction: 'sale', lastActivityAt: '2026-11-01', daysSinceActivity: 8, freshness: 'fresh', lotId: 'L1' },
+    { key: 'c', url: url('c'), transaction: 'sale', lastActivityAt: '2026-01-01', freshness: 'stale' },
+    { key: 'd', url: url('d'), transaction: 'sale', lotId: 'L1' },
+  ];
+  // Below market first (deepest first), then units at several agencies; recent checks are skipped.
+  const checks = { d: [today - 1, null, 1] };
+  const todo = pageCandidates({ deals: [{ url: url('c'), gapPercent: -15 }, { url: url('a'), gapPercent: -40 }], lots: [{ lotId: 'L1', listings: 2 }], listings, checks, today });
+  assert.deepEqual(todo.map((l) => l.key), ['a', 'c', 'b']);
+  checks.d = [today - RECHECK_DAYS, null, 1];
+  assert.ok(pageCandidates({ lots: [{ lotId: 'L1', listings: 2 }], listings, checks, today }).some((l) => l.key === 'd'));
+
+  checks.a = pageCheck(today, { updatedAt: '2026-11-06', available: true });
+  checks.b = pageCheck(today, { updatedAt: '2026-08-09', available: false });
+  checks.c = removedCheck(today);
+  applyPageChecks(listings, checks, today);
+  assert.deepEqual([listings[0].lastActivityAt, listings[0].freshness, listings[0].siteStatus, listings[0].offMarket], ['2026-11-06', 'fresh', 'for sale', false]);
+  // An older site date does not make a listing look older.
+  assert.deepEqual([listings[1].lastActivityAt, listings[1].siteUpdatedAt, listings[1].siteStatus, listings[1].offMarket], ['2026-11-01', '2026-08-09', 'not for sale', true]);
+  assert.deepEqual([listings[2].siteStatus, listings[2].offMarket], ['page removed', true]);
+});

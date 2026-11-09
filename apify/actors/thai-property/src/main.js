@@ -6,11 +6,12 @@ import { Actor, log } from 'apify';
 
 import { districtOf } from './areas.js';
 import { MAX_RESULTS, PAGE_SIZE, parseListPage, parseListingPage, searchUrl } from './dotproperty.js';
-import { applyHistory, keepAsSeen, loadHistory, rememberLots, saveHistory } from './history.js';
+import { applyHistory, dayNumber, keepAsSeen, loadHistory, rememberLots, saveHistory } from './history.js';
 import { HttpError, createHttpClient, mapLimit } from './http.js';
 import { belowMarket, ownershipOf } from './deals.js';
 import { findLots, floorOf } from './match.js';
 import { hashOfJpeg, loadPhotoHashes, savePhotoHashes, shortPhotoId, thumbnailForKey } from './photos.js';
+import { applyPageChecks, keepChecks, pageCandidates, pageCheck, removedCheck } from './pages.js';
 import { joinProjects } from './projects.js';
 import { loadSearchState, saveSearchState } from './state.js';
 import { withEstimatedStations } from './stations.js';
@@ -29,6 +30,7 @@ const input = {
   maxProjectDetailsPerRun: 600,
   maxRemovalChecksPerRun: 1500,
   maxFloorChecksPerRun: 3000,
+  maxPageChecksPerRun: 3000,
   lotsFor: ['sale'],
   maxNewPhotoHashesPerRun: 20000,
   projectDetailsMaxAgeDays: 90,
@@ -330,7 +332,7 @@ function findAllLots() {
   const found = [];
   for (const transaction of lotTransactions) {
     const projectMedians = Object.fromEntries(projects.map((p) => [p.projectKey, transaction === 'sale' ? p.medianSalePricePerSqm : p.medianRentPerSqm]));
-    const result = findLots(allListings.filter((l) => l.transaction === transaction), { projectMedians, photoHashes });
+    const result = findLots(allListings.filter((l) => l.transaction === transaction && !l.offMarket), { projectMedians, photoHashes });
     for (const l of allListings) if (l.transaction === transaction) l.lotId = result.lotOf.get(l.key) ?? null;
     pushAll(found, result.lots.map((lot) => ({ ...lot, scrapedAt })));
   }
@@ -341,6 +343,11 @@ function findAllLots() {
 // neighbouring units furnished alike share photos. Each listing's page is read once; the floor
 // (or null when the description names none) is kept in the memory.
 const unitFloors = (await memory.getValue('unit-floors')) ?? {};
+// Each page read also tells when the agency last updated the listing and whether it is still for
+// sale (see pages.js); the answers are kept for a week.
+const pageChecks = (await memory.getValue('page-checks')) ?? {};
+const today = dayNumber(scrapedAt);
+applyPageChecks(allListings, pageChecks, today);
 const applyFloors = () => { for (const l of allListings) if (unitFloors[l.key] != null) l.unitFloor = unitFloors[l.key]; };
 applyFloors();
 let lots = findAllLots();
@@ -363,12 +370,16 @@ if (floorChecks.length) {
     try {
       const page = parseListingPage(await http.get(l.url));
       unitFloors[l.key] = page.unitFloor ?? null;
+      pageChecks[l.key] = pageCheck(today, page);
       summary.floors.checked++;
       if (page.unitFloor != null) summary.floors.found++;
     } catch (error) {
       summary.floors.failed++;
       // A removed page will not tell: remember that, so it is not asked again.
-      if (error instanceof HttpError && (error.status === 404 || error.status === 410)) unitFloors[l.key] = null;
+      if (error instanceof HttpError && (error.status === 404 || error.status === 410)) {
+        unitFloors[l.key] = null;
+        pageChecks[l.key] = removedCheck(today);
+      }
     }
     if (summary.floors.checked % 200 === 0 && summary.floors.checked) await memory.setValue('unit-floors', unitFloors);
   });
@@ -377,6 +388,44 @@ if (floorChecks.length) {
     lots = findAllLots();
   }
 }
+
+// Pages of the listings that matter: below market first, then units at several agencies. Their
+// update date makes the freshness right, and listings the site no longer offers are left out.
+{
+  const candidates = belowMarket(allListings.filter((l) => !l.offMarket), { projects: Object.fromEntries(projects.map((p) => [p.projectKey, p])) });
+  const todo = pageCandidates({ deals: candidates, lots, listings: allListings, checks: pageChecks, today });
+  const checks = todo.slice(0, input.maxPageChecksPerRun);
+  summary.pageChecks = { checked: 0, forSale: 0, notForSale: 0, pageRemoved: 0, failed: 0, leftForNextRuns: todo.length - checks.length };
+  if (checks.length) {
+    await Actor.setStatusMessage(`Checking ${checks.length} listing pages: update date and whether still for sale.`);
+    await mapLimit(checks, input.concurrency, async (l) => {
+      if (outOfTime()) {
+        warnOutOfTime('Listing pages');
+        summary.pageChecks.leftForNextRuns++;
+        return;
+      }
+      try {
+        const page = parseListingPage(await http.get(l.url));
+        pageChecks[l.key] = pageCheck(today, page);
+        if (l.lotId && !(l.key in unitFloors)) unitFloors[l.key] = page.unitFloor ?? null;
+        summary.pageChecks.checked++;
+        if (page.available === false) summary.pageChecks.notForSale++;
+        else summary.pageChecks.forSale++;
+      } catch (error) {
+        if (error instanceof HttpError && (error.status === 404 || error.status === 410)) {
+          pageChecks[l.key] = removedCheck(today);
+          summary.pageChecks.pageRemoved++;
+        } else summary.pageChecks.failed++;
+      }
+      if ((summary.pageChecks.checked + summary.pageChecks.pageRemoved) % 200 === 0) await memory.setValue('page-checks', keepChecks(pageChecks, allListings));
+    });
+  }
+  applyPageChecks(allListings, pageChecks, today);
+  applyFloors();
+  lots = findAllLots();
+  await memory.setValue('page-checks', keepChecks(pageChecks, allListings));
+}
+
 // Only listings still on the market are kept.
 const current = new Set(allListings.map((l) => l.key));
 await memory.setValue('unit-floors', Object.fromEntries(Object.entries(unitFloors).filter(([key]) => current.has(key))));
@@ -423,7 +472,7 @@ for (const p of projects) {
   p.thaiQuotaSaleListings = quota.get(p.projectKey)?.thai ?? 0;
   p.foreignQuotaSaleListings = quota.get(p.projectKey)?.foreign ?? 0;
 }
-const deals = belowMarket(allListings, { projects: Object.fromEntries(projects.map((p) => [p.projectKey, p])) }).map((d) => ({ ...d, scrapedAt }));
+const deals = belowMarket(allListings.filter((l) => !l.offMarket), { projects: Object.fromEntries(projects.map((p) => [p.projectKey, p])) }).map((d) => ({ ...d, scrapedAt }));
 summary.belowMarket = deals.length;
 summary.belowMarketThaiQuota = deals.filter((d) => d.ownership === 'thai quota').length;
 summary.listingsInLots = lots.reduce((sum, lot) => sum + lot.listings, 0);
@@ -440,7 +489,7 @@ await push(await Actor.openDataset({ alias: 'districts' }), districts);
 await push(await Actor.openDataset({ alias: 'lots' }), lots);
 await push(await Actor.openDataset({ alias: 'belowMarket' }), deals);
 await push(await Actor.openDataset({ alias: 'removed' }), removedAll.map((r) => ({ recordType: 'removed', ...r, scrapedAt })));
-if (input.saveListings) await push(await Actor.openDataset({ alias: 'listings' }), allListings.map(({ photoUrls, photoKeys, previousLotId, ...l }) => l));
+if (input.saveListings) await push(await Actor.openDataset({ alias: 'listings' }), allListings.map(({ photoUrls, photoKeys, previousLotId, offMarket, ...l }) => l));
 
 summary.stoppedEarlyForTimeLimit = timeWarned;
 summary.finishedAt = new Date().toISOString();

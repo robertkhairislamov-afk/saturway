@@ -71,7 +71,9 @@ export function applyHistory(listings, seen = {}, now = new Date().toISOString()
     listing.previousLotId = before?.[8] ?? null;
     next[listing.key] = [first, today, before ? before[2] : listing.price, listing.price, listing.projectKey ?? null, listing.district ?? null, listing.url ?? null, priceChanged, before?.[8] ?? null];
   }
-  const lastRun = Math.max(-1, ...Object.values(seen).map((v) => v[1]));
+  // A loop, not Math.max(...values): spreading 125,000 values overflows the stack (Bangkok rent).
+  let lastRun = -1;
+  for (const value of Object.values(seen)) if (value[1] > lastRun) lastRun = value[1];
   const missing = [];
   for (const [key, value] of Object.entries(seen)) {
     if (present.has(key)) continue;

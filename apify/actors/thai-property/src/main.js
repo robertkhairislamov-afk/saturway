@@ -332,7 +332,7 @@ function findAllLots() {
     const projectMedians = Object.fromEntries(projects.map((p) => [p.projectKey, transaction === 'sale' ? p.medianSalePricePerSqm : p.medianRentPerSqm]));
     const result = findLots(allListings.filter((l) => l.transaction === transaction), { projectMedians, photoHashes });
     for (const l of allListings) if (l.transaction === transaction) l.lotId = result.lotOf.get(l.key) ?? null;
-    found.push(...result.lots.map((lot) => ({ ...lot, scrapedAt })));
+    pushAll(found, result.lots.map((lot) => ({ ...lot, scrapedAt })));
   }
   return found;
 }

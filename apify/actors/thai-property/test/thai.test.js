@@ -494,3 +494,13 @@ test('Bangkok: the district, the nearest station from the page, and estimated st
   assert.equal(out.details.far.nearestStation, undefined);
   assert.equal(details.c.nearestStation, undefined);
 });
+
+test('history: a search with 130,000 listings (Bangkok rent) does not overflow the stack', () => {
+  const now = new Date().toISOString();
+  const listings = Array.from({ length: 130000 }, (_, i) => ({ key: `${(i * 2654435761 % 4294967296).toString(16)}-${i}`, price: 10000 + i, url: `u${i}` }));
+  const before = Object.fromEntries(listings.slice(1).map((l) => [l.key, [20000, 20400, l.price, l.price, null, null, l.url, null, null]]));
+  before.gone = [20000, 20400, 1, 1, null, null, 'u-gone', null, null];
+  const { seen, missing } = applyHistory(listings, before, now);
+  assert.equal(Object.keys(seen).length, 130001);
+  assert.deepEqual(missing.map((m) => m.key), ['gone']);
+});

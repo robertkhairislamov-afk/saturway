@@ -80,6 +80,7 @@ You pay only for leads saved: **$3 per 1,000 leads** on the Apify Free plan, les
 
 ## Tips
 
+- **Keyword rank tracking with changes**: to follow your apps' positions for a list of keywords in both stores, with the change since the last run and search suggestions, use [ASO Keyword Rank Tracker](https://apify.com/robertosan16/aso-keyword-tracker).
 - **Small and mid-size companies** answer more often than giants: set **Maximum installs** to 1,000,000 or 5,000,000.
 - **Active companies only**: set **Updated in the last days** to 90.
 - **Competitors of your customer**: paste your best customer's app under **Competitor apps** to find companies like them.

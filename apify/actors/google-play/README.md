@@ -132,6 +132,7 @@ You pay only for results: **$1.50 per 1,000 results**. That is the price on the 
 
 ## Tips
 
+- **Keyword rank tracking with changes**: to follow your apps' positions for a list of keywords in both stores, with the change since the last run and search suggestions, use [ASO Keyword Rank Tracker](https://apify.com/robertosan16/aso-keyword-tracker).
 - **Contacts of app companies**: to reach the companies behind the apps, use [Google Play Developer Leads](https://apify.com/robertosan16/google-play-developer-leads): one record per company with business email, website, address and top app, for a keyword, category or competitor app.
 - **Daily rank tracking**: save your input as a task and add a schedule. Every run records the current rank of each app, so you can chart positions over time.
 - **Fast chart lists**: turn off **Load full app details** to get ranks, titles, developers, ratings, installs and prices of thousands of apps in seconds.

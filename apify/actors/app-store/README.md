@@ -116,6 +116,7 @@ You pay only for results: **$1 per 1,000 results**. That is the price on the Api
 
 ## Tips
 
+- **Contacts of app companies**: to reach the companies behind Android apps, use [Google Play Developer Leads](https://apify.com/robertosan16/google-play-developer-leads): one record per company with business email, website, address and top app, for a keyword, category or competitor app.
 - **Daily rank tracking**: save your input as a task and add a schedule. Every run records the current rank of each app, so you can chart positions over time.
 - **Games charts**: pick "Games" or a kind of game, such as "Games: Puzzle", in **Chart categories**.
 - **Many countries**: Apple runs a separate store in each country; add every country you need, and each source is scraped for each of them.

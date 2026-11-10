@@ -1,0 +1,16 @@
+{
+  "actorSpecification": 1,
+  "name": "google-play-developer-leads",
+  "title": "Google Play Developer Leads: App Company Emails & Websites",
+  "description": "Find Android app companies by keyword, category or competitor app and get one lead per developer: public business email, website, legal name, address, top app, installs and last update. Companies only by default.",
+  "version": "0.1",
+  "buildTag": "latest",
+  "input": "./input_schema.json",
+  "storages": {
+    "dataset": "./dataset_schema.json",
+    "keyValueStore": "./key_value_store_schema.json"
+  },
+  "output": "./output_schema.json",
+  "dockerfile": "../Dockerfile",
+  "readme": "../README.md"
+}

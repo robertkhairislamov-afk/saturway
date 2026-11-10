@@ -1,0 +1,235 @@
+{
+  "title": "Google Play Developer Leads",
+  "description": "Find app companies by keyword, category or competitor app; get one lead per developer with public business contacts.",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "searchTerms": {
+      "title": "Keywords",
+      "type": "array",
+      "editor": "stringList",
+      "description": "What the apps do, for example <code>invoice maker</code>, <code>meditation</code> or <code>food delivery</code>. Each keyword finds up to 30 apps on Google Play; with <b>Similar apps</b> on, each of them adds the apps Google shows as similar.",
+      "prefill": [
+        "invoice maker",
+        "crm"
+      ],
+      "placeholderValue": "habit tracker"
+    },
+    "categories": {
+      "title": "Categories",
+      "type": "array",
+      "editor": "select",
+      "description": "Also take the developers of the top charts of these categories (up to 200 apps per chart).",
+      "items": {
+        "type": "string",
+        "enum": [
+          "APPLICATION",
+          "ANDROID_WEAR",
+          "ART_AND_DESIGN",
+          "AUTO_AND_VEHICLES",
+          "BEAUTY",
+          "BOOKS_AND_REFERENCE",
+          "BUSINESS",
+          "COMICS",
+          "COMMUNICATION",
+          "DATING",
+          "EDUCATION",
+          "ENTERTAINMENT",
+          "EVENTS",
+          "FINANCE",
+          "FOOD_AND_DRINK",
+          "HEALTH_AND_FITNESS",
+          "HOUSE_AND_HOME",
+          "LIBRARIES_AND_DEMO",
+          "LIFESTYLE",
+          "MAPS_AND_NAVIGATION",
+          "MEDICAL",
+          "MUSIC_AND_AUDIO",
+          "NEWS_AND_MAGAZINES",
+          "PARENTING",
+          "PERSONALIZATION",
+          "PHOTOGRAPHY",
+          "PRODUCTIVITY",
+          "SHOPPING",
+          "SOCIAL",
+          "SPORTS",
+          "TOOLS",
+          "TRAVEL_AND_LOCAL",
+          "VIDEO_PLAYERS",
+          "WATCH_FACE",
+          "WEATHER",
+          "FAMILY",
+          "GAME",
+          "GAME_ACTION",
+          "GAME_ADVENTURE",
+          "GAME_ARCADE",
+          "GAME_BOARD",
+          "GAME_CARD",
+          "GAME_CASINO",
+          "GAME_CASUAL",
+          "GAME_EDUCATIONAL",
+          "GAME_MUSIC",
+          "GAME_PUZZLE",
+          "GAME_RACING",
+          "GAME_ROLE_PLAYING",
+          "GAME_SIMULATION",
+          "GAME_SPORTS",
+          "GAME_STRATEGY",
+          "GAME_TRIVIA",
+          "GAME_WORD"
+        ],
+        "enumTitles": [
+          "All apps",
+          "Wear OS",
+          "Art & Design",
+          "Auto & Vehicles",
+          "Beauty",
+          "Books & Reference",
+          "Business",
+          "Comics",
+          "Communication",
+          "Dating",
+          "Education",
+          "Entertainment",
+          "Events",
+          "Finance",
+          "Food & Drink",
+          "Health & Fitness",
+          "House & Home",
+          "Libraries & Demo",
+          "Lifestyle",
+          "Maps & Navigation",
+          "Medical",
+          "Music & Audio",
+          "News & Magazines",
+          "Parenting",
+          "Personalization",
+          "Photography",
+          "Productivity",
+          "Shopping",
+          "Social",
+          "Sports",
+          "Tools",
+          "Travel & Local",
+          "Video Players",
+          "Watch Face",
+          "Weather",
+          "Family (kids)",
+          "All games",
+          "Games: Action",
+          "Games: Adventure",
+          "Games: Arcade",
+          "Games: Board",
+          "Games: Card",
+          "Games: Casino",
+          "Games: Casual",
+          "Games: Educational",
+          "Games: Music",
+          "Games: Puzzle",
+          "Games: Racing",
+          "Games: Role Playing",
+          "Games: Simulation",
+          "Games: Sports",
+          "Games: Strategy",
+          "Games: Trivia",
+          "Games: Word"
+        ]
+      }
+    },
+    "appIds": {
+      "title": "Competitor apps",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Package names or Google Play links, for example <code>com.zoho.invoice</code>. Their developers are included, and with <b>Similar apps</b> on, the developers of the apps Google shows as similar: your competitors' competitors.",
+      "placeholderValue": "com.zoho.invoice"
+    },
+    "developers": {
+      "title": "Developers",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Developer names or Google Play developer links, to get their contact record.",
+      "placeholderValue": "Zoho Corporation"
+    },
+    "includeSimilarApps": {
+      "title": "Similar apps",
+      "type": "boolean",
+      "default": true,
+      "description": "For apps found by keyword and competitor apps, also take the apps Google shows as similar. Finds many more developers in the same niche; takes a little longer."
+    },
+    "countries": {
+      "title": "Countries",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Two-letter Google Play countries to search, for example <code>US</code>, <code>GB</code>, <code>DE</code>. US when empty.",
+      "prefill": [
+        "US"
+      ],
+      "placeholderValue": "GB"
+    },
+    "language": {
+      "title": "Language",
+      "type": "string",
+      "editor": "textfield",
+      "default": "en",
+      "description": "Language of app pages, for example <code>en</code> or <code>de</code>."
+    },
+    "companiesOnly": {
+      "title": "Companies only",
+      "type": "boolean",
+      "default": true,
+      "sectionCaption": "Filters",
+      "description": "Keep developers that are businesses: a company form in the name (Inc, Ltd, GmbH, AB...) or a support email on their own website's domain. Individual developers' emails, addresses and phones are never saved; turning this off adds them with name, website and apps only."
+    },
+    "requireEmail": {
+      "title": "Only with email",
+      "type": "boolean",
+      "default": true,
+      "description": "Keep only developers with a public business email."
+    },
+    "requireWebsite": {
+      "title": "Only with website",
+      "type": "boolean",
+      "default": false,
+      "description": "Keep only developers with a website."
+    },
+    "minInstalls": {
+      "title": "Minimum installs of the top app",
+      "type": "integer",
+      "minimum": 0,
+      "description": "For example 100000 for established developers. Leave empty for any."
+    },
+    "maxInstalls": {
+      "title": "Maximum installs of the top app",
+      "type": "integer",
+      "minimum": 0,
+      "description": "For example 1000000 to skip the giants and reach small and mid-size developers. Leave empty for no limit."
+    },
+    "updatedWithinDays": {
+      "title": "Top app updated in the last days",
+      "type": "integer",
+      "minimum": 0,
+      "unit": "days",
+      "description": "Keep active developers only, for example 90. Leave empty for any."
+    },
+    "maxLeads": {
+      "title": "Maximum leads",
+      "type": "integer",
+      "minimum": 0,
+      "default": 100,
+      "sectionCaption": "Limits",
+      "description": "Stop after this many leads. You pay only for leads saved. 0 means no limit."
+    },
+    "proxyConfiguration": {
+      "title": "Proxy configuration",
+      "type": "object",
+      "editor": "proxy",
+      "description": "The Actor connects directly, which is fastest. If Google Play starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it from the start.",
+      "prefill": {
+        "useApifyProxy": false
+      },
+      "default": {
+        "useApifyProxy": false
+      }
+    }
+  }
+}

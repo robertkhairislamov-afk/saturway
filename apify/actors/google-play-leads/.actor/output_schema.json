@@ -1,0 +1,18 @@
+{
+  "actorOutputSchemaVersion": 1,
+  "title": "Google Play Developer Leads output",
+  "properties": {
+    "leads": {
+      "type": "string",
+      "title": "Leads",
+      "description": "One record per developer: business email, website, legal details and top app.",
+      "template": "{{links.apiDefaultDatasetUrl}}/items?view=overview"
+    },
+    "summary": {
+      "type": "string",
+      "title": "Run summary",
+      "description": "Developers found and checked, leads saved, how many were left out and why, and each source.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/SUMMARY"
+    }
+  }
+}

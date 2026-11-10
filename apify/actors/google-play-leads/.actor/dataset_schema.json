@@ -1,0 +1,172 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "developerName": {
+        "description": "Developer name on Google Play."
+      },
+      "developerId": {
+        "description": "Google Play developer ID."
+      },
+      "developerUrl": {
+        "description": "Developer page on Google Play."
+      },
+      "developerType": {
+        "description": "company (a company form in the name), business (support email on the developer's own domain) or individual (contacts not saved)."
+      },
+      "companyName": {
+        "description": "Legal name when Google shows it, else the developer name."
+      },
+      "email": {
+        "description": "Public support email of the listing (businesses only)."
+      },
+      "emailDomain": {
+        "description": "Domain of the email."
+      },
+      "website": {
+        "description": "Developer website from the listing."
+      },
+      "websiteDomain": {
+        "description": "Domain of the website."
+      },
+      "legalName": {
+        "description": "Legal name from the trader details Google shows for developers selling in the EU."
+      },
+      "legalEmail": {
+        "description": "Email from the trader details (companies only)."
+      },
+      "address": {
+        "description": "Business address from the trader details (companies only)."
+      },
+      "phone": {
+        "description": "Business phone from the trader details (companies only)."
+      },
+      "privacyPolicyUrl": {
+        "description": "Privacy policy link of the top app."
+      },
+      "topAppId": {
+        "description": "Package name of the developer's most installed app found."
+      },
+      "topAppTitle": {
+        "description": "Title of that app."
+      },
+      "topAppUrl": {
+        "description": "Google Play link of that app."
+      },
+      "topAppInstalls": {
+        "description": "Installs as Google Play shows them, for example 1,000,000+."
+      },
+      "topAppMinInstalls": {
+        "description": "Installs as a number (the lower bound)."
+      },
+      "topAppScore": {
+        "description": "Average rating."
+      },
+      "topAppRatings": {
+        "description": "Number of ratings."
+      },
+      "topAppGenre": {
+        "description": "Category of the top app."
+      },
+      "topAppFree": {
+        "description": "Whether the top app is free."
+      },
+      "topAppContainsAds": {
+        "description": "Whether the top app shows ads."
+      },
+      "topAppInAppPurchases": {
+        "description": "Whether the top app sells in-app purchases."
+      },
+      "topAppUpdatedAt": {
+        "description": "When the top app was last updated."
+      },
+      "daysSinceUpdate": {
+        "description": "Days since that update."
+      },
+      "appsFound": {
+        "description": "Apps of this developer found by the run."
+      },
+      "apps": {
+        "description": "Up to 10 of those apps: ID, title, installs, rating, category."
+      },
+      "genres": {
+        "description": "Categories of the apps found."
+      },
+      "foundBy": {
+        "description": "Keywords, charts or apps that found the developer."
+      },
+      "countries": {
+        "description": "Google Play countries where the developer was found."
+      },
+      "scrapedAt": {
+        "description": "When the lead was saved."
+      }
+    }
+  },
+  "views": {
+    "overview": {
+      "title": "Leads",
+      "transformation": {
+        "fields": [
+          "developerName",
+          "developerType",
+          "email",
+          "website",
+          "topAppTitle",
+          "topAppInstalls",
+          "daysSinceUpdate",
+          "appsFound",
+          "address",
+          "developerUrl"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "developerName": {
+            "label": "Developer",
+            "format": "text"
+          },
+          "developerType": {
+            "label": "Type",
+            "format": "text"
+          },
+          "email": {
+            "label": "Email",
+            "format": "text"
+          },
+          "website": {
+            "label": "Website",
+            "format": "link"
+          },
+          "topAppTitle": {
+            "label": "Top app",
+            "format": "text"
+          },
+          "topAppInstalls": {
+            "label": "Installs",
+            "format": "text"
+          },
+          "daysSinceUpdate": {
+            "label": "Days since update",
+            "format": "number"
+          },
+          "appsFound": {
+            "label": "Apps found",
+            "format": "number"
+          },
+          "address": {
+            "label": "Address",
+            "format": "text"
+          },
+          "developerUrl": {
+            "label": "Google Play",
+            "format": "link"
+          }
+        }
+      }
+    }
+  }
+}

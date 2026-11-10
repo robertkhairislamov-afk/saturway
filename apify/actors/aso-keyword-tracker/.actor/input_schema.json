@@ -1,0 +1,98 @@
+{
+  "title": "ASO Keyword Rank Tracker",
+  "description": "Keyword ranks of apps on Google Play and the App Store, with changes, suggestions and competition.",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "keywords": {
+      "title": "Keywords",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Search terms to check, for example <code>invoice maker</code> or <code>meditation app</code>. Each keyword is checked in every store and country.",
+      "prefill": [
+        "invoice maker",
+        "budget planner"
+      ],
+      "placeholderValue": "habit tracker"
+    },
+    "trackApps": {
+      "title": "Your apps to track",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Apps whose rank you want for every keyword, even outside the top results: Google Play package names or links (<code>com.zoho.invoice</code>) and App Store links or numeric ids (<code>https://apps.apple.com/us/app/…/id694831622</code>). Add competitors too.",
+      "placeholderValue": "com.zoho.invoice"
+    },
+    "stores": {
+      "title": "Stores",
+      "type": "array",
+      "editor": "select",
+      "items": {
+        "type": "string",
+        "enum": [
+          "googlePlay",
+          "appStore"
+        ],
+        "enumTitles": [
+          "Google Play",
+          "App Store"
+        ]
+      },
+      "default": [
+        "googlePlay",
+        "appStore"
+      ],
+      "description": "Google Play checks the top 30 results, the App Store up to 200."
+    },
+    "countries": {
+      "title": "Countries",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Two-letter store countries, for example <code>US</code>, <code>GB</code>, <code>DE</code>. US when empty.",
+      "prefill": [
+        "US"
+      ],
+      "placeholderValue": "GB"
+    },
+    "language": {
+      "title": "Language",
+      "type": "string",
+      "editor": "textfield",
+      "default": "en",
+      "description": "Language of Google Play results, for example <code>en</code> or <code>de</code>."
+    },
+    "topN": {
+      "title": "Top results per keyword",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 200,
+      "default": 10,
+      "description": "How many of the top-ranked apps to save for each keyword (your tracked apps are always saved). 0 saves only your tracked apps."
+    },
+    "includeSuggestions": {
+      "title": "Search suggestions",
+      "type": "boolean",
+      "default": true,
+      "description": "Add the store's search box suggestions for each keyword: the phrases people type, for finding new keywords."
+    },
+    "historyName": {
+      "title": "History name",
+      "type": "string",
+      "editor": "textfield",
+      "default": "aso-keyword-history",
+      "sectionCaption": "Tracking",
+      "description": "Ranks are remembered in a key-value store of this name in your account, so each run shows the change since the previous one. Use another name for a separate project."
+    },
+    "proxyConfiguration": {
+      "title": "Proxy configuration",
+      "type": "object",
+      "editor": "proxy",
+      "description": "The Actor connects directly, which is fastest. If Google Play starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it from the start.",
+      "prefill": {
+        "useApifyProxy": false
+      },
+      "default": {
+        "useApifyProxy": false
+      }
+    }
+  }
+}

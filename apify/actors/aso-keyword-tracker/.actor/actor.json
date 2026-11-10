@@ -1,0 +1,19 @@
+{
+  "actorSpecification": 1,
+  "name": "aso-keyword-tracker",
+  "title": "ASO Keyword Rank Tracker: App Store & Google Play",
+  "description": "Track where your apps and your competitors rank for any keyword on Google Play and the App Store, in any country. Rank changes since the last run, search suggestions and a competition score for every keyword. Schedule it for daily rank tracking.",
+  "version": "0.1",
+  "buildTag": "latest",
+  "input": "./input_schema.json",
+  "storages": {
+    "datasets": {
+      "default": "./dataset_schema.json",
+      "keywords": "./dataset_keywords_schema.json"
+    },
+    "keyValueStore": "./key_value_store_schema.json"
+  },
+  "output": "./output_schema.json",
+  "dockerfile": "../Dockerfile",
+  "readme": "../README.md"
+}

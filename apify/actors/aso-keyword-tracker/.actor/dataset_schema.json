@@ -1,0 +1,157 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "recordType": {
+        "description": "keyword (one per keyword, store and country) or rank (one per app in the results)."
+      },
+      "keyword": {
+        "description": "The search term."
+      },
+      "store": {
+        "description": "Google Play or App Store."
+      },
+      "country": {
+        "description": "Store country."
+      },
+      "rank": {
+        "description": "Position in the search results (1 is first); empty when a tracked app is not in the results checked."
+      },
+      "rankSource": {
+        "description": "store: the order the store's own search shows; api: App Store positions after the first page, from Apple's search API."
+      },
+      "previousRank": {
+        "description": "Rank at the previous run with the same history name."
+      },
+      "rankChange": {
+        "description": "Positions gained since the previous run (negative: lost)."
+      },
+      "newInResults": {
+        "description": "The app was not in the results at the previous run."
+      },
+      "tracked": {
+        "description": "One of your tracked apps."
+      },
+      "appId": {
+        "description": "Package name (Google Play) or numeric id (App Store)."
+      },
+      "title": {
+        "description": "App title."
+      },
+      "developer": {
+        "description": "Developer."
+      },
+      "score": {
+        "description": "Average rating."
+      },
+      "ratingsCount": {
+        "description": "Number of ratings (App Store)."
+      },
+      "installs": {
+        "description": "Installs as Google Play shows them."
+      },
+      "minInstalls": {
+        "description": "Installs as a number."
+      },
+      "free": {
+        "description": "Whether the app is free."
+      },
+      "price": {
+        "description": "Price."
+      },
+      "currency": {
+        "description": "Currency of the price."
+      },
+      "genre": {
+        "description": "Category."
+      },
+      "url": {
+        "description": "Store link."
+      },
+      "checkedAt": {
+        "description": "When the keyword was checked."
+      }
+    }
+  },
+  "views": {
+    "overview": {
+      "title": "Ranks",
+      "transformation": {
+        "fields": [
+          "keyword",
+          "store",
+          "country",
+          "rank",
+          "previousRank",
+          "rankChange",
+          "tracked",
+          "title",
+          "developer",
+          "installs",
+          "ratingsCount",
+          "score",
+          "url"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "keyword": {
+            "label": "Keyword",
+            "format": "text"
+          },
+          "store": {
+            "label": "Store",
+            "format": "text"
+          },
+          "country": {
+            "label": "Country",
+            "format": "text"
+          },
+          "rank": {
+            "label": "Rank",
+            "format": "number"
+          },
+          "previousRank": {
+            "label": "Previous",
+            "format": "number"
+          },
+          "rankChange": {
+            "label": "Change",
+            "format": "number"
+          },
+          "tracked": {
+            "label": "Yours",
+            "format": "boolean"
+          },
+          "title": {
+            "label": "App",
+            "format": "text"
+          },
+          "developer": {
+            "label": "Developer",
+            "format": "text"
+          },
+          "installs": {
+            "label": "Installs",
+            "format": "text"
+          },
+          "ratingsCount": {
+            "label": "Ratings",
+            "format": "number"
+          },
+          "score": {
+            "label": "Rating",
+            "format": "number"
+          },
+          "url": {
+            "label": "Link",
+            "format": "link"
+          }
+        }
+      }
+    }
+  }
+}

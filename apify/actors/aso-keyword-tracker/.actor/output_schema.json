@@ -1,0 +1,24 @@
+{
+  "actorOutputSchemaVersion": 1,
+  "title": "ASO Keyword Rank Tracker output",
+  "properties": {
+    "ranks": {
+      "type": "string",
+      "title": "Ranks",
+      "description": "Apps in the results of each keyword, with rank and change since the last run.",
+      "template": "{{storages.datasets.default.apiUrl}}/items?view=overview"
+    },
+    "keywords": {
+      "type": "string",
+      "title": "Keywords",
+      "description": "One record per keyword, store and country: competition, your apps' ranks, suggestions.",
+      "template": "{{storages.datasets.keywords.apiUrl}}/items?view=overview"
+    },
+    "summary": {
+      "type": "string",
+      "title": "Run summary",
+      "description": "Each keyword check, with results found and errors.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/SUMMARY"
+    }
+  }
+}

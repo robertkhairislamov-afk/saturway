@@ -1,0 +1,102 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "recordType": {
+        "description": "keyword (one per keyword, store and country) or rank (one per app in the results)."
+      },
+      "keyword": {
+        "description": "The search term."
+      },
+      "store": {
+        "description": "Google Play or App Store."
+      },
+      "country": {
+        "description": "Store country."
+      },
+      "resultsChecked": {
+        "description": "Results checked for the keyword: up to 30 on Google Play, 200 on the App Store."
+      },
+      "competition": {
+        "description": "0 to 100: how established the top 10 apps are (installs on Google Play, ratings on the App Store). Our estimate, comparable within one store."
+      },
+      "top10MedianInstalls": {
+        "description": "Median installs of the top 10 (Google Play)."
+      },
+      "top10MedianRatings": {
+        "description": "Median number of ratings of the top 10 (App Store)."
+      },
+      "topApps": {
+        "description": "Titles of the top 3 apps."
+      },
+      "trackedRanks": {
+        "description": "Rank, previous rank and change of each tracked app."
+      },
+      "suggestions": {
+        "description": "Search box suggestions for the keyword."
+      },
+      "previousCheckAt": {
+        "description": "When the keyword was checked before."
+      },
+      "checkedAt": {
+        "description": "When the keyword was checked."
+      }
+    }
+  },
+  "views": {
+    "overview": {
+      "title": "Keywords",
+      "transformation": {
+        "fields": [
+          "keyword",
+          "store",
+          "country",
+          "competition",
+          "resultsChecked",
+          "trackedRanks",
+          "topApps",
+          "suggestions"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "keyword": {
+            "label": "Keyword",
+            "format": "text"
+          },
+          "store": {
+            "label": "Store",
+            "format": "text"
+          },
+          "country": {
+            "label": "Country",
+            "format": "text"
+          },
+          "competition": {
+            "label": "Competition",
+            "format": "number"
+          },
+          "resultsChecked": {
+            "label": "Results",
+            "format": "number"
+          },
+          "trackedRanks": {
+            "label": "Your apps",
+            "format": "text"
+          },
+          "topApps": {
+            "label": "Top 3",
+            "format": "text"
+          },
+          "suggestions": {
+            "label": "Suggestions",
+            "format": "text"
+          }
+        }
+      }
+    }
+  }
+}

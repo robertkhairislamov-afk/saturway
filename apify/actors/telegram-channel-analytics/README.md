@@ -89,6 +89,7 @@ Public **groups** are listed too, with their members and members online (their m
 
 ## Tips
 
+- **Audit the advertisers' websites**: channels' ad posts link to businesses; check their sites' pixels, analytics and contacts with [Website Marketing Audit](https://apify.com/robertosan16/website-marketing-audit).
 - **Map a city or niche**: start with 3 to 5 known channels, turn on **Find related channels** and set **Minimum subscribers** to 1,000.
 - **Weekly tracking**: save the input as a task and schedule it; compare subscribers and average views week by week.
 - **Check the asking price**: if a channel asks much more than `estimatedPostPriceUsd` at your CPM, ask for its statistics.

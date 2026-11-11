@@ -87,6 +87,7 @@ Businesses **without a website**, with only a **social page**, or with a site th
 
 ## Tips
 
+- **Who already advertises on Google**: [Google Ads Transparency Scraper](https://apify.com/robertosan16/google-ads-transparency-scraper) lists the ads of any website or brand; Telegram channels to advertise in are scored by [Telegram Channel Analytics](https://apify.com/robertosan16/telegram-channel-analytics).
 - **Best local leads**: businesses with many Google reviews but `marketingScore` under 50: they have customers, but no marketing setup.
 - **Has budget**: `adTracking: true` with gaps such as no Google Ads tag means they advertise but cannot measure results.
 - **Abandoned sites**: filter `copyrightOutdated: true` or `status: unreachable` for a website redesign offer.

@@ -202,3 +202,15 @@ If an icon is attached, copy its style exactly: the same flat look, stroke weigh
 ```
 If an icon is attached, copy its style exactly: the same flat look, stroke weight, symbol size and position, gradient direction and shadow; only the symbol and the colors change. Symbol: a magnifying glass, and inside its lens three short vertical bars rising from left to right like a ranking chart, with a small upward arrow above the tallest bar. Style: flat vector app icon, perfectly square 1:1. The background fills the whole canvas edge to edge with a smooth diagonal gradient from #7C2D12 at the top left to #FBBF24 at the bottom right; no border, no frame, no rounded corners, no outer shadow, no vignette. The symbol is centered, drawn in solid white with bold uniform strokes and simple geometric shapes, about 60% of the canvas width, with a very soft shadow under it. Clean, modern, premium SaaS look, high contrast, easy to read at 48 pixels. No text, no letters, no numbers, no logos, no brand marks, no watermark.
 ```
+
+### 29. Telegram Channel Analytics
+
+```
+If an icon is attached, copy its style exactly: the same flat look, stroke weight, symbol size and position, gradient direction and shadow; only the symbol and the colors change. Symbol: a rounded speech bubble with three vertical bars inside it rising from left to right like a small bar chart, and a small round badge with a simple eye outline overlapping the bottom right corner of the bubble. Style: flat vector app icon, perfectly square 1:1. The background fills the whole canvas edge to edge with a smooth diagonal gradient from #0C4A6E at the top left to #38BDF8 at the bottom right; no border, no frame, no rounded corners, no outer shadow, no vignette. The symbol is centered, drawn in solid white with bold uniform strokes and simple geometric shapes, about 60% of the canvas width, with a very soft shadow under it. Clean, modern, premium SaaS look, high contrast, easy to read at 48 pixels. No text, no letters, no numbers, no logos, no brand marks, no paper plane, no watermark.
+```
+
+### 30. Website Marketing Audit
+
+```
+If an icon is attached, copy its style exactly: the same flat look, stroke weight, symbol size and position, gradient direction and shadow; only the symbol and the colors change. Symbol: a browser window with a top bar of three small dots and a simple target of two circles with a center dot inside the window, and a small round badge with a check mark overlapping the bottom right corner of the window. Style: flat vector app icon, perfectly square 1:1. The background fills the whole canvas edge to edge with a smooth diagonal gradient from #4C1D95 at the top left to #F472B6 at the bottom right; no border, no frame, no rounded corners, no outer shadow, no vignette. The symbol is centered, drawn in solid white with bold uniform strokes and simple geometric shapes, about 60% of the canvas width, with a very soft shadow under it. Clean, modern, premium SaaS look, high contrast, easy to read at 48 pixels. No text, no letters, no numbers, no logos, no brand marks, no watermark.
+```

@@ -1,0 +1,209 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "recordType": {
+        "description": "channel or group."
+      },
+      "username": {
+        "description": "Public @name of the channel."
+      },
+      "url": {
+        "description": "t.me link."
+      },
+      "title": {
+        "description": "Channel title."
+      },
+      "description": {
+        "description": "Channel description."
+      },
+      "verified": {
+        "description": "Verified by Telegram."
+      },
+      "subscribers": {
+        "description": "Exact number of subscribers (channels)."
+      },
+      "members": {
+        "description": "Members (groups)."
+      },
+      "online": {
+        "description": "Members online at the check (groups)."
+      },
+      "previewAvailable": {
+        "description": "The channel shows its posts on the web; without it only subscribers and description are available."
+      },
+      "mediaCounts": {
+        "description": "Photos, videos, links and files the channel has posted."
+      },
+      "postsAnalyzed": {
+        "description": "Recent posts the statistics are based on."
+      },
+      "statsBasedOnPosts": {
+        "description": "Settled posts the views, reach and engagement are averaged over: 2 to 30 days old, or the newest 20 older than 48 hours."
+      },
+      "firstPostAt": {
+        "description": "Date of the oldest post analysed."
+      },
+      "lastPostAt": {
+        "description": "Date of the latest post."
+      },
+      "daysSinceLastPost": {
+        "description": "Days since the latest post."
+      },
+      "active": {
+        "description": "Posted in the last 30 days. Silent channels get no price estimate: their views come from old posts."
+      },
+      "postsPerDay": {
+        "description": "Posts per day over the posts analysed."
+      },
+      "avgViews": {
+        "description": "Average views per post, from posts older than 48 hours (their views have settled)."
+      },
+      "medianViews": {
+        "description": "Median views per post, from posts older than 48 hours."
+      },
+      "reachPercent": {
+        "description": "Average views as a percentage of subscribers (ERR): how much of the audience actually reads."
+      },
+      "reactionsPerPost": {
+        "description": "Average reactions per post."
+      },
+      "engagementPercent": {
+        "description": "Reactions as a percentage of views."
+      },
+      "viewsTrendPercent": {
+        "description": "Change of median views from the older to the newer half of the posts analysed."
+      },
+      "forwardedPercent": {
+        "description": "Share of posts forwarded from other chats."
+      },
+      "adPosts": {
+        "description": "Posts with ad markers (erid, #реклама, #ad, ad law labels)."
+      },
+      "adPercent": {
+        "description": "Ad posts as a percentage of the posts analysed."
+      },
+      "adPostsPerWeek": {
+        "description": "Ad posts per week."
+      },
+      "lastAdPostAt": {
+        "description": "Date of the latest ad post."
+      },
+      "estimatedPostPriceUsd": {
+        "description": "Average views / 1000 × your CPM: a reference price for one ad post. Empty for channels silent for 30 days."
+      },
+      "cpmUsd": {
+        "description": "CPM used for the price estimate."
+      },
+      "script": {
+        "description": "Main script of the posts: Cyrillic, Latin, Thai, Arabic, CJK and others."
+      },
+      "topPosts": {
+        "description": "The three most viewed posts analysed."
+      },
+      "linkedChannels": {
+        "description": "Channels this channel mentions or forwards from, with the number of posts."
+      },
+      "contacts": {
+        "description": "Usernames, t.me links, emails and websites in the channel description (often the ad contact)."
+      },
+      "foundBy": {
+        "description": "input, or which input channels mentioned it."
+      },
+      "checkedAt": {
+        "description": "When the channel was checked."
+      }
+    }
+  },
+  "views": {
+    "overview": {
+      "title": "Channels",
+      "transformation": {
+        "fields": [
+          "username",
+          "url",
+          "title",
+          "subscribers",
+          "postsAnalyzed",
+          "lastPostAt",
+          "active",
+          "postsPerDay",
+          "avgViews",
+          "reachPercent",
+          "engagementPercent",
+          "adPosts",
+          "adPercent",
+          "estimatedPostPriceUsd",
+          "script"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "username": {
+            "label": "Channel",
+            "format": "text"
+          },
+          "url": {
+            "label": "Link",
+            "format": "link"
+          },
+          "title": {
+            "label": "Title",
+            "format": "text"
+          },
+          "subscribers": {
+            "label": "Subscribers",
+            "format": "number"
+          },
+          "postsAnalyzed": {
+            "label": "Posts",
+            "format": "number"
+          },
+          "lastPostAt": {
+            "label": "Last post",
+            "format": "date"
+          },
+          "postsPerDay": {
+            "label": "Posts/day",
+            "format": "number"
+          },
+          "avgViews": {
+            "label": "Avg views",
+            "format": "number"
+          },
+          "reachPercent": {
+            "label": "Reach %",
+            "format": "number"
+          },
+          "engagementPercent": {
+            "label": "Engagement %",
+            "format": "number"
+          },
+          "adPosts": {
+            "label": "Ad posts",
+            "format": "number"
+          },
+          "adPercent": {
+            "label": "Ads %",
+            "format": "number"
+          },
+          "estimatedPostPriceUsd": {
+            "label": "Est. price $",
+            "format": "number"
+          },
+          "script": {
+            "label": "Script",
+            "format": "text"
+          },
+          "active": {
+            "label": "Active",
+            "format": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

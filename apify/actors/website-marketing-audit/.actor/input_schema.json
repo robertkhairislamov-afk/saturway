@@ -1,0 +1,64 @@
+{
+  "title": "Website Marketing Audit",
+  "description": "Marketing setup of websites: pixels, analytics, CMS, chat, contacts, SEO basics and a score.",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "websites": {
+      "title": "Websites",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Websites to audit: <code>example.com</code> or full links. One home page is checked per site.",
+      "prefill": [
+        "https://www.allbirds.com",
+        "https://wordpress.org"
+      ],
+      "placeholderValue": "example.com"
+    },
+    "datasetId": {
+      "title": "Dataset of businesses (Google Maps Scraper)",
+      "type": "string",
+      "editor": "textfield",
+      "description": "ID of a dataset in your account, for example the results of the <a href='https://apify.com/compass/crawler-google-places'>Google Maps Scraper</a>. Each business's <code>website</code> is audited, and its name, category, phone, rating and reviews are carried over. Other datasets with a <code>website</code> or <code>url</code> field work too."
+    },
+    "includeNoWebsite": {
+      "title": "Include businesses without a website",
+      "type": "boolean",
+      "default": true,
+      "description": "From the dataset, also save businesses with no website or only a Facebook or other social page: often the best leads for a web or ads agency."
+    },
+    "maxMarketingScore": {
+      "title": "Save only sites scoring at most",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Keep only weaker setups, for example 60 for businesses with clear gaps. Sites above it are left out (free). Empty saves all."
+    },
+    "checkContactPage": {
+      "title": "Check the contact page",
+      "type": "boolean",
+      "default": true,
+      "description": "When the home page has no email, also read the site's contact or about page for emails, phones, chat buttons and social links."
+    },
+    "maxSites": {
+      "title": "Maximum sites",
+      "type": "integer",
+      "minimum": 1,
+      "default": 1000,
+      "description": "Stop after this many websites and businesses."
+    },
+    "proxyConfiguration": {
+      "title": "Proxy configuration",
+      "type": "object",
+      "editor": "proxy",
+      "sectionCaption": "Advanced",
+      "description": "Websites are opened directly. Turn on a proxy only if you need requests to come from another country.",
+      "prefill": {
+        "useApifyProxy": false
+      },
+      "default": {
+        "useApifyProxy": false
+      }
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "channel": {
+        "description": "Channel name."
+      },
+      "postId": {
+        "description": "Post number."
+      },
+      "url": {
+        "description": "Post link."
+      },
+      "date": {
+        "description": "Date."
+      },
+      "views": {
+        "description": "Views."
+      },
+      "reactions": {
+        "description": "Reactions."
+      },
+      "forwardedFrom": {
+        "description": "@name of the channel the post was forwarded from, when public."
+      },
+      "forwardedFromName": {
+        "description": "Name of the chat or person the post was forwarded from, as Telegram shows it."
+      },
+      "isAd": {
+        "description": "Has ad markers."
+      },
+      "media": {
+        "description": "photo, video, document, poll, voice."
+      },
+      "text": {
+        "description": "Post text."
+      },
+      "mentions": {
+        "description": "Channels the post mentions or links to."
+      }
+    }
+  },
+  "views": {
+    "overview": {
+      "title": "Posts",
+      "transformation": {
+        "fields": [
+          "channel",
+          "postId",
+          "url",
+          "date",
+          "views",
+          "reactions",
+          "isAd",
+          "text"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "channel": {
+            "label": "Channel",
+            "format": "text"
+          },
+          "postId": {
+            "label": "Post",
+            "format": "number"
+          },
+          "url": {
+            "label": "Link",
+            "format": "link"
+          },
+          "date": {
+            "label": "Date",
+            "format": "date"
+          },
+          "views": {
+            "label": "Views",
+            "format": "number"
+          },
+          "reactions": {
+            "label": "Reactions",
+            "format": "number"
+          },
+          "isAd": {
+            "label": "Ad",
+            "format": "boolean"
+          },
+          "text": {
+            "label": "Text",
+            "format": "text"
+          }
+        }
+      }
+    }
+  }
+}

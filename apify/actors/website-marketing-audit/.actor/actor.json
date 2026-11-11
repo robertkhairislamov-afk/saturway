@@ -1,0 +1,16 @@
+{
+  "actorSpecification": 1,
+  "name": "website-marketing-audit",
+  "title": "Website Marketing Audit: Pixels, Analytics & Lead Score",
+  "description": "Audit websites or a Google Maps leads list for marketing gaps: Meta Pixel, Google Analytics, Google Ads and TikTok tags (also inside Tag Manager), CMS, chat buttons, social profiles, emails, SEO basics, a 0-100 score and ready-made pitch reasons.",
+  "version": "0.1",
+  "buildTag": "latest",
+  "input": "./input_schema.json",
+  "storages": {
+    "dataset": "./dataset_schema.json",
+    "keyValueStore": "./key_value_store_schema.json"
+  },
+  "output": "./output_schema.json",
+  "dockerfile": "../Dockerfile",
+  "readme": "../README.md"
+}

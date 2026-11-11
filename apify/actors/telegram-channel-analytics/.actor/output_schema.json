@@ -1,0 +1,24 @@
+{
+  "actorOutputSchemaVersion": 1,
+  "title": "Telegram Channel Analytics output",
+  "properties": {
+    "channels": {
+      "type": "string",
+      "title": "Channels",
+      "description": "One record per channel or group, with reach, engagement, ads and price estimate.",
+      "template": "{{storages.datasets.default.apiUrl}}/items?view=overview"
+    },
+    "posts": {
+      "type": "string",
+      "title": "Posts",
+      "description": "The posts analysed, when Save posts is on.",
+      "template": "{{storages.datasets.posts.apiUrl}}/items?view=overview"
+    },
+    "summary": {
+      "type": "string",
+      "title": "Run summary",
+      "description": "Channels saved, skipped and failed, and why.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/SUMMARY"
+    }
+  }
+}

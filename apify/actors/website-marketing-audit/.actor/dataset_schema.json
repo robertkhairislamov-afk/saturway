@@ -1,0 +1,287 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "businessName": {
+        "description": "Business name (from the dataset)."
+      },
+      "category": {
+        "description": "Category (from the dataset)."
+      },
+      "address": {
+        "description": "Address (from the dataset)."
+      },
+      "city": {
+        "description": "City (from the dataset)."
+      },
+      "phone": {
+        "description": "Phone (from the dataset)."
+      },
+      "rating": {
+        "description": "Google rating (from the dataset)."
+      },
+      "reviewsCount": {
+        "description": "Google reviews (from the dataset)."
+      },
+      "mapsUrl": {
+        "description": "Google Maps link (from the dataset)."
+      },
+      "placeId": {
+        "description": "Google place id (from the dataset)."
+      },
+      "website": {
+        "description": "Website as given."
+      },
+      "domain": {
+        "description": "Domain."
+      },
+      "status": {
+        "description": "ok, no website, social page only, unreachable or error."
+      },
+      "error": {
+        "description": "Why the site could not be opened."
+      },
+      "httpStatus": {
+        "description": "HTTP status of the home page."
+      },
+      "finalUrl": {
+        "description": "Address the home page ended on after redirects."
+      },
+      "marketingScore": {
+        "description": "0 to 100: how complete the marketing setup is (HTTPS, mobile, analytics, pixels, SEO basics, chat, social, fresh content)."
+      },
+      "adTracking": {
+        "description": "Has at least one ad pixel or conversion tag: the business likely spends on ads."
+      },
+      "adPixels": {
+        "description": "Ad platforms tracked: Meta, Google Ads, TikTok, LinkedIn, Pinterest, Snapchat, X, Microsoft Ads, LINE, VK."
+      },
+      "foundInTagManager": {
+        "description": "Tags found only in the Google Tag Manager container, not in the page itself."
+      },
+      "gaps": {
+        "description": "What is missing, most valuable first: ready-made reasons to contact the business."
+      },
+      "emails": {
+        "description": "Emails the site publishes (home and contact page)."
+      },
+      "phones": {
+        "description": "Click-to-call phone numbers on the site."
+      },
+      "contactPageUrl": {
+        "description": "Contact page checked for contacts."
+      },
+      "cms": {
+        "description": "Website platform: WordPress, Wix, Shopify, Squarespace, Webflow, Tilda and others."
+      },
+      "technologies": {
+        "description": "Platforms and plugins detected."
+      },
+      "metaPixel": {
+        "description": "Meta (Facebook) Pixel."
+      },
+      "metaPixelIds": {
+        "description": "Meta Pixel ids."
+      },
+      "googleAnalytics": {
+        "description": "Google Analytics."
+      },
+      "googleAnalyticsIds": {
+        "description": "Google Analytics 4 ids (G-…)."
+      },
+      "universalAnalyticsIds": {
+        "description": "Old Universal Analytics ids (UA-…), no longer collecting data."
+      },
+      "googleTagManager": {
+        "description": "Google Tag Manager."
+      },
+      "googleTagManagerIds": {
+        "description": "Tag Manager container ids (GTM-…)."
+      },
+      "googleAds": {
+        "description": "Google Ads conversion or remarketing tag."
+      },
+      "googleAdsIds": {
+        "description": "Google Ads ids (AW-…)."
+      },
+      "tiktokPixel": {
+        "description": "TikTok Pixel."
+      },
+      "linkedinInsight": {
+        "description": "LinkedIn Insight Tag."
+      },
+      "pinterestTag": {
+        "description": "Pinterest Tag."
+      },
+      "snapPixel": {
+        "description": "Snap Pixel."
+      },
+      "xPixel": {
+        "description": "X (Twitter) Pixel."
+      },
+      "microsoftAds": {
+        "description": "Microsoft Advertising UET tag."
+      },
+      "lineTag": {
+        "description": "LINE Tag."
+      },
+      "yandexMetrica": {
+        "description": "Yandex Metrica."
+      },
+      "vkPixel": {
+        "description": "VK / Mail.ru pixel."
+      },
+      "hotjar": {
+        "description": "Hotjar."
+      },
+      "microsoftClarity": {
+        "description": "Microsoft Clarity."
+      },
+      "chat": {
+        "description": "Chat and messenger buttons: WhatsApp, LINE, Telegram, Messenger, Viber, live chats."
+      },
+      "booking": {
+        "description": "Booking and shop tools: Calendly, Fresha, Booksy, OpenTable, SiteMinder, online shop and others."
+      },
+      "social": {
+        "description": "Social profiles linked from the site."
+      },
+      "https": {
+        "description": "The site opens over HTTPS."
+      },
+      "sslError": {
+        "description": "The HTTPS certificate is broken; the site opened only over HTTP."
+      },
+      "responseTimeMs": {
+        "description": "Time to load the home page."
+      },
+      "pageSizeKb": {
+        "description": "Size of the home page HTML."
+      },
+      "title": {
+        "description": "Page title."
+      },
+      "metaDescription": {
+        "description": "Meta description."
+      },
+      "h1": {
+        "description": "First H1 heading."
+      },
+      "language": {
+        "description": "Language of the page (html lang)."
+      },
+      "mobileViewport": {
+        "description": "Has a mobile viewport (mobile-friendly layout)."
+      },
+      "openGraphImage": {
+        "description": "Has a share image for social media (og:image)."
+      },
+      "noindex": {
+        "description": "The home page asks search engines not to index it."
+      },
+      "structuredData": {
+        "description": "schema.org types on the page (LocalBusiness, Restaurant, Hotel, …)."
+      },
+      "copyrightYear": {
+        "description": "Latest copyright year shown."
+      },
+      "copyrightOutdated": {
+        "description": "Copyright year older than last year."
+      },
+      "checkedAt": {
+        "description": "When the site was checked."
+      }
+    }
+  },
+  "views": {
+    "overview": {
+      "title": "Audit",
+      "transformation": {
+        "fields": [
+          "businessName",
+          "category",
+          "rating",
+          "reviewsCount",
+          "domain",
+          "status",
+          "finalUrl",
+          "marketingScore",
+          "adTracking",
+          "adPixels",
+          "gaps",
+          "emails",
+          "cms",
+          "chat",
+          "mobileViewport"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "businessName": {
+            "label": "Business",
+            "format": "text"
+          },
+          "category": {
+            "label": "Category",
+            "format": "text"
+          },
+          "rating": {
+            "label": "Rating",
+            "format": "number"
+          },
+          "reviewsCount": {
+            "label": "Reviews",
+            "format": "number"
+          },
+          "domain": {
+            "label": "Domain",
+            "format": "text"
+          },
+          "status": {
+            "label": "Status",
+            "format": "text"
+          },
+          "finalUrl": {
+            "label": "Website",
+            "format": "link"
+          },
+          "marketingScore": {
+            "label": "Score",
+            "format": "number"
+          },
+          "adTracking": {
+            "label": "Ad tracking",
+            "format": "boolean"
+          },
+          "adPixels": {
+            "label": "Ad pixels",
+            "format": "array"
+          },
+          "gaps": {
+            "label": "Gaps",
+            "format": "array"
+          },
+          "emails": {
+            "label": "Emails",
+            "format": "array"
+          },
+          "cms": {
+            "label": "CMS",
+            "format": "text"
+          },
+          "chat": {
+            "label": "Chat",
+            "format": "array"
+          },
+          "mobileViewport": {
+            "label": "Mobile",
+            "format": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

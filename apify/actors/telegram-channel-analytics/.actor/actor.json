@@ -1,0 +1,19 @@
+{
+  "actorSpecification": 1,
+  "name": "telegram-channel-analytics",
+  "title": "Telegram Channel Analytics: Reach, ERR & Ad Price",
+  "description": "Analyse public Telegram channels before buying ads: exact subscribers, average views per post, reach (ERR), engagement, posting frequency, share of ad posts and an estimated price per post. Finds related channels too. No login, no API key.",
+  "version": "0.1",
+  "buildTag": "latest",
+  "input": "./input_schema.json",
+  "storages": {
+    "datasets": {
+      "default": "./dataset_schema.json",
+      "posts": "./dataset_posts_schema.json"
+    },
+    "keyValueStore": "./key_value_store_schema.json"
+  },
+  "output": "./output_schema.json",
+  "dockerfile": "../Dockerfile",
+  "readme": "../README.md"
+}

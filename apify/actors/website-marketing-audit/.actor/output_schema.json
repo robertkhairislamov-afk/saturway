@@ -1,0 +1,18 @@
+{
+  "actorOutputSchemaVersion": 1,
+  "title": "Website Marketing Audit output",
+  "properties": {
+    "audit": {
+      "type": "string",
+      "title": "Audit",
+      "description": "One record per website or business: score, ad pixels, gaps, contacts and details.",
+      "template": "{{links.apiDefaultDatasetUrl}}/items?view=overview"
+    },
+    "summary": {
+      "type": "string",
+      "title": "Run summary",
+      "description": "Sites audited, without a website, unreachable, protected and skipped.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/SUMMARY"
+    }
+  }
+}

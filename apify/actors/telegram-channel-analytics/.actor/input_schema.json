@@ -1,0 +1,88 @@
+{
+  "title": "Telegram Channel Analytics",
+  "description": "Reach, engagement, ad posts and price per post of public Telegram channels.",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "channels": {
+      "title": "Channels",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Public channels: <code>@name</code>, <code>name</code> or <code>https://t.me/name</code>. Public groups are listed with their members; users and bots are skipped.",
+      "prefill": [
+        "durov",
+        "telegram"
+      ],
+      "placeholderValue": "@channel"
+    },
+    "postsPerChannel": {
+      "title": "Posts to analyse per channel",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1000,
+      "default": 50,
+      "description": "Recent posts the statistics are based on. Very active channels are read a little further back, so that at least 10 posts are older than 48 hours."
+    },
+    "cpmUsd": {
+      "title": "Your CPM (USD)",
+      "type": "number",
+      "minimum": 0,
+      "default": 5,
+      "description": "Price per 1,000 views you expect to pay, for the estimated price of an ad post (average views / 1000 × CPM). Set it to the rate of your niche and market."
+    },
+    "discoverRelated": {
+      "title": "Find related channels",
+      "type": "boolean",
+      "default": false,
+      "sectionCaption": "Related channels",
+      "description": "Also check the channels your channels mention or forward from: a quick way to map a niche or a city's channels from a few you know."
+    },
+    "maxRelatedChannels": {
+      "title": "Maximum related channels",
+      "type": "integer",
+      "minimum": 0,
+      "default": 30,
+      "description": "How many related channels to check, the most mentioned first."
+    },
+    "discoveryDepth": {
+      "title": "Discovery depth",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 3,
+      "default": 1,
+      "description": "1: channels your channels mention. 2 and 3: also the channels those mention, for a wider map of a niche or city. The total stays within Maximum related channels."
+    },
+    "minSubscribers": {
+      "title": "Minimum subscribers of related channels",
+      "type": "integer",
+      "minimum": 0,
+      "default": 0,
+      "description": "Related channels and groups smaller than this are skipped (free). Channels you enter are always checked."
+    },
+    "includeGroups": {
+      "title": "Include public groups",
+      "type": "boolean",
+      "default": true,
+      "description": "Save public groups (chats) with their members and members online. Their messages are not read."
+    },
+    "includePosts": {
+      "title": "Save posts",
+      "type": "boolean",
+      "default": false,
+      "description": "Also save every post analysed (date, views, reactions, ad marker, text, mentions) to a separate dataset, free of charge."
+    },
+    "proxyConfiguration": {
+      "title": "Proxy configuration",
+      "type": "object",
+      "editor": "proxy",
+      "sectionCaption": "Advanced",
+      "description": "The Actor connects directly. If Telegram starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it from the start.",
+      "prefill": {
+        "useApifyProxy": false
+      },
+      "default": {
+        "useApifyProxy": false
+      }
+    }
+  }
+}

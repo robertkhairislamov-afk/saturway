@@ -1,0 +1,3 @@
+=b.fbq=function(){a.callMethod?a.callMethod.apply(a,arguments):a.queue.push(arguments)},b._fbq||(b._fbq=a),a.push=a,a.loaded=!0,a.version=\"2.0\",a.queue=[],c=e.createElement(f),c.async=!0,c.src=g,d=e.getElementsByTagName(f)[0],d.parentNode.insertBefore(c,d))}(window,document,\"script\",\"https:\/\/connect.facebook.net\/en_US\/fbevents.js\");var fbcValue=",["escape",["macro",67],8,16],";fbcValue?fbq(\"init\",\"",["escape",["macro",69],7],"\",{fbc:fbcValue}):fbq(\"init\",\"",["escape",["macro",69],7],"\");\nfbq(\"tr
+85},{"function":"__googtag","vtp_tagId":"AW-786649265","tag_id":1476},{"function":"__googtag",
+key","keeptheamazonprime\\.com","value","G-KJL05B1DJZ"],["map","key","((ww

@@ -46,16 +46,15 @@ The owner (Mozart Standard Co., Pattaya, Thailand) runs an Apify Store portfolio
 
 ## Open work (12.11.2026)
 
-1. **UAE Property Deals** (`apify/actors/uae-property-deals`): code and tests ready, not yet on
-   Apify (the token was rotated after Apify's security incident of 9–11.11). Create the private
-   Actor, price $5 per 1000 listings like `telegram-channel-analytics`, deploy, test on Dubai Marina
-   and on Abu Dhabi, then give the owner the icon prompt (next number in icon-prompts.md).
+1. **UAE Property Deals** (`robertosan16/uae-property-deals`): published 12.11 with its icon,
+   build 0.1.3, $5 per 1000 listings. Not yet in Store search results on 12.11 (check again).
 2. **DLD CSV**: the owner downloads transaction CSVs from dubailand.gov.ae by hand (the search has a
    reCAPTCHA) and uploads them to the Apify key-value store; add CSV input to the UAE Actor once
    the first file arrives. The friend in Dubai checks which DLD datasets data.dubai offers.
-3. **Store check on 17.11** (scheduled in the earlier session): users and search positions of
-   Google Play Developer Leads, ASO Keyword Rank Tracker, Telegram Channel Analytics and Website
-   Marketing Audit against competitors.
-4. Reviews offer (Apify, $20): G2 reviews of 10.11 in moderation; TrustRadius pending; no reply
-   from Oliver at Apify yet.
+3. **Store check on 17.11** (scheduled): users and search positions of Google Play Developer
+   Leads, ASO Keyword Rank Tracker, Telegram Channel Analytics, Website Marketing Audit and UAE
+   Property Deals against competitors.
+4. Reviews offer (Apify, $20): Trustpilot and G2 published (G2 approved 12.11); TrustRadius
+   waiting for approval; Capterra link not found yet. The reward form needs all 4 published review
+   links and can be sent only once: do not send it before that.
 5. Thai property: Pattaya weekly schedule runs on Mondays with page checks.

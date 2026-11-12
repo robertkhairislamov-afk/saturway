@@ -25,7 +25,7 @@ function readInput(raw) {
   if (badType) throw new Error(`Unknown property type "${badType}". Use ${Object.keys(PROPERTY_TYPES).join(', ')}.`);
   let areas = toList(raw.areas).map(areaSlug).filter(Boolean);
   if (!toList(raw.areas).length && raw.areas === undefined) areas = emirate === 'dubai' ? ['dubai-marina'] : [];
-  const maxListings = Number(raw.maxListings ?? 1000);
+  const maxListings = Number(raw.maxListings ?? 300);
   if (!Number.isInteger(maxListings) || maxListings < 1) throw new Error('"maxListings" must be a whole number, 1 or more.');
   const minDiscount = Number(raw.minDiscount ?? 10);
   const minConfidence = String(raw.minConfidence ?? 'medium').toLowerCase();
@@ -189,7 +189,9 @@ try {
   const wanted = input.onlyBelowMarket
     ? records.filter((r) => r.discountPercent != null && r.discountPercent >= input.minDiscount && CONFIDENCE_RANK[r.confidence] >= CONFIDENCE_RANK[input.minConfidence])
     : records;
-  wanted.sort((a, b) => (b.discountPercent ?? -999) - (a.discountPercent ?? -999));
+  // Trustworthy finds first (high, then medium), then the rest; within each, the biggest discount first.
+  const trust = (r) => (r.discountPercent == null ? 0 : CONFIDENCE_RANK[r.confidence] >= 2 ? 2 : 1);
+  wanted.sort((a, b) => trust(b) - trust(a) || (b.discountPercent ?? -999) - (a.discountPercent ?? -999));
   const budget = Actor.getChargingManager().calculateMaxEventChargeCountWithinLimit(ITEM_EVENT);
   const toSave = wanted.slice(0, budget);
   for (let i = 0; i < toSave.length; i += 500) await Actor.pushData(toSave.slice(i, i + 500));

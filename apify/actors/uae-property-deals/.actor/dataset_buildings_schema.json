@@ -1,0 +1,129 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "building": {
+        "description": "Building."
+      },
+      "community": {
+        "description": "Community."
+      },
+      "dealsLastYear": {
+        "description": "Sales in the last 12 months."
+      },
+      "averageSalePrice": {
+        "description": "Average sale price (AED)."
+      },
+      "averageSalePricePerSqftSite": {
+        "description": "Average sale price per sqft as Property Finder shows it."
+      },
+      "salePriceChangePercent": {
+        "description": "Change of the average sale price over a year."
+      },
+      "averageAnnualRent": {
+        "description": "Average yearly rent of new contracts (AED)."
+      },
+      "roiPercent": {
+        "description": "Yearly return as Property Finder estimates it."
+      },
+      "grossYieldPercent": {
+        "description": "Average rent / average sale price (rough)."
+      },
+      "dealsRemembered": {
+        "description": "Sales remembered across runs (Property Finder shows the latest 10 a run)."
+      },
+      "medianDealPricePerSqft": {
+        "description": "Median price per sqft of the remembered sales."
+      },
+      "listings": {
+        "description": "Listings analysed in the building."
+      },
+      "medianListingPricePerSqft": {
+        "description": "Median asking price per sqft."
+      },
+      "listingPremiumPercent": {
+        "description": "How much asking prices are above sold prices."
+      },
+      "belowMarketListings": {
+        "description": "Listings at least 10% below market with medium or high confidence."
+      },
+      "locationSlug": {
+        "description": "Location id in Property Finder links."
+      },
+      "emirate": {
+        "description": "Emirate."
+      }
+    }
+  },
+  "views": {
+    "overview": {
+      "title": "Buildings",
+      "transformation": {
+        "fields": [
+          "building",
+          "community",
+          "dealsLastYear",
+          "averageSalePrice",
+          "salePriceChangePercent",
+          "averageAnnualRent",
+          "roiPercent",
+          "grossYieldPercent",
+          "listings",
+          "listingPremiumPercent",
+          "belowMarketListings"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "building": {
+            "label": "Building",
+            "format": "text"
+          },
+          "community": {
+            "label": "Community",
+            "format": "text"
+          },
+          "dealsLastYear": {
+            "label": "Deals 12m",
+            "format": "number"
+          },
+          "averageSalePrice": {
+            "label": "Avg sale",
+            "format": "number"
+          },
+          "salePriceChangePercent": {
+            "label": "Change %",
+            "format": "number"
+          },
+          "averageAnnualRent": {
+            "label": "Avg rent",
+            "format": "number"
+          },
+          "roiPercent": {
+            "label": "ROI %",
+            "format": "number"
+          },
+          "grossYieldPercent": {
+            "label": "Gross yield %",
+            "format": "number"
+          },
+          "listings": {
+            "label": "Listings",
+            "format": "number"
+          },
+          "listingPremiumPercent": {
+            "label": "Asking premium %",
+            "format": "number"
+          },
+          "belowMarketListings": {
+            "label": "Below market",
+            "format": "number"
+          }
+        }
+      }
+    }
+  }
+}

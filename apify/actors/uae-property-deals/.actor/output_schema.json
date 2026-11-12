@@ -1,0 +1,24 @@
+{
+  "actorOutputSchemaVersion": 1,
+  "title": "UAE Property Deals output",
+  "properties": {
+    "listings": {
+      "type": "string",
+      "title": "Listings vs market",
+      "description": "Each listing with its market value, discount and confidence, best deals first.",
+      "template": "{{storages.datasets.default.apiUrl}}/items?view=overview"
+    },
+    "buildings": {
+      "type": "string",
+      "title": "Buildings",
+      "description": "Deals, prices, rents and yield of each building.",
+      "template": "{{storages.datasets.buildings.apiUrl}}/items?view=overview"
+    },
+    "summary": {
+      "type": "string",
+      "title": "Run summary",
+      "description": "Searches, listings analysed and skipped, buildings checked.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/SUMMARY"
+    }
+  }
+}

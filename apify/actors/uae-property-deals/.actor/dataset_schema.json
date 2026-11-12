@@ -1,0 +1,250 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "discountPercent": {
+        "description": "How far the price is below the market value (negative: above)."
+      },
+      "confidence": {
+        "description": "high: verified listing, comparable sales close together and the price below every one of them; medium: verified, comparables within 60%; low: the rest (hotel units, unverified listings, scattered comparables)."
+      },
+      "comparisonBasis": {
+        "description": "deals: real sales of the same layout (Dubai, DLD); listings: other listings of the same layout (Abu Dhabi, Sharjah, or Dubai buildings without enough deals)."
+      },
+      "building": {
+        "description": "Building or sub-community."
+      },
+      "community": {
+        "description": "Community and area."
+      },
+      "emirate": {
+        "description": "Dubai, Abu Dhabi or Sharjah."
+      },
+      "propertyType": {
+        "description": "Apartment, Villa, Townhouse or Penthouse."
+      },
+      "bedrooms": {
+        "description": "Bedrooms (0 = studio)."
+      },
+      "bathrooms": {
+        "description": "Bathrooms."
+      },
+      "sizeSqft": {
+        "description": "Size in sqft."
+      },
+      "price": {
+        "description": "Asking price in AED."
+      },
+      "pricePerSqft": {
+        "description": "Asking price per sqft."
+      },
+      "marketValue": {
+        "description": "Value from comparables: their median price per sqft × this listing's size."
+      },
+      "marketPricePerSqft": {
+        "description": "Median price per sqft of the comparables."
+      },
+      "comparables": {
+        "description": "Number of comparable sales (or listings) of the same building, bedrooms, status and size within 15%."
+      },
+      "comparablePrices": {
+        "description": "Their prices, lowest first."
+      },
+      "lastComparableDate": {
+        "description": "Date of the latest comparable sale."
+      },
+      "completion": {
+        "description": "ready or off-plan."
+      },
+      "sameLayoutListings": {
+        "description": "Listings of the same building, bedrooms and size on sale now (supply)."
+      },
+      "sameLayoutMinPrice": {
+        "description": "Lowest asking price of that layout."
+      },
+      "sameLayoutMedianPrice": {
+        "description": "Median asking price of that layout."
+      },
+      "buildingDealsLastYear": {
+        "description": "Sales in the building in the last 12 months."
+      },
+      "buildingRoiPercent": {
+        "description": "Yearly return of the building as Property Finder estimates it."
+      },
+      "buildingGrossYieldPercent": {
+        "description": "Average yearly rent / average sale price of the building (rough)."
+      },
+      "daysListed": {
+        "description": "Days since the listing was published."
+      },
+      "firstSeenAt": {
+        "description": "First run that saw the listing (with the same history name)."
+      },
+      "previousPrice": {
+        "description": "Price at the run before the last price change."
+      },
+      "priceChange": {
+        "description": "Change since that price (negative: reduced)."
+      },
+      "priceChangedAt": {
+        "description": "Run that saw the change."
+      },
+      "verified": {
+        "description": "Verified by Property Finder."
+      },
+      "priceDropOnSite": {
+        "description": "Property Finder marks a price drop."
+      },
+      "furnished": {
+        "description": "Furnishing."
+      },
+      "agency": {
+        "description": "Agency."
+      },
+      "reraPermit": {
+        "description": "Advertising permit number."
+      },
+      "reference": {
+        "description": "Agency reference."
+      },
+      "listedAt": {
+        "description": "Publication date."
+      },
+      "refreshedAt": {
+        "description": "Last refresh on the site."
+      },
+      "title": {
+        "description": "Listing title."
+      },
+      "url": {
+        "description": "Listing link."
+      },
+      "listingId": {
+        "description": "Property Finder listing id."
+      },
+      "location": {
+        "description": "Full location."
+      },
+      "locationSlug": {
+        "description": "Location id in Property Finder links."
+      },
+      "locationId": {
+        "description": "Location id."
+      },
+      "locationType": {
+        "description": "TOWER, SUBCOMMUNITY or COMMUNITY."
+      },
+      "latitude": {
+        "description": "Latitude."
+      },
+      "longitude": {
+        "description": "Longitude."
+      },
+      "priceHidden": {
+        "description": "Price hidden on the site."
+      },
+      "currency": {
+        "description": "AED."
+      },
+      "checkedAt": {
+        "description": "When the run analysed the listing."
+      }
+    }
+  },
+  "views": {
+    "overview": {
+      "title": "Listings vs market",
+      "transformation": {
+        "fields": [
+          "discountPercent",
+          "confidence",
+          "comparisonBasis",
+          "building",
+          "community",
+          "bedrooms",
+          "sizeSqft",
+          "price",
+          "marketValue",
+          "comparables",
+          "completion",
+          "daysListed",
+          "priceChange",
+          "agency",
+          "title",
+          "url"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "discountPercent": {
+            "label": "Below market %",
+            "format": "number"
+          },
+          "confidence": {
+            "label": "Confidence",
+            "format": "text"
+          },
+          "comparisonBasis": {
+            "label": "Basis",
+            "format": "text"
+          },
+          "building": {
+            "label": "Building",
+            "format": "text"
+          },
+          "community": {
+            "label": "Community",
+            "format": "text"
+          },
+          "bedrooms": {
+            "label": "Beds",
+            "format": "number"
+          },
+          "sizeSqft": {
+            "label": "Sqft",
+            "format": "number"
+          },
+          "price": {
+            "label": "Price AED",
+            "format": "number"
+          },
+          "marketValue": {
+            "label": "Market value",
+            "format": "number"
+          },
+          "comparables": {
+            "label": "Comparables",
+            "format": "number"
+          },
+          "completion": {
+            "label": "Status",
+            "format": "text"
+          },
+          "daysListed": {
+            "label": "Days listed",
+            "format": "number"
+          },
+          "priceChange": {
+            "label": "Price change",
+            "format": "number"
+          },
+          "agency": {
+            "label": "Agency",
+            "format": "text"
+          },
+          "title": {
+            "label": "Title",
+            "format": "text"
+          },
+          "url": {
+            "label": "Link",
+            "format": "link"
+          }
+        }
+      }
+    }
+  }
+}

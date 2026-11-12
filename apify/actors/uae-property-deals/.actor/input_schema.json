@@ -1,0 +1,116 @@
+{
+  "title": "UAE Property Deals",
+  "description": "Listings compared with real sales of the same layout.",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "emirate": {
+      "title": "Emirate",
+      "type": "string",
+      "editor": "select",
+      "enum": [
+        "dubai",
+        "abu-dhabi",
+        "sharjah"
+      ],
+      "enumTitles": [
+        "Dubai (compared with real DLD sales)",
+        "Abu Dhabi (compared with listings)",
+        "Sharjah (compared with listings)"
+      ],
+      "default": "dubai",
+      "description": "Dubai listings are compared with real sales registered with the Dubai Land Department. Abu Dhabi and Sharjah sales are not published there, so listings are compared with other listings of the same layout."
+    },
+    "areas": {
+      "title": "Areas",
+      "type": "array",
+      "editor": "stringList",
+      "prefill": [
+        "dubai-marina"
+      ],
+      "description": "Communities or buildings as Property Finder names them: <code>dubai-marina</code>, <code>jumeirah-village-circle</code>, <code>business-bay</code>, <code>al-reem-island</code>, or a Property Finder search link. Empty: the whole emirate (large: set Maximum listings)."
+    },
+    "propertyTypes": {
+      "title": "Property types",
+      "type": "array",
+      "editor": "select",
+      "items": {
+        "type": "string",
+        "enum": [
+          "apartments",
+          "villas",
+          "townhouses",
+          "penthouses"
+        ],
+        "enumTitles": [
+          "Apartments",
+          "Villas",
+          "Townhouses",
+          "Penthouses"
+        ]
+      },
+      "default": [
+        "apartments"
+      ],
+      "description": "Types to analyse."
+    },
+    "maxListings": {
+      "title": "Maximum listings",
+      "type": "integer",
+      "minimum": 1,
+      "default": 1000,
+      "description": "Stop reading listings after this many. Each listing analysed is one result."
+    },
+    "onlyBelowMarket": {
+      "title": "Save only listings below market",
+      "type": "boolean",
+      "default": false,
+      "sectionCaption": "Deals only",
+      "description": "Save only listings at least Minimum discount below market with at least Minimum confidence. Off: every analysed listing is saved, with its market value and discount."
+    },
+    "minDiscount": {
+      "title": "Minimum discount %",
+      "type": "number",
+      "default": 10,
+      "description": "Used with Save only listings below market."
+    },
+    "minConfidence": {
+      "title": "Minimum confidence",
+      "type": "string",
+      "editor": "select",
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ],
+      "default": "medium",
+      "description": "Used with Save only listings below market. In our checks, high and medium finds held up; low ones were hotel units, unverified listings or scattered comparables."
+    },
+    "includeRentData": {
+      "title": "Rents and yields",
+      "type": "boolean",
+      "default": true,
+      "sectionCaption": "Advanced",
+      "description": "Read each building's rent page too, for average rent, ROI and gross yield (one more page per building)."
+    },
+    "historyName": {
+      "title": "History name",
+      "type": "string",
+      "editor": "textfield",
+      "default": "uae-property-history",
+      "description": "Listings and deals are remembered in a key-value store of this name in your account: price changes show, and each building's deal history grows beyond the 10 sales a page shows. Use another name for a separate project."
+    },
+    "proxyConfiguration": {
+      "title": "Proxy configuration",
+      "type": "object",
+      "editor": "proxy",
+      "description": "The Actor connects directly at a gentle pace. Turn on a proxy only if you need it.",
+      "prefill": {
+        "useApifyProxy": false
+      },
+      "default": {
+        "useApifyProxy": false
+      }
+    }
+  }
+}

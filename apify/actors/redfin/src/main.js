@@ -286,5 +286,5 @@ try {
   await Actor.exit(message);
 } catch (error) {
   log.error(error.message);
-  await Actor.fail(error.message);
+  await Actor.fail(`${error.message} If this looks wrong, please report it in the Issues tab of this Actor and we will fix it quickly.`);
 }

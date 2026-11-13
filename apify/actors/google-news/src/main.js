@@ -169,7 +169,7 @@ const message = `Saved ${saved} article(s) from ${summary.length} feed(s)${resol
 log.info(message);
 // Every feed failed and nothing was saved: say so instead of finishing with an empty dataset.
 if (summary.length > 0 && saved === 0 && failed.length === summary.length) {
-  await Actor.fail(`No Google News feed could be read. First error: ${failed[0].error}`);
+  await Actor.fail(`No Google News feed could be read. First error: ${failed[0].error}. If this looks wrong, please report it in the Issues tab of this Actor and we will fix it quickly.`);
 } else {
   await Actor.exit(message);
 }

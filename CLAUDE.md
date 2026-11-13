@@ -46,8 +46,11 @@ The owner (Mozart Standard Co., Pattaya, Thailand) runs an Apify Store portfolio
 
 ## Open work (12.11.2026)
 
-1. **UAE Property Deals** (`robertosan16/uae-property-deals`): published 12.11 with its icon,
-   build 0.1.3, $5 per 1000 listings. Not yet in Store search results on 12.11 (check again).
+1. **UAE Property Deals** (`robertosan16/uae-property-deals`): published 12.11, build 0.1.3.
+   Property Finder's terms (checked 13.11, after publishing) forbid automated access and commercial
+   use of its content. The owner waits for the Dubai friend's answer on rebuilding it on official
+   DLD data (option C); until then it stays published by the owner's decision. Check the terms of
+   use of every new source BEFORE building, not only robots.txt.
 2. **DLD CSV**: the owner downloads transaction CSVs from dubailand.gov.ae by hand (the search has a
    reCAPTCHA) and uploads them to the Apify key-value store; add CSV input to the UAE Actor once
    the first file arrives. The friend in Dubai checks which DLD datasets data.dubai offers.

@@ -21,6 +21,8 @@ The owner (Mozart Standard Co., Pattaya, Thailand) runs an Apify Store portfolio
   pay per event `apify-default-dataset-item`, tiers FREE/BRONZE/SILVER/GOLD+ (e.g. $5, 4.50, 4,
   3.50 per 1000). Price changes are the owner's decision.
 - Test on the platform with real runs (empty input and a real input) before saying it works.
+  Never start deliberately failing runs on published Actors (they count in the success rate and the
+  quality score); test error paths locally.
 
 ## Rules (agreed with the owner)
 

@@ -12,6 +12,8 @@ import * as greenhouse from './greenhouse.js';
 import * as indeed from './indeed.js';
 import * as infojobs from './infojobs.js';
 import * as lever from './lever.js';
+import * as personio from './personio.js';
+import * as teamtailor from './teamtailor.js';
 import * as linkedin from './linkedin.js';
 import * as reed from './reed.js';
 import * as seek from './seek.js';
@@ -127,6 +129,8 @@ export const CAREER_SITES = {
   lever: { adapter: lever, host: /(^|\.)lever\.co$/i },
   ashby: { adapter: ashby, host: /(^|\.)ashbyhq\.com$/i },
   workday: { adapter: workday, host: /(^|\.)(myworkdayjobs|myworkdaysite)\.com$/i },
+  personio: { adapter: personio, host: personio.HOST },
+  teamtailor: { adapter: teamtailor, host: teamtailor.HOST },
 };
 
 const toList = (value) => (Array.isArray(value) ? value : value ? [value] : []).map((item) => String(item).trim()).filter(Boolean);
@@ -213,7 +217,7 @@ export function parseCompany(value) {
   let text = String(value ?? '').trim();
   if (!KEY.test(text)) {
     const site = careerSiteOf(text);
-    if (!site) throw new Error('this is not a supported career site link. Paste the link of a Greenhouse, Lever, Ashby or Workday job board, or search with keywords and countries.');
+    if (!site) throw new Error('this is not a supported career site link. Paste the link of a Greenhouse, Lever, Ashby, Workday, Personio or Teamtailor job board, or search with keywords and countries.');
     text = keyOf(site, text);
   }
   const [, site, keywordPart, inner] = KEY.exec(text);

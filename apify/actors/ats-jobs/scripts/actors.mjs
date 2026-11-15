@@ -216,15 +216,15 @@ export const ACTORS = {
   },
   careers: {
     name: 'career-page-jobs-scraper',
-    title: 'Career Page Jobs Scraper: Greenhouse, Lever, Ashby, Workday',
-    tagline: 'company career sites on Greenhouse, Lever, Ashby and Workday by name, domain or link, or a search across 2,600+ companies',
+    title: 'Career Page Jobs Scraper: Greenhouse, Lever, Workday & 3 More',
+    tagline: 'company career sites on Greenhouse, Lever, Ashby, Workday, Personio and Teamtailor by name, domain or link, or a search across 2,600+ companies',
     apiExample: { companies: ['stripe', 'notion.so', 'https://jobs.lever.co/zoox'], keywords: ['engineer'], maxItems: 50 },
-    description: 'Get every open job from company career sites on Greenhouse, Lever, Ashby and Workday. Enter company names, domains or job board links, or search 2,600+ companies at once by job title. Salary ranges, departments, locations, full descriptions, one format.',
-    seoTitle: 'Career Page Jobs Scraper – Greenhouse, Lever, Ashby, Workday',
-    seoDescription: 'Scrape jobs from company career pages on Greenhouse, Lever, Ashby and Workday by company name, domain or link, or search 2,600+ companies. $1.50 per 1,000 jobs.',
+    description: 'Get every open job from company career sites on Greenhouse, Lever, Ashby, Workday, Personio and Teamtailor. Enter company names, domains or job board links, or search 2,600+ companies at once by job title. Salary ranges, departments, locations, full descriptions, one format.',
+    seoTitle: 'Career Page Jobs – Greenhouse, Lever, Workday, Personio',
+    seoDescription: 'Jobs from company career pages on Greenhouse, Lever, Ashby, Workday, Personio and Teamtailor by company name, domain or link. $1.50 per 1,000 jobs.',
     companies: {
       title: 'Companies',
-      description: 'Company names, website domains or job board links, one per line, for example <code>Stripe</code>, <code>notion.so</code> or <code>https://jobs.lever.co/zoox</code>. The Actor finds each company\'s board on Greenhouse, Lever or Ashby; Workday boards need their link (or the company must be in the directory). Leave empty to search every company with <b>Search all companies</b>.',
+      description: 'Company names, website domains or job board links, one per line, for example <code>Stripe</code>, <code>notion.so</code> or <code>https://jobs.lever.co/zoox</code>. The Actor finds each company\'s board on Greenhouse, Lever, Ashby, Personio or Teamtailor; Workday boards need their link (or the company must be in the directory). Leave empty to search every company with <b>Search all companies</b>.',
       prefill: ['airbnb', 'https://jobs.lever.co/zoox', 'ramp'],
       placeholder: 'stripe.com',
     },
@@ -1527,7 +1527,7 @@ function careersInputSchema() {
   return {
     ...schema,
     title: ACTORS.careers.title,
-    description: 'Get every open job from company career sites on Greenhouse, Lever, Ashby and Workday, by company or across the whole directory.',
+    description: 'Get every open job from company career sites on Greenhouse, Lever, Ashby, Workday, Personio and Teamtailor, by company or across the whole directory.',
     properties: {
       companies: {
         ...companies,
@@ -1540,7 +1540,7 @@ function careersInputSchema() {
         title: 'Search all companies',
         type: 'boolean',
         default: false,
-        description: `Search every company in the built-in directory (${careers.directorySize().toLocaleString('en-US')} career sites found and checked on Greenhouse, Lever, Ashby and Workday), keeping the jobs whose title matches your <b>Title keywords</b>. Title keywords are required here.`,
+        description: `Search every company in the built-in directory (${careers.directorySize().toLocaleString('en-US')} career sites found and checked on the supported systems), keeping the jobs whose title matches your <b>Title keywords</b>. Title keywords are required here.`,
       },
       platforms: {
         title: 'Career site systems',
@@ -1595,7 +1595,7 @@ function multiInputSchema() {
         title: 'Company career sites',
         type: 'array',
         editor: 'stringList',
-        description: 'Links to company job boards on Greenhouse, Lever, Ashby or Workday, for example <code>https://boards.greenhouse.io/airbnb</code>. Jobs whose title contains your keywords are added; without keywords, all their jobs.',
+        description: 'Links to company job boards on Greenhouse, Lever, Ashby, Workday, Personio or Teamtailor, for example <code>https://boards.greenhouse.io/airbnb</code>. Jobs whose title contains your keywords are added; without keywords, all their jobs.',
         placeholderValue: 'https://jobs.lever.co/zoox',
       },
       remoteOnly: {
@@ -1635,6 +1635,8 @@ const EXTRA_COLUMN = {
   greenhouse: ['department', 'Department'],
   lever: ['department', 'Department'],
   ashby: ['department', 'Department'],
+  personio: ['department', 'Department'],
+  teamtailor: ['department', 'Department'],
   dice: ['employmentType', 'Employment'],
   wttj: ['employmentType', 'Contract'],
   seek: ['employmentType', 'Work type'],
@@ -1836,6 +1838,8 @@ const SITE_FIELDS = {
   lever: [],
   ashby: [],
   workday: [],
+  personio: [],
+  teamtailor: [],
   dice: ['skills', 'easyApply', 'employerType', 'validThrough', 'companyLogoUrl'],
   wttj: ['skills', 'tools', 'experienceLevel', 'educationLevel', 'contractDurationMonths', 'startDate', 'language', 'companyIndustry', 'companySize', 'companySummary', 'companyLogoUrl'],
   seek: SEEK_FIELDS,
@@ -1853,7 +1857,7 @@ const SITE_FIELDS = {
 };
 // All-in-One searches many of the sites, so its records can have any of their fields.
 SITE_FIELDS.multi = [...new Set(Object.values(SITE_FIELDS).flat())];
-SITE_FIELDS.careers = [...new Set(['greenhouse', 'lever', 'ashby', 'workday'].flatMap((site) => SITE_FIELDS[site]))];
+SITE_FIELDS.careers = [...new Set(['greenhouse', 'lever', 'ashby', 'workday', 'personio', 'teamtailor'].flatMap((site) => SITE_FIELDS[site]))];
 
 // The `fields` part of the dataset schema: every field with its description, and any other field allowed.
 export const fieldsSchema = (ats) => {

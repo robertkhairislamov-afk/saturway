@@ -1,6 +1,6 @@
 # All-in-One Jobs Scraper
 
-**Search LinkedIn, Indeed, Glassdoor and 8 more job boards at once, plus company career sites.** Enter keywords and countries, and get jobs from LinkedIn, Indeed, Glassdoor, Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet, JobsDB, Reed and InfoJobs, plus the Greenhouse, Lever, Ashby or Workday career sites of the companies you add, in one format, with duplicates across sites removed. Salary as numbers, full descriptions, apply links. **$1 per 1,000 jobs, no start fee.**
+**Search LinkedIn, Indeed, Glassdoor and 8 more job boards at once, plus company career sites.** Enter keywords and countries, and get jobs from LinkedIn, Indeed, Glassdoor, Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet, JobsDB, Reed and InfoJobs, plus the Greenhouse, Lever, Ashby, Workday, Personio or Teamtailor career sites of the companies you add, in one format, with duplicates across sites removed. Salary as numbers, full descriptions, apply links. **$1 per 1,000 jobs, no start fee.**
 
 One search, many job sites: the Actor sends your keywords to every job board that covers your countries, reads the career sites of the companies you list, and merges everything into one clean table. A job with the same title, company and city on two sites is saved once, and duplicates are free. Each job keeps its source, so you always know where it came from. Run it on a schedule to get **only new jobs** from all sites at once. No browser, no login.
 
@@ -11,7 +11,7 @@ One search, many job sites: the Actor sends your keywords to every job board tha
 - 🌐 **Indeed included**: Indeed jobs in all 62 countries, with salaries, job types, benefits and company size, even past Indeed's limit of about 1,000 jobs per search.
 - ⭐ **Glassdoor included**: Glassdoor jobs in all 62 countries, with the company's Glassdoor rating, size, revenue and industry, and Glassdoor's salary estimate where the employer states no pay.
 - 🔎 **One simple input**: keywords, countries and, for one country, a city. No site-specific settings needed.
-- 🏢 **Company career sites by link**: paste any Greenhouse, Lever, Ashby or Workday job board link; the system is recognized automatically. These systems have no search across companies, so only the companies you add are read. Your keywords pick their jobs by title.
+- 🏢 **Company career sites by link**: paste any Greenhouse, Lever, Ashby, Workday, Personio or Teamtailor job board link; the system is recognized automatically. These systems have no search across companies, so only the companies you add are read. Your keywords pick their jobs by title.
 - 🧹 **Duplicates removed**: a job with the same title, company and city from two sites or two searches is saved once, and you do not pay for it. The FAQ explains what this match can miss.
 - 💰 **Salary as numbers** in the local currency: "$120k - $140k p.a.", "RM 3,800 – RM 5,000 per month" or "€75,000-85,000" become `min`, `max`, `currency` and `interval`.
 - 🎛️ **Filters for all sites**: remote only, posted in the last N days, only jobs with a salary, title must contain, exclude words. LinkedIn is left out of remote searches, because it does not show visitors which jobs are remote.
@@ -34,7 +34,7 @@ One search, many job sites: the Actor sends your keywords to every job board tha
 | Malaysia, Singapore, Philippines, Indonesia | Jobstreet |
 | Hong Kong, Thailand | JobsDB |
 | Austria, Switzerland, Portugal, Poland, Czechia, Hungary, Romania, Greece, Ukraine, Sweden, Denmark, Norway, Finland, Türkiye, Israel, United Arab Emirates, Saudi Arabia, Qatar, Kuwait, Bahrain, Oman, Egypt, Morocco, Nigeria, South Africa, India, Pakistan, Japan, South Korea, China, Taiwan, Vietnam, Brazil, Mexico, Argentina, Chile, Colombia, Peru, Ecuador, Uruguay, Venezuela, Costa Rica, Panama | LinkedIn, Indeed and Glassdoor only |
-| Any country | Greenhouse, Lever, Ashby and Workday career sites you add |
+| Any country | Greenhouse, Lever, Ashby, Workday, Personio and Teamtailor career sites you add |
 
 ## What data does it extract?
 

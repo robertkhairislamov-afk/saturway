@@ -1,5 +1,5 @@
-// Career Page Jobs Scraper: open jobs from company career sites on Greenhouse, Lever, Ashby and
-// Workday. A company can be given by its job board link, its website domain or just its name (the
+// Career Page Jobs Scraper: open jobs from company career sites on Greenhouse, Lever, Ashby,
+// Workday, Personio and Teamtailor. A company can be given by its job board link, its website domain or just its name (the
 // Actor finds its board); or every company in the built-in directory is searched at once, with
 // the title, location and other filters picking the jobs.
 
@@ -8,6 +8,8 @@ import { readFileSync } from 'node:fs';
 import * as ashby from './ashby.js';
 import * as greenhouse from './greenhouse.js';
 import * as lever from './lever.js';
+import * as personio from './personio.js';
+import * as teamtailor from './teamtailor.js';
 import { CAREER_SITES, careerSiteOf } from './multi.js';
 import * as workday from './workday.js';
 
@@ -21,7 +23,7 @@ export const detailConcurrency = 8;
 // Jobs read per Workday board when searching the whole directory.
 const DIRECTORY_WORKDAY_LIMIT = 300;
 
-export const PLATFORMS = { greenhouse: 'Greenhouse', lever: 'Lever', ashby: 'Ashby', workday: 'Workday' };
+export const PLATFORMS = { greenhouse: 'Greenhouse', lever: 'Lever', ashby: 'Ashby', workday: 'Workday', personio: 'Personio', teamtailor: 'Teamtailor' };
 
 // The directory: companies whose boards were found and checked, as [name, platform, board].
 const DIRECTORY = JSON.parse(readFileSync(new URL('../data/careers-directory.json', import.meta.url), 'utf8'));
@@ -44,7 +46,7 @@ for (const [company, platform, board] of DIRECTORY) {
   for (const k of new Set([nameKey(company), nameKey(board)])) if (k && !BY_NAME.has(k)) BY_NAME.set(k, [platform, board]);
 }
 
-const ADAPTERS = { greenhouse, lever, ashby, workday };
+const ADAPTERS = { greenhouse, lever, ashby, workday, personio, teamtailor };
 const toList = (value) => (Array.isArray(value) ? value : value ? [value] : []).map((item) => String(item).trim()).filter(Boolean);
 
 // Source keys start like links, so the input reader never splits them at commas:
@@ -107,11 +109,18 @@ const PROBES = [
   ['greenhouse', (slug) => `https://boards-api.greenhouse.io/v1/boards/${encodeURIComponent(slug)}`],
   ['lever', (slug) => `https://api.lever.co/v0/postings/${encodeURIComponent(slug)}?mode=json&limit=1`],
   ['ashby', (slug) => `https://api.ashbyhq.com/posting-api/job-board/${encodeURIComponent(slug)}`],
+  // XML feeds: a board exists when the feed answers with its root element.
+  ['personio', (slug) => `https://${encodeURIComponent(slug)}.jobs.personio.de/xml`, /<workzag-jobs/i],
+  ['teamtailor', (slug) => `https://${encodeURIComponent(slug)}.teamtailor.com/jobs.rss`, /<rss[\s>]/i],
 ];
 export async function findBoard(text, http) {
   for (const slug of boardCandidates(text)) {
-    for (const [platform, url] of PROBES) {
+    for (const [platform, url, feed] of PROBES) {
       try {
+        if (feed) {
+          if (feed.test(await http.getText(url(slug), { retries: 2 }))) return { platform, board: slug };
+          continue;
+        }
         const data = await http.getJson(url(slug), { retries: 2 });
         // Lever answers an unknown company with an error object, the others with 404.
         if (platform === 'lever' && !Array.isArray(data)) continue;
@@ -125,11 +134,14 @@ export async function findBoard(text, http) {
   return null;
 }
 
+// The same board can come in twice (a company name and a link to its board): its jobs are saved once.
+export const dedupeKey = (job) => `${job.ats}|${job.company}|${job.jobId}`;
+
 export async function* listJobs(source, context) {
   let found = source;
   if (source.platform === 'find') {
     const board = await findBoard(source.name, context.http);
-    if (!board) throw new Error(`no Greenhouse, Lever or Ashby job board found for "${source.name}". Paste the link of its career site (Workday boards are found only by link).`);
+    if (!board) throw new Error(`no Greenhouse, Lever, Ashby, Personio or Teamtailor job board found for "${source.name}". Paste the link of its career site (Workday boards are found only by link).`);
     context.log.info(`${source.name}: found its job board on ${PLATFORMS[board.platform]} (${board.board}).`);
     found = parseCompany(keyOf(board.platform, board.board));
     source.resolved = found;

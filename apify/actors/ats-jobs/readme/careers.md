@@ -1,17 +1,18 @@
-# Career Page Jobs Scraper: Greenhouse, Lever, Ashby, Workday
+# Career Page Jobs Scraper: Greenhouse, Lever, Ashby, Workday, Personio, Teamtailor
 
-**Get every open job from company career pages on Greenhouse, Lever, Ashby and Workday.** Enter company names, website domains or job board links, or **search 2,600+ companies at once** by job title. Title, department, locations, salary range, full description and apply link, in one format for all four systems. **$1.50 per 1,000 jobs, no start fee.**
+**Get every open job from company career pages on Greenhouse, Lever, Ashby, Workday, Personio and Teamtailor.** Enter company names, website domains or job board links, or **search 2,600+ companies at once** by job title. Title, department, locations, salary range, full description and apply link, in one format for all six systems. **$1.50 per 1,000 jobs, no start fee.**
 
-Most tech companies, startups and many large employers publish their jobs on their own career site, run by an applicant tracking system: **Greenhouse** (Airbnb, Stripe, Figma), **Lever** (Zoox, Palantir), **Ashby** (Ramp, Notion, 1Password) or **Workday** (NVIDIA, Salesforce, banks and retailers). Their jobs often appear there days before job boards, with the salary range the company publishes. This Actor reads the career sites directly, with no browser and no login.
+Most tech companies, startups and many large employers publish their jobs on their own career site, run by an applicant tracking system: **Greenhouse** (Airbnb, Stripe, Figma), **Lever** (Zoox, Palantir), **Ashby** (Ramp, Notion, 1Password) or **Workday** (NVIDIA, Salesforce, banks and retailers), and in Europe often **Personio** (German and Austrian SMEs, the Mittelstand) or **Teamtailor** (Nordic and European companies). Their jobs often appear there days before job boards, with the salary range the company publishes. This Actor reads the career sites directly, with no browser and no login.
 
 ## What can this career page scraper do?
 
-- 🏢 **Companies by name, domain or link**: `Stripe`, `notion.so` or `https://jobs.lever.co/zoox`. You don't need to know which system a company uses: the Actor finds its Greenhouse, Lever or Ashby board for you.
+- 🏢 **Companies by name, domain or link**: `Stripe`, `notion.so` or `https://jobs.lever.co/zoox`. You don't need to know which system a company uses: the Actor finds its Greenhouse, Lever, Ashby, Personio or Teamtailor board for you.
 - 🌐 **Search all companies**: one search across **2,630 company career sites** found and checked on Greenhouse, Lever, Ashby and Workday, about 320,000 open jobs. For example *data engineer, remote or United States*.
+- 🇪🇺 **European career sites**: Personio (`acme.jobs.personio.de`) and Teamtailor (`acme.teamtailor.com`) boards, read from the job feeds both systems publish for job boards, with offices, departments, seniority and remote status.
 - 💰 **Salary ranges** wherever the company publishes them, as `min`, `max`, `currency` and `interval`, plus ranges found in the description.
 - 🔎 **Filters**: title keywords, excluded words, locations, remote only, departments, posted in the last N days, only jobs with a salary.
 - 🆕 **Only new jobs since the last run**: schedule it daily and get only the jobs that opened since yesterday.
-- 🧩 **One format for all four systems**, and the same as our other job scrapers listed at the end of this page.
+- 🧩 **One format for all six systems**, and the same as our other job scrapers listed at the end of this page.
 
 ## What data does it extract?
 

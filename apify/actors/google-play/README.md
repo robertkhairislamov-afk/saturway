@@ -167,6 +167,8 @@ curl -X POST "https://api.apify.com/v2/acts/robertosan16~google-play-scraper/run
 
 Missing a field or a feature? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.
 
+If this Actor saved you time, a short review in the **Reviews** tab helps other users find it and helps us keep improving it.
+
 ## 中文简介
 
 **Google Play 数据采集工具（Google Play 爬虫）**：抓取 Google Play（谷歌应用商店）任意国家和分类的**免费榜、付费榜和畅销榜**，每个榜单最多 200 名；按关键词抓取 Google Play **搜索排名**，用于 ASO 关键词排名追踪和竞品分析；获取应用详情：评分、评分分布、安装量、价格、内购价格区间、是否含广告、版本、更新日期、开发者邮箱和网站，以及一个开发者的全部应用。

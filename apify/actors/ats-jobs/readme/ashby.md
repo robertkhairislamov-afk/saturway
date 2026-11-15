@@ -108,3 +108,5 @@ You pay only for the jobs you get: **$1 per 1,000 jobs**. That is the price on t
 **Why do some jobs have no salary?** Companies choose whether to show compensation. When it is shown on Ashby or written in the description, it is extracted, and `salary.source` says where it came from.
 
 Missing a field or a feature? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.
+
+If this Actor saved you time, a short review in the **Reviews** tab helps other users find it and helps us keep improving it.

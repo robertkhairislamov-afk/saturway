@@ -142,4 +142,6 @@ You pay only for the results you get: **$0.50 per 1,000 jobs**, or $0.50 per 1,0
 
 Missing a field or a feature? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.
 
+If this Actor saved you time, a short review in the **Reviews** tab helps other users find it and helps us keep improving it.
+
 *This Actor is not affiliated with, endorsed or sponsored by LinkedIn. LinkedIn is a trademark of LinkedIn Corporation.*

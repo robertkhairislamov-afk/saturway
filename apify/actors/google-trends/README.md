@@ -214,6 +214,8 @@ curl -X POST "https://api.apify.com/v2/acts/robertosan16~google-trends-scraper/r
 
 Missing a field or a feature? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.
 
+If this Actor saved you time, a short review in the **Reviews** tab helps other users find it and helps us keep improving it.
+
 ## 中文简介
 
 **谷歌趋势（Google Trends）数据导出工具**：导出任意数量关键词和国家/地区的**搜索热度变化**、按地区（省/州、城市、美国 DMA 区域）的热度、热门和**飙升的相关搜索**，以及 “Trending now” **实时热搜榜**（含搜索量）。谷歌趋势一次最多对比 5 个关键词；开启 **Compare on one scale** 后，可以把 10 个、50 个甚至 200 个关键词放在同一个 0–100 标尺上对比，长周期也可以按天输出。每个关键词自带分析指标：平均值、峰值、最新值、近期变化、同比变化、趋势方向和旺季月份。

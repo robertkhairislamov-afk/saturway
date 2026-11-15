@@ -102,3 +102,5 @@ Businesses **without a website**, with only a **social page**, or with a site th
 **Is it legal to contact these businesses?** The data is what businesses publish on their own websites. Rules for contacting businesses differ by country (for example GDPR in the EU, PDPA in Thailand): check the rules that apply to you and include an opt-out.
 
 Missing a check or a feature? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.
+
+If this Actor saved you time, a short review in the **Reviews** tab helps other users find it and helps us keep improving it.

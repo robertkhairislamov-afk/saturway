@@ -158,3 +158,5 @@ curl -X POST "https://api.apify.com/v2/acts/robertosan16~redfin-scraper/run-sync
 ```
 
 Missing a field or a feature? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.
+
+If this Actor saved you time, a short review in the **Reviews** tab helps other users find it and helps us keep improving it.

@@ -99,3 +99,5 @@
 **Is the competition score Apple's popularity score?** No. Apple shows its search popularity only inside Apple Search Ads. The competition score is our estimate of how strong the apps already ranking for a keyword are.
 
 Missing a field or a feature? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.
+
+If this Actor saved you time, a short review in the **Reviews** tab helps other users find it and helps us keep improving it.

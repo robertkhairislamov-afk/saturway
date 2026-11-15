@@ -104,3 +104,5 @@ Public **groups** are listed too, with their members and members online (their m
 **Can it read private channels or group messages?** No, only public channels. Groups are listed with their member counts only.
 
 Missing a field or a feature? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.
+
+If this Actor saved you time, a short review in the **Reviews** tab helps other users find it and helps us keep improving it.

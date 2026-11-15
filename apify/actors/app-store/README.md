@@ -150,6 +150,8 @@ curl -X POST "https://api.apify.com/v2/acts/robertosan16~app-store-scraper/run-s
 
 Missing a field or a feature? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.
 
+If this Actor saved you time, a short review in the **Reviews** tab helps other users find it and helps us keep improving it.
+
 ## 中文简介
 
 **App Store 数据采集工具（苹果应用商店爬虫）**：抓取苹果 App Store 任意国家和分类的**免费榜、付费榜和畅销榜**（iPhone 和 iPad）以及新上架应用，每个榜单最多 100 名；按关键词抓取 App Store **搜索排名**（最多 200 个应用），用于 ASO 关键词排名追踪和竞品分析；获取应用详情：评分和评分数（全部版本及当前版本）、价格、版本、发布和更新日期、安装包大小、年龄分级、支持语言、描述和截图，以及一个开发者的全部应用。

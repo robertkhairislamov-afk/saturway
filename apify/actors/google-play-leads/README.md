@@ -95,3 +95,5 @@ You pay only for leads saved: **$3 per 1,000 leads** on the Apify Free plan, les
 **Is it legal to use these leads?** The data is public business contact information published by the companies on Google Play. Contacting businesses is regulated differently in each country (for example GDPR in the EU, CAN-SPAM in the US): check the rules that apply to you, and include an opt-out in your messages.
 
 Missing a field or a feature? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.
+
+If this Actor saved you time, a short review in the **Reviews** tab helps other users find it and helps us keep improving it.

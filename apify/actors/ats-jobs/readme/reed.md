@@ -122,3 +122,5 @@ You pay only for the jobs you get: **$1 per 1,000 jobs**. That is the price on t
 **Is it legal to scrape Reed?** The Actor reads the public job listings Reed shows to every visitor. Check the terms that apply to your use case.
 
 Missing a field or a feature? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.
+
+If this Actor saved you time, a short review in the **Reviews** tab helps other users find it and helps us keep improving it.

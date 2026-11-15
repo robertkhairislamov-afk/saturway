@@ -157,6 +157,8 @@ curl -X POST "https://api.apify.com/v2/acts/robertosan16~google-ads-transparency
 
 Missing a field or a feature? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.
 
+If this Actor saved you time, a short review in the **Reviews** tab helps other users find it and helps us keep improving it.
+
 ## 中文简介
 
 **谷歌广告透明度中心（Google Ads Transparency Center）数据采集工具**：按品牌名、网站或广告主 ID 获取竞争对手的全部谷歌广告，**广告文案直接以文本输出**：标题、描述、显示网址、购物广告的商品和应用广告的应用信息，无需截图和 OCR 识别。可以按国家/地区（240 多个）、平台（搜索、YouTube、购物、地图、Google Play）、广告格式和日期筛选，并获取每条广告的首次和最后展示日期、全部版本、投放国家，以及欧盟地区的展示量区间。开启 **Only new ads** 并设置定时任务，就能只收到竞争对手新上线的广告。

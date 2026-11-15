@@ -128,3 +128,5 @@ You pay only for the jobs you get: **$0.50 per 1,000 jobs**. That is the price o
 **Is it legal to scrape Welcome to the Jungle?** The Actor reads the public job listings the site shows to every visitor. Job postings are public business information. Check the terms that apply to your use case.
 
 Missing a field or a feature? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.
+
+If this Actor saved you time, a short review in the **Reviews** tab helps other users find it and helps us keep improving it.

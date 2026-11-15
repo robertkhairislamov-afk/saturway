@@ -146,6 +146,8 @@ curl -X POST "https://api.apify.com/v2/acts/robertosan16~aliexpress-search-scrap
 
 Missing a field or a feature? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.
 
+If this Actor saved you time, a short review in the **Reviews** tab helps other users find it and helps us keep improving it.
+
 ## 中文简介
 
 **速卖通（AliExpress）数据采集工具**：按关键词或类目链接抓取全球速卖通的商品搜索结果：标题、**价格、原价和折扣**、**精确销量**（例如 6,916，而不只是“5,000+ sold”）、评分、上架日期、**配送天数和预计送达日期**、Choice 和广告标记、图片以及商品在搜索结果中的位置。每次搜索最多 3,600 个商品，可以按销量或价格排序，设置价格区间、最低评分和最低销量，并选择收货国家（51 个）、币种和**发货地（海外仓：美国、西班牙、法国、德国等）**。

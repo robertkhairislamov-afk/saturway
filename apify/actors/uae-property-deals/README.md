@@ -95,3 +95,5 @@ Listing scrapers give you asking prices. Asking prices in Dubai Marina are about
 **Is a high-confidence find a guaranteed bargain?** No. It means the asking price is below every recent sale of the same layout. View, floor, condition and tenancy still matter: a rented unit, for example, usually sells cheaper.
 
 Missing a feature or an area? Open an issue in the Issues tab or email [support@mozartstandard.com](mailto:support@mozartstandard.com), and we will reply quickly.
+
+If this Actor saved you time, a short review in the **Reviews** tab helps other users find it and helps us keep improving it.

@@ -278,18 +278,24 @@ export async function runScraper(Actor, adapter, rawInput, log) {
     }
     if (before) stats.jobsNew = [...listed].filter((id) => !before.has(id)).length;
     const duplicates = stats.duplicates ? `, ${stats.duplicates} duplicates of jobs from other sources skipped` : '';
-    log.info(`${company.id}: ${stats.jobsFound} jobs${before ? `, ${stats.jobsNew} new` : ''}, ${stats.jobsMatched} matching, ${stats.jobsSaved} saved${duplicates}.`);
+    // A directory search reads thousands of boards: only the ones with saved jobs are logged.
+    if (!company.fromDirectory || stats.jobsSaved > 0) {
+      log.info(`${company.id}: ${stats.jobsFound} jobs${before ? `, ${stats.jobsNew} new` : ''}, ${stats.jobsMatched} matching, ${stats.jobsSaved} saved${duplicates}.`);
+    }
     return stats;
   }
 
+  // With a few sources every start and finish is shown; with thousands (a directory search) the
+  // message is throttled, and sources never wait for it: status updates go out one at a time.
+  const showEach = companies.length <= 50;
   const results = await mapWithConcurrency(companies, adapter.companyConcurrency ?? 5, async (company) => {
     if (roomLeft() <= 0) return { input: company.input, company: company.id, jobsFound: 0, jobsMatched: 0, jobsSaved: 0, error: null, skipped: 'limit reached' };
     working.add(company);
-    await showProgress(true);
+    showProgress(showEach);
     const stats = await scrapeCompany(company);
     working.delete(company);
     finished++;
-    await showProgress(true);
+    showProgress(showEach);
     return stats;
   });
   if (timeGuard) clearTimeout(timeGuard);

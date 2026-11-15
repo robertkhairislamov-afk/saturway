@@ -194,7 +194,9 @@ async function* search(company, context, searchText, appliedFacets, depth) {
   const fetchPage = (offset) => http.postJson(`${company.apiBase}/jobs`, { appliedFacets, limit: PAGE_SIZE, offset, searchText });
   const first = await fetchPage(0);
   const total = Number(first?.total) || 0;
-  if (total >= MAX_RESULTS) {
+  // A search that wants only the best matches (resultLimit) needs no splitting.
+  const limit = context.resultLimit ?? MAX_RESULTS;
+  if (total >= MAX_RESULTS && limit >= MAX_RESULTS) {
     const split = depth < MAX_SPLIT_DEPTH ? chooseSplit(first.facets, appliedFacets) : null;
     if (split) {
       log.info(`${company.id}: over ${MAX_RESULTS} jobs${searchText ? ` for "${searchText}"` : ''}; Workday lists at most ${MAX_RESULTS} per search, so searching each ${split.descriptor ?? split.parameter} separately (${split.values.length}).`);
@@ -208,7 +210,7 @@ async function* search(company, context, searchText, appliedFacets, depth) {
   yield (first?.jobPostings ?? []).map(toPartialJob);
   // The remaining pages are known from the total, so a few are loaded at once.
   const offsets = [];
-  for (let offset = PAGE_SIZE; offset < Math.min(total, MAX_RESULTS); offset += PAGE_SIZE) offsets.push(offset);
+  for (let offset = PAGE_SIZE; offset < Math.min(total, MAX_RESULTS, limit); offset += PAGE_SIZE) offsets.push(offset);
   for (let start = 0; start < offsets.length; start += PAGE_CONCURRENCY) {
     const pages = await Promise.all(offsets.slice(start, start + PAGE_CONCURRENCY).map(fetchPage));
     for (const page of pages) {

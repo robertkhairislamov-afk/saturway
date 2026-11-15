@@ -16,18 +16,44 @@ import * as workday from './workday.js';
 export const name = 'careers';
 export const title = 'Career sites';
 export const sourceNames = ['company', 'companies'];
-// Most boards answer in one request, so many companies are read at once.
-export const companyConcurrency = 12;
+// Most boards answer in one request, so many companies are read at once. Greenhouse, Lever and Ashby
+// serve every company from one API host, so at most a few of their boards are read at a time; Workday,
+// Personio and Teamtailor boards each have their own host.
+export const companyConcurrency = 24;
+const SHARED_HOST_SLOTS = 4;
+const SHARED_HOSTS = new Set(['greenhouse', 'lever', 'ashby']);
+const slots = new Map();
+
+export async function* gently(platform, jobs) {
+  if (!SHARED_HOSTS.has(platform)) {
+    yield* jobs;
+    return;
+  }
+  const slot = slots.get(platform) ?? { active: 0, waiting: [] };
+  slots.set(platform, slot);
+  if (slot.active >= SHARED_HOST_SLOTS) await new Promise((resolve) => slot.waiting.push(resolve));
+  else slot.active++;
+  try {
+    yield* jobs;
+  } finally {
+    // The slot passes straight to the next waiting board, or is freed.
+    const next = slot.waiting.shift();
+    if (next) next();
+    else slot.active--;
+  }
+}
 export const detailConcurrency = 8;
 
-// Jobs read per Workday board when searching the whole directory.
-const DIRECTORY_WORKDAY_LIMIT = 300;
+// Jobs read per Workday board when searching the whole directory: Workday lists the best matches
+// for the keywords first, and thousands of boards are read in one search.
+const DIRECTORY_WORKDAY_LIMIT = 100;
 
 export const PLATFORMS = { greenhouse: 'Greenhouse', lever: 'Lever', ashby: 'Ashby', workday: 'Workday', personio: 'Personio', teamtailor: 'Teamtailor' };
 
 // The directory: companies whose boards were found and checked, as [name, platform, board].
 const DIRECTORY = JSON.parse(readFileSync(new URL('../data/careers-directory.json', import.meta.url), 'utf8'));
 export const directorySize = () => DIRECTORY.length;
+const NAME_OF = new Map(DIRECTORY.map(([company, platform, board]) => [`${platform}|${board.toLowerCase()}`, company]));
 
 // "Door Dash, Inc." and "doordash.com" are found under "doordash".
 const SUFFIXES = /\b(inc|llc|ltd|limited|corp|corporation|co|company|gmbh|ag|sa|bv|plc|pty|group|holdings|technologies|technology|labs|hq)\b\.?/g;
@@ -92,7 +118,8 @@ export function parseCompany(value) {
   const adapter = ADAPTERS[platform];
   if (!adapter) throw new Error(`"${platform}" is not a career site this Actor knows.`);
   const source = adapter.parseCompany(inner);
-  return { id: `${adapter.title}: ${source.id}`, key: keyOf(prefixed, source.key), platform, adapter, inner: source, fromDirectory };
+  const directoryName = fromDirectory ? NAME_OF.get(`${platform}|${inner.toLowerCase()}`) : undefined;
+  return { id: `${adapter.title}: ${source.id}`, key: keyOf(prefixed, source.key), platform, adapter, inner: source, fromDirectory, directoryName };
 }
 
 // Board names to try for a company: "Door Dash" → doordash, door-dash, door_dash.
@@ -147,7 +174,7 @@ export async function* listJobs(source, context) {
     source.resolved = found;
   }
   if (!found.fromDirectory) {
-    yield* found.adapter.listJobs(found.inner, context);
+    yield* gently(found.platform, found.adapter.listJobs(found.inner, context));
     return;
   }
   // A directory board that closed or moved since it was checked is skipped quietly: the search is
@@ -156,7 +183,8 @@ export async function* listJobs(source, context) {
     // Workday searches by keyword with the best matches first and pages of 20; a big employer can
     // list thousands of loose matches, so a directory search reads only the first ones.
     let listed = 0;
-    for await (const page of found.adapter.listJobs(found.inner, context)) {
+    const limit = found.platform === 'workday' ? DIRECTORY_WORKDAY_LIMIT : undefined;
+    for await (const page of gently(found.platform, found.adapter.listJobs(found.inner, { ...context, resultLimit: limit, directoryName: found.directoryName }))) {
       yield page;
       listed += page.length;
       if (found.platform === 'workday' && listed >= DIRECTORY_WORKDAY_LIMIT) break;

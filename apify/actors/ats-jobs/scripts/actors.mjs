@@ -217,9 +217,9 @@ export const ACTORS = {
   careers: {
     name: 'career-page-jobs-scraper',
     title: 'Career Page Jobs Scraper: Greenhouse, Lever, Workday & 3 More',
-    tagline: 'company career sites on Greenhouse, Lever, Ashby, Workday, Personio and Teamtailor by name, domain or link, or a search across 2,600+ companies',
+    tagline: 'company career sites on Greenhouse, Lever, Ashby, Workday, Personio and Teamtailor by name, domain or link, or a search across 9,600+ companies',
     apiExample: { companies: ['stripe', 'notion.so', 'https://jobs.lever.co/zoox'], keywords: ['engineer'], maxItems: 50 },
-    description: 'Get every open job from company career sites on Greenhouse, Lever, Ashby, Workday, Personio and Teamtailor. Enter company names, domains or job board links, or search 2,600+ companies at once by job title. Salary ranges, departments, locations, full descriptions, one format.',
+    description: 'Get every open job from company career sites on Greenhouse, Lever, Ashby, Workday, Personio and Teamtailor. Enter company names, domains or job board links, or search 9,600+ companies at once by job title. Salary ranges, departments, locations, full descriptions, one format.',
     seoTitle: 'Career Page Jobs – Greenhouse, Lever, Workday, Personio',
     seoDescription: 'Jobs from company career pages on Greenhouse, Lever, Ashby, Workday, Personio and Teamtailor by company name, domain or link. $1.50 per 1,000 jobs.',
     companies: {
@@ -1546,7 +1546,7 @@ function careersInputSchema() {
         title: 'Career site systems',
         type: 'array',
         editor: 'select',
-        description: 'With <b>Search all companies</b>, search only companies on these systems. Leave empty for all four.',
+        description: 'With <b>Search all companies</b>, search only companies on these systems. Leave empty for all of them.',
         items: { type: 'string', enum: Object.keys(careers.PLATFORMS), enumTitles: Object.values(careers.PLATFORMS) },
       },
       ...rest,

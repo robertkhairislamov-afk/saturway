@@ -71,24 +71,38 @@ export function toJob(position, company, companyName) {
   });
 }
 
+// The company part of a career page title: "Jobs at Acme GmbH", "Acme GmbH - Jobs", "Karriere - Acme |
+// slogan", "Acme Careers". Null when nothing but the job words is left, or the title is a link.
+const JOB_WORDS = '(?:early careers|careers? (?:page|site)|karriereseite|offene stellen|stellenangebote|lediga jobb|vacatures|karriere|careers?|stellen|jobs?)';
+export function companyFromTitle(title) {
+  let text = cleanText(title) ?? '';
+  text = text.replace(new RegExp(`^${JOB_WORDS}(\\s+(at|bei|chez|bij))?\\b\\s*[-|–:]?\\s*`, 'i'), '');
+  text = text.replace(new RegExp(`\\s*[-|–:]\\s*${JOB_WORDS}\\b.*$`, 'i'), '');
+  text = text.replace(new RegExp(`\\s+${JOB_WORDS}$`, 'i'), '');
+  text = text.split(/\s+[|–]\s+/)[0].trim();
+  if (!text || /^https?:|^www\.|page not found/i.test(text) || new RegExp(`^${JOB_WORDS}$`, 'i').test(text)) return null;
+  return text;
+}
+
 async function boardTitle(company, http) {
   try {
     const html = await http.getText(company.boardUrl, { retries: 2 });
-    // "Jobs at Acme GmbH" or "Acme GmbH - Jobs": the company part.
-    const text = cleanText(/<title>([^<]*)<\/title>/i.exec(html)?.[1]);
-    return text ? cleanText(text.replace(/^(jobs|karriere|careers?|stellenangebote)\s+(at|bei)\s+/i, '').replace(/\s*[-|–]\s*(jobs|karriere|careers?|stellenangebote).*$/i, '')) : null;
+    return companyFromTitle(/<title>([^<]*)<\/title>/i.exec(html)?.[1]);
   } catch {
     return null;
   }
 }
 
-export async function* listJobs(company, { http }) {
+export async function* listJobs(company, { http, directoryName }) {
   let xml;
   try {
     xml = await http.getText(`${company.feedUrl}?language=en`);
   } catch (error) {
-    if (error.status === 404) throw new Error(`Personio company "${company.id}" was not found. Check the name in <name>.jobs.personio.de.`);
-    throw error;
+    if (error.status !== 404) throw error;
+    // Companies can switch the job feed off; their career page still opens.
+    const pageOpens = await http.getText(company.boardUrl, { retries: 1 }).then(() => true, () => false);
+    if (pageOpens) throw new Error(`Personio company "${company.id}" has switched off its public job feed, so its jobs cannot be read.`);
+    throw new Error(`Personio company "${company.id}" was not found. Check the name in <name>.jobs.personio.de.`);
   }
   if (!/<workzag-jobs/i.test(xml)) throw new Error(`Personio company "${company.id}" has no public job feed.`);
   let positions = blocks(xml, 'position');
@@ -97,6 +111,7 @@ export async function* listJobs(company, { http }) {
     xml = await http.getText(company.feedUrl);
     positions = blocks(xml, 'position');
   }
-  const companyName = positions.length > 0 ? await boardTitle(company, http) : null;
+  // A company from the Actor's directory already has its name.
+  const companyName = positions.length > 0 ? directoryName ?? await boardTitle(company, http) : null;
   yield positions.map((position) => toJob(position, company, companyName));
 }

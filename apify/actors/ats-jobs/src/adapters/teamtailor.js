@@ -6,6 +6,7 @@ import { makeJob } from '../core/job.js';
 import { salaryFromText } from '../core/salary.js';
 import { cleanText, htmlToText } from '../core/text.js';
 import { blocks, tagText } from '../core/xml.js';
+import { companyFromTitle } from './personio.js';
 
 export const name = 'teamtailor';
 export const title = 'Teamtailor';
@@ -79,6 +80,7 @@ export async function* listJobs(company, { http }) {
   }
   if (!/<rss[\s>]/i.test(xml)) throw new Error(`Teamtailor company "${company.id}" has no public job feed.`);
   const channel = blocks(xml, 'channel')[0] ?? xml;
-  const companyName = cleanText(tagText(channel.split('<item>')[0], 'title'));
+  const channelTitle = cleanText(tagText(channel.split('<item>')[0], 'title'));
+  const companyName = companyFromTitle(channelTitle) ?? channelTitle;
   yield blocks(xml, 'item').map((item) => toJob(item, company, companyName));
 }

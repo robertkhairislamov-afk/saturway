@@ -70,3 +70,48 @@ test('careers: one job reached by a name and by a link is saved once', () => {
   assert.equal(dedupeKey(job), dedupeKey({ ...job }));
   assert.notEqual(dedupeKey(job), dedupeKey({ ...job, ats: 'teamtailor' }));
 });
+
+test('personio: the company part of a career page title', () => {
+  assert.equal(personio.companyFromTitle('Jobs at tado GmbH'), 'tado GmbH');
+  assert.equal(personio.companyFromTitle('Karriere - Viehoff Gruppe | Wir können Optik'), 'Viehoff Gruppe');
+  assert.equal(personio.companyFromTitle('Camunda Careers'), 'Camunda');
+  assert.equal(personio.companyFromTitle('Jobsity'), 'Jobsity');
+  assert.equal(personio.companyFromTitle('Jobs bei'), null);
+  assert.equal(personio.companyFromTitle('https://www.example.com/karriere/'), null);
+});
+
+test('workday: a search for the best matches only reads the first pages and does not split', async () => {
+  const workday = await import('../src/adapters/workday.js');
+  const company = workday.parseCompany('https://acme.wd1.myworkdayjobs.com/External');
+  let calls = 0;
+  const http = {
+    postJson: async (_url, body) => {
+      calls++;
+      const postings = Array.from({ length: 20 }, (_, i) => ({ title: `Data engineer ${body.offset + i}`, externalPath: `/job/x/${body.offset + i}`, locationsText: 'Remote' }));
+      return { total: 5000, jobPostings: postings, facets: [{ facetParameter: 'locations', values: [{ id: 'a', count: 2500 }, { id: 'b', count: 2500 }] }] };
+    },
+  };
+  let jobs = 0;
+  for await (const page of workday.listJobs(company, { http, log: { info() {}, warning() {} }, keywords: ['data engineer'], resultLimit: 100 })) jobs += page.length;
+  assert.equal(jobs, 100);
+  assert.equal(calls, 5);
+});
+
+test('careers: boards on a shared API host are read at most four at a time', async () => {
+  const { gently } = await import('../src/adapters/careers.js');
+  let active = 0;
+  let most = 0;
+  async function* board() {
+    active++;
+    most = Math.max(most, active);
+    await new Promise((resolve) => setTimeout(resolve, 5));
+    yield [1];
+    active--;
+  }
+  const read = async (platform) => { for await (const page of gently(platform, board())) void page; };
+  await Promise.all(Array.from({ length: 12 }, () => read('greenhouse')));
+  assert.equal(most, 4);
+  most = 0;
+  await Promise.all(Array.from({ length: 12 }, () => read('teamtailor')));
+  assert.equal(most, 12);
+});

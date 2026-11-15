@@ -1549,6 +1549,12 @@ function careersInputSchema() {
         description: 'With <b>Search all companies</b>, search only companies on these systems. Leave empty for all of them.',
         items: { type: 'string', enum: Object.keys(careers.PLATFORMS), enumTitles: Object.values(careers.PLATFORMS) },
       },
+      companySummary: {
+        title: 'Company summary (free)',
+        type: 'boolean',
+        default: true,
+        description: 'Also save one free record per company in a separate <b>Company summary</b> dataset: open jobs, teams, places, jobs posted in the last 7 and 30 days, and how the number of open jobs changed since your earlier runs (kept in the <code>career-page-company-history</code> key-value store of your account). With <b>Search all companies</b>, only companies with matching jobs get one. Not charged.',
+      },
       ...rest,
     },
   };
@@ -1908,6 +1914,34 @@ export const datasetSchema = (ats) => {
   };
 };
 
+// Career Page's free company summary: its own dataset, one record per company read.
+const SUMMARY_COLUMNS = {
+  companyName: { label: 'Company', format: 'text' },
+  ats: { label: 'System', format: 'text' },
+  openJobs: { label: 'Open jobs', format: 'number' },
+  newJobsLast7Days: { label: 'New in 7 days', format: 'number' },
+  newJobsLast30Days: { label: 'New in 30 days', format: 'number' },
+  openJobsChange7Days: { label: 'Change in 7 days', format: 'number' },
+  openJobsChange30Days: { label: 'Change in 30 days', format: 'number' },
+  savedJobs: { label: 'Jobs saved', format: 'number' },
+  departments: { label: 'Teams', format: 'array' },
+  locations: { label: 'Places', format: 'array' },
+  remoteJobs: { label: 'Remote', format: 'number' },
+  jobsWithSalary: { label: 'With salary', format: 'number' },
+  latestPostedAt: { label: 'Latest job', format: 'date' },
+};
+export const companiesDatasetSchema = () => ({
+  actorSpecification: 1,
+  title: 'Company summary',
+  views: {
+    overview: {
+      title: 'Company summary',
+      transformation: { fields: Object.keys(SUMMARY_COLUMNS) },
+      display: { component: 'table', properties: SUMMARY_COLUMNS },
+    },
+  },
+});
+
 export const outputSchema = (ats) => ({
   actorOutputSchemaVersion: 1,
   title: `${ACTORS[ats].title} output`,
@@ -1924,6 +1958,14 @@ export const outputSchema = (ats) => ({
         title: 'Hiring companies',
         description: 'With "What to save: Hiring companies": one record per employer with its job counts and company details.',
         template: '{{links.apiDefaultDatasetUrl}}/items?view=companies',
+      },
+    } : {}),
+    ...(ats === 'careers' ? {
+      companySummary: {
+        type: 'string',
+        title: 'Company summary (free)',
+        description: 'One record per company read: open jobs, teams, places, jobs posted in the last 7 and 30 days, and the change since earlier runs.',
+        template: '{{storages.datasets.companies.apiUrl}}/items?view=overview',
       },
     } : {}),
     summary: {
@@ -1962,7 +2004,9 @@ export const actorJson = (ats) => ({
   version: '0.1',
   buildTag: 'latest',
   input: './input_schema.json',
-  storages: { dataset: './dataset_schema.json', keyValueStore: './key_value_store_schema.json' },
+  storages: ats === 'careers'
+    ? { datasets: { default: './dataset_schema.json', companies: './dataset_companies_schema.json' }, keyValueStore: './key_value_store_schema.json' }
+    : { dataset: './dataset_schema.json', keyValueStore: './key_value_store_schema.json' },
   output: './output_schema.json',
   dockerfile: '../Dockerfile',
   readme: '../README.md',

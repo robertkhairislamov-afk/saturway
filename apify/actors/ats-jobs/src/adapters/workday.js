@@ -194,6 +194,9 @@ async function* search(company, context, searchText, appliedFacets, depth) {
   const fetchPage = (offset) => http.postJson(`${company.apiBase}/jobs`, { appliedFacets, limit: PAGE_SIZE, offset, searchText });
   const first = await fetchPage(0);
   const total = Number(first?.total) || 0;
+  // The board's own count (with the filters of its link), for the company summary; Workday counts
+  // no further than MAX_RESULTS, so a count that high is only a lower bound and is left out.
+  if (depth === 0) company.listedTotal = total < MAX_RESULTS ? total : null;
   // A search that wants only the best matches (resultLimit) needs no splitting.
   const limit = context.resultLimit ?? MAX_RESULTS;
   if (total >= MAX_RESULTS && limit >= MAX_RESULTS) {

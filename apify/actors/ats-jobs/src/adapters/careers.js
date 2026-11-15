@@ -43,6 +43,24 @@ export async function* gently(platform, jobs) {
   }
 }
 export const detailConcurrency = 8;
+// One free summary record per company read: open jobs, teams, places, recent postings, growth.
+export const companySummary = true;
+// What the company summary needs to know about a board. complete: the jobs listed are all its open
+// jobs. Greenhouse, Lever, Ashby, Personio and Teamtailor list a whole board in one answer. Workday
+// lists pages, and with keywords searches on its server, so its list then holds only the matching
+// jobs; without keywords its first page tells how many jobs it has.
+export function summaryFacts(source, input, listedToEnd) {
+  const found = source.resolved ?? source;
+  const workday = found.platform === 'workday';
+  const complete = !workday || (listedToEnd && input.keywords.length === 0);
+  return {
+    ats: found.platform,
+    companyName: found.directoryName ?? null,
+    fallbackName: workday ? String(found.inner?.id ?? '').split('/')[0] || null : null,
+    complete,
+    openJobs: workday && !complete && input.keywords.length === 0 ? found.inner?.listedTotal ?? null : null,
+  };
+}
 
 // Jobs read per Workday board when searching the whole directory: Workday lists the best matches
 // for the keywords first, and thousands of boards are read in one search.

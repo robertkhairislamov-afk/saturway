@@ -7,6 +7,7 @@ import { createJobFilter } from './filters.js';
 import { createHttpClient } from './http.js';
 import { normalizeInput } from './input.js';
 import { nextSeenIds, openSeenJobs } from './state.js';
+import { nextChecks, openCompanyHistory, summarizeCompany } from './summary.js';
 
 // Pay-per-event: the platform charges this event for every item pushed to the default dataset.
 const ITEM_EVENT = 'apify-default-dataset-item';
@@ -121,6 +122,10 @@ export async function runScraper(Actor, adapter, rawInput, log) {
   const context = { http, log, keywords: input.keywords, includeDescription: companyMode ? false : input.includeDescription, options: rawInput ?? {} };
   const filter = createJobFilter(input);
   const seenJobs = input.onlyNew ? await openSeenJobs(Actor, adapter.name) : null;
+  // Free company summary (Career Page): its own dataset, and the user's history of job counts.
+  const summaries = adapter.companySummary && !companyMode && rawInput?.companySummary !== false
+    ? { dataset: await Actor.openDataset({ alias: 'companies' }), history: await openCompanyHistory(Actor), saved: 0 }
+    : null;
   const budget = Actor.getChargingManager().calculateMaxEventChargeCountWithinLimit(ITEM_EVENT);
 
   let saved = 0;
@@ -160,12 +165,35 @@ export async function runScraper(Actor, adapter, rawInput, log) {
     return { ...rest, scrapedAt };
   };
 
+  async function saveSummary(company, jobs, stats, listedToEnd) {
+    const found = company.resolved ?? company;
+    const facts = adapter.summaryFacts?.(company, input, listedToEnd) ?? { complete: listedToEnd };
+    const id = `${adapter.name}|${found.key}`;
+    const checks = await summaries.history.load(id);
+    const record = summarizeCompany({
+      ...facts,
+      company: found.id,
+      ats: facts.ats ?? jobs.find((job) => job.ats)?.ats ?? adapter.name,
+      jobs,
+      matchingJobs: stats.jobsMatched,
+      savedJobs: stats.jobsSaved,
+      checks,
+    });
+    await summaries.dataset.pushData(record);
+    summaries.saved++;
+    if (record.openJobs != null) await summaries.history.save(id, record.companyName, nextChecks(checks, record.openJobs));
+  }
+
   async function scrapeCompany(company) {
     const stats = { input: company.input, company: company.id, jobsFound: 0, jobsMatched: 0, jobsSaved: 0, error: null };
     const before = seenJobs ? await seenJobs.load(company.key) : null;
     if (before?.size === 0) log.info(`${company.id}: first run with "Only new jobs"; saving all current jobs and remembering them for next time.`);
     const listed = new Set();
     const handled = new Set();
+    // Every listed job, matching or not, for the company summary.
+    const allJobs = summaries ? [] : null;
+    // The adapter gave all its pages (no stop for limits).
+    let listedToEnd = false;
     let listingComplete = true;
     // Set when the limit was reached while details of listed jobs were still to load.
     let cutShort = false;
@@ -196,8 +224,9 @@ export async function runScraper(Actor, adapter, rawInput, log) {
         }
         showProgress();
       }
-      // A full run needs no more pages: requests still in progress for other sources end now.
-      if (roomLeft() <= 0) http.stop?.();
+      // A full run needs no more pages: requests still in progress for other sources end now (with
+      // company summaries they finish, one request per board, so those companies are summarized).
+      if (roomLeft() <= 0 && !summaries) http.stop?.();
       return taken.length === fresh.length;
     }
 
@@ -244,9 +273,13 @@ export async function runScraper(Actor, adapter, rawInput, log) {
     }
 
     try {
+      let broke = false;
       for await (const page of adapter.listJobs(company, context)) {
+        // The summary counts every job the board listed, also once the run is full.
+        if (allJobs) for (const job of page) if (job?.jobId && !listed.has(job.jobId)) allJobs.push(job);
         if (room() <= 0) {
           listingComplete = false;
+          broke = true;
           break;
         }
         for (const job of page) {
@@ -259,9 +292,11 @@ export async function runScraper(Actor, adapter, rawInput, log) {
         }
         if (!(await processQueue(false))) {
           listingComplete = false;
+          broke = true;
           break;
         }
       }
+      listedToEnd = !broke;
       if (listingComplete && !(await processQueue(true))) listingComplete = false;
       if (cutShort) listingComplete = false;
     } catch (error) {
@@ -270,6 +305,15 @@ export async function runScraper(Actor, adapter, rawInput, log) {
       if (!error.stopped) {
         stats.error = error.message;
         log.warning(`${company.id}: ${error.message}`);
+      }
+    }
+
+    // A directory search summarizes only the companies with saved jobs.
+    if (summaries && !stats.error && allJobs.length > 0 && (!company.fromDirectory || stats.jobsSaved > 0)) {
+      try {
+        await saveSummary(company, allJobs, stats, listedToEnd);
+      } catch (error) {
+        log.warning(`${company.id}: company summary not saved: ${error.message}`);
       }
     }
 
@@ -316,6 +360,7 @@ export async function runScraper(Actor, adapter, rawInput, log) {
   await Actor.setValue('SUMMARY', {
     ats: adapter.name,
     ...(companyMode ? { output: 'companies', companiesSaved, companiesFound, jobsRead: saved, companiesSkipped: collector.skipped } : { jobsSaved: saved }),
+    ...(summaries ? { companySummaries: summaries.saved } : {}),
     companies: summary,
   });
   const { requests, retried, limited, blocked } = http.stats;
@@ -349,6 +394,7 @@ export async function runScraper(Actor, adapter, rawInput, log) {
   if (saved === 0 && failed.length === 0 && !stopped) message = `No ${newText}jobs matched the filters in ${companiesText}.`;
   else if (companyMode) message = `Saved ${companiesSaved} hiring companies from ${saved} ${newText}jobs in ${companiesText}${notesText}.`;
   else message = `Saved ${saved} ${newText}jobs from ${companiesText}${notesText}.`;
+  if (summaries?.saved > 0) message += ` Free company summaries: ${summaries.saved}.`;
   log.info(message);
   return { saved: companyMode ? companiesSaved : saved, message, summary };
 }

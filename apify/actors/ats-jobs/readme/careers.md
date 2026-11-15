@@ -11,6 +11,7 @@ Most tech companies, startups and many large employers publish their jobs on the
 - 🇪🇺 **European career sites**: Personio (`acme.jobs.personio.de`) and Teamtailor (`acme.teamtailor.com`) boards, read from the job feeds both systems publish for job boards, with offices, departments, seniority and remote status.
 - 💰 **Salary ranges** wherever the company publishes them, as `min`, `max`, `currency` and `interval`, plus ranges found in the description.
 - 🔎 **Filters**: title keywords, excluded words, locations, remote only, departments, posted in the last N days, only jobs with a salary.
+- 📊 **Free company summary**: one record per company with its open jobs, teams, places, jobs posted in the last 7 and 30 days and how the count changed since your earlier runs. Not charged.
 - 🆕 **Only new jobs since the last run**: schedule it daily and get only the jobs that opened since yesterday.
 - 🧩 **One format for all six systems**, and the same as our other job scrapers listed at the end of this page.
 
@@ -83,17 +84,50 @@ In our test (November 2026) this search read all 9,687 career sites in about 18 
 }
 ```
 
+### Free company summary
+
+Next to the jobs, every run saves one record per company it read in a separate **Company summary** dataset (in the Output tab). These records are free. With **Search all companies**, only the companies with matching jobs get one.
+
+```json
+{
+  "company": "Greenhouse: stripe",
+  "companyName": "Stripe",
+  "ats": "greenhouse",
+  "openJobs": 785,
+  "matchingJobs": 12,
+  "savedJobs": 12,
+  "newJobsLast7Days": 61,
+  "newJobsLast30Days": 237,
+  "openJobsChange7Days": 14,
+  "openJobsChange30Days": -22,
+  "previousOpenJobs": 771,
+  "previousCheckAt": "2026-11-08T09:00:00.000Z",
+  "departments": [{ "name": "Account Executives (EMEA)", "jobs": 47 }, { "name": "General University", "jobs": 28 }],
+  "locations": [{ "name": "Dublin", "jobs": 59 }, { "name": "Singapore", "jobs": 56 }],
+  "remoteJobs": 118,
+  "hybridJobs": 0,
+  "onsiteJobs": 0,
+  "jobsWithSalary": 410,
+  "latestPostedAt": "2026-11-14T18:02:11.000Z",
+  "checkedAt": "2026-11-15T09:00:00.000Z"
+}
+```
+
+- **New jobs** come from the jobs' posting dates. **Change** compares the number of open jobs with your own earlier runs, so it appears from the second run on (after 7 or 30 days). The counts are kept in the `career-page-company-history` key-value store of your Apify account; delete it to start over.
+- `openJobs` counts all open jobs of the board, also when the run saves only some of them. Workday boards searched by title keywords list only the matching jobs, so their `openJobs` is empty; without keywords it is Workday's own count (left out above 2,000, where Workday stops counting).
+- Turn it off with **Company summary (free)** in the input.
+
 ## Use cases
 
 - **Job boards and aggregators**: fill a niche board with fresh jobs straight from company career sites, often before they reach LinkedIn or Indeed.
 - **Recruiting and sourcing**: watch target companies and react the day a role opens.
-- **Sales and lead generation**: a company that hires for a role your product serves is a lead. Search all companies for that role and get the list.
+- **Sales and lead generation**: a company that hires for a role your product serves is a lead. Search all companies for that role and get the list; the free company summary shows which of them hire most and grow.
 - **Salary research**: published pay ranges by role, location and company, from the companies themselves.
 - **Job seekers and AI agents**: one search across thousands of startups and tech companies, structured for a spreadsheet, an alert or an LLM.
 
 ## How much does it cost?
 
-You pay only for the jobs you get: **$1.50 per 1,000 jobs**. That is the price on the Apify Free plan; paid Apify plans pay less. No start fee. Jobs that don't match your filters are free, and so are companies whose board is not found.
+You pay only for the jobs you get: **$1.50 per 1,000 jobs**. That is the price on the Apify Free plan; paid Apify plans pay less. No start fee. Jobs that don't match your filters are free, and so are companies whose board is not found and the company summary records.
 
 ## Tips
 

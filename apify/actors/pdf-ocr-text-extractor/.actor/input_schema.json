@@ -1,0 +1,180 @@
+{
+  "title": "PDF & Image to Text",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "urls": {
+      "title": "File links",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Direct links to PDF files or images (PNG, JPEG, TIFF, WebP, GIF, BMP), one per line. Files are downloaded only where the site's robots.txt allows it; for other files (for example Google Drive or Dropbox, which don't allow automated downloads), download the file and upload it below.",
+      "prefill": [
+        "https://api.apify.com/v2/key-value-stores/McK7YieXsXVetN4uP/records/sample-invoice-report.pdf?signature=ur72I9CODSvHy1tTWcOr"
+      ]
+    },
+    "file": {
+      "title": "Upload a file",
+      "type": "string",
+      "editor": "fileupload",
+      "description": "Or upload one PDF or image from your computer."
+    },
+    "ocr": {
+      "title": "OCR",
+      "type": "string",
+      "editor": "select",
+      "enum": [
+        "auto",
+        "always",
+        "never"
+      ],
+      "enumTitles": [
+        "Auto: only pages without text (scans)",
+        "Always: every page",
+        "Never: text layer only"
+      ],
+      "default": "auto",
+      "description": "PDF pages usually carry their own text, which is read exactly and fast. Scanned pages are images, so they need OCR. <b>Auto</b> runs OCR only on pages with almost no text. Images are always read with OCR."
+    },
+    "languages": {
+      "title": "OCR languages",
+      "type": "array",
+      "editor": "select",
+      "items": {
+        "type": "string",
+        "enum": [
+          "eng",
+          "deu",
+          "fra",
+          "spa",
+          "ita",
+          "por",
+          "nld",
+          "pol",
+          "tur",
+          "rus",
+          "ukr",
+          "ara",
+          "hin",
+          "tha",
+          "vie",
+          "ind",
+          "chi_sim",
+          "chi_tra",
+          "jpn",
+          "kor"
+        ],
+        "enumTitles": [
+          "English",
+          "German",
+          "French",
+          "Spanish",
+          "Italian",
+          "Portuguese",
+          "Dutch",
+          "Polish",
+          "Turkish",
+          "Russian",
+          "Ukrainian",
+          "Arabic",
+          "Hindi",
+          "Thai",
+          "Vietnamese",
+          "Indonesian",
+          "Chinese (simplified)",
+          "Chinese (traditional)",
+          "Japanese",
+          "Korean"
+        ]
+      },
+      "default": [
+        "eng"
+      ],
+      "description": "The languages of the scanned text. Pick all languages that appear, for example English and Thai; fewer languages read faster and more accurately."
+    },
+    "pages": {
+      "title": "Pages",
+      "type": "string",
+      "editor": "textfield",
+      "description": "Only these pages of each PDF, for example <code>1-3, 5, 10-</code>. Empty: all pages."
+    },
+    "includeMarkdown": {
+      "title": "Markdown",
+      "type": "boolean",
+      "default": true,
+      "description": "Add the text as Markdown, with a section per page, ready for LLMs and notes."
+    },
+    "includePages": {
+      "title": "Text of each page",
+      "type": "boolean",
+      "default": true,
+      "description": "Add a list of pages with their text, the method (text layer or OCR) and the OCR confidence."
+    },
+    "includeChunks": {
+      "title": "Chunks for RAG",
+      "type": "boolean",
+      "default": false,
+      "description": "Add the text cut into chunks of about <b>Chunk size</b> characters at paragraph ends, each with its page numbers, ready for a vector database."
+    },
+    "chunkSize": {
+      "title": "Chunk size (characters)",
+      "type": "integer",
+      "minimum": 200,
+      "maximum": 20000,
+      "default": 1500,
+      "description": "About this many characters per chunk."
+    },
+    "datasetId": {
+      "title": "Links from a dataset",
+      "type": "string",
+      "editor": "textfield",
+      "sectionCaption": "More sources and limits",
+      "description": "The ID of a dataset (for example the results of another Actor) whose items hold file links. Their links are read too."
+    },
+    "datasetField": {
+      "title": "Dataset link field",
+      "type": "string",
+      "editor": "textfield",
+      "default": "url",
+      "description": "The field of the dataset items that holds the link (or a list of links)."
+    },
+    "pdfPassword": {
+      "title": "PDF password",
+      "type": "string",
+      "editor": "textfield",
+      "isSecret": true,
+      "description": "For password-protected PDFs. The same password is used for every file."
+    },
+    "maxPagesPerDocument": {
+      "title": "Max pages per document",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5000,
+      "default": 500,
+      "description": "At most this many pages of each PDF are read."
+    },
+    "maxFileSizeMb": {
+      "title": "Max file size (MB)",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 500,
+      "default": 100,
+      "description": "Larger files are skipped (not charged)."
+    },
+    "minTextChars": {
+      "title": "Minimum text per page",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10000,
+      "default": 25,
+      "description": "With OCR on Auto, a page with fewer letters and digits than this in its text layer is treated as a scan."
+    },
+    "ocrDpi": {
+      "title": "OCR resolution (DPI)",
+      "type": "integer",
+      "minimum": 72,
+      "maximum": 600,
+      "default": 300,
+      "description": "Scanned PDF pages are turned into images at this resolution for OCR. 300 suits most documents; raise it for very small print."
+    }
+  }
+}

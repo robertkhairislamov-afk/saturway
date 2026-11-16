@@ -1,0 +1,18 @@
+{
+  "actorOutputSchemaVersion": 1,
+  "title": "PDF & Image to Text output",
+  "properties": {
+    "documents": {
+      "type": "string",
+      "title": "Documents",
+      "description": "One record per file: text, Markdown, pages, chunks and metadata.",
+      "template": "{{links.apiDefaultDatasetUrl}}/items?view=overview"
+    },
+    "summary": {
+      "type": "string",
+      "title": "Run summary",
+      "description": "Every file with its result, pages, OCR pages or the reason it failed.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/SUMMARY"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "actorKeyValueStoreSchemaVersion": 1,
+  "title": "Run records",
+  "description": "Records each run keeps in its default key-value store, next to the dataset of documents.",
+  "collections": {
+    "summary": {
+      "title": "Run summary",
+      "description": "Every file with its result: pages, OCR pages, characters, or why it could not be read.",
+      "key": "SUMMARY"
+    },
+    "documents": {
+      "title": "Long documents",
+      "description": "Full text, Markdown, pages and chunks of documents too long for one dataset record.",
+      "keyPrefix": "document-"
+    },
+    "input": {
+      "title": "Input",
+      "description": "The input the run was started with.",
+      "key": "INPUT"
+    }
+  }
+}

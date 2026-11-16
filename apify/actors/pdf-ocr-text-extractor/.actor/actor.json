@@ -1,0 +1,16 @@
+{
+  "actorSpecification": 1,
+  "name": "pdf-ocr-text-extractor",
+  "title": "PDF & Image to Text [$2/1K]: OCR for Scans, Markdown & RAG",
+  "description": "Extract text from PDFs and images by link, upload or dataset. Reads each PDF page's own text and runs OCR only on scanned pages (20 languages incl. Thai, Chinese, Arabic). Markdown, per-page text, RAG chunks with page numbers, metadata.",
+  "version": "0.1",
+  "buildTag": "latest",
+  "input": "./input_schema.json",
+  "storages": {
+    "dataset": "./dataset_schema.json",
+    "keyValueStore": "./key_value_store_schema.json"
+  },
+  "output": "./output_schema.json",
+  "dockerfile": "../Dockerfile",
+  "readme": "../README.md"
+}

@@ -1,0 +1,57 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "type": "object",
+    "properties": {
+      "url": { "type": ["string", "null"], "description": "The file link (empty for an uploaded file)." },
+      "fileName": { "type": ["string", "null"], "description": "The file name." },
+      "fileType": { "type": "string", "description": "pdf, png, jpeg, tiff, webp, gif or bmp." },
+      "fileSizeBytes": { "type": "integer", "description": "The file size." },
+      "pageCount": { "type": "integer", "description": "Pages in the document." },
+      "pagesRead": { "type": "integer", "description": "Pages read (within Pages and Max pages per document)." },
+      "pagesWithOcr": { "type": "integer", "description": "Pages read with OCR." },
+      "ocrLanguages": { "type": "array", "description": "OCR languages used." },
+      "ocrConfidence": { "type": ["integer", "null"], "description": "Average OCR word confidence, 0-100." },
+      "title": { "type": ["string", "null"], "description": "PDF title (metadata)." },
+      "author": { "type": ["string", "null"], "description": "PDF author (metadata)." },
+      "subject": { "type": ["string", "null"], "description": "PDF subject (metadata)." },
+      "keywords": { "type": ["string", "null"], "description": "PDF keywords (metadata)." },
+      "creator": { "type": ["string", "null"], "description": "The application that created the PDF." },
+      "producer": { "type": ["string", "null"], "description": "The application that produced the PDF." },
+      "createdAt": { "type": ["string", "null"], "description": "PDF creation date." },
+      "modifiedAt": { "type": ["string", "null"], "description": "PDF modification date." },
+      "characters": { "type": "integer", "description": "Characters of text." },
+      "words": { "type": "integer", "description": "Words of text." },
+      "text": { "type": "string", "description": "The whole text." },
+      "markdown": { "type": "string", "description": "The text as Markdown, a section per page." },
+      "pages": { "type": "array", "description": "Each page: page, method (text or ocr), characters, ocrConfidence, text." },
+      "chunks": { "type": "array", "description": "Chunks for RAG: index, pages, text." },
+      "fullContentUrl": { "type": "string", "description": "For very long documents: the full text, Markdown, pages and chunks in the key-value store." },
+      "warnings": { "type": "array", "description": "Notes about the reading, for example low OCR confidence." },
+      "processedAt": { "type": "string", "description": "When the file was read." }
+    }
+  },
+  "views": {
+    "overview": {
+      "title": "Documents",
+      "transformation": {
+        "fields": ["fileName", "fileType", "pageCount", "pagesWithOcr", "ocrConfidence", "words", "title", "text", "warnings", "url"]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "fileName": { "label": "File", "format": "text" },
+          "fileType": { "label": "Type", "format": "text" },
+          "pageCount": { "label": "Pages", "format": "number" },
+          "pagesWithOcr": { "label": "OCR pages", "format": "number" },
+          "ocrConfidence": { "label": "OCR confidence", "format": "number" },
+          "words": { "label": "Words", "format": "number" },
+          "title": { "label": "Title", "format": "text" },
+          "text": { "label": "Text", "format": "text" },
+          "warnings": { "label": "Notes", "format": "array" },
+          "url": { "label": "Link", "format": "link" }
+        }
+      }
+    }
+  }
+}

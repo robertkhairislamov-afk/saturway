@@ -63,9 +63,10 @@
     "maxPagesPerSearch": {
       "title": "Max pages per search",
       "type": "integer",
-      "description": "30 listings per page. 0 reads every page. A partial read gives figures but cannot tell which listings left the market.",
+      "description": "30 listings per page. 0 reads every page. A partial read gives figures but cannot tell which listings left the market. The form starts with a small test run (1 page); set 0 to read the whole market.",
       "minimum": 0,
-      "default": 0
+      "default": 0,
+      "prefill": 1
     },
     "includeProjectDetails": {
       "title": "Project details",
@@ -78,21 +79,24 @@
       "type": "integer",
       "description": "Projects with the most listings first; the rest are read in the next runs.",
       "minimum": 0,
-      "default": 600
+      "default": 600,
+      "prefill": 10
     },
     "maxRemovalChecksPerRun": {
       "title": "Max departure checks per run",
       "type": "integer",
       "description": "A listing missing from the list pages since the last run is checked on its own page: gone or no longer on offer counts as left the market; still on offer means it was only missed. The rest are checked in the next run.",
       "minimum": 0,
-      "default": 1500
+      "default": 1500,
+      "prefill": 20
     },
     "maxFloorChecksPerRun": {
       "title": "Max floor checks per run",
       "type": "integer",
       "description": "Listings in units listed more than once whose floor is not in the start of the description: their own page is read once for the floor, so neighbouring units furnished alike are not taken for one unit. The rest are read in the next runs.",
       "minimum": 0,
-      "default": 3000
+      "default": 3000,
+      "prefill": 20
     },
     "maxPageChecksPerRun": {
       "title": "Listing pages to check per run",
@@ -100,7 +104,8 @@
       "minimum": 0,
       "default": 3000,
       "unit": "pages",
-      "description": "Pages of below-market listings and of units listed by several agencies to read: the date the agency last updated the listing and whether it is still for sale. Each page is read at most once a week. 0 turns the check off."
+      "description": "Pages of below-market listings and of units listed by several agencies to read: the date the agency last updated the listing and whether it is still for sale. Each page is read at most once a week. 0 turns the check off.",
+      "prefill": 20
     },
     "lotsFor": {
       "title": "Find repeated units in",
@@ -127,7 +132,8 @@
       "type": "integer",
       "description": "Listings that may repeat a unit are compared by their first 4 photos (64×48 thumbnails, about 8 KB each). Comparisons are kept, so later runs read only new photos. The largest projects come first; the rest wait for the next runs.",
       "minimum": 0,
-      "default": 20000
+      "default": 20000,
+      "prefill": 100
     },
     "saveListings": {
       "title": "Save listings",

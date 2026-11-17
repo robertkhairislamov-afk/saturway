@@ -115,3 +115,15 @@ test('careers: boards on a shared API host are read at most four at a time', asy
   await Promise.all(Array.from({ length: 12 }, () => read('teamtailor')));
   assert.equal(most, 12);
 });
+
+test('careers: directory boards get two short tries, options of the caller still win', async () => {
+  const { quick } = await import('../src/adapters/careers.js');
+  const seen = [];
+  const http = { getJson: async (u, o) => seen.push(o), getText: async (u, o) => seen.push(o), postJson: async (u, d, o) => seen.push(o), stats: {} };
+  const q = quick(http);
+  await q.getJson('x');
+  await q.getText('x', { retries: 1 });
+  await q.postJson('x', {}, { timeoutMs: 5000 });
+  assert.deepEqual(seen, [{ retries: 2, timeoutMs: 15000 }, { retries: 1, timeoutMs: 15000 }, { retries: 2, timeoutMs: 5000 }]);
+  assert.equal(q.stats, http.stats);
+});

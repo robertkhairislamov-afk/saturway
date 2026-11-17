@@ -161,7 +161,7 @@ export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback
   // `rotate` takes a rotating session for every attempt. `accept(text)` tells a real answer from a
   // block page that comes with status 200 (such as an empty page or a login wall); a block page
   // is retried like a rate limit.
-  async function request(url, { method = 'GET', body, headers = {}, json = true, retries = maxRetries, rotate = false, datacenter: viaDatacenter = false, accept, redirect = 'follow' } = {}) {
+  async function request(url, { method = 'GET', body, headers = {}, json = true, retries = maxRetries, rotate = false, datacenter: viaDatacenter = false, accept, redirect = 'follow', timeoutMs: requestTimeoutMs = timeoutMs } = {}) {
     let lastError;
     for (let attempt = 1; attempt <= retries; attempt++) {
       if (stopper.signal.aborted) throw stoppedError(url);
@@ -175,7 +175,7 @@ export function createHttpClient({ proxyConfiguration, fallbackProxy, onFallback
           body,
           dispatcher,
           redirect,
-          signal: AbortSignal.any([AbortSignal.timeout(timeoutMs), stopper.signal]),
+          signal: AbortSignal.any([AbortSignal.timeout(requestTimeoutMs), stopper.signal]),
           headers: {
             'user-agent': USER_AGENT,
             accept: json ? 'application/json' : 'text/html,application/xhtml+xml,*/*',

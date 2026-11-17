@@ -9,6 +9,13 @@ from an empty work folder with `APIFY_TOKEN` set; the working files are written 
 2. `node extract.mjs`: reads the runs' apply links and keeps the boards on Greenhouse, Lever,
    Ashby, Workday, Personio and Teamtailor (`boards-raw.json`). Greenhouse short links (grnh.se)
    are resolved with one request each.
+2b. **Common Crawl** (more boards, no cost): for each recent crawl, download its cluster index
+   (`https://data.commoncrawl.org/cc-index/collections/CC-MAIN-<id>/indexes/cluster.idx`, about 100 MB;
+   data.commoncrawl.org invites downloads over HTTPS, while the index.commoncrawl.org search API is
+   closed by robots.txt and is not used), then `python3 cc-blocks.py cluster.idx > blocks.jsonl`
+   (the index blocks holding the six systems' addresses, about 23 MB) and
+   `node harvest-cc.mjs CC-MAIN-<id> blocks.jsonl` (downloads those blocks with HTTP ranges, one at a
+   time, into `boards-cc.json`). Then `node merge-cc.mjs` adds them to `boards-raw.json`.
 3. `node validate.mjs`: checks every found board and every board already in the directory on its
    system's public API or feed, 8 at a time with a pause; keeps boards with open jobs
    (`directory-checked.json`, results cached in `check-cache.json`).

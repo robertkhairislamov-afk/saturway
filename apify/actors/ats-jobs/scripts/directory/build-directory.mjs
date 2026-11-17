@@ -16,6 +16,8 @@ const rows = checked.map(([name, platform, board]) => {
   let company = name;
   company = companyFromTitle(name) ?? ((platform === 'personio' || platform === 'teamtailor') ? fallback : name) ?? board;
   if (!company || /^https?:/i.test(company)) company = fallback ?? board;
+  // Boards found without a company name (Common Crawl): Workday's tenant, the others' board name.
+  if (/^https?:/i.test(company)) company = new URL(company).hostname.split('.')[0];
   return [company, platform, board];
 });
 // Greenhouse serves EU boards from the same API: the board name alone is the board.

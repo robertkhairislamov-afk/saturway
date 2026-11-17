@@ -24,6 +24,16 @@ const SHARED_HOST_SLOTS = 4;
 const SHARED_HOSTS = new Set(['greenhouse', 'lever', 'ashby']);
 const slots = new Map();
 
+// A directory search reads thousands of boards: a slow or broken board is given up after two short
+// tries instead of holding a reader for minutes (a board named by the user keeps the full retries).
+const QUICK = { retries: 2, timeoutMs: 15000 };
+export const quick = (http) => ({
+  ...http,
+  getJson: (url, options) => http.getJson(url, { ...QUICK, ...options }),
+  getText: (url, options) => http.getText(url, { ...QUICK, ...options }),
+  postJson: (url, data, options) => http.postJson(url, data, { ...QUICK, ...options }),
+});
+
 export async function* gently(platform, jobs) {
   if (!SHARED_HOSTS.has(platform)) {
     yield* jobs;
@@ -202,7 +212,7 @@ export async function* listJobs(source, context) {
     // list thousands of loose matches, so a directory search reads only the first ones.
     let listed = 0;
     const limit = found.platform === 'workday' ? DIRECTORY_WORKDAY_LIMIT : undefined;
-    for await (const page of gently(found.platform, found.adapter.listJobs(found.inner, { ...context, resultLimit: limit, directoryName: found.directoryName }))) {
+    for await (const page of gently(found.platform, found.adapter.listJobs(found.inner, { ...context, http: quick(context.http), resultLimit: limit, directoryName: found.directoryName }))) {
       yield page;
       listed += page.length;
       if (found.platform === 'workday' && listed >= DIRECTORY_WORKDAY_LIMIT) break;

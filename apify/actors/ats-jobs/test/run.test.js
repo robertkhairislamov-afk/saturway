@@ -185,3 +185,15 @@ test('a source stopped because the run is full is not reported as failed', async
   assert.deepEqual(warnings, []);
   assert.doesNotMatch(result.message, /failed/);
 });
+
+test('a site that limits requests midway: the saved jobs are delivered, the run does not fail', async () => {
+  const adapter = fakeAdapter({});
+  adapter.listJobs = async function* () {
+    yield [job('nvidia', 1), job('nvidia', 2)];
+    throw new Error('HTTP 429 for https://nvidia.example/jobs');
+  };
+  const actor = fakeActor();
+  const result = await runScraper(actor, adapter, { companies: ['nvidia'] }, silentLog);
+  assert.equal(actor.dataset.length, 2);
+  assert.match(result.message, /Saved 2 jobs from 1 company \(1 failed: nvidia\)/);
+});

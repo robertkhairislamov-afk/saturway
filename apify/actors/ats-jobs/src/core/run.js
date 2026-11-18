@@ -367,7 +367,9 @@ export async function runScraper(Actor, adapter, rawInput, log) {
   if (retried > 0) log.info(`${requests} requests; ${retried} tried again after ${limited} rate limits and ${blocked} empty or blocked pages.`);
 
   const failed = results.filter((result) => result.error);
-  if (failed.length === results.length) {
+  // A run fails only when nothing could be read; jobs already saved are delivered, and the
+  // status message names what failed (for example a site that limited requests midway).
+  if (failed.length === results.length && saved === 0) {
     throw new Error(failed.length === 1 ? failed[0].error : `All ${failed.length} ${many} failed. First error: ${failed[0].error}`);
   }
   let stopped = null;

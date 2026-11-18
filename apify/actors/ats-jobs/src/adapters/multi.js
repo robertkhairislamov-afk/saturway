@@ -1,6 +1,6 @@
 // One search across our job sites. Keywords and countries go to the job boards that cover those
 // countries (LinkedIn, Indeed and Glassdoor everywhere, Dice, Welcome to the Jungle, StepStone,
-// SEEK, Jobstreet, JobsDB, Reed, InfoJobs); career site links go to their applicant tracking system (Greenhouse,
+// SEEK, Jobstreet, Reed, InfoJobs); career site links go to their applicant tracking system (Greenhouse,
 // Lever, Ashby, Workday). Each source runs with its own adapter, and a job found on two sites is
 // saved once.
 
@@ -107,7 +107,6 @@ export const BOARDS = {
   stepstone: { adapter: stepstone, label: 'StepStone', countries: ['DE'] },
   seek: { adapter: seek, label: 'SEEK', countries: ['AU', 'NZ'] },
   jobstreet: { adapter: seek.brandAdapter('jobstreet'), label: 'Jobstreet', countries: ['MY', 'SG', 'PH', 'ID'] },
-  jobsdb: { adapter: seek.brandAdapter('jobsdb'), label: 'JobsDB', countries: ['HK', 'TH'] },
   reed: { adapter: reed, label: 'Reed', countries: ['GB'] },
   infojobs: { adapter: infojobs, label: 'InfoJobs', countries: ['ES'] },
   indeed: { adapter: indeed, label: 'Indeed', countries: Object.keys(COUNTRIES).filter((code) => indeed.COUNTRIES[code]) },

@@ -8,7 +8,7 @@ const sitesOf = (keys) => keys.map((key) => /^multi:\/\/([a-z]+)/.exec(key)[1]);
 
 test('multi: countries pick the job boards that cover them', () => {
   const { companies } = multi.prepareInput({ searchQueries: ['data analyst'], countries: ['us', 'DE', 'AU', 'MY', 'HK', 'XX'] });
-  assert.deepEqual([...new Set(sitesOf(companies))].sort(), ['dice', 'glassdoor', 'indeed', 'jobsdb', 'jobstreet', 'linkedin', 'seek', 'stepstone', 'wttj']);
+  assert.deepEqual([...new Set(sitesOf(companies))].sort(), ['dice', 'glassdoor', 'indeed', 'jobstreet', 'linkedin', 'seek', 'stepstone', 'wttj']);
   // LinkedIn, Indeed and Glassdoor search every country on its own.
   assert.equal(sitesOf(companies).filter((site) => site === 'linkedin').length, 5);
   assert.equal(sitesOf(companies).filter((site) => site === 'indeed').length, 5);

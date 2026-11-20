@@ -11,9 +11,13 @@ import { cleanText, htmlToText } from '../core/text.js';
 export const name = 'workday';
 export const title = 'Workday';
 export const exampleInput = { companies: ['https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite'], maxItems: 50 };
-// Several companies run in parallel, and each loads job details in parallel too.
+// Several companies run in parallel, and each loads job details a few at a time.
 export const companyConcurrency = 2;
-export const detailConcurrency = 12;
+export const detailConcurrency = 4;
+// Workday limits busy addresses (it refused Apify's own servers in November 2026): the companies
+// named in the input continue through Apify Proxy at the same pace.
+export const proxyFallback = true;
+export const limitNotice = 'Workday is limiting requests from this server';
 
 const PAGE_SIZE = 20;
 const PAGE_CONCURRENCY = 5;

@@ -21,7 +21,8 @@ export const sourceNames = ['company', 'companies'];
 // Personio and Teamtailor boards each have their own host.
 export const companyConcurrency = 24;
 const SHARED_HOST_SLOTS = 4;
-const SHARED_HOSTS = new Set(['greenhouse', 'lever', 'ashby']);
+// Workday career sites share Workday's servers too, and Workday limits busy addresses.
+const SHARED_HOSTS = new Set(['greenhouse', 'lever', 'ashby', 'workday']);
 const slots = new Map();
 
 // A directory search reads thousands of boards: a slow or broken board is given up after two short
@@ -75,6 +76,10 @@ export function summaryFacts(source, input, listedToEnd) {
 // Jobs read per Workday board when searching the whole directory: Workday lists the best matches
 // for the keywords first, and thousands of boards are read in one search.
 const DIRECTORY_WORKDAY_LIMIT = 100;
+
+// Once Workday answers "too many requests" during a directory search, the rest of its boards are
+// skipped for this run instead of asking every one of them.
+export const workdayLimit = { reached: false };
 
 export const PLATFORMS = { greenhouse: 'Greenhouse', lever: 'Lever', ashby: 'Ashby', workday: 'Workday', personio: 'Personio', teamtailor: 'Teamtailor' };
 
@@ -207,6 +212,7 @@ export async function* listJobs(source, context) {
   }
   // A directory board that closed or moved since it was checked is skipped quietly: the search is
   // across all companies, not about this one.
+  if (found.platform === 'workday' && workdayLimit.reached) return;
   try {
     // Workday searches by keyword with the best matches first and pages of 20; a big employer can
     // list thousands of loose matches, so a directory search reads only the first ones.
@@ -219,6 +225,10 @@ export async function* listJobs(source, context) {
     }
   } catch (error) {
     if (error.stopped) throw error;
+    if (found.platform === 'workday' && error.status === 429 && !workdayLimit.reached) {
+      workdayLimit.reached = true;
+      context.log.warning?.('Workday is limiting requests from this server; the remaining Workday companies are skipped in this search.');
+    }
     context.log.debug?.(`${found.id}: skipped (${error.message}).`);
   }
 }

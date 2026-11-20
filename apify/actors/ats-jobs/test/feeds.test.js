@@ -127,3 +127,20 @@ test('careers: directory boards get two short tries, options of the caller still
   assert.deepEqual(seen, [{ retries: 2, timeoutMs: 15000 }, { retries: 1, timeoutMs: 15000 }, { retries: 2, timeoutMs: 5000 }]);
   assert.equal(q.stats, http.stats);
 });
+
+test('careers: after Workday limits requests, the other directory Workday boards are skipped', async () => {
+  const careers = await import('../src/adapters/careers.js');
+  careers.workdayLimit.reached = false;
+  const { companies } = careers.prepareInput({ searchAllCompanies: true, keywords: ['engineer'], platforms: ['workday'] });
+  let calls = 0;
+  let warned = 0;
+  const http = { postJson: async () => { calls++; throw Object.assign(new Error('HTTP 429'), { status: 429 }); }, getJson: async () => { calls++; throw Object.assign(new Error('HTTP 429'), { status: 429 }); }, getText: async () => { calls++; throw Object.assign(new Error('HTTP 429'), { status: 429 }); }, stats: {} };
+  const context = { http, log: { info() {}, debug() {}, warning() { warned++; } }, keywords: ['engineer'] };
+  for (const key of companies.slice(0, 5)) for await (const page of careers.listJobs(careers.parseCompany(key), context)) void page;
+  assert.equal(warned, 1);
+  assert.ok(careers.workdayLimit.reached);
+  const afterFirst = calls;
+  for (const key of companies.slice(5, 10)) for await (const page of careers.listJobs(careers.parseCompany(key), context)) void page;
+  assert.equal(calls, afterFirst);
+  careers.workdayLimit.reached = false;
+});

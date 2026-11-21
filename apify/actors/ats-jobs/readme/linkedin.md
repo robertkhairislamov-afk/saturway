@@ -101,7 +101,7 @@ A company that hires is growing, and growing companies buy. Set **What to save**
 - `departments`: the teams it hires for, from the job titles, for example `{ "Sales": 6, "Engineering & IT": 2 }`.
 - `topJobTitles`, `locations`, `countries`, `remoteJobs`, `salaryRange`: what, where and for how much.
 - `sampleJobs`: the newest jobs with links, to quote in your first message; `searches`: which of your searches found the company.
-- `companyUrl` and `companyLogo`: the company's LinkedIn page and logo. LinkedIn shows visitors no company size or website; for those, run the same search in our [Indeed Jobs Scraper](https://apify.com/robertosan16/indeed-jobs-scraper) or [Glassdoor Jobs Scraper](https://apify.com/robertosan16/glassdoor-jobs-scraper), which have the same option.
+- `companyUrl` and `companyLogo`: the company's LinkedIn page and logo. LinkedIn shows visitors no company size or website; for those, run the same search in our [Indeed Jobs Scraper](https://apify.com/robertosan16/indeed-jobs-scraper), which has the same option.
 
 In a test on October 20, 2026, `account executive` in Austin, TX, posted in the last 7 days, gave 213 companies from 300 jobs in one minute. You pay per company, $0.50 per 1,000; the jobs read to build the list are free. The records hold company data only, no names, emails or phone numbers of people.
 
@@ -128,7 +128,7 @@ You pay only for the results you get: **$0.50 per 1,000 jobs**, or $0.50 per 1,0
 
 ## FAQ
 
-**Why not just ask an AI chatbot?** A chatbot with web search reads a few pages and retells them, so it finds a handful of jobs. In our test in October 2026, a chatbot asked for every nurse and dental assistant job in Adelaide listed about 10; our [All-in-One Jobs Scraper](https://apify.com/robertosan16/all-in-one-jobs-scraper), which shares this Actor's code, returned 1,480 from SEEK, Indeed, Glassdoor and LinkedIn in three minutes, each with its link and date. This Actor gives you every job the site shows for your search, word for word and in the same fields every time, so you can load them into a spreadsheet, database or CRM, get only new jobs on a schedule, and pay a fixed price per 1,000 jobs instead of paying an AI to read every page. AI agents use it the same way: through Apify's MCP server, an agent can call this Actor whenever it needs real job data.
+**Why not just ask an AI chatbot?** A chatbot with web search reads a few pages and retells them, so it finds a handful of jobs. In our test in October 2026, a chatbot asked for every nurse and dental assistant job in Adelaide listed about 10; our [All-in-One Jobs Scraper](https://apify.com/robertosan16/all-in-one-jobs-scraper), which shares this Actor's code, returned 1,480 from SEEK, Indeed, Glassdoor (searched then, no longer) and LinkedIn in three minutes, each with its link and date. This Actor gives you every job the site shows for your search, word for word and in the same fields every time, so you can load them into a spreadsheet, database or CRM, get only new jobs on a schedule, and pay a fixed price per 1,000 jobs instead of paying an AI to read every page. AI agents use it the same way: through Apify's MCP server, an agent can call this Actor whenever it needs real job data.
 
 **Do I need a LinkedIn account or cookies?** No. The Actor reads the public job pages that LinkedIn shows to everyone without login. It never logs in, so no account can be restricted.
 

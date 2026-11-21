@@ -207,12 +207,12 @@ export const ACTORS = {
   },
   multi: {
     name: 'all-in-one-jobs-scraper',
-    title: 'All-in-One Job Scraper [$1/1K]: LinkedIn, Indeed, Glassdoor',
-    tagline: 'LinkedIn, Indeed, Glassdoor and the other job boards here in one search, plus career sites you add, with duplicates removed',
+    title: 'All-in-One Job Scraper [$1/1K]: LinkedIn, Indeed, Dice',
+    tagline: 'LinkedIn, Indeed, Dice and the other job boards here in one search, plus career sites you add, with duplicates removed',
     apiExample: { searchQueries: ['data analyst'], countries: ['US', 'DE', 'AU'], maxItems: 30 },
-    description: '$1 per 1,000 jobs. LinkedIn, Indeed, Glassdoor and 7 more job boards in 62 countries in one run, plus company career sites. One format, salary as numbers, duplicates removed and free, only new jobs on a schedule.',
-    seoTitle: 'Job Scraper API – LinkedIn, Indeed, Glassdoor + 7 Sites',
-    seoDescription: 'Job scraper for LinkedIn, Indeed, Glassdoor, Dice, StepStone, SEEK, Reed, InfoJobs, Jobstreet and career sites in one run. One format. $1/1,000 jobs.',
+    description: '$1 per 1,000 jobs. LinkedIn, Indeed and 7 more job boards in 62 countries in one run, plus company career sites. One format, salary as numbers, duplicates removed and free, only new jobs on a schedule.',
+    seoTitle: 'Job Scraper API – LinkedIn, Indeed, Dice + 6 Sites',
+    seoDescription: 'Job scraper for LinkedIn, Indeed, Dice, StepStone, SEEK, Reed, InfoJobs, Jobstreet and career sites in one run. One format. $1/1,000 jobs.',
   },
   careers: {
     name: 'career-page-jobs-scraper',
@@ -1580,7 +1580,7 @@ function multiInputSchema() {
         title: 'Countries',
         type: 'array',
         editor: 'select',
-        description: 'Where to search. LinkedIn, Indeed and Glassdoor cover every country here, and each country also goes to the other sites that cover it: the United States to Dice and Welcome to the Jungle; Germany to StepStone and Welcome to the Jungle; the UK to Reed and Welcome to the Jungle; Spain to InfoJobs and Welcome to the Jungle; Australia and New Zealand to SEEK; Malaysia, Singapore, the Philippines and Indonesia to Jobstreet; Canada and western Europe to Welcome to the Jungle.',
+        description: 'Where to search. LinkedIn and Indeed cover every country here, and each country also goes to the other sites that cover it: the United States to Dice and Welcome to the Jungle; Germany to StepStone and Welcome to the Jungle; the UK to Reed and Welcome to the Jungle; Spain to InfoJobs and Welcome to the Jungle; Australia and New Zealand to SEEK; Malaysia, Singapore, the Philippines and Indonesia to Jobstreet; Canada and western Europe to Welcome to the Jungle.',
         items: selectOf(multi.COUNTRIES),
         prefill: ['US'],
       },
@@ -1625,7 +1625,7 @@ function multiInputSchema() {
         details: 'the full description (text and HTML) and every detail the site offers',
         proxyDescription: 'The Actor connects directly, which is fastest; LinkedIn always goes through Apify Proxy (datacenter addresses, residential ones if LinkedIn limits them) and Indeed through Apify Proxy. If a site starts limiting requests, it switches to Apify Proxy automatically. Turn on a proxy here only to use it for every site from the start.',
       }),
-      // The first run shows 10 jobs from each of the five sites that cover the United States; the fastest
+      // The first run shows 10 jobs from each of the four sites that cover the United States; the fastest
       // ones would fill the 50 jobs of the form alone.
       maxItemsPerCompany: {
         ...commonSettings({ perSource: 'search or career site' }).maxItemsPerCompany,

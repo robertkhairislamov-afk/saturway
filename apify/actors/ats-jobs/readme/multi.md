@@ -1,6 +1,6 @@
 # All-in-One Jobs Scraper
 
-**Search LinkedIn, Indeed, Glassdoor and 7 more job boards at once, plus company career sites.** Enter keywords and countries, and get jobs from LinkedIn, Indeed, Glassdoor, Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet, Reed and InfoJobs, plus the Greenhouse, Lever, Ashby, Workday, Personio or Teamtailor career sites of the companies you add, in one format, with duplicates across sites removed. Salary as numbers, full descriptions, apply links. **$1 per 1,000 jobs, no start fee.**
+**Search LinkedIn, Indeed and 7 more job boards at once, plus company career sites.** Enter keywords and countries, and get jobs from LinkedIn, Indeed, Dice, Welcome to the Jungle, StepStone, SEEK, Jobstreet, Reed and InfoJobs, plus the Greenhouse, Lever, Ashby, Workday, Personio or Teamtailor career sites of the companies you add, in one format, with duplicates across sites removed. Salary as numbers, full descriptions, apply links. **$1 per 1,000 jobs, no start fee.**
 
 One search, many job sites: the Actor sends your keywords to every job board that covers your countries, reads the career sites of the companies you list, and merges everything into one clean table. A job with the same title, company and city on two sites is saved once, and duplicates are free. Each job keeps its source, so you always know where it came from. Run it on a schedule to get **only new jobs** from all sites at once. No browser, no login.
 
@@ -9,22 +9,21 @@ One search, many job sites: the Actor sends your keywords to every job board tha
 - 🌍 **62 countries, 10 job boards searched by keyword**: pick countries, and every board that covers them is searched (see the table below).
 - 🔗 **LinkedIn included**: public LinkedIn job listings in every country, without login, with seniority, job function and number of applicants. The proxies LinkedIn needs are included in the price.
 - 🌐 **Indeed included**: Indeed jobs in all 62 countries, with salaries, job types, benefits and company size, even past Indeed's limit of about 1,000 jobs per search.
-- ⭐ **Glassdoor included**: Glassdoor jobs in all 62 countries, with the company's Glassdoor rating, size, revenue and industry, and Glassdoor's salary estimate where the employer states no pay.
 - 🔎 **One simple input**: keywords, countries and, for one country, a city. No site-specific settings needed.
 - 🏢 **Company career sites by link**: paste any Greenhouse, Lever, Ashby, Workday, Personio or Teamtailor job board link; the system is recognized automatically. These systems have no search across companies, so only the companies you add are read. Your keywords pick their jobs by title.
 - 🧹 **Duplicates removed**: a job with the same title, company and city from two sites or two searches is saved once, and you do not pay for it. The FAQ explains what this match can miss.
 - 💰 **Salary as numbers** in the local currency: "$120k - $140k p.a.", "RM 3,800 – RM 5,000 per month" or "€75,000-85,000" become `min`, `max`, `currency` and `interval`.
 - 🎛️ **Filters for all sites**: remote only, posted in the last N days, only jobs with a salary, title must contain, exclude words. LinkedIn is left out of remote searches, because it does not show visitors which jobs are remote.
 - 📋 **A report for every run**: the status message names any site that failed, and the **Run summary** on the Output tab lists every site with jobs found, matched and saved.
-- 📈 **Hiring companies (lead lists)**: switch **What to save** to *Hiring companies* and get one row per employer across all sites: the same company found on Indeed, Glassdoor, LinkedIn and SEEK becomes one record, with its number of matching jobs, jobs of the last 7 and 30 days, the teams it hires for, places, pay range, company details and the sites it posts on. Staffing agencies are left out.
+- 📈 **Hiring companies (lead lists)**: switch **What to save** to *Hiring companies* and get one row per employer across all sites: the same company found on Indeed, LinkedIn and SEEK becomes one record, with its number of matching jobs, jobs of the last 7 and 30 days, the teams it hires for, places, pay range, company details and the sites it posts on. Staffing agencies are left out.
 - 🆕 **Only new jobs since the last run**: one daily job alert across all sites.
-- 🏷️ **Source of every job** in the `ats` field: `linkedin`, `indeed`, `glassdoor`, `dice`, `wttj`, `stepstone`, `seek`, `jobstreet`, `reed`, `infojobs`, `greenhouse`, `lever`, `ashby` or `workday`.
+- 🏷️ **Source of every job** in the `ats` field: `linkedin`, `indeed`, `dice`, `wttj`, `stepstone`, `seek`, `jobstreet`, `reed`, `infojobs`, `greenhouse`, `lever`, `ashby` or `workday`.
 
 ## Which sites cover which countries?
 
 | Countries | Job sites |
 |---|---|
-| Every country in this table | LinkedIn, Indeed, Glassdoor |
+| Every country in this table | LinkedIn, Indeed |
 | United States | Dice, Welcome to the Jungle |
 | Germany | StepStone, Welcome to the Jungle |
 | United Kingdom | Reed, Welcome to the Jungle |
@@ -32,7 +31,7 @@ One search, many job sites: the Actor sends your keywords to every job board tha
 | Ireland, France, Belgium, Netherlands, Luxembourg, Italy, Canada | Welcome to the Jungle |
 | Australia, New Zealand | SEEK |
 | Malaysia, Singapore, Philippines, Indonesia | Jobstreet |
-| Hong Kong, Thailand, Austria, Switzerland, Portugal, Poland, Czechia, Hungary, Romania, Greece, Ukraine, Sweden, Denmark, Norway, Finland, Türkiye, Israel, United Arab Emirates, Saudi Arabia, Qatar, Kuwait, Bahrain, Oman, Egypt, Morocco, Nigeria, South Africa, India, Pakistan, Japan, South Korea, China, Taiwan, Vietnam, Brazil, Mexico, Argentina, Chile, Colombia, Peru, Ecuador, Uruguay, Venezuela, Costa Rica, Panama | LinkedIn, Indeed and Glassdoor only |
+| Hong Kong, Thailand, Austria, Switzerland, Portugal, Poland, Czechia, Hungary, Romania, Greece, Ukraine, Sweden, Denmark, Norway, Finland, Türkiye, Israel, United Arab Emirates, Saudi Arabia, Qatar, Kuwait, Bahrain, Oman, Egypt, Morocco, Nigeria, South Africa, India, Pakistan, Japan, South Korea, China, Taiwan, Vietnam, Brazil, Mexico, Argentina, Chile, Colombia, Peru, Ecuador, Uruguay, Venezuela, Costa Rica, Panama | LinkedIn and Indeed only |
 | Any country | Greenhouse, Lever, Ashby, Workday, Personio and Teamtailor career sites you add |
 
 ## What data does it extract?
@@ -50,7 +49,7 @@ One search, many job sites: the Actor sends your keywords to every job board tha
 | `jobUrl` / `applyUrl` | https://www.dice.com/job-detail/b707fbf4-… |
 | `descriptionText` / `descriptionHtml` | full job description |
 
-Each site adds its own extra fields, such as `seniorityLevel`, `industries` and `applicants` on LinkedIn, `jobTypes`, `benefits` and `companySize` on Indeed, `companyRating` and `salaryEstimate` on Glassdoor, `skills` on Dice, `benefits` on StepStone, `companyIndustry` and `companySize` on SEEK and Jobstreet, or `department` on company career sites.
+Each site adds its own extra fields, such as `seniorityLevel`, `industries` and `applicants` on LinkedIn, `jobTypes`, `benefits` and `companySize` on Indeed, `skills` on Dice, `benefits` on StepStone, `companyIndustry` and `companySize` on SEEK and Jobstreet, or `department` on company career sites.
 
 ## How to scrape jobs from many sites at once
 
@@ -140,9 +139,9 @@ Set **What to save** to **Hiring companies** and the Actor reads the jobs of you
 - `departments`: the teams it hires for, from the job titles, for example `{ "Sales": 6, "Engineering & IT": 2 }`.
 - `topJobTitles`, `locations`, `countries`, `remoteJobs`, `salaryRange`: what, where and for how much.
 - `sampleJobs`: the newest jobs with links, to quote in your first message; `searches`: which of your searches found the company.
-- `companyDomain`, `companySize`, `companyRevenue`, `companyIndustry`, `companyRating`: from the sites that show them (Indeed and Glassdoor).
+- `companyDomain`, `companySize`, `companyRevenue`, `companyIndustry`, `companyRating`: from the sites that show them (Indeed).
 
-In a test on October 20, 2026, `registered nurse` in Adelaide, Australia, posted in the last 7 days, gave 118 employers from 345 jobs on SEEK, Indeed, Glassdoor and LinkedIn in 96 seconds; 28 of them were found on two sites or more. You pay per company, $1 per 1,000; the jobs read to build the list are free.
+In a test on October 20, 2026, `registered nurse` in Adelaide, Australia, posted in the last 7 days, gave 118 employers from 345 jobs on SEEK, Indeed, Glassdoor (searched then, no longer) and LinkedIn in 96 seconds; 28 of them were found on two sites or more. You pay per company, $1 per 1,000; the jobs read to build the list are free.
 
 ## Use cases
 
@@ -165,7 +164,7 @@ You pay only for the results you get: **$1 per 1,000 jobs**, or $1 per 1,000 com
 
 ## FAQ
 
-**Why not just ask an AI chatbot?** A chatbot with web search reads a few pages and retells them, so it finds a handful of jobs. In our test in October 2026, a chatbot asked for every nurse and dental assistant job in Adelaide listed about 10; this Actor returned 1,480 from SEEK, Indeed, Glassdoor and LinkedIn in three minutes, each with its link and date. This Actor gives you every job the site shows for your search, word for word and in the same fields every time, so you can load them into a spreadsheet, database or CRM, get only new jobs on a schedule, and pay a fixed price per 1,000 jobs instead of paying an AI to read every page. AI agents use it the same way: through Apify's MCP server, an agent can call this Actor whenever it needs real job data.
+**Why not just ask an AI chatbot?** A chatbot with web search reads a few pages and retells them, so it finds a handful of jobs. In our test in October 2026, a chatbot asked for every nurse and dental assistant job in Adelaide listed about 10; this Actor returned 1,480 from SEEK, Indeed, Glassdoor (searched then, no longer) and LinkedIn in three minutes, each with its link and date. This Actor gives you every job the site shows for your search, word for word and in the same fields every time, so you can load them into a spreadsheet, database or CRM, get only new jobs on a schedule, and pay a fixed price per 1,000 jobs instead of paying an AI to read every page. AI agents use it the same way: through Apify's MCP server, an agent can call this Actor whenever it needs real job data.
 
 **Why are there no LinkedIn jobs in remote searches?** LinkedIn does not show visitors who are not logged in which jobs are remote, so **Remote jobs only** leaves LinkedIn out. To find remote LinkedIn jobs, add `remote` to your keywords instead.
 

@@ -62,10 +62,10 @@
     "pastDays": {
       "title": "Sold prices from the last days",
       "type": "integer",
-      "description": "Also read the prices cars were sold for at AUCT auctions in this many past days (all yards), for the reference price. 0 skips it.",
+      "description": "Also read the prices cars were sold for at AUCT auctions in this many past days (all yards). Sold prices are kept between runs, so a week is enough for daily runs; 0 skips it.",
       "minimum": 0,
       "maximum": 60,
-      "default": 14
+      "default": 7
     },
     "brands": {
       "title": "Brands",

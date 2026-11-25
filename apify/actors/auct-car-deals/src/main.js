@@ -88,7 +88,11 @@ if (input.retailReference !== false) {
   log.info(`${retail.length} retail prices from Carsome.`);
 }
 
+const carGroups = (input.carGroups ?? []).map((g) => String(g).toUpperCase());
+const stars = (value, min) => !min || (value != null && value >= min);
 const passes = (car) => branchOk(car.branchCode)
+  && (!carGroups.length || carGroups.includes(String(car.carGroup ?? '').toUpperCase()))
+  && stars(car.bodyStars, input.minBodyStars) && stars(car.engineStars, input.minEngineStars) && stars(car.interiorStars, input.minInteriorStars)
   && (!brands.length || brands.includes(String(car.brand).toLowerCase()))
   && (!keywords.length || keywords.some((k) => `${car.model} ${car.subModel}`.toLowerCase().includes(k)))
   && (!input.minYear || (car.year && car.year >= input.minYear))
@@ -99,6 +103,8 @@ const passes = (car) => branchOk(car.branchCode)
 const rows = [];
 for (const car of cars.filter(passes)) {
   const ref = expectedPrice(car, sold);
+  // The least the car is worth: its expected price, or the starting price when nothing sold is known.
+  if (input.minPrice && (ref.expectedPrice ?? car.startPrice ?? 0) < input.minPrice) continue;
   const rt = retailPrice(car, retail);
   const hits = matchTargets(car, targets, ref.expectedPrice);
   if (onlyTargets && !hits.length) continue;

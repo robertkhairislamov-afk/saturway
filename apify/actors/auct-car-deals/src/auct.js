@@ -132,9 +132,14 @@ export function carOf(raw, lane = {}) {
     engineCc: num(raw.Engine_Size),
     fuel: mapped(FUEL, raw.Fuel_Type),
     color: text(raw.Car_Paint),
-    bodyType: text(raw.Asset_Group_Name) ?? text(raw.Car_Type),
+    bodyType: text(raw.Asset_Group_Name),
+    // AUCT grading since 1.1.2025: group G (normal), U (cannot be driven), I (transfer not
+    // guaranteed), W (flooded, not repaired), S (salvage); 1–5 stars for body, engine and interior.
+    carGroup: text(raw.Car_Type),
+    bodyStars: num(raw.Point_Grade_1),
+    engineStars: num(raw.Point_Grade_2),
+    interiorStars: num(raw.Point_Grade_3),
     grade: text(raw.Asset_Grade) ?? text(raw.Condition_Grade),
-    gradePoints: [raw.Point_Grade_1, raw.Point_Grade_2, raw.Point_Grade_3].map(text).filter(Boolean).join(' / ') || null,
     inspectorNotes: notesOf(raw.Comment),
     plateProvince: text(raw.License_Plate_City),
     sellerGroup: text(raw.Seller_Group),

@@ -103,6 +103,62 @@
       "description": "Skip cars with more kilometres than this.",
       "minimum": 0
     },
+    "carGroups": {
+      "title": "AUCT groups",
+      "type": "array",
+      "editor": "select",
+      "description": "G: normal cars (also repaired flood cars). U: cannot be driven, sold as is. I: transfer of ownership not guaranteed. W: flooded, not repaired. S: salvage. G only for cars to use right away.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "G",
+          "U",
+          "I",
+          "W",
+          "S"
+        ],
+        "enumTitles": [
+          "G – normal",
+          "U – cannot be driven",
+          "I – transfer not guaranteed",
+          "W – flooded",
+          "S – salvage"
+        ]
+      },
+      "default": [
+        "G"
+      ]
+    },
+    "minBodyStars": {
+      "title": "Body: at least (stars)",
+      "type": "integer",
+      "description": "AUCT's 1–5 stars. Engine: 3 = average, 2 = needs repair, 1 = must be repaired before use. Body: 2 or 1 = heavy collision reaching the main structure.",
+      "minimum": 0,
+      "maximum": 5,
+      "default": 3
+    },
+    "minEngineStars": {
+      "title": "Engine: at least (stars)",
+      "type": "integer",
+      "description": "AUCT's 1–5 stars. Engine: 3 = average, 2 = needs repair, 1 = must be repaired before use. Body: 2 or 1 = heavy collision reaching the main structure.",
+      "minimum": 0,
+      "maximum": 5,
+      "default": 3
+    },
+    "minInteriorStars": {
+      "title": "Interior: at least (stars)",
+      "type": "integer",
+      "description": "AUCT's 1–5 stars. Engine: 3 = average, 2 = needs repair, 1 = must be repaired before use. Body: 2 or 1 = heavy collision reaching the main structure.",
+      "minimum": 0,
+      "maximum": 5,
+      "default": 3
+    },
+    "minPrice": {
+      "title": "Min price (THB)",
+      "type": "integer",
+      "description": "Skip cars expected to sell below this (the starting price is used when no sales are known).",
+      "minimum": 0
+    },
     "maxPrice": {
       "title": "Max starting price (THB)",
       "type": "integer",

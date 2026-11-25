@@ -7,7 +7,7 @@ import { expectedPrice, matchTargets, modelKey, parseTarget } from '../src/value
 const raw = {
   _id: 'a1', Document_No: 'D-1', Car_Order: '12', Brand_Name: 'TOYOTA', Model_Name: 'FORTUNER', Sub_Model_Name: '2.4 V 2WD',
   Year_of_Manufacture: '2020', Register_Year: '2563', Mile: '85,000', Asset_Gear: 'ออโตเมติค', Fuel_Type: 'ดีเซล', Sales_Price: '720,000', Branch_Name: 'พัทยา',
-  Asset_Grade: 'C1', Point_Grade_1: '4', Point_Grade_2: '2', Point_Grade_3: '3', Engine_Size: '2393',
+  Asset_Grade: 'C1', Car_Type: 'G', Point_Grade_1: '4', Point_Grade_2: '2', Point_Grade_3: '3', Engine_Size: '2393',
   Comment: "[{'Document_No': 'X', 'Comment': 'กันชนหน้าครูด  '}]", images: "['TimePhoto_1.jpg']",
   Contract_No: 'SECRET-1', Chassis_No: 'CHASSIS-1', License_Plate_No: '1กข 1234', Customer_Name: 'PERSON', Customer_Phone_No: '0812345678',
 };
@@ -22,7 +22,8 @@ test('a car from the auction service, with the yard, a Buddhist-era year and no 
   assert.equal(car.startPrice, 720000);
   assert.equal(car.auctionDate, '2026-11-28');
   assert.equal(car.lotUrl, 'https://www.auct.co.th/auction-list/D-1');
-  assert.deepEqual([car.gear, car.fuel, car.engineCc, car.grade, car.gradePoints], ['automatic', 'diesel', 2393, 'C1', '4 / 2 / 3']);
+  assert.deepEqual([car.gear, car.fuel, car.engineCc, car.grade], ['automatic', 'diesel', 2393, 'C1']);
+  assert.deepEqual([car.carGroup, car.bodyStars, car.engineStars, car.interiorStars], ['G', 4, 2, 3]);
   assert.equal(car.inspectorNotes, 'กันชนหน้าครูด');
   for (const secret of ['SECRET-1', 'CHASSIS-1', '1234', 'PERSON', '0812345678', 'TimePhoto']) assert.ok(!JSON.stringify(car).includes(secret), secret);
 });

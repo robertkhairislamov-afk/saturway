@@ -160,10 +160,16 @@
       "minimum": 0
     },
     "maxPrice": {
-      "title": "Max starting price (THB)",
+      "title": "Max price (THB)",
       "type": "integer",
-      "description": "Skip lots whose starting price is higher than this.",
+      "description": "Skip cars expected to sell above this (the starting price is used when no sales are known).",
       "minimum": 0
+    },
+    "noPickups": {
+      "title": "No pickups or vans",
+      "type": "boolean",
+      "description": "Skip pickups and vans (AUCT body group กระบะ & ตู้, and models such as D-Max, Triton, Hilux, Ranger, Navara).",
+      "default": false
     },
     "targets": {
       "title": "My price targets",

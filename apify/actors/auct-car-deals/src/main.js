@@ -88,6 +88,9 @@ if (input.retailReference !== false) {
   log.info(`${retail.length} retail prices from Carsome.`);
 }
 
+// Pickups and vans: AUCT's body group "กระบะ & ตู้", or a known pickup model.
+const PICKUPS = /\b(d-?max|triton|hilux|vigo|revo|ranger|navara|frontier|bt-?50|colorado|big-?m|strada|tiger|mighty)\b/i;
+const isPickup = (car) => /กระบะ/.test(car.bodyType ?? '') || PICKUPS.test(`${car.model} ${car.subModel}`);
 const carGroups = (input.carGroups ?? []).map((g) => String(g).toUpperCase());
 const stars = (value, min) => !min || (value != null && value >= min);
 const passes = (car) => branchOk(car.branchCode)
@@ -98,13 +101,15 @@ const passes = (car) => branchOk(car.branchCode)
   && (!input.minYear || (car.year && car.year >= input.minYear))
   && (!input.maxYear || (car.year && car.year <= input.maxYear))
   && (!input.maxMileage || (car.mileageKm != null && car.mileageKm <= input.maxMileage))
-  && (!input.maxPrice || (car.startPrice && car.startPrice <= input.maxPrice));
+  && (!input.noPickups || !isPickup(car));
 
 const rows = [];
 for (const car of cars.filter(passes)) {
   const ref = expectedPrice(car, sold);
   // The least the car is worth: its expected price, or the starting price when nothing sold is known.
-  if (input.minPrice && (ref.expectedPrice ?? car.startPrice ?? 0) < input.minPrice) continue;
+  const likely = ref.expectedPrice ?? car.startPrice ?? 0;
+  if (input.minPrice && likely < input.minPrice) continue;
+  if (input.maxPrice && (!likely || likely > input.maxPrice)) continue;
   const rt = retailPrice(car, retail);
   const hits = matchTargets(car, targets, ref.expectedPrice);
   if (onlyTargets && !hits.length) continue;

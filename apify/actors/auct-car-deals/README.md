@@ -13,7 +13,10 @@ price targets. Not for the Apify Store.
    yards; only brand, model, year and the sold price are kept, in the named key-value store
    `auct-car-deals-history`, 180 days) and gives each upcoming car an **expected price**: the median
    sold price of the same model and year (neighbouring years with low confidence).
-4. Marks cars whose expected price is at or under your **price targets**
+4. Reads the cars on sale at **Carsome** (all list pages, refreshed weekly, kept in the history
+   store) and gives each auction car the **retail price** of the same model and year (median; year
+   ±1 if needed) and `belowRetailPercent`: how far the expected auction price is below retail.
+5. Marks cars whose expected price is at or under your **price targets**
    (`toyota fortuner 2020 750000`); without an expected price, by the starting price (marked).
 
 The price AUCT lists for an upcoming lot is the **starting price**: cars sell far above it (a 2021
@@ -34,5 +37,9 @@ lane, and the link to the lane on auct.co.th (photos are there).
   province only). Photo links are left out because their address contains the contract number.
 - The port 2368 service sends its certificate without the intermediate; the public Sectigo DV R36
   intermediate is bundled (`src/certs`) so TLS stays fully verified.
-- Expected prices are auction (wholesale) prices, not retail. A retail comparison (Carsome) is not
-  used: its terms forbid commercial use. Bidding needs AUCT registration and a deposit.
+- Expected prices are auction (wholesale) prices. Retail prices come from Carsome, whose terms
+  forbid commercial use of its content: used here for the owner's internal buying only, at the
+  owner's decision and risk (25.11.2026), never published or sold. Carsome pages are read as text
+  (the page data is parsed, not executed), about 32 pages a week with pauses; no seller details.
+- Auction cars are often in worse condition (grades C/D, high mileage) than Carsome's inspected
+  cars: the gap to retail is a guide, not a profit. Bidding needs AUCT registration and a deposit.

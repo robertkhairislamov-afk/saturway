@@ -45,3 +45,19 @@ export function matchTargets(car, targets, expected = null) {
     .map((t) => ({ target: t.text, maxPrice: t.maxPrice, by: expected ? 'expected price' : 'starting price only', fits: expected ? expected <= t.maxPrice : car.startPrice > 0 && car.startPrice <= t.maxPrice }))
     .filter((m) => m.fits);
 }
+
+// The retail price of the same brand, model and year on sale at Carsome (median); the neighbouring
+// years with low confidence. retail: [{ id, brand, model, year, price }].
+export function retailPrice(car, retail) {
+  const others = retail.filter((r) => modelKey(r) === modelKey(car) && r.price > 0);
+  const same = others.filter((r) => r.year === car.year);
+  if (same.length >= 2) return { retailPrice: median(same.map((r) => r.price)), retailComparables: same.length, retailBasis: 'same model and year' };
+  const near = others.filter((r) => car.year && Math.abs(r.year - car.year) <= 1);
+  if (near.length >= 2) return { retailPrice: median(near.map((r) => r.price)), retailComparables: near.length, retailBasis: 'same model, year ±1' };
+  return { retailPrice: null, retailComparables: same.length, retailBasis: null };
+}
+
+export function belowPercent(price, reference) {
+  if (!price || !reference) return null;
+  return Math.round(((reference - price) / reference) * 100);
+}

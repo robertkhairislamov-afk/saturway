@@ -138,6 +138,20 @@
       "description": "The Actor reads one page at a time with this pause.",
       "minimum": 300,
       "default": 1200
+    },
+    "retailReference": {
+      "title": "Compare with retail prices (Carsome)",
+      "type": "boolean",
+      "description": "Read the cars on sale at Carsome (refreshed weekly) and show how far the expected auction price is below retail for the same model and year.",
+      "default": true
+    },
+    "retailRefreshDays": {
+      "title": "Refresh retail prices every (days)",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 60,
+      "default": 7,
+      "description": "Carsome prices older than this are read again; in between, the saved ones are used."
     }
   }
 }

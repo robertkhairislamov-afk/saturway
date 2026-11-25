@@ -1,7 +1,8 @@
 import { Actor, log } from 'apify';
 
-import { BRANCHES, CAR, branchCodeOf, carOf, createClient, daysFrom, lanesOf } from './auct.js';
-import { expectedPrice, matchTargets, modelKey, parseTarget } from './value.js';
+import { BRANCHES, CAR, USER_AGENT, branchCodeOf, carOf, createClient, daysFrom, lanesOf } from './auct.js';
+import { fetchCarsome } from './carsome.js';
+import { belowPercent, expectedPrice, matchTargets, modelKey, parseTarget, retailPrice } from './value.js';
 
 await Actor.init();
 const input = (await Actor.getInput()) ?? {};
@@ -72,6 +73,21 @@ const sold = [...byId.values()].filter((o) => o.date >= cutoff).slice(-50000);
 await history.setValue('sold', sold);
 log.info(`${sold.length} sold prices in the history.`);
 
+// Retail prices at Carsome, refreshed when older than a week.
+let retail = [];
+if (input.retailReference !== false) {
+  const saved = await history.getValue('retail');
+  const ageDays = saved?.fetchedAt ? (Date.now() - Date.parse(saved.fetchedAt)) / 86400000 : Infinity;
+  if (ageDays < Number(input.retailRefreshDays ?? 7) && saved.cars?.length) retail = saved.cars;
+  else {
+    await Actor.setStatusMessage('Reading retail prices at Carsome');
+    retail = await fetchCarsome({ userAgent: USER_AGENT, delayMs: 2000, log });
+    if (retail.length) await history.setValue('retail', { fetchedAt: new Date().toISOString(), cars: retail });
+    else if (saved?.cars?.length) retail = saved.cars;
+  }
+  log.info(`${retail.length} retail prices from Carsome.`);
+}
+
 const passes = (car) => branchOk(car.branchCode)
   && (!brands.length || brands.includes(String(car.brand).toLowerCase()))
   && (!keywords.length || keywords.some((k) => `${car.model} ${car.subModel}`.toLowerCase().includes(k)))
@@ -83,15 +99,16 @@ const passes = (car) => branchOk(car.branchCode)
 const rows = [];
 for (const car of cars.filter(passes)) {
   const ref = expectedPrice(car, sold);
+  const rt = retailPrice(car, retail);
   const hits = matchTargets(car, targets, ref.expectedPrice);
   if (onlyTargets && !hits.length) continue;
-  rows.push({ ...car, ...ref, matchesTarget: hits.length > 0, targets: hits });
+  rows.push({ ...car, ...ref, ...rt, belowRetailPercent: belowPercent(ref.expectedPrice, rt.retailPrice), matchesTarget: hits.length > 0, targets: hits });
 }
-// Cars within a target first (by expected price), then by auction date and yard.
-rows.sort((a, b) => (b.matchesTarget - a.matchesTarget) || String(a.auctionDate).localeCompare(String(b.auctionDate)) || String(a.branch).localeCompare(String(b.branch)) || ((a.order ?? 0) - (b.order ?? 0)));
+// Cars within a target first, then the furthest below retail, then by auction date and yard.
+rows.sort((a, b) => (b.matchesTarget - a.matchesTarget) || ((b.belowRetailPercent ?? -999) - (a.belowRetailPercent ?? -999)) || String(a.auctionDate).localeCompare(String(b.auctionDate)) || String(a.branch).localeCompare(String(b.branch)) || ((a.order ?? 0) - (b.order ?? 0)));
 await Actor.pushData(rows);
 
-const message = `Saved ${rows.length} cars from ${lanes.length} auction lanes (${cars.length} cars listed); ${rows.filter((r) => r.matchesTarget).length} within your targets; expected price known for ${rows.filter((r) => r.expectedPrice).length}.`;
+const message = `Saved ${rows.length} cars from ${lanes.length} auction lanes (${cars.length} cars listed); ${rows.filter((r) => r.matchesTarget).length} within your targets; expected price known for ${rows.filter((r) => r.expectedPrice).length}, compared with retail for ${rows.filter((r) => r.belowRetailPercent != null).length}.`;
 log.info(message);
 await Actor.setStatusMessage(message, { isStatusMessageTerminal: true });
 await Actor.exit();

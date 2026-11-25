@@ -81,3 +81,22 @@ test('the client sends a form with an honest user agent and retries a busy serve
 test('days from today', () => {
   assert.deepEqual(daysFrom(new Date('2026-11-25'), 2), ['2026-11-25', '2026-11-26', '2026-11-27']);
 });
+
+test('carsome: the car list is read from the page data as text, with parameters resolved', async () => {
+  const { parseCarsomePage, retailOf } = await import('../src/carsome.js');
+  const { readFileSync } = await import('node:fs');
+  const { cars, total } = parseCarsomePage(readFileSync(new URL('./fixtures/carsome-mini.html', import.meta.url), 'utf8'));
+  assert.equal(total, 36);
+  assert.deepEqual(cars.map(retailOf).map((c) => [c.brand, c.model, c.year, c.mileageKm, c.price]), [['Toyota', 'FORTUNER', 2020, 189540, 1133130], ['Isuzu', 'D-MAX', 2021, 52000, 455000]]);
+  assert.ok(!('dealerName' in retailOf(cars[0])));
+});
+
+test('retail price of the same model and year, and how far the expected auction price is below it', async () => {
+  const { retailPrice, belowPercent } = await import('../src/value.js');
+  const auction = { brand: 'Isuzu', model: 'D-Max', year: 2021 };
+  const retail = [455000, 475000, 520000].map((price, i) => ({ id: `r${i}`, brand: 'Isuzu', model: 'D-MAX', year: 2021, price }));
+  const r = retailPrice(auction, retail);
+  assert.deepEqual([r.retailPrice, r.retailComparables], [475000, 3]);
+  assert.equal(belowPercent(370000, r.retailPrice), 22);
+  assert.equal(retailPrice({ ...auction, year: 2015 }, retail).retailPrice, null);
+});

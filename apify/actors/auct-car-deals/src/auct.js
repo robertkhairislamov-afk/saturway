@@ -1,6 +1,11 @@
 // AUCT (Sahakarn Auction, auct.co.th): the JSON service its public pages read. One request at a
 // time with a pause, an honest user agent, and only the lists the website itself shows visitors.
 
+import { readFileSync } from 'node:fs';
+import tls from 'node:tls';
+
+import { Agent } from 'undici';
+
 export const SERVICE = 'https://service.auct.co.th:2368';
 export const SITE = 'https://www.auct.co.th';
 export const USER_AGENT = 'auct-car-deals (internal tool of a Pattaya car rental company)';
@@ -28,6 +33,13 @@ export function branchCodeOf(obj = {}) {
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// The service on port 2368 sends its Sectigo certificate without the intermediate certificate, so
+// Node cannot build the chain. The public intermediate (Sectigo Public Server Authentication CA DV
+// R36, from crt.sectigo.com, signed by the Sectigo R46 root in Node's own store) is added to the
+// trusted roots: certificates are still fully verified.
+const INTERMEDIATE = readFileSync(new URL('./certs/sectigo-dv-r36.pem', import.meta.url), 'utf8');
+export const serviceAgent = new Agent({ connect: { ca: [...tls.rootCertificates, INTERMEDIATE] } });
+
 export function createClient({ delayMs = 1200, fetchImpl = fetch, log = console } = {}) {
   let last = 0;
   return async function post(path, form) {
@@ -41,13 +53,15 @@ export function createClient({ delayMs = 1200, fetchImpl = fetch, log = console 
           headers: { 'user-agent': USER_AGENT, accept: 'application/json', 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8', origin: SITE, referer: `${SITE}/` },
           body: new URLSearchParams(form).toString(),
           signal: AbortSignal.timeout(45000),
+          dispatcher: serviceAgent,
         });
         if (res.status === 429 || res.status >= 500) throw Object.assign(new Error(`HTTP ${res.status}`), { retry: true });
         if (!res.ok) throw new Error(`HTTP ${res.status} for ${path}`);
         return await res.json();
       } catch (error) {
-        if (attempt === 3 || (!error.retry && error.name !== 'TimeoutError' && !/fetch failed/.test(error.message))) throw error;
-        log.warning?.(`${path}: ${error.message}, trying again`);
+        const cause = error.cause ? ` (${error.cause.code ?? ''} ${error.cause.message ?? ''})`.replace(/\s+\)/, ')') : '';
+        if (attempt === 3 || (!error.retry && error.name !== 'TimeoutError' && !/fetch failed/.test(error.message))) throw new Error(`${error.message}${cause} for ${path}`);
+        log.warning?.(`${path}: ${error.message}${cause}, trying again`);
         await sleep(5000 * attempt);
       }
     }
@@ -83,10 +97,18 @@ const year = (v) => {
 };
 const text = (v) => (v == null ? null : String(v).trim() || null);
 
-function imagesOf(images) {
-  const list = Array.isArray(images) ? images : images ? [images] : [];
-  return list.map((img) => (typeof img === 'string' ? img : img?.url ?? img?.path ?? img?.Image_Url ?? null)).filter(Boolean).slice(0, 4)
-    .map((src) => (/^https?:\/\//.test(src) ? src : `${SITE}/${src.replace(/^\/+/, '')}`));
+const GEAR = { 'ออโตเมติค': 'automatic', 'อัตโนมัติ': 'automatic', 'ธรรมดา': 'manual', 'เกียร์ธรรมดา': 'manual' };
+const FUEL = { 'เบนซิน': 'petrol', 'ดีเซล': 'diesel', 'ไฟฟ้า': 'electric', 'ไฮบริด': 'hybrid', 'แก๊ส': 'gas', 'LPG': 'LPG', 'NGV': 'NGV' };
+const mapped = (table, value) => {
+  const t = text(value);
+  if (!t) return null;
+  const key = Object.keys(table).find((k) => t.includes(k));
+  return key ? table[key] : t;
+};
+// The inspectors' notes ("front bumper scratched"), which the service sends as a Python-style list.
+function notesOf(value) {
+  const notes = [...String(value ?? '').matchAll(/'Comment':\s*'([^']*)'/g)].map((m) => m[1].replace(/\s+/g, ' ').trim()).filter(Boolean);
+  return notes.length ? notes.join(' | ').slice(0, 500) : null;
 }
 
 export function carOf(raw, lane = {}) {
@@ -103,20 +125,22 @@ export function carOf(raw, lane = {}) {
     brand: text(raw.Brand_Name),
     model: text(raw.Model_Name),
     subModel: text(raw.Sub_Model_Name),
-    year: year(raw.Year_of_Manufacture) ?? year(raw.Register_Year),
+    year: year(raw.Year_of_Manufacture) ?? year(raw.Manufacturing_Year) ?? year(raw.Register_Year),
     registerYear: year(raw.Register_Year),
     mileageKm: num(raw.Mile),
-    gear: text(raw.Asset_Gear),
-    engine: text(raw.Engine_Size),
-    fuel: text(raw.Fuel_Type),
+    gear: mapped(GEAR, raw.Asset_Gear),
+    engineCc: num(raw.Engine_Size),
+    fuel: mapped(FUEL, raw.Fuel_Type),
     color: text(raw.Car_Paint),
-    bodyType: text(raw.Car_Type),
-    grade: [raw.Point_Grade_1, raw.Point_Grade_2, raw.Point_Grade_3].map(text).filter(Boolean).join(' / ') || null,
+    bodyType: text(raw.Asset_Group_Name) ?? text(raw.Car_Type),
+    grade: text(raw.Asset_Grade) ?? text(raw.Condition_Grade),
+    gradePoints: [raw.Point_Grade_1, raw.Point_Grade_2, raw.Point_Grade_3].map(text).filter(Boolean).join(' / ') || null,
+    inspectorNotes: notesOf(raw.Comment),
     plateProvince: text(raw.License_Plate_City),
     sellerGroup: text(raw.Seller_Group),
-    price: num(raw.Sales_Price),
-    sellerOffer: num(raw.Seller_Offer),
-    images: imagesOf(raw.images),
+    startPrice: num(raw.Sales_Price),
+    soldPrice: num(raw.Sold_Price),
+    auctionTime: text(lane.Auction_Time),
     lotUrl: documentNo ? `${SITE}/auction-list/${encodeURIComponent(documentNo)}` : null,
     documentNo,
   };

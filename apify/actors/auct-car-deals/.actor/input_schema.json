@@ -10,10 +10,46 @@
       "description": "AUCT yards to read. Pattaya, Chonburi, Rayong, Bangkok and Rangsit by default.",
       "items": {
         "type": "string",
-        "enum": ["029", "010", "021", "001", "018", "009", "008", "005", "025", "006", "007", "015", "014", "004"],
-        "enumTitles": ["Pattaya", "Chonburi", "Rayong", "Bangkok (Ramkhamhaeng)", "Rangsit", "Nakhon Ratchasima", "Khon Kaen", "Phitsanulok", "Ratchaburi", "Songkhla", "Surat Thani", "Udon Thani", "Ubon Ratchathani", "Chiang Mai"]
+        "enum": [
+          "029",
+          "010",
+          "021",
+          "001",
+          "018",
+          "009",
+          "008",
+          "005",
+          "025",
+          "006",
+          "007",
+          "015",
+          "014",
+          "004"
+        ],
+        "enumTitles": [
+          "Pattaya",
+          "Chonburi",
+          "Rayong",
+          "Bangkok (Ramkhamhaeng)",
+          "Rangsit",
+          "Nakhon Ratchasima",
+          "Khon Kaen",
+          "Phitsanulok",
+          "Ratchaburi",
+          "Songkhla",
+          "Surat Thani",
+          "Udon Thani",
+          "Ubon Ratchathani",
+          "Chiang Mai"
+        ]
       },
-      "default": ["029", "010", "021", "001", "018"]
+      "default": [
+        "029",
+        "010",
+        "021",
+        "001",
+        "018"
+      ]
     },
     "daysAhead": {
       "title": "Days ahead",
@@ -23,12 +59,23 @@
       "maximum": 30,
       "default": 10
     },
+    "pastDays": {
+      "title": "Sold prices from the last days",
+      "type": "integer",
+      "description": "Also read the prices cars were sold for at AUCT auctions in this many past days (all yards), for the reference price. 0 skips it.",
+      "minimum": 0,
+      "maximum": 60,
+      "default": 14
+    },
     "brands": {
       "title": "Brands",
       "type": "array",
       "editor": "stringList",
       "description": "Only these brands, for example Toyota, Honda, Isuzu. Empty for all.",
-      "prefill": ["Toyota", "Honda"]
+      "prefill": [
+        "Toyota",
+        "Honda"
+      ]
     },
     "keywords": {
       "title": "Models",
@@ -36,24 +83,47 @@
       "editor": "stringList",
       "description": "Only cars whose model contains one of these words, for example Fortuner, Yaris, City, D-Max. Empty for all models."
     },
-    "minYear": { "title": "From year", "type": "integer", "description": "Year of manufacture, from.", "minimum": 1990, "maximum": 2035 },
-    "maxYear": { "title": "To year", "type": "integer", "description": "Year of manufacture, to.", "minimum": 1990, "maximum": 2035 },
-    "maxMileage": { "title": "Max mileage (km)", "type": "integer", "description": "Skip cars with more kilometres than this.", "minimum": 0 },
-    "maxPrice": { "title": "Max price (THB)", "type": "integer", "description": "Skip cars with a higher price than this.", "minimum": 0 },
+    "minYear": {
+      "title": "From year",
+      "type": "integer",
+      "description": "Year of manufacture, from.",
+      "minimum": 1990,
+      "maximum": 2035
+    },
+    "maxYear": {
+      "title": "To year",
+      "type": "integer",
+      "description": "Year of manufacture, to.",
+      "minimum": 1990,
+      "maximum": 2035
+    },
+    "maxMileage": {
+      "title": "Max mileage (km)",
+      "type": "integer",
+      "description": "Skip cars with more kilometres than this.",
+      "minimum": 0
+    },
+    "maxPrice": {
+      "title": "Max starting price (THB)",
+      "type": "integer",
+      "description": "Skip lots whose starting price is higher than this.",
+      "minimum": 0
+    },
     "targets": {
       "title": "My price targets",
       "type": "array",
       "editor": "stringList",
-      "description": "One car per line: words of the model, an optional year and the most you would pay, for example <code>toyota fortuner 2020 750000</code> or <code>honda city 450000</code>. Cars at or under your price are marked.",
-      "prefill": ["toyota yaris 2020 350000", "honda city 2021 420000"]
+      "description": "One car per line: words of the model, an optional year and the most you would pay, for example <code>toyota fortuner 2020 750000</code> or <code>honda city 450000</code>. A car fits when what the same model and year sold for at AUCT (median) is at or under your price.",
+      "prefill": [
+        "toyota yaris 2020 350000",
+        "honda city 2021 420000"
+      ]
     },
-    "minDiscountPercent": {
-      "title": "Only below the reference by (%)",
-      "type": "integer",
-      "description": "Save only cars at least this much below the reference price of the same model and year (cars that match a target are always saved). 0 saves every car that passes the filters.",
-      "minimum": 0,
-      "maximum": 90,
-      "default": 0
+    "onlyTargets": {
+      "title": "Only cars within my targets",
+      "type": "boolean",
+      "description": "Save only the cars that fit one of your targets.",
+      "default": false
     },
     "historyName": {
       "title": "History store",

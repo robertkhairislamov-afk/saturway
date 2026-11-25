@@ -1,0 +1,45 @@
+// Reference prices and price targets for auction cars.
+// A car is compared with the same brand, model and year seen at AUCT (this run and earlier runs);
+// with fewer than three such cars, the neighbouring years are used and the confidence is low.
+
+const clean = (s) => String(s ?? '').toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9฀-๿]+/g, ' ').trim();
+
+export const modelKey = (car) => `${clean(car.brand)}|${clean(car.model)}`;
+
+const median = (values) => {
+  const v = [...values].sort((a, b) => a - b);
+  if (!v.length) return null;
+  const m = Math.floor(v.length / 2);
+  return v.length % 2 ? v[m] : Math.round((v[m - 1] + v[m]) / 2);
+};
+
+// observations: [{ id, key, year, price }] from this run and the history.
+export function referencePrice(car, observations) {
+  const others = observations.filter((o) => o.id !== car.id && o.key === modelKey(car) && o.price > 0);
+  const same = others.filter((o) => o.year === car.year);
+  if (same.length >= 3) return { referencePrice: median(same.map((o) => o.price)), comparables: same.length, confidence: same.length >= 8 ? 'high' : 'medium', basis: 'same model and year' };
+  const near = others.filter((o) => car.year && Math.abs(o.year - car.year) <= 1);
+  if (near.length >= 3) return { referencePrice: median(near.map((o) => o.price)), comparables: near.length, confidence: 'low', basis: 'same model, year ±1' };
+  return { referencePrice: null, comparables: same.length, confidence: null, basis: null };
+}
+
+export function discountPercent(price, reference) {
+  if (!price || !reference) return null;
+  return Math.round(((reference - price) / reference) * 100);
+}
+
+// "toyota fortuner 2020 750000" → { words: ['toyota', 'fortuner'], year: 2020, maxPrice: 750000 }
+export function parseTarget(line) {
+  const parts = clean(line).split(' ').filter(Boolean);
+  const numbers = parts.filter((p) => /^\d+$/.test(p)).map(Number);
+  const maxPrice = numbers.filter((n) => n > 3000).pop() ?? null;
+  const year = numbers.find((n) => n >= 1980 && n <= 2040) ?? null;
+  const words = parts.filter((p) => !/^\d+$/.test(p));
+  if (!maxPrice || !words.length) return null;
+  return { text: String(line).trim(), words, year, maxPrice };
+}
+
+export function matchTargets(car, targets) {
+  const text = clean(`${car.brand} ${car.model} ${car.subModel}`);
+  return targets.filter((t) => t.words.every((w) => text.includes(w)) && (!t.year || t.year === car.year) && car.price > 0 && car.price <= t.maxPrice);
+}

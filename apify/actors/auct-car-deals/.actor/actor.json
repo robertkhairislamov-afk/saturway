@@ -1,0 +1,11 @@
+{
+  "actorSpecification": 1,
+  "name": "auct-car-deals",
+  "title": "AUCT Car Auction Deals (internal)",
+  "description": "Upcoming car lots of AUCT (Sahakarn Auction) in Bangkok, Rangsit, Chonburi, Pattaya and Rayong, with a reference price from the same model and year and your own price targets. Internal tool.",
+  "version": "0.1",
+  "buildTag": "latest",
+  "input": "./input_schema.json",
+  "dockerfile": "../Dockerfile",
+  "readme": "../README.md"
+}

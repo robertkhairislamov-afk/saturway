@@ -1,0 +1,11 @@
+{
+  "actorSpecification": 1,
+  "name": "app-data-all-in-one",
+  "title": "App Data All-in-One: Google Play + App Store",
+  "description": "Search, charts and app links for Google Play and the App Store in one run: one format for both stores, the same app matched across them, ratings, installs, prices, versions and descriptions.",
+  "version": "0.1",
+  "buildTag": "latest",
+  "input": "./input_schema.json",
+  "dockerfile": "../Dockerfile",
+  "readme": "../README.md"
+}

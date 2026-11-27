@@ -26,6 +26,12 @@ The owner (Mozart Standard Co., Pattaya, Thailand) runs an Apify Store portfolio
 
 ## Rules (agreed with the owner)
 
+- **Money first (rule of 27.11.2026).** Judge every idea by feasibility and earnings before the
+  technical side: who pays, how much, how soon, what it costs. Earnings decide how much we can
+  afford to try and fail (more income → bigger subscription → more attempts). Start every proposal
+  with the money estimate, labelled as data (with a source) or as an estimate; say "unknown" when
+  it is. Do not present estimates with a confident tone.
+
 - Respect robots.txt. No CAPTCHA solving, no bot-protection bypass (DataDome, Cloudflare,
   "Security check" pages): drop such sources. Send an honest User-Agent naming the tool, not a
   browser imitation. Read sites at a gentle pace.

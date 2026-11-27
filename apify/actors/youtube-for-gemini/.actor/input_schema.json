@@ -1,0 +1,41 @@
+{
+  "title": "YouTube Videos for Gemini",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "youtubeApiKey": {
+      "title": "YouTube Data API key",
+      "type": "string",
+      "editor": "textfield",
+      "isSecret": true,
+      "description": "A key of YouTube Data API v3 from Google Cloud Console (APIs & Services). Stored encrypted. Without it, the YOUTUBE_API_KEY environment variable of the Actor is used."
+    },
+    "videoUrls": {
+      "title": "Video links",
+      "type": "array",
+      "editor": "stringList",
+      "description": "YouTube video links (watch, youtu.be, shorts) or video IDs.",
+      "prefill": ["https://www.youtube.com/watch?v=4se8RTfN144"]
+    },
+    "channelUrl": {
+      "title": "Channel",
+      "type": "string",
+      "editor": "textfield",
+      "description": "Channel link (https://www.youtube.com/@name or /channel/UC...) or @handle: its uploads, videos and Shorts, newest first."
+    },
+    "maxVideos": {
+      "title": "Max videos from the channel",
+      "type": "integer",
+      "description": "Newest uploads of the channel to list.",
+      "minimum": 1,
+      "maximum": 5000,
+      "default": 50
+    },
+    "skipIds": {
+      "title": "Skip these video IDs",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Video IDs already analysed."
+    }
+  }
+}

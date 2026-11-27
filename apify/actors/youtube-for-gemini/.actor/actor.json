@@ -1,0 +1,11 @@
+{
+  "actorSpecification": 1,
+  "name": "youtube-for-gemini",
+  "title": "YouTube Videos for Gemini (internal)",
+  "description": "The videos and Shorts of a YouTube channel, or a list of video links, with title, date, duration, views and description from the official YouTube Data API. Gemini then analyses each video by its URL. Internal tool.",
+  "version": "0.1",
+  "buildTag": "latest",
+  "input": "./input_schema.json",
+  "dockerfile": "../Dockerfile",
+  "readme": "../README.md"
+}

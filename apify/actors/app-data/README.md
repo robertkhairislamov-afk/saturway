@@ -1,6 +1,6 @@
-# App Data All-in-One: Google Play + App Store
+# App Data All-in-One: Google Play, App Store, Samsung, Xiaomi & F-Droid
 
-**Get app data from Google Play and the Apple App Store in one run, in one format, with the same app matched across both stores.** Search by keyword, read the top charts, or give app links: every app comes with its rating, number of ratings, installs (Google Play), price, version, release and update dates, genre, description and icon. When an app is in both stores, its row links to its page in the other store.
+**Get app data from 5 app stores in one run and one format: Google Play, the Apple App Store, Samsung Galaxy Store, Xiaomi GetApps and F-Droid, with the same app matched across them.** Search by keyword, read the top charts, or give app links: every app comes with its rating, number of ratings, installs (Google Play), price, version, release and update dates, genre, description and icon. When an app is in both stores, its row links to its page in the other store.
 
 No login, no API key, no browser.
 
@@ -8,7 +8,8 @@ No login, no API key, no browser.
 
 - 🔎 **Keyword search in both stores at once**: the apps each store shows for `habit tracker`, `vpn` or `budget app`, with their rank in each store.
 - 🏆 **Top charts of both stores**: top free, top paid and top grossing, up to 100 apps per store and country.
-- 🔗 **The same app in both stores**: give a Google Play package (`com.spotify.music`) or an App Store link, and the Actor also finds the app in the other store. In searches and charts, apps found in both stores are matched by name and developer (`inBothStores`, `otherStoreAppId`, `otherStoreUrl`).
+- 🤖 **Full Android coverage**: every Google Play app is also looked up in **Samsung Galaxy Store**, **Xiaomi GetApps** and **F-Droid** by its package name, with each store's rating, downloads, version and price. `alsoIn` lists the stores where the app is available.
+- 🔗 **The same app on iOS**: give a Google Play package (`com.spotify.music`) or an App Store link, and the Actor also finds the app in the other store. In searches and charts, apps found in both stores are matched by name and developer (`inBothStores`, `otherStoreAppId`, `otherStoreUrl`).
 - 🌍 **Any country**: US, GB, DE, TH or any other store front, one or many in one run.
 - 📋 **One format**: the same columns for both stores, so you can compare ratings and versions side by side in a spreadsheet.
 
@@ -16,7 +17,7 @@ No login, no API key, no browser.
 
 | Field | Example |
 |---|---|
-| `store` | Google Play / App Store |
+| `store` | Google Play / App Store / Samsung Galaxy Store / Xiaomi GetApps / F-Droid |
 | `appId`, `url` | com.habitnow, https://play.google.com/store/apps/details?id=com.habitnow |
 | `title`, `developer`, `genre` | HabitNow Daily Routine Planner, HabitNow Apps, Productivity |
 | `score`, `ratingsCount` | 4.76, 93,890 |
@@ -24,6 +25,8 @@ No login, no API key, no browser.
 | `free`, `price`, `currency` | true, 0, USD |
 | `version`, `releasedAt`, `updatedAt` | 2.5.5, 2019-05-17, … |
 | `summary`, `description`, `icon` | full texts and icon link |
+| `alsoIn` | ["Samsung Galaxy Store", "Xiaomi GetApps", "App Store"] (on Google Play rows) |
+| `license`, `sizeText` | GNU GPL v3 (F-Droid), 130.6 MB (GetApps) |
 | `inBothStores`, `otherStoreAppId`, `otherStoreUrl`, `otherStoreTitle`, `otherStoreScore` | the same app in the other store |
 | `source`, `searchTerm`, `chart`, `rank`, `country` | search, habit tracker, —, 4, US |
 
@@ -46,9 +49,11 @@ Leave **Full Google Play details** on for ratings counts, dates, versions and de
 
 ## FAQ
 
-**Is it legal?** The Actor reads public store pages and Apple's public iTunes Search API, at a gentle pace, without logging in. Check the terms of the stores and the laws that apply to your use.
+**Is it legal?** The Actor reads public store pages, Apple's public iTunes Search API and F-Droid's public API, at a gentle pace, without logging in, and follows each store's robots.txt. Check the terms of the stores and the laws that apply to your use.
 
 **How is the same app matched in both stores?** By its name without the subtitle (the part after " - " or ":") and its developer name. Apps with a generic name ("Habit Tracker") are matched only when the developers match too.
+
+**Why are some Android stores not covered?** Huawei AppGallery closes its pages to robots (robots.txt) and APKPure sits behind a bot check, so they are left out. Galaxy Store search is closed to robots too, so Galaxy Store apps are found through Google Play results and app links, not by keyword.
 
 **Why does an app appear in one store only?** Many apps exist on one platform only, or under a different name. Give its link in **Apps** to look it up in the other store directly.
 

@@ -37,3 +37,19 @@ test("a developer's different apps are not mixed up", () => {
   assert.ok(sameApp({ title: 'Habitify', developer: 'Unstatic' }, { title: 'Habitify Habit Tracker', developer: 'Unstatic Ltd' }) === false);
   assert.ok(sameApp({ title: 'Notion Calendar', developer: 'Notion Labs' }, { title: 'Notion Calendar App', developer: 'Notion Labs, Inc' }));
 });
+
+test('other Android stores: package names from links, store pages parsed', async () => {
+  const { packageFromLink, parseSamsung, parseXiaomi, parseFdroid, countOf } = await import('../src/android.js');
+  assert.equal(packageFromLink('https://galaxystore.samsung.com/detail/com.spotify.music'), 'com.spotify.music');
+  assert.equal(packageFromLink('https://global.app.mi.com/details?id=com.spotify.music'), 'com.spotify.music');
+  assert.equal(packageFromLink('https://f-droid.org/en/packages/org.isoron.uhabits/'), 'org.isoron.uhabits');
+  assert.equal(packageFromLink('com.spotify.music'), null);
+  assert.equal(countOf('11M+'), 11000000);
+  const sam = parseSamsung('<script type="application/ld+json">{"@type":"SoftwareApplication","name":"Spotify","applicationCategory":"Music","author":{"name":"© 2008–2024 Spotify Ltd."},"aggregateRating":{"ratingValue":"4.5","ratingCount":"8832"},"offers":{"price":"$0.00","priceCurrency":"$"}}</script>', 'com.spotify.music');
+  assert.deepEqual([sam.title, sam.developer, sam.score, sam.ratingsCount, sam.free, sam.currency], ['Spotify', 'Spotify Ltd.', 4.5, 8832, true, 'USD']);
+  assert.equal(parseSamsung('<html>no app</html>', 'x.y'), null);
+  const mi = parseXiaomi('<p class="app-info__title_X"> Spotify </p><p class="app-info__developer_Y"><span>Spotify AB</span></p><div aria-label="Ratings:4.9"></div><div aria-label="Downloads:11M+"></div><div aria-label="Version:9.2"></div><div aria-label="Category:Music &amp; Audio"></div>', 'com.spotify.music');
+  assert.deepEqual([mi.title, mi.developer, mi.score, mi.minInstalls, mi.version, mi.genre], ['Spotify', 'Spotify AB', 4.9, 11000000, '9.2', 'Music & Audio']);
+  const fd = parseFdroid('<h3 class="package-name">Loop Habit Tracker</h3><div class="package-summary">Track your habits</div> License <a href="x">GNU GPL v3</a> Added on Oct 25, 2026 ... Added on Aug 21, 2015', { suggestedVersionCode: 2, packages: [{ versionName: '2.3.2', versionCode: 2 }] }, 'org.isoron.uhabits');
+  assert.deepEqual([fd.title, fd.license, fd.version, fd.updatedAt, fd.releasedAt], ['Loop Habit Tracker', 'GNU GPL v3', '2.3.2', '2026-10-25', '2015-08-21']);
+});

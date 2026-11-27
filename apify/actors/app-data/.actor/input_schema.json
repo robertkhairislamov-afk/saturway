@@ -8,34 +8,139 @@
       "type": "array",
       "editor": "stringList",
       "description": "Keywords searched in both stores, for example habit tracker or vpn. Each store returns its results in its own order (rank).",
-      "prefill": ["habit tracker"]
+      "prefill": [
+        "habit tracker"
+      ]
     },
     "appIds": {
       "title": "Apps",
       "type": "array",
       "editor": "stringList",
-      "description": "Google Play package names or links (com.habitnow) and App Store ids or links (apps.apple.com/us/app/.../id1234567890). Each app is also looked up in the other store."
+      "description": "Google Play package names or links (com.habitnow), App Store ids or links (apps.apple.com/us/app/.../id1234567890), or Galaxy Store, GetApps and F-Droid links. Each app is also looked up in the other stores."
     },
     "charts": {
       "title": "Top charts",
       "type": "array",
       "editor": "select",
       "description": "Top charts of both stores (all apps).",
-      "items": { "type": "string", "enum": ["top_free", "top_paid", "top_grossing"], "enumTitles": ["Top free", "Top paid", "Top grossing"] }
+      "items": {
+        "type": "string",
+        "enum": [
+          "top_free",
+          "top_paid",
+          "top_grossing"
+        ],
+        "enumTitles": [
+          "Top free",
+          "Top paid",
+          "Top grossing"
+        ]
+      }
     },
-    "chartDepth": { "title": "Chart depth", "type": "integer", "description": "Apps per chart and store (up to 100).", "minimum": 1, "maximum": 100, "default": 50 },
+    "chartDepth": {
+      "title": "Chart depth",
+      "type": "integer",
+      "description": "Apps per chart and store (up to 100).",
+      "minimum": 1,
+      "maximum": 100,
+      "default": 50
+    },
     "stores": {
       "title": "Stores",
       "type": "array",
       "editor": "select",
       "description": "Leave empty for both.",
-      "items": { "type": "string", "enum": ["googlePlay", "appStore"], "enumTitles": ["Google Play", "App Store"] }
+      "items": {
+        "type": "string",
+        "enum": [
+          "googlePlay",
+          "appStore"
+        ],
+        "enumTitles": [
+          "Google Play",
+          "App Store"
+        ]
+      }
     },
-    "countries": { "title": "Countries", "type": "array", "editor": "stringList", "description": "Two-letter country codes, for example US, GB, DE, TH. Each country is a separate store front.", "prefill": ["US"] },
-    "language": { "title": "Language (Google Play)", "type": "string", "editor": "textfield", "description": "Language of Google Play texts, for example en, de or th.", "default": "en" },
-    "maxItemsPerSource": { "title": "Results per search", "type": "integer", "description": "Apps per search term and store.", "minimum": 1, "maximum": 200, "default": 50 },
-    "playDetails": { "title": "Full Google Play details", "type": "boolean", "description": "Open every Google Play app page for ratings count, release and update dates, version and description (slower). Off: the search and chart data only.", "default": true },
-    "maxItems": { "title": "Max apps", "type": "integer", "description": "Stop after this many apps in total. 0 for no limit.", "minimum": 0 },
-    "proxyConfiguration": { "title": "Proxy", "type": "object", "editor": "proxy", "description": "The Actor connects directly and switches to Apify Proxy by itself if a store limits requests.", "prefill": { "useApifyProxy": false }, "default": { "useApifyProxy": false } }
+    "otherAndroidStores": {
+      "title": "Other Android stores",
+      "type": "array",
+      "editor": "select",
+      "description": "Check every Google Play app in these stores too, by its package name (the same app id on all Android stores). Leave all three for full Android coverage.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "samsung",
+          "xiaomi",
+          "fdroid"
+        ],
+        "enumTitles": [
+          "Samsung Galaxy Store",
+          "Xiaomi GetApps",
+          "F-Droid"
+        ]
+      },
+      "default": [
+        "samsung",
+        "xiaomi",
+        "fdroid"
+      ]
+    },
+    "maxAndroidChecks": {
+      "title": "Max apps to check in other Android stores",
+      "type": "integer",
+      "description": "Google Play apps looked up in Samsung Galaxy Store, Xiaomi GetApps and F-Droid (the first ones found).",
+      "minimum": 0,
+      "maximum": 1000,
+      "default": 100
+    },
+    "countries": {
+      "title": "Countries",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Two-letter country codes, for example US, GB, DE, TH. Each country is a separate store front.",
+      "prefill": [
+        "US"
+      ]
+    },
+    "language": {
+      "title": "Language (Google Play)",
+      "type": "string",
+      "editor": "textfield",
+      "description": "Language of Google Play texts, for example en, de or th.",
+      "default": "en"
+    },
+    "maxItemsPerSource": {
+      "title": "Results per search",
+      "type": "integer",
+      "description": "Apps per search term and store.",
+      "minimum": 1,
+      "maximum": 200,
+      "default": 50
+    },
+    "playDetails": {
+      "title": "Full Google Play details",
+      "type": "boolean",
+      "description": "Open every Google Play app page for ratings count, release and update dates, version and description (slower). Off: the search and chart data only.",
+      "default": true
+    },
+    "maxItems": {
+      "title": "Max apps",
+      "type": "integer",
+      "description": "Stop after this many apps in total. 0 for no limit.",
+      "minimum": 0
+    },
+    "proxyConfiguration": {
+      "title": "Proxy",
+      "type": "object",
+      "editor": "proxy",
+      "description": "The Actor connects directly and switches to Apify Proxy by itself if a store limits requests.",
+      "prefill": {
+        "useApifyProxy": false
+      },
+      "default": {
+        "useApifyProxy": false
+      }
+    }
   }
 }

@@ -1,8 +1,8 @@
 {
   "actorSpecification": 1,
   "name": "app-data-all-in-one",
-  "title": "App Data All-in-One: Google Play + App Store",
-  "description": "Search, charts and app links for Google Play and the App Store in one run: one format for both stores, the same app matched across them, ratings, installs, prices, versions and descriptions.",
+  "title": "App Data All-in-One: Google Play, App Store & 3 More",
+  "description": "App data from 5 stores in one run and one format: Google Play, App Store, Samsung Galaxy Store, Xiaomi GetApps and F-Droid. Search, top charts and app links, the same app matched across stores, ratings, installs, versions and prices.",
   "version": "0.1",
   "buildTag": "latest",
   "input": "./input_schema.json",

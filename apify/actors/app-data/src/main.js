@@ -2,6 +2,7 @@ import { Actor, log } from 'apify';
 
 import { CHARTS as APPLE_CHARTS, appsOf, chartUrl, lookupUrl, parseAppId as parseAppleId, parseChart, searchUrl as appleSearchUrl, LOOKUP_BATCH } from './apple/appstore.js';
 import { createHttpClient as appleClient } from './apple/http.js';
+import { fdroidApiUrl, fdroidPageUrl, packageFromLink, parseFdroid, parseSamsung, parseXiaomi, samsungUrl, xiaomiUrl } from './android.js';
 import { linkStores, sameApp } from './match.js';
 import { createHttpClient as playClient } from './play/http.js';
 import { NotFoundError, appPageUrl, batchUrl, chartRequestBody, parseAppId as parsePlayId, parseAppPage, parseChartResponse, parseSearchPage, searchPageUrl } from './play/play.js';
@@ -17,8 +18,8 @@ const CHARTS = { top_free: ['topselling_free', 'top_free'], top_paid: ['topselli
 const EMPTY = {
   store: null, appId: null, url: null, title: null, developer: null, developerId: null, genre: null,
   score: null, ratingsCount: null, installs: null, minInstalls: null, free: null, price: null, currency: null,
-  contentRating: null, releasedAt: null, updatedAt: null, version: null, summary: null, description: null, icon: null,
-  inBothStores: false, otherStoreAppId: null, otherStoreUrl: null, otherStoreTitle: null, otherStoreScore: null,
+  contentRating: null, releasedAt: null, updatedAt: null, version: null, sizeText: null, license: null, summary: null, description: null, icon: null,
+  alsoIn: null, inBothStores: false, otherStoreAppId: null, otherStoreUrl: null, otherStoreTitle: null, otherStoreScore: null,
   source: null, searchTerm: null, chart: null, rank: null, country: null, scrapedAt: null,
 };
 
@@ -89,6 +90,9 @@ try {
   const charts = toList(raw.charts).filter((c) => CHARTS[c]);
   const playDetails = raw.playDetails !== false;
   const maxItems = Number(raw.maxItems ?? 0);
+  const ANDROID = { samsung: 'Samsung Galaxy Store', xiaomi: 'Xiaomi GetApps', fdroid: 'F-Droid' };
+  const androidStores = (raw.otherAndroidStores === undefined ? Object.keys(ANDROID) : toList(raw.otherAndroidStores)).filter((s) => ANDROID[s]);
+  const maxAndroidChecks = Math.min(Math.max(Number(raw.maxAndroidChecks ?? 100), 0), 1000);
 
   const proxy = raw.proxyConfiguration?.useApifyProxy || raw.proxyConfiguration?.proxyUrls?.length ? await Actor.createProxyConfiguration(raw.proxyConfiguration) : undefined;
   const fallbackProxy = () => Actor.createProxyConfiguration({ useApifyProxy: true });
@@ -170,7 +174,9 @@ try {
       }
     }
     // Apps by link or id: the app in its own store, and the same app found in the other store.
-    for (const value of toList(raw.appIds)) {
+    for (const given of toList(raw.appIds)) {
+      // A Galaxy Store, GetApps or F-Droid link names the Android package, read on Google Play.
+      const value = packageFromLink(given) ?? given;
       const isApple = /apps\.apple\.com|itunes\.apple\.com/i.test(value) || /^(id)?\d{5,}$/i.test(value);
       await step(`app ${value} (${country})`, async () => {
         const ctx = { source: 'app', country };
@@ -198,13 +204,49 @@ try {
     }
   }
 
+  // The same Android packages in the other Android stores, once per package.
+  if (androidStores.length && maxAndroidChecks > 0) {
+    const firstOf = new Map();
+    for (const r of records) if (r.store === 'Google Play' && !firstOf.has(r.appId)) firstOf.set(r.appId, r);
+    const packages = [...firstOf.keys()].slice(0, maxAndroidChecks);
+    const found = new Map();
+    const get = async (url) => {
+      try { return await fetchText(url); } catch (error) {
+        if (error.status !== 404) log.warning(`${url}: ${error.message}`);
+        return null;
+      }
+    };
+    let done = 0;
+    await mapLimit(packages, 3, async (pkg) => {
+      const hits = [];
+      if (androidStores.includes('samsung')) { const html = await get(samsungUrl(pkg)); const app = html && parseSamsung(html, pkg); if (app) hits.push(app); }
+      if (androidStores.includes('xiaomi')) { const html = await get(xiaomiUrl(pkg)); const app = html && parseXiaomi(html, pkg); if (app) hits.push(app); }
+      if (androidStores.includes('fdroid')) {
+        const api = await get(fdroidApiUrl(pkg));
+        if (api) { const html = await get(fdroidPageUrl(pkg)); let parsed = null; try { parsed = JSON.parse(api); } catch { /* not JSON */ } const app = html && parseFdroid(html, parsed, pkg); if (app) hits.push(app); }
+      }
+      found.set(pkg, hits);
+      done++;
+      if (done % 20 === 0) await Actor.setStatusMessage(`Checked ${done} of ${packages.length} Android apps in other stores`);
+    });
+    for (const pkg of packages) {
+      const play = firstOf.get(pkg);
+      for (const hit of found.get(pkg) ?? []) records.push({ ...EMPTY, ...hit, source: 'same package', country: play.country, scrapedAt });
+    }
+    for (const r of records) if (r.store === 'Google Play') r.alsoIn = (found.get(r.appId) ?? []).map((h) => h.store);
+    const total = [...found.values()].reduce((n, h) => n + h.length, 0);
+    log.info(`Other Android stores: ${packages.length} packages checked, ${total} store pages found.`);
+  }
+
   linkStores(records);
+  for (const r of records) if (r.store === 'Google Play' && r.inBothStores) r.alsoIn = [...(r.alsoIn ?? []), 'App Store'];
   const budget = Actor.getChargingManager().calculateMaxEventChargeCountWithinLimit(ITEM_EVENT);
   const room = Math.min(maxItems > 0 ? maxItems : Infinity, budget);
   const out = records.slice(0, room);
   if (out.length) await Actor.pushData(out);
   await Actor.setValue('SUMMARY', { saved: out.length, inBothStores: out.filter((r) => r.inBothStores).length, sources: summary });
-  const message = `Saved ${out.length} apps (${out.filter((r) => r.store === 'Google Play').length} Google Play, ${out.filter((r) => r.store === 'App Store').length} App Store); ${out.filter((r) => r.inBothStores).length} matched in both stores.`;
+  const perStore = ['Google Play', 'App Store', 'Samsung Galaxy Store', 'Xiaomi GetApps', 'F-Droid'].map((st) => [st, out.filter((r) => r.store === st).length]).filter(([, n]) => n).map(([st, n]) => `${n} ${st}`).join(', ');
+  const message = `Saved ${out.length} store pages (${perStore}); ${out.filter((r) => r.inBothStores).length} matched between Google Play and the App Store.`;
   log.info(message);
   await Actor.setStatusMessage(message, { isStatusMessageTerminal: true });
   if (!out.length && summary.every((s) => s.error)) throw new Error(summary[0]?.error ?? 'Nothing could be read.');

@@ -5,8 +5,8 @@
 
 import { EnvHttpProxyAgent, ProxyAgent, fetch } from 'undici';
 
-const USER_AGENT =
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36';
+// An honest name for the tool, not a browser imitation.
+const USER_AGENT = 'app-data-all-in-one/0.1 (Apify Actor; +https://apify.com/robertosan16)';
 
 // Without Apify Proxy, respect a proxy from the environment (for example in local runs).
 const envAgent = process.env.HTTPS_PROXY || process.env.https_proxy ? new EnvHttpProxyAgent() : undefined;

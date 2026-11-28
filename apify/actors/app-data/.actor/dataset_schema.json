@@ -1,0 +1,208 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "store": {
+        "description": "Google Play, App Store, Samsung Galaxy Store, Xiaomi GetApps or F-Droid."
+      },
+      "appId": {
+        "description": "Package name (Android) or numeric id (App Store)."
+      },
+      "url": {
+        "description": "App page in the store."
+      },
+      "title": {
+        "description": "App name."
+      },
+      "developer": {
+        "description": "Developer or publisher."
+      },
+      "developerId": {
+        "description": "Developer id in the store."
+      },
+      "genre": {
+        "description": "Category."
+      },
+      "score": {
+        "description": "Average rating."
+      },
+      "ratingsCount": {
+        "description": "Number of ratings."
+      },
+      "installs": {
+        "description": "Installs or downloads as the store shows them (5,000,000+)."
+      },
+      "minInstalls": {
+        "description": "Installs as a number (lower bound)."
+      },
+      "free": {
+        "description": "Free to download."
+      },
+      "price": {
+        "description": "Price."
+      },
+      "currency": {
+        "description": "Price currency."
+      },
+      "contentRating": {
+        "description": "Age rating."
+      },
+      "releasedAt": {
+        "description": "First release date."
+      },
+      "updatedAt": {
+        "description": "Last update date."
+      },
+      "version": {
+        "description": "Current version."
+      },
+      "sizeText": {
+        "description": "App size (GetApps)."
+      },
+      "license": {
+        "description": "Licence (F-Droid)."
+      },
+      "summary": {
+        "description": "Short description."
+      },
+      "description": {
+        "description": "Full description."
+      },
+      "icon": {
+        "description": "Icon link."
+      },
+      "alsoIn": {
+        "description": "Other stores where the same app was found (on Google Play rows)."
+      },
+      "inBothStores": {
+        "description": "The same app was matched between Google Play and the App Store."
+      },
+      "otherStoreAppId": {
+        "description": "Its id in the other store."
+      },
+      "otherStoreUrl": {
+        "description": "Its page in the other store."
+      },
+      "otherStoreTitle": {
+        "description": "Its name in the other store."
+      },
+      "otherStoreScore": {
+        "description": "Its rating in the other store."
+      },
+      "source": {
+        "description": "search, chart, app, other store or same package."
+      },
+      "searchTerm": {
+        "description": "Search term that found the app."
+      },
+      "chart": {
+        "description": "Top chart that listed the app."
+      },
+      "rank": {
+        "description": "Position in the search or chart."
+      },
+      "country": {
+        "description": "Store country."
+      },
+      "scrapedAt": {
+        "description": "When the data was read."
+      }
+    }
+  },
+  "views": {
+    "overview": {
+      "title": "Apps",
+      "transformation": {
+        "fields": [
+          "store",
+          "title",
+          "developer",
+          "genre",
+          "score",
+          "ratingsCount",
+          "installs",
+          "price",
+          "currency",
+          "version",
+          "updatedAt",
+          "alsoIn",
+          "otherStoreUrl",
+          "rank",
+          "country",
+          "url"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "store": {
+            "label": "Store",
+            "format": "text"
+          },
+          "title": {
+            "label": "App",
+            "format": "text"
+          },
+          "developer": {
+            "label": "Developer",
+            "format": "text"
+          },
+          "genre": {
+            "label": "Category",
+            "format": "text"
+          },
+          "score": {
+            "label": "Rating",
+            "format": "number"
+          },
+          "ratingsCount": {
+            "label": "Ratings",
+            "format": "number"
+          },
+          "installs": {
+            "label": "Installs",
+            "format": "text"
+          },
+          "price": {
+            "label": "Price",
+            "format": "number"
+          },
+          "currency": {
+            "label": "Currency",
+            "format": "text"
+          },
+          "version": {
+            "label": "Version",
+            "format": "text"
+          },
+          "updatedAt": {
+            "label": "Updated",
+            "format": "text"
+          },
+          "alsoIn": {
+            "label": "Also in",
+            "format": "array"
+          },
+          "otherStoreUrl": {
+            "label": "Other store",
+            "format": "link"
+          },
+          "rank": {
+            "label": "Rank",
+            "format": "number"
+          },
+          "country": {
+            "label": "Country",
+            "format": "text"
+          },
+          "url": {
+            "label": "Link",
+            "format": "link"
+          }
+        }
+      }
+    }
+  }
+}

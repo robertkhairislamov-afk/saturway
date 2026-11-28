@@ -51,6 +51,10 @@ The owner (Mozart Standard Co., Pattaya, Thailand) runs an Apify Store portfolio
   without asking (it is fine as the support address inside our own READMEs).
 - Thai property Actor: internal use only. Bangkok runs are manual (no schedule).
 - Check facts before claiming them; when a result is uncertain, say so.
+- Before recommending any service (payments, banks, platforms, tools), check that it works for the
+  owner's actual case first: a Thai private limited company (Mozart Standard Co., Ltd.), Thai
+  address, foreign director. Read the service's own eligibility page and say the result up front
+  (lesson of 28.11.2026: Wise Business does not onboard Thai limited companies).
 - Prices: the owner does not want price increases (after the Google Play increase on 9.11 its
   paying users stopped). Do not propose raising prices.
 
